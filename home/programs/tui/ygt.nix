@@ -2,6 +2,7 @@
 
 {
   home.packages = with pkgs; [
+    docker-compose
     gcc
     gnumake
     go-task

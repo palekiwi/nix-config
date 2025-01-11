@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = with pkgs; [ git gitui ];
+
   programs.git = {
     enable = true;
     userName = "Pawel Lisewski";

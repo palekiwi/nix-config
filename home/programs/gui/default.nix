@@ -9,6 +9,7 @@
     ./picom.nix
     ./rofi.nix
     ./sxhkd.nix
+    ./utils.nix
     ./xorg.nix
   ];
 

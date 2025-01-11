@@ -1,7 +1,9 @@
-{ pkgs, config, lib, ... }: {
+{ ... }: {
 
   imports = [
     ./cmus.nix
+    ./dev.nix
+    ./fonts.nix
     ./gh.nix
     ./git.nix
     ./sesh.nix
