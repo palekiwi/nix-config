@@ -43,7 +43,7 @@
   ];
 
   home.file."${config.xdg.configHome}/zsh/aliases.d" = {
-	source = ../../config/zsh/aliases.d;
-	recursive = true;
+    source = ../../config/zsh/aliases.d;
+    recursive = true;
   };
 }
