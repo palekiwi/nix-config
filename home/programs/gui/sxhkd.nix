@@ -1,9 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    sxhkd
-  ];
+  home.packages = with pkgs; [ sxhkd ];
 
   services.sxhkd = {
     enable = true;

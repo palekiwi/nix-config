@@ -9,5 +9,8 @@
 
   programs.home-manager.enable = true;
 
-  imports = [ ./programs ];
+  imports = [
+    ../../programs/gui
+    ../../programs/tui
+  ];
 }

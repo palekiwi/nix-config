@@ -1,9 +1,11 @@
 { pkgs, ... }:
 
 {
+  home.packages = with pkgs; [ tmux ];
+
   programs.tmux = {
     enable = true;
-    extraConfig = builtins.readFile ../config/tmux/tmux.conf;
+    extraConfig = builtins.readFile ../../config/tmux/tmux.conf;
     keyMode = "vi";
     mouse = true;
     prefix = "M-g";

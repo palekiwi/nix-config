@@ -4,7 +4,7 @@
     programs.rofi = {
         enable = true;
         package = pkgs.rofi;
-        theme = ../config/rofi/dark_theme.rasi;
+        theme = ../../config/rofi/dark_theme.rasi;
         plugins = [ pkgs.rofi-calc ];
 
         # extraConfig = {

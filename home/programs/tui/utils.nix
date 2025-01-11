@@ -16,9 +16,6 @@
     firefox
     freeplane
     fzf
-    gh
-    gh-f
-    gh-s
     git
     gitui
     gnumake
@@ -50,7 +47,6 @@
     ranger
     ripgrep
     rustup
-    sesh
     signal-desktop
     simplescreenrecorder
     starship
