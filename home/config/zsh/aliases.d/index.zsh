@@ -7,10 +7,6 @@ source ~/.config/zsh/aliases.d/git.zsh
 source ~/.config/zsh/aliases.d/rust.zsh
 source ~/.config/zsh/aliases.d/ygt.zsh
 
-nt () {
-    cd ~/Notes && nvim +"lua require('kiwi').open_wiki_index()" index.md
-}
-
 alias cat="bat -p"
 alias cdc="pwd | ctc"
 alias chx="chmod +x"
@@ -21,7 +17,7 @@ alias gut="gu ~/tailnet"
 alias ll="ls -la"
 alias pc="pass -c"
 alias rr="ranger"
-alias update="home-manager switch --flake ~/dotfiles/hosts/$(hostname -s)/home-manager"
+alias update="home-manager switch --flake ~/nix-config/home#"$(whoami)@$(hostname -f)""
 alias v="nvim_fg"
 alias xo="xdg-open"
 
