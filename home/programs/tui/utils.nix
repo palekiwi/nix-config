@@ -13,14 +13,11 @@
     docker-compose
     eza
     fasd
-    firefox
-    freeplane
     fzf
     git
     gitui
     gnumake
     go
-    google-chrome
     gpick
     home-assistant-cli
     jetbrains-mono

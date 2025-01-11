@@ -10,8 +10,13 @@
 
     programs.home-manager.enable = true;
 
-    modules.kitty.enable = true;
-    modules.chrome.enable = true;
+    modules.kitty.enable = false;
+
+    # kitty is installed from Fedora packages
+    home.file."${config.xdg.configHome}/kitty" = {
+      source = ../../config/kitty;
+      recursive = true;
+    };
   };
 
   imports = [
