@@ -1,16 +1,22 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
   config = {
-    home.username = "pl";
-    home.homeDirectory = "/home/pl";
-    home.stateVersion = "24.11";
+    home = {
+      username = "pl";
+      homeDirectory = "/home/pl";
+      stateVersion = "24.11";
+    };
 
     nixpkgs.config.allowUnfree = true;
 
     programs.home-manager.enable = true;
 
-    modules.kitty.enable = false;
+    modules = {
+      chrome.enable = true;
+      kitty.enable = false;
+      ygt.enable = true;
+    };
 
     # kitty is installed from Fedora packages
     home.file."${config.xdg.configHome}/kitty" = {

@@ -1,17 +1,22 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   config = {
-    home.username = "pl";
-    home.homeDirectory = "/home/pl";
-    home.stateVersion = "24.11";
+    home = {
+      username = "pl";
+      homeDirectory = "/home/pl";
+      stateVersion = "24.11";
+    };
 
     nixpkgs.config.allowUnfree = true;
 
     programs.home-manager.enable = true;
 
-    modules.kitty.enable = true;
-    modules.chrome.enable = true;
+    modules = {
+      chrome.enable = true;
+      kitty.enable = true;
+      ygt.enable = true;
+    };
   };
 
   imports = [
