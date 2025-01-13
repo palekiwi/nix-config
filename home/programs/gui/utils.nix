@@ -7,7 +7,6 @@
     gpick
     libnotify
     maim
-    pinentry-gtk2
     playerctl
     pulseaudio
     signal-desktop

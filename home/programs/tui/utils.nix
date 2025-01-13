@@ -14,7 +14,6 @@
     maim
     neovim
     pass
-    pinentry-gtk2
     ranger
     ripgrep
     starship
