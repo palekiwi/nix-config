@@ -2,7 +2,6 @@
 
 {
   home.packages = with pkgs; [
-    alsa-utils
     arc-icon-theme
     gpick
     libnotify
