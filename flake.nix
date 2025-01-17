@@ -11,6 +11,11 @@
         system = "x86_64-linux";
         modules = [ ./hosts/sayuri ];
       };
+
+      akemi = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./hosts/akemi ];
+      };
     };
   };
 }
