@@ -16,7 +16,7 @@
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
-      "XF86AudioMute" = "~/dotfiles/hosts/all/bin/cplay";
+      "XF86AudioMute" = "~/nix-config/home/bin/cplay";
       "{XF86MonBrightnessUp,XF86MonBrightnessDown}" = "light -{A,U} 2";
       "{XF86AudioPlay,XF86AudioPause}" = "playerctl -i cmus play-pause";
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
@@ -40,8 +40,8 @@
       # "XF86Tools" = "~/dotfiles/arch/bin/hass_state toggle light.kitchen_ceiling";
       # "XF86Launch5" = "~/dotfiles/arch/bin/hass state toggle light.desk";
       # "XF86Launch6" = "~/dotfiles/arch/bin/hass state toggle light.salon";
-      "XF86Launch7; g" = "/bin/bash -c 'sleep 0.1 && ssh-add -L | xclip -selection clipboard; xdotool key Control_L+Shift+v'";
-      "XF86Launch7; b" = "/bin/bash -c 'sleep 0.1 && xdotool type \"[ci skip] \"'";
+      "XF86Launch7; g" = "/usr/bin/env bash -c 'sleep 0.1 && ssh-add -L | xclip -selection clipboard; xdotool key Control_L+Shift+v'";
+      "XF86Launch7; b" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"[ci skip] \"'";
       "XF86Launch8" = "~/.dmenu/hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
     };
