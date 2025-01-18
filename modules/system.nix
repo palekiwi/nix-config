@@ -1,4 +1,4 @@
-{ pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 {
   users.users.pl = {
     isNormalUser = true;
@@ -61,10 +61,17 @@
 
   services.openssh = {
     enable = true;
-    settings.PasswordAuthentication = false;
-    settings.KbdInteractiveAuthentication = false;
-    settings.PermitRootLogin = "no";
+    ports = [ 438 ];
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "no";
+    };
   };
+
+  networking.firewall.allowedTCPPorts = [ 438 ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.enable = true;
 
   environment.systemPackages = with pkgs; [
     alsa-utils
