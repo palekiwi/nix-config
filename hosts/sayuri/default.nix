@@ -8,6 +8,7 @@
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/ibus.nix
+      ../../modules/sops.nix
       ../../modules/system.nix
       ../../modules/yubikey.nix
     ];
