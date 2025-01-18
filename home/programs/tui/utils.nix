@@ -26,5 +26,6 @@
     yubikey-manager
     zellij
     zoxide
+    (import ./bin/hass.nix { inherit pkgs; })
   ];
 }

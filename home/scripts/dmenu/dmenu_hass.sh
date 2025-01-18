@@ -2,7 +2,7 @@
 
 launcher='dmenu -i -nb #1d1f21 -nf #D3D7CF -sb #37ADD4 -sf #192330 -fn 11'
 
-cmd=~/nix-config/home/bin/hass
+cmd=hass
 
 rm4c=f3e8f78e81ce8fbbbe613ed7d0382f11
 
