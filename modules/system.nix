@@ -1,4 +1,4 @@
-{ pkgs, lib, ...}:
+{ pkgs, ...}:
 {
   users.users.pl = {
     isNormalUser = true;
@@ -60,6 +60,4 @@
     xscreensaver
     zsh
   ];
-
-  virtualisation.docker.enable = true;
 }
