@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
@@ -12,6 +16,7 @@
         modules = [
           ./hosts/sayuri
           ./users/pl
+          inputs.sops-nix.nixosModules.sops
         ];
       };
 
@@ -20,6 +25,7 @@
         modules = [
           ./hosts/akemi
           ./users/pl
+          inputs.sops-nix.nixosModules.sops
         ];
       };
     };

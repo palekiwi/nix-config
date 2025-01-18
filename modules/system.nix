@@ -74,6 +74,7 @@
   networking.firewall.enable = true;
 
   environment.systemPackages = with pkgs; [
+    age
     alsa-utils
     curl
     git

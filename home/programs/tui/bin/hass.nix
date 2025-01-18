@@ -1,9 +1,5 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "hass" ''
-  set -a
-  source ~/.hass-cli
-  set +a
-
-  hass-cli $@
+  hass-cli --server $(cat /run/secrets/hass/server) --token $(cat /run/secrets/hass/token) $@
 ''
