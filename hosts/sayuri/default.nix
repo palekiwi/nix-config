@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ../../modules/awesome.nix
       ../../modules/docker.nix
+      ../../modules/fonts.nix
       ../../modules/system.nix
     ];
 
