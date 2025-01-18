@@ -9,7 +9,10 @@
     nixosConfigurations = {
       sayuri = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./hosts/sayuri ];
+        modules = [
+          ./hosts/sayuri
+          ./users/pl
+        ];
       };
     };
   };
