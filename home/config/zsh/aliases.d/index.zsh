@@ -18,6 +18,7 @@ alias ll="ls -la"
 alias pc="pass -c"
 alias rr="ranger"
 alias update="home-manager switch --flake ~/nix-config/home#"$(whoami)@$(hostname -f)""
+alias rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -f)"
 alias v="nvim_fg"
 alias xo="xdg-open"
 
