@@ -73,15 +73,6 @@
     # started in user sessions.
     # programs.mtr.enable = true;
 
-    services.tailscale.enable = true;
-
-    services.openssh = {
-      enable = true;
-      settings.PasswordAuthentication = false;
-      settings.KbdInteractiveAuthentication = false;
-      settings.PermitRootLogin = "no";
-    };
-
     # yubikey
     services.udev.packages = [ pkgs.yubikey-personalization ];
     services.pcscd.enable = true;
@@ -93,9 +84,6 @@
       enableSSHSupport = true;
       pinentryPackage = pkgs.pinentry-gnome3;
     };
-
-    programs.firefox.enable = true;
-    programs.zsh.enable = true;
 
     # Enable touchpad support (enabled default in most desktopManager).
     # services.xserver.libinput.enable = true;

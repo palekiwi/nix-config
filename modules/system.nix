@@ -7,6 +7,8 @@
     shell = pkgs.zsh;
   };
 
+  programs.zsh.enable = true;
+
   nixpkgs.config.allowUnfree = true;
 
   nix.gc = {
@@ -53,14 +55,24 @@
     #media-session.enable = true;
   };
 
+  programs.dconf.enable = true;
+
+  services.tailscale.enable = true;
+
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+    settings.KbdInteractiveAuthentication = false;
+    settings.PermitRootLogin = "no";
+  };
+
   environment.systemPackages = with pkgs; [
+    curl
     git
     gnupg
+    lm_sensors
     neovim
-    picom
-    pinentry-gnome3
-    rsync
+    sysstat
     wget
-    zsh
   ];
 }
