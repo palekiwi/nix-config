@@ -188,6 +188,8 @@
   services.udev.packages = [ pkgs.yubikey-personalization ];
   services.pcscd.enable = true;
 
+  services.dbus.packages = [ pkgs.gcr ]; # for gnome pinentry
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
