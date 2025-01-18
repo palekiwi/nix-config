@@ -7,11 +7,13 @@
       ../../modules/awesome.nix
       ../../modules/docker.nix
       ../../modules/fonts.nix
+      ../../modules/ibus.nix
       ../../modules/system.nix
     ];
 
   config = {
     modules.docker.enable = true;
+    modules.ibus.enable = true;
 
     # Enable OpenGL
     hardware.graphics = {
