@@ -16,7 +16,16 @@
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
-      "XF86AudioMute" = "~/nix-config/home/bin/cplay";
+      # "XF86AudioMute" = "~/nix-config/home/bin/cplay";
+      "XF86AudioMute" = pkgs.writeShellScript "cplay"  ''
+        if ! pgrep -x cmus ; then
+          ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
+          sleep 1
+          ${pkgs.cmus}/bin/cmus-remote --play
+        else
+          ${pkgs.cmus}/bin/cmus-remote -u
+        fi
+      '';
       "{XF86MonBrightnessUp,XF86MonBrightnessDown}" = "light -{A,U} 2";
       "{XF86AudioPlay,XF86AudioPause}" = "playerctl -i cmus play-pause";
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";

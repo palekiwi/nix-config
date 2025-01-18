@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if ! pgrep -x cmus ; then
-  tmux new -d -s "cmus" "cmus"
-  sleep 1
-  cmus-remote --play
-else
-  cmus-remote -u
-fi
