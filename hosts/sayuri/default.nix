@@ -4,8 +4,9 @@
   imports =
     [
       ./hardware-configuration.nix
-      ../../modules/system.nix
+      ../../modules/awesome.nix
       ../../modules/docker.nix
+      ../../modules/system.nix
     ];
 
   config = {
@@ -65,39 +66,11 @@
     # Enable networking
     networking.networkmanager.enable = true;
 
-    # Configure keymap in X11
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
-    };
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # programs.mtr.enable = true;
 
     services.tailscale.enable = true;
-
-    services.xserver = {
-      enable = true;
-      displayManager = {
-        gdm.enable = true;
-      };
-
-      desktopManager.gnome.enable = true;
-
-      windowManager.awesome = {
-        enable = true;
-        luaModules = with pkgs.luaPackages; [
-          luarocks # is the package manager for Lua modules
-          luadbi-mysql # Database abstraction layer
-        ];
-      };
-    };
-
-    # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-    systemd.services."getty@tty1".enable = false;
-    systemd.services."autovt@tty1".enable = false;
-
-    services.displayManager.defaultSession = "none+awesome";
 
     services.openssh = {
       enable = true;

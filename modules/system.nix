@@ -48,7 +48,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    awesome
     git
     gnupg
     neovim
@@ -56,8 +55,6 @@
     pinentry-gnome3
     rsync
     wget
-    xorg.xrandr
-    xscreensaver
     zsh
   ];
 }
