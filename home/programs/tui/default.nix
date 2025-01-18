@@ -3,10 +3,9 @@
   imports = [
     ./cmus.nix
     ./dev.nix
-    ./fonts.nix
+    ./direnv.nix
     ./gh.nix
     ./git.nix
-    # ./gpg.nix
     ./sesh.nix
     ./starship.nix
     ./tmux.nix
