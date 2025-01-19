@@ -23,7 +23,7 @@
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
     networking.hostName = "kaori"; # Define your hostname.
-    networking.wireless.enable = true;
+    # networking.wireless.enable = true;
 
     # Configure network proxy if necessary
     # networking.proxy.default = "http://user:password@proxy:port/";
