@@ -28,6 +28,15 @@
           inputs.sops-nix.nixosModules.sops
         ];
       };
+
+      kaori = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/kaori
+          ./users/pl
+          inputs.sops-nix.nixosModules.sops
+        ];
+      };
     };
   };
 }
