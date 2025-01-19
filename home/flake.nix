@@ -15,10 +15,18 @@
       pkgs = import nixpkgs { inherit system; };
     in
     {
+      defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./users/pl/pale.nix ];
+          extraSpecialArgs = { inherit inputs; };
+        };
+
+        "pl@kaori" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./users/pl/kaori.nix ];
           extraSpecialArgs = { inherit inputs; };
         };
 
