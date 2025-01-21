@@ -16,8 +16,9 @@
       chrome.enable = true;
       kitty.enable = false;
       ygt.enable = true;
-      sxhkd.flatpak_chrome = true;
     };
+
+    fedora = true;
 
     # kitty is installed from Fedora packages
     home.file."${config.xdg.configHome}/kitty" = {

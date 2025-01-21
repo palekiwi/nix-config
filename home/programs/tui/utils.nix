@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   home.packages = with pkgs; [
@@ -26,6 +26,6 @@
     yubikey-manager
     zellij
     zoxide
-    (import ./bin/hass.nix { inherit pkgs; })
+    (import ./bin/hass.nix { inherit pkgs config; })
   ];
 }
