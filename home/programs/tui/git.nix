@@ -16,13 +16,14 @@
       ".direnv"
       ".envrc"
       ".gutctags"
-      "tags"
-      "tags.lock"
-      "tags.temp"
       "build"
       "gemset.nix"
       "log/test.log.0"
+      "tags"
+      "tags.lock"
+      "tags.temp"
       "tmux-client-*"
+      "vendor"
     ];
     # hooks = {
     #   pre-commit = ../config/git/hooks/pre-commit;
