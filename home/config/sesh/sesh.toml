@@ -16,6 +16,11 @@ path = "~/code/ygt/spabreaks/"
 startup_command = "make console"
 
 [[session]]
+name = "spabreaks-cypress"
+path = "~/code/ygt/spabreaks/"
+startup_command = "make cypress"
+
+[[session]]
 name = "spabreaks-guard"
 path = "~/code/ygt/spabreaks/"
 startup_command = "make guard"
