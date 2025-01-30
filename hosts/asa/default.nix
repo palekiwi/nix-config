@@ -101,6 +101,7 @@
     curl
     git
     gitui
+    google-chrome
     neovim
     rsync
     wget
