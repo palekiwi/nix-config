@@ -28,6 +28,15 @@
           inputs.sops-nix.nixosModules.sops
         ];
       };
+
+      asa = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/asa
+          ./users/pl
+          inputs.sops-nix.nixosModules.sops
+        ];
+      };
     };
   };
 }
