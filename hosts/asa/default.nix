@@ -123,6 +123,16 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   networking.firewall.enable = true;
 
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      rime-data
+      fcitx5-gtk
+      fcitx5-chinese-addons
+      fcitx5-rime
+    ];
+  };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
