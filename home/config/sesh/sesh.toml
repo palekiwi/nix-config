@@ -34,7 +34,18 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data"
 [[session]]
 name = "wss-api-dev"
 path = "~/code/ygt/wss-api/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-api-dev"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
+
+# --- my-account
+[[session]]
+name = "my-account"
+path = "~/code/ygt/my-account/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account"
+
+[[session]]
+name = "my-account-dev"
+path = "~/code/ygt/my-account/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
 
 # --- VRS
 [[session]]
