@@ -28,6 +28,11 @@ name = "spabreaks-guard"
 path = "~/code/ygt/spabreaks/"
 startup_command = "make guard"
 
+[[session]]
+name = "spabreaks-psql"
+path = "~/code/ygt/spabreaks/"
+startup_command = "make psql"
+
 #-------------------
 #  --- wss-data ---
 #-------------------
