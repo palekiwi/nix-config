@@ -133,4 +133,4 @@ startup_command = "~/bin/ollama serve"
 
 [[session]]
 name = "haze"
-startup_command = "ssh haze"
+startup_command = "ssh haze -A"
