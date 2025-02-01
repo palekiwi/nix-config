@@ -8,7 +8,9 @@
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/ibus.nix
+      ../../modules/sops.nix
       ../../modules/system.nix
+      ../../modules/yubikey.nix
     ];
 
   config = {
@@ -72,18 +74,6 @@
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # programs.mtr.enable = true;
-
-    # yubikey
-    services.udev.packages = [ pkgs.yubikey-personalization ];
-    services.pcscd.enable = true;
-
-    services.dbus.packages = [ pkgs.gcr ]; # for gnome pinentry
-
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-      pinentryPackage = pkgs.pinentry-gnome3;
-    };
 
     # Enable touchpad support (enabled default in most desktopManager).
     # services.xserver.libinput.enable = true;

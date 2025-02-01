@@ -18,13 +18,13 @@
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./users/pl/pale.nix ];
+          modules = [ ./users/pl/pale.nix ./options ];
           extraSpecialArgs = { inherit inputs; };
         };
 
         "pl@sayuri" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./users/pl/sayuri.nix ];
+          modules = [ ./users/pl/sayuri.nix ./options ];
           extraSpecialArgs = { inherit inputs; };
         };
       };

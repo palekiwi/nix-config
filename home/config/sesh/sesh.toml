@@ -1,14 +1,17 @@
 # --- YGT ---
-# --- Spabreaks
+
+#-------------------
+# --- Spabreaks ---
+#-------------------
 [[session]]
 name = "spabreaks"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/spabreaks"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/spabreaks"
 
 [[session]]
 name = "spabreaks-dev"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/spabreaks-dev"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/spabreaks-dev"
 
 [[session]]
 name = "spabreaks-console"
@@ -16,57 +19,100 @@ path = "~/code/ygt/spabreaks/"
 startup_command = "make console"
 
 [[session]]
+name = "spabreaks-cypress"
+path = "~/code/ygt/spabreaks/"
+startup_command = "make cypress"
+
+[[session]]
 name = "spabreaks-guard"
 path = "~/code/ygt/spabreaks/"
 startup_command = "make guard"
 
-# --- wss-data
+[[session]]
+name = "spabreaks-psql"
+path = "~/code/ygt/spabreaks/"
+startup_command = "make psql"
+
+#-------------------
+#  --- wss-data ---
+#-------------------
 [[session]]
 name = "wss-data"
 path = "~/code/ygt/wss-data/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/wss-data"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data"
 
 [[session]]
 name = "wss-api-dev"
 path = "~/code/ygt/wss-api/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/wss-api-dev"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
 
-# --- VRS
+#-------------------
+# --- my-account ---
+#-------------------
+[[session]]
+name = "my-account"
+path = "~/code/ygt/my-account/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account"
+
+[[session]]
+name = "my-account-dev"
+path = "~/code/ygt/my-account/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
+
+#-------------------
+#    --- VRS ---
+#-------------------
 [[session]]
 name = "vrs"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/vrs"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/vrs"
 
 [[session]]
 name = "vrs-dev"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/ygt/vrs-dev"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/vrs-dev"
 
 [[session]]
 name = "vrs-psql"
 path = "~/code/ygt/sb-voucher-redemptions/"
 startup_command = "make psql"
 
-# --- Config ---
-
-[[session]]
-name = "dotfiles"
-path = "~/dotfiles"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/git-repo dotfiles"
+#-------------------
+#  --- Config ---
+#-------------------
 
 [[session]]
 name = "awesome"
 path = "~/.config/awesome/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/git-repo awesome"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo awesome"
 
-# --- Repos ---
+[[session]]
+name = "dotfiles"
+path = "~/dotfiles"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo dotfiles"
+
+[[session]]
+name = "nix-config"
+path = "~/nix-config"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo nix-config"
+
+[[session]]
+name = "nvim"
+path = "~/.config/nvim/"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo nvim"
+
+#-------------------
+#   --- Repos ---
+#-------------------
 
 [[session]]
 name = "live-test_nvim"
 path = "~/code/neovim/plugins/live-test.nvim/"
-startup_command = "~/dotfiles/hosts/all/scripts/tmux/git-repo live-test_nvim"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo live-test_nvim"
 
-# --- Utils ---
+#-------------------
+#   --- Utils ---
+#-------------------
 
 [[session]]
 name = "elia"
@@ -81,7 +127,9 @@ startup_command = "nvim index.md"
 name = "ollama"
 startup_command = "~/bin/ollama serve"
 
-# --- ssh ----
+#-------------------
+#    --- ssh ----
+#-------------------
 
 [[session]]
 name = "haze"

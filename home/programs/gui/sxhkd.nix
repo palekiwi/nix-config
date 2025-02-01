@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   home.packages = with pkgs; [ sxhkd ];
@@ -8,7 +8,7 @@
     keybindings = {
       "super + space" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
-      "super + 0" = "google-chrome-stable";
+      "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
       "super + 3" = "rofi-pass --root ~/.password-store 2> /tmp/rofi-pass.log";
@@ -16,7 +16,16 @@
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
-      "XF86AudioMute" = "~/nix-config/home/bin/cplay";
+      # "XF86AudioMute" = "~/nix-config/home/bin/cplay";
+      "XF86AudioMute" = pkgs.writeShellScript "cplay" ''
+        if ! pgrep -x cmus ; then
+          ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
+          sleep 1
+          ${pkgs.cmus}/bin/cmus-remote --play
+        else
+          ${pkgs.cmus}/bin/cmus-remote -u
+        fi
+      '';
       "{XF86MonBrightnessUp,XF86MonBrightnessDown}" = "light -{A,U} 2";
       "{XF86AudioPlay,XF86AudioPause}" = "playerctl -i cmus play-pause";
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
