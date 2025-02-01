@@ -64,6 +64,7 @@
   environment.systemPackages = with pkgs; [
     curl
     git
+    gitui
     gnupg
     lm_sensors
     neovim
