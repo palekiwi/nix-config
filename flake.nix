@@ -28,6 +28,15 @@
           inputs.sops-nix.nixosModules.sops
         ];
       };
+
+      haze = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/haze
+          ./users/pl
+          inputs.sops-nix.nixosModules.sops
+        ];
+      };
     };
   };
 }
