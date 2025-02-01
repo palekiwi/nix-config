@@ -69,6 +69,7 @@
     lm_sensors
     neovim
     rsync
+    go-task
     sysstat
     wget
   ];

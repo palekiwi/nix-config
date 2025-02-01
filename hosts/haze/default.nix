@@ -23,7 +23,10 @@
       variant = "";
     };
 
-    users.users.pl.extraGroups = [ "dialout" ];
+    users.users.pl = {
+      extraGroups = [ "dialout" ];
+      linger = true;
+    };
 
     services.udev.extraRules = ''
       KERNEL=="ttyUSB0", OWNER="pl"
