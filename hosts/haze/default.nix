@@ -28,6 +28,13 @@
       linger = true;
     };
 
+
+   environment.shellAliases = {
+     gu = "gitui";
+     p = "podman";
+     v = "nvim";
+   };
+
     services.udev.extraRules = ''
       KERNEL=="ttyUSB0", OWNER="pl"
     '';
