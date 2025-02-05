@@ -51,6 +51,7 @@
       # "XF86Launch6" = "~/dotfiles/arch/bin/hass state toggle light.salon";
       "XF86Launch7; g" = "/usr/bin/env bash -c 'sleep 0.1 && ssh-add -L | xclip -selection clipboard; xdotool key Control_L+Shift+v'";
       "XF86Launch7; b" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"[ci skip] \"'";
+      "XF86Launch7; s" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"staging.spabreaks.com\"'";
       "XF86Launch8" = "~/.dmenu/hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
     };
