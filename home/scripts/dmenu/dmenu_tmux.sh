@@ -2,7 +2,7 @@
 
 launcher="rofi -dmenu -i"
 
-options=$(sesh list --json | jq -r '.[] | .Name + "," + .Src + "," + .Path + "," + (.Attached | if . > 0 then "*" else " " end)' | column -s"," -t) 
+options=$(sesh list --json | jq -r '.[] | (.Score|tostring) + "," + .Name + "," + .Src + "," + .Path + "," + (.Attached | if . > 0 then "*" else " " end)' | sort -k 2,2 -k4,4 -t"," --stable --unique | sort -nk 1 -t"," | cut -d',' -f2- | column -s"," -t)
 
 choice=$(echo "$(printf '%s\n' "${options[@]}")" | $launcher -p 'Tmux sessions')
 
