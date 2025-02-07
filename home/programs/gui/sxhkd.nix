@@ -16,7 +16,6 @@
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
-      # "XF86AudioMute" = "~/nix-config/home/bin/cplay";
       "XF86AudioMute" = pkgs.writeShellScript "cplay" ''
         if ! pgrep -x cmus ; then
           ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
@@ -52,6 +51,7 @@
       "XF86Launch7; g" = "/usr/bin/env bash -c 'sleep 0.1 && ssh-add -L | xclip -selection clipboard; xdotool key Control_L+Shift+v'";
       "XF86Launch7; b" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"[ci skip] \"'";
       "XF86Launch7; s" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"staging.spabreaks.com\"'";
+      "XF86Launch7; c" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"4242 4242 4242 4242\"'";
       "XF86Launch8" = "~/.dmenu/hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
     };
