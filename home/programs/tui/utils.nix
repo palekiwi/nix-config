@@ -13,6 +13,7 @@
     jq
     maim
     neovim
+    ollama-cuda
     pass
     ranger
     ripgrep
