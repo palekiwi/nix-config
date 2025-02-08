@@ -1,5 +1,24 @@
 { pkgs, config, ... }:
 
+let
+  cplay = pkgs.writeShellScript "cplay" ''
+    if ! pgrep -x cmus ; then
+      ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
+      sleep 1
+      ${pkgs.cmus}/bin/cmus-remote --play
+    else
+      ${pkgs.cmus}/bin/cmus-remote -u
+    fi
+  '';
+
+  typeText = pkgs.writeShellScript "typeText" ''
+    sleep 0.1 && xdotool type $@
+  '';
+
+  screenshot = pkgs.writeShellScript "screenshot" ''
+    ${pkgs.maim}/bin/maim --select | xclip -selection clipboard -target image/png
+  '';
+in
 {
   home.packages = with pkgs; [ sxhkd ];
 
@@ -8,6 +27,7 @@
     keybindings = {
       "super + space" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
+
       "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
@@ -16,16 +36,8 @@
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
-      # "XF86AudioMute" = "~/nix-config/home/bin/cplay";
-      "XF86AudioMute" = pkgs.writeShellScript "cplay" ''
-        if ! pgrep -x cmus ; then
-          ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
-          sleep 1
-          ${pkgs.cmus}/bin/cmus-remote --play
-        else
-          ${pkgs.cmus}/bin/cmus-remote -u
-        fi
-      '';
+
+      "XF86AudioMute" = cplay;
       "{XF86MonBrightnessUp,XF86MonBrightnessDown}" = "light -{A,U} 2";
       "{XF86AudioPlay,XF86AudioPause}" = "playerctl -i cmus play-pause";
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
@@ -37,21 +49,18 @@
       "shift + XF86AudioRaiseVolume" = "cmus-remote -v +5%";
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";
       "shift + control + XF86AudioRaiseVolume" = "cmus-remote -v 75%; notify-send -t 800 'Cmus Vol:' 75%";
-      "Print" = "maim --select | xclip -selection clipboard -target image/png";
-      # "XF86Favorites" = "rofi -show window";
-      # "XF86Calculator" = "rofi -show window";
+      "Print" = screenshot;
       "XF86HomePage; p" = "~/.dmenu/process";
       "XF86HomePage; x" = "~/.dmenu/xrandr";
       "XF86HomePage; n" = "~/.dmenu/run";
       "XF86HomePage; t" = "~/.dmenu/tmux";
       "XF86Search" = "rofi -show window";
-      #"XF86Explorer" = "rofi -show window";
-      # "XF86Tools" = "~/dotfiles/arch/bin/hass_state toggle light.kitchen_ceiling";
-      # "XF86Launch5" = "~/dotfiles/arch/bin/hass state toggle light.desk";
-      # "XF86Launch6" = "~/dotfiles/arch/bin/hass state toggle light.salon";
-      "XF86Launch7; g" = "/usr/bin/env bash -c 'sleep 0.1 && ssh-add -L | xclip -selection clipboard; xdotool key Control_L+Shift+v'";
-      "XF86Launch7; b" = "/usr/bin/env bash -c 'sleep 0.1 && xdotool type \"[ci skip] \"'";
-      "XF86Launch8" = "~/.dmenu/hass";
+
+      "XF86Launch7; b" = "${typeText} [ci skip]";
+      "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
+      "XF86Launch7; c" = "${typeText} 4242 4242 4242 4242";
+
+      "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
     };
   };

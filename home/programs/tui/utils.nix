@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -27,5 +27,6 @@
     zellij
     zoxide
     (import ./bin/hass.nix { inherit pkgs config; })
+    (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
   ];
 }
