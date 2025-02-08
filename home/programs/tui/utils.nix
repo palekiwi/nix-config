@@ -1,5 +1,10 @@
 { pkgs, config, lib, ... }:
 
+let
+  extra = if config.fedora
+          then []
+          else with pkgs; [ ollama-cuda oterm ];
+in
 {
   home.packages = with pkgs; [
     acpi
@@ -13,7 +18,6 @@
     jq
     maim
     neovim
-    ollama-cuda
     pass
     ranger
     ripgrep
@@ -29,5 +33,5 @@
     zoxide
     (import ./bin/hass.nix { inherit pkgs config; })
     (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
-  ];
+  ] ++ extra;
 }
