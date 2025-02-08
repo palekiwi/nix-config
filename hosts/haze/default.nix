@@ -38,25 +38,6 @@
       KERNEL=="ttyUSB0", OWNER="pl"
     '';
 
-    systemd.timers."nextcloud-cron" = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = "*:0/5";
-        Unit = "nextcloud-cron.service";
-      };
-    };
-
-    systemd.services."nextcloud-cron" = {
-      description = "Cron job for nextcloud";
-      requires = ["podman-kube@-home-pl-homelab-nc-kube.yml.service"];
-      after = ["podman-kube@-home-pl-homelab-nc-kube.yml.service"];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = ''podman exec -u www-data nc-nextcloud php -f /var/www/html/cron.php'';
-        User = "pl";
-      };
-    };
-
     networking.firewall.allowedTCPPorts = [ 8080 8123 5050 8088 ];
 
     # networking.firewall.allowedUDPPorts = [ ... ];
