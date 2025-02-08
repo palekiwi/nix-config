@@ -39,7 +39,7 @@
       KERNEL=="ttyUSB0", OWNER="pl"
     '';
 
-    networking.firewall.allowedTCPPorts = [ 8080 8123 5050 ];
+    networking.firewall.allowedTCPPorts = [ 8080 8123 5050 8088 ];
     # networking.firewall.allowedUDPPorts = [ ... ];
 
     virtualisation.podman.enable = true;
