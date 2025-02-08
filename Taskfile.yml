@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  gpg-import-keys:
+    cmds:
+      - gpg --import ~/nix-config/users/pl/pgp.asc
