@@ -11,9 +11,7 @@ let
     fi
   '';
 
-  typeText = pkgs.writeShellScript "typeText" ''
-    sleep 0.1 && xdotool type $@
-  '';
+  typeText = ''sleep 0.1 && xdotool type'';
 
   screenshot = pkgs.writeShellScript "screenshot" ''
     ${pkgs.maim}/bin/maim --select | xclip -selection clipboard -target image/png
@@ -56,9 +54,11 @@ in
       "XF86HomePage; t" = "~/.dmenu/tmux";
       "XF86Search" = "rofi -show window";
 
-      "XF86Launch7; b" = "${typeText} [ci skip]";
+      "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
       "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
       "XF86Launch7; c" = "${typeText} 4242 4242 4242 4242";
+      "XF86Launch7; g; e" = ''${typeText} "git config --global user.email \"dev@palekiwi.com\""'';
+      "XF86Launch7; g; u" = ''${typeText} "git config --global user.name \"Pawel Lisewski\""'';
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
