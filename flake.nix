@@ -11,6 +11,13 @@
 
   outputs = { self, nixpkgs, ... }@inputs: {
     nixosConfigurations = {
+      xps16-test = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/xps16-test
+        ];
+      };
+
       sayuri = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
