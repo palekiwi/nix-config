@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -44,18 +45,37 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+  services = {
+    xserver = {
+      xkb = {
+        layout = "us";
+        variant = "";
+      };
+
+      enable = true;
+
+      windowManager.awesome = {
+        enable = true;
+        luaModules = with pkgs.luaPackages; [
+          luarocks # is the package manager for Lua modules
+          luadbi-mysql # Database abstraction layer
+        ];
+      };
+    };
+
+    displayManager = {
+      lightdm.enable = true;
+      defaultSession = "none+awesome";
+    };
   };
+
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pl = {
     isNormalUser = true;
     description = "pl";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    packages = with pkgs; [ ];
   };
 
   # Allow unfree packages
