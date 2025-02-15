@@ -12,6 +12,8 @@
 
   programs.dconf.enable = true;
 
+  services.gnome.gnome-keyring.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = false;
 }
