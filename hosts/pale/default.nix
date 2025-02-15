@@ -15,6 +15,7 @@
 
       ../../users/pl/default.nix
       ../../modules/docker.nix
+      ../../modules/yubikey.nix
     ];
 
   config = {
