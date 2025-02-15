@@ -10,6 +10,8 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  programs.dconf.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = false;
 }
