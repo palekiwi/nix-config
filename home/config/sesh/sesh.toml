@@ -125,7 +125,7 @@ startup_command = "nvim index.md"
 
 [[session]]
 name = "ollama"
-startup_command = "~/bin/ollama serve"
+startup_command = "ollama serve"
 
 #-------------------
 #    --- ssh ----
