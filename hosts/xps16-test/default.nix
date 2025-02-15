@@ -66,8 +66,9 @@
         '';
       };
 
+      displayManager.defaultSession = "none+awesome";
+
       windowManager = {
-        default = "awesome";
         awesome = {
           enable = true;
           luaModules = with pkgs.luaPackages; [
