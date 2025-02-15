@@ -22,6 +22,7 @@
         system = "x86_64-linux";
         modules = [
           ./hosts/pale
+          inputs.sops-nix.nixosModules.sops
         ];
       };
 
