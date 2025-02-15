@@ -48,25 +48,34 @@
 
   services = {
     xserver = {
+      enable = true;
+
       xkb = {
         layout = "us";
         variant = "";
       };
 
-      enable = true;
-
-      windowManager.awesome = {
+      displayManager.lightdm.greeters.mini = {
         enable = true;
-        luaModules = with pkgs.luaPackages; [
-          luarocks # is the package manager for Lua modules
-          luadbi-mysql # Database abstraction layer
-        ];
+        user = "pl";
+        extraConfig = ''
+          [greeter]
+          show-password-label = false
+          [greeter-theme]
+          background-image = ""
+        '';
       };
-    };
 
-    displayManager = {
-      sddm.enable = true;
-      defaultSession = "none+awesome";
+      windowManager = {
+        default = "awesome";
+        awesome = {
+          enable = true;
+          luaModules = with pkgs.luaPackages; [
+            luarocks # is the package manager for Lua modules
+            luadbi-mysql # Database abstraction layer
+          ];
+        };
+      };
     };
   };
 
