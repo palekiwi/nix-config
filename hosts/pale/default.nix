@@ -14,7 +14,11 @@
       ./user.nix
 
       ../../users/pl/default.nix
+
       ../../modules/docker.nix
+      ../../modules/fonts.nix
+      ../../modules/ibus.nix
+      ../../modules/sops.nix
       ../../modules/yubikey.nix
     ];
 
