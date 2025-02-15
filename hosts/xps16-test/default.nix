@@ -47,6 +47,8 @@
   };
 
   services = {
+    displayManager.defaultSession = "none+awesome";
+
     xserver = {
       enable = true;
 
@@ -65,8 +67,6 @@
           background-image = ""
         '';
       };
-
-      displayManager.defaultSession = "none+awesome";
 
       windowManager = {
         awesome = {
