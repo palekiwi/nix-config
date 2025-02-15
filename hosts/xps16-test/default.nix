@@ -14,15 +14,20 @@
       ./user.nix
 
       ../../users/pl/default.nix
+      ../../modules/docker.nix
     ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  config = {
+    modules.docker.enable = true;
 
-  networking.hostName = "xps16-test";
+    boot.loader.systemd-boot.enable = true;
+    boot.loader.efi.canTouchEfiVariables = true;
+    boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.networkmanager.enable = true;
+    networking.hostName = "xps16-test";
 
-  system.stateVersion = "24.11";
+    networking.networkmanager.enable = true;
+
+    system.stateVersion = "24.11";
+  };
 }
