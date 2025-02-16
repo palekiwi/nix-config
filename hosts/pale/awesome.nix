@@ -36,7 +36,5 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    picom
-  ];
+  services.picom.enable = true;
 }
