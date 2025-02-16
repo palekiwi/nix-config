@@ -6,9 +6,9 @@
     ./firefox.nix
     ./gtk.nix
     ./kitty.nix
-    # ./picom.nix
     ./rofi.nix
     ./sxhkd.nix
+    ./unclutter.nix
     ./utils.nix
     ./xorg.nix
   ];

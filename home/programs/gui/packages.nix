@@ -25,7 +25,6 @@
     tldr
     arc-icon-theme
     kdePackages.breeze-gtk
-    unclutter-xfixes
     playerctl
     gnumake
     dmenu
