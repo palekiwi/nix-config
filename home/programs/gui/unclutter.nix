@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   services.unclutter = {
     enable = true;
@@ -8,8 +8,10 @@
       "start-hidden"
     ];
 
+    package = pkgs.unclutter-xfixes;
+
     timeout = 1;
 
-    threshold = 1;
+    threshold = 2;
   };
 }
