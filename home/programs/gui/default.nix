@@ -6,7 +6,7 @@
     ./firefox.nix
     ./gtk.nix
     ./kitty.nix
-    ./picom.nix
+    # ./picom.nix
     ./rofi.nix
     ./sxhkd.nix
     ./utils.nix

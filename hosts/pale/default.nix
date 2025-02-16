@@ -8,6 +8,7 @@
       ./locale.nix
       ./nvidia.nix
       ./packages.nix
+      ./picom.nix
       ./sound.nix
       ./ssh.nix
       ./system.nix
