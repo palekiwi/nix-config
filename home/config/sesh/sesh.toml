@@ -34,6 +34,19 @@ path = "~/code/ygt/spabreaks/"
 startup_command = "make psql"
 
 #-------------------
+#  --- sales ---
+#-------------------
+[[session]]
+name = "sales"
+path = "~/code/ygt/sales/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/sales"
+
+[[session]]
+name = "sales-dev"
+path = "~/code/ygt/sales/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
+
+#-------------------
 #  --- wss-data ---
 #-------------------
 [[session]]
@@ -42,8 +55,8 @@ path = "~/code/ygt/wss-data/"
 startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data"
 
 [[session]]
-name = "wss-api-dev"
-path = "~/code/ygt/wss-api/"
+name = "wss-data-dev"
+path = "~/code/ygt/wss-data/"
 startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
 
 #-------------------
