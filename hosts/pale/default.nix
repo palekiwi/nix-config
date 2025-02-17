@@ -4,6 +4,7 @@
   imports =
     [
       ./awesome.nix
+      ./bluetooth.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./nvidia.nix
