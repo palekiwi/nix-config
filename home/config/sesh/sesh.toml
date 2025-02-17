@@ -129,7 +129,8 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo live-test_nvim"
 
 [[session]]
 name = "elia"
-startup_command = "~/.venv/elia/bin/elia"
+path = "~/code/nix/elia"
+startup_command = "nix develop -c ./venv/bin/elia"
 
 [[session]]
 name = "Notes"
