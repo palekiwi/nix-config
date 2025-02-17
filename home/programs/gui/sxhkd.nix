@@ -38,9 +38,17 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + space" = "~/.dmenu/tmux";
+      "super + Return" = "~/.dmenu/tmux";
+      "super + Return + control" = "~/.dmenu/tmux --tmux";
       "super + BackSpace" = "kitty --title $USER";
-      "super + Return; s; e" = "${switchToSession} spabreaks";
+
+      "super + space; n; a" = "${switchToSession} awesome";
+      "super + space; n; c" = "${switchToSession} nix-config";
+      "super + space; n; v" = "${switchToSession} nvim";
+      "super + space; s; c" = "${switchToSession} spabreaks-console";
+      "super + space; s; d" = "${switchToSession} spabreaks-dev";
+      "super + space; s; e" = "${switchToSession} spabreaks";
+      "super + space; s; g" = "${switchToSession} spabreaks-guard";
 
       "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
