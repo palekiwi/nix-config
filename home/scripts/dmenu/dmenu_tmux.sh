@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+flags=$@
+
 launcher="rofi -dmenu -i"
 
-options=$(sesh list --json \
+options=$(sesh list --json $flags \
     | jq -r '.[] | (.Score|tostring) + "," + .Name + "," + .Src + "," + .Path + "," + (.Attached | if . > 0 then "*" else " " end)' \
     | sort -k 2,2 -k 4,4 -t"," --stable --unique \
     | sort -nk 1 -t"," --stable \
