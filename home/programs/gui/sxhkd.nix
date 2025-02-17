@@ -18,6 +18,19 @@ let
   screenshot = pkgs.writeShellScript "screenshot" ''
     ${pkgs.maim}/bin/maim --select | xclip -selection clipboard -target image/png
   '';
+
+  switchToSession = pkgs.writeShellScript "switchToSession" ''
+    session_name=$1
+    tmux list-clients -F '#S' | grep -q "^$session_name$"
+
+    if [[ $? -eq 0 ]]; then
+        # session is already attached, focus it
+        wmctrl -Fa $session_name
+    else
+        # session is not attached, open a terminal and attach
+        kitty -T $session_name -e sesh connect $session_name
+    fi
+  '';
 in
 {
   home.packages = with pkgs; [ sxhkd ];
@@ -27,6 +40,7 @@ in
     keybindings = {
       "super + space" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
+      "super + Return; s; e" = "${switchToSession} spabreaks";
 
       "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
