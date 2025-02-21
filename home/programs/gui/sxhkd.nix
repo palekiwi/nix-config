@@ -44,11 +44,17 @@ in
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
+      "super + space; n; e" = "${switchToSession} elia";
+      "super + space; n; t" = "${switchToSession} notes";
       "super + space; n; v" = "${switchToSession} nvim";
+
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
       "super + space; s; e" = "${switchToSession} spabreaks";
       "super + space; s; g" = "${switchToSession} spabreaks-guard";
+
+      "super + space; v; d" = "${switchToSession} vrs-dev";
+      "super + space; v; e" = "${switchToSession} vrs";
 
       "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
