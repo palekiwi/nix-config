@@ -133,7 +133,7 @@ path = "~/code/nix/elia"
 startup_command = "nix develop -c ./venv/bin/elia"
 
 [[session]]
-name = "Notes"
+name = "notes"
 path = "~/Nextcloud/Notes"
 startup_command = "nvim index.md"
 
