@@ -4,6 +4,7 @@ let
   lights_kitchen = [
     "light.kitchen"
     "light.kitchen_ceiling"
+    "light.workbench"
   ];
 
   lights = [
