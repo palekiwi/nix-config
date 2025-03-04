@@ -5,7 +5,7 @@ git_grep_focused_test() {
 }
 
 alias gfoc="git_grep_focused_test"
- 
+
 set_pr_base() {
     export GIT_BASE=$1
 }
@@ -30,10 +30,10 @@ alias sgh="set_pr_base_from_gh"
 git_switch_create_ygt() {
     if [ $# -lt 2 ]; then
         echo "Need at least 2 arguments"
-        exit 1
+        return
     elif ! [[ $1 =~ ^[0-9]+$ ]]; then
         echo "First argument must be a number"
-        exit 1
+        return
     fi
 
     card_nr=$1
@@ -46,6 +46,10 @@ git_switch_create_ygt() {
 
 git_switch_create_variant() {
     git switch -c $(git branch --show-current)--$@
+}
+
+git_switch_variant() {
+    git switch $(git branch --show-current)--$@
 }
 
 git_merge_variant() {
@@ -89,6 +93,7 @@ alias gsar="git_submodule_add_role"
 alias gsc="git switch -c"
 alias gscy="git_switch_create_ygt"
 alias gscv="git_switch_create_variant"
+alias gsv="git_switch_variant"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
 alias gsm="git_get_master_branch_name | xargs git switch && unset GIT_BASE && unset PR_NUMBER && git pull"
