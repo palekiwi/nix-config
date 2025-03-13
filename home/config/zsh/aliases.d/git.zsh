@@ -64,6 +64,10 @@ git_get_master_branch_name() {
     git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 }
 
+git_branch_name_to_clipboard() {
+    git branch --show-current | ctc
+}
+
 alias gac="git add . && git commit"
 alias gacm="git add . && git commit -m"
 alias gar="git_add_remote"
@@ -106,6 +110,7 @@ alias gsts="git status --short"
 alias gsur="git submodule update --remote"
 alias nah="git reset --hard; git clean -dif;"
 alias gbn="git rev-parse --abbrev-ref HEAD"
+alias gbnc="git_branch_name_to_clipboard"
 git_clone_repo() {
   git clone https://github.com/$1
 }
