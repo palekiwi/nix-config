@@ -38,8 +38,6 @@ in
     extraConfig = ''
       set -ga terminal-overrides ",xterm-256color:Tc"
 
-      set -s extended-keys always
-
       bind -n M-C-e split-window -v ${tmux_list_sessions}
       bind -n M-C-m run-shell ${tmux_view_output}
 
