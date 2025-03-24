@@ -33,6 +33,11 @@ name = "spabreaks-psql"
 path = "~/code/ygt/spabreaks/"
 startup_command = "make psql"
 
+[[session]]
+name = "ygt-env"
+path = "~/code/ygt-env"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo ygt-env"
+
 #-------------------
 #  --- sales ---
 #-------------------
@@ -119,9 +124,19 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo nvim"
 #-------------------
 
 [[session]]
-name = "live-test_nvim"
-path = "~/code/neovim/plugins/live-test.nvim/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo live-test_nvim"
+name = "rails-utils.nvim"
+path = "~/code/neovim/plugins/rails-utils.nvim"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo rails-utils.nvim"
+
+[[session]]
+name = "rspec-runner"
+path = "~/code/neovim/plugins/rspec-runner.nvim"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo rspec-runner"
+
+[[session]]
+name = "homelab"
+path = "~/code/homelab"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo homelab"
 
 #-------------------
 #   --- Utils ---
