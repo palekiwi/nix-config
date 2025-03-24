@@ -16,6 +16,7 @@ in
     signal-desktop
     simplescreenrecorder
     unclutter-xfixes
+    vlc
     wmctrl
     xclip
     xdotool
