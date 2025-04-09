@@ -16,4 +16,8 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = false;
+
+  services.xscreensaver = {
+    enable = true;
+  };
 }

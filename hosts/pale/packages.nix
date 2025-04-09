@@ -12,6 +12,7 @@
     sysstat
     tree
     wget
+    xscreensaver
   ];
 }
 
