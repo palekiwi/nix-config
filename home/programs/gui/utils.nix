@@ -9,6 +9,7 @@ in
   home.packages = with pkgs; [
     arc-icon-theme
     gpick
+    insomnia
     libnotify
     maim
     playerctl
