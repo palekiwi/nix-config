@@ -2,6 +2,7 @@
 
 {
   home.packages = with pkgs; [
+    xorg.xhost
     xorg.xev
     xorg.xmodmap
     xorg.xset
