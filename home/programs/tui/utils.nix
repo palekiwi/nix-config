@@ -1,9 +1,10 @@
 { pkgs, config, lib, ... }:
 
 let
-  extra = if config.fedora
-          then []
-          else with pkgs; [ ollama-cuda oterm ];
+  extra = [];
+  # extra = if config.fedora
+  #         then []
+  #         else with pkgs; [ ollama-cuda oterm ];
 in
 {
   home.packages = with pkgs; [
