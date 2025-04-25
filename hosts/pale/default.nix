@@ -8,6 +8,7 @@
       ./hardware-configuration.nix
       ./locale.nix
       ./nvidia.nix
+      ./ollama.nix
       ./packages.nix
       ./picom.nix
       ./sound.nix
