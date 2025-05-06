@@ -6,6 +6,17 @@ gh_pr_create() {
     gh pr create --title "$title" --body "$body" "${@:3}"
 }
 
-alias prs="gh f -p; sgh"
+gh_prs() {
+    if [ $# -eq 0 ]; then
+        gh f -p
+    else
+        gh pr checkout "$1"
+    fi
+
+    set_pr_base_from_gh
+}
+
+alias prs="gh_prs"
 alias prw="gh pr view --web"
 alias prc="gh_pr_create"
+alias pre="gh_pr_create"
