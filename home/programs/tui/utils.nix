@@ -34,5 +34,6 @@ in
     zoxide
     (import ./bin/hass.nix { inherit pkgs config; })
     (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
+    (import ./bin/yt-subs.nix { inherit pkgs lib config; })
   ] ++ extra;
 }
