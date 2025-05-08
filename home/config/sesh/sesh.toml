@@ -124,6 +124,11 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo nvim"
 #-------------------
 
 [[session]]
+name = "ff_monads"
+path = "~/code/ygt/ff_monads/"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo ff_monads"
+
+[[session]]
 name = "rails-utils.nvim"
 path = "~/code/neovim/plugins/rails-utils.nvim"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo rails-utils.nvim"
