@@ -13,7 +13,6 @@
 
     keycode 192 = ISO_Level3_Shift
 
-    # Menu as compose key
     keycode 138 = Multi_key
   '';
 }
