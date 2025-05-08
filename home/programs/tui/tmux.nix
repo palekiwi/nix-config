@@ -46,8 +46,6 @@ in
       bind -n M-i select-window -t3
       bind -n M-o select-window -t4
 
-      bind -n M-q kill-session
-
       bind -n M-C-y send-keys -R\; clear-history
 
       bind-key -n M-y copy-mode
