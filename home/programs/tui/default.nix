@@ -6,6 +6,7 @@
     ./direnv.nix
     ./gh.nix
     ./git.nix
+    ./email.nix
     ./sesh.nix
     ./starship.nix
     ./tmux.nix
