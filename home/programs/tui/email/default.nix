@@ -44,6 +44,7 @@
   services.mbsync = {
     enable = true;
     frequency = "*:0/2";
+    postExec = "${pkgs.notmuch}/bin/notmuch new";
   };
 
   accounts.email.accounts = {
