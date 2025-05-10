@@ -90,7 +90,16 @@
         enable = true;
         create = "maildir";
         expunge = "both";
-        patterns = [ "*" ];
+        patterns = [
+          "Inbox"
+          "Accounts"
+          "Airbrake/*"
+          "GCP"
+          "[Gmail]/Drafts"
+          "[Gmail]/Important"
+          "[Gmail]/Sent Mail"
+          "[Gmail]/Starred"
+        ];
       };
 
       msmtp = {
