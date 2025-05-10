@@ -1,16 +1,18 @@
 { pkgs, ... }:
 
 {
-  home.packages = [ pkgs.himalaya];
+  home.packages = [ pkgs.himalaya ];
 
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
+    notmuch. enable = true;
 
-    notmuch = {
+    himalaya = {
       enable = true;
-      hooks = {
-        preNew = "mbsync --all";
+      settings = {
+        email-reading-format = "plain";
+        email-sending-save-copy = true;
       };
     };
 
