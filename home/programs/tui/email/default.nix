@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
 {
-  home.packages = [ pkgs.himalaya ];
-
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
@@ -10,10 +8,7 @@
 
     himalaya = {
       enable = true;
-      settings = {
-        email-reading-format = "plain";
-        email-sending-save-copy = true;
-      };
+      package = pkgs.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; };
     };
 
     neomutt = {
@@ -84,6 +79,15 @@
           "Airbrake/Staging"
           "GCP"
         ];
+      };
+
+      himalaya = {
+        enable = true;
+        settings = {
+          notmuch = {
+            maildir-path = "/home/pl/Maildir";
+          };
+        };
       };
 
       mbsync = {
