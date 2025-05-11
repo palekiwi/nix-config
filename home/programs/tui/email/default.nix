@@ -1,15 +1,19 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 {
+  home.packages = [
+    (pkgs-unstable.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; })
+  ];
+
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
     notmuch. enable = true;
 
-    himalaya = {
-      enable = true;
-      package = pkgs.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; };
-    };
+    # himalaya = {
+    #   enable = true;
+    #   package = pkgs-unstable.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; };
+    # };
 
     neomutt = {
       enable = true;
@@ -81,21 +85,31 @@
         ];
       };
 
-      himalaya = {
-        enable = true;
-        settings = {
-          notmuch = {
-            maildir-path = "/home/pl/Maildir";
-          };
-        };
-      };
+      # himalaya = {
+      #   enable = true;
+      #   settings = {
+      #     backend = {
+      #       type = "maildir";
+      #       root-dir = "~/Maildir";
+      #     };
+
+      #     folder.alias = {
+      #       inbox = "ygt/Inbox";
+      #       airbrake-s = "ygt/Airbrake/Staging";
+      #       airbrake-p = "ygt/Airbrake/Production";
+      #       sent = "ygt/[Gmail]/'Sent Mail'";
+      #       important = "ygt/[Gmail]/Important";
+      #       drafts = "ygt/[Gmail]/Drafts";
+      #     };
+      #   };
+      # };
 
       mbsync = {
         enable = true;
         create = "maildir";
         expunge = "both";
         patterns = [
-          "Inbox"
+          "INBOX"
           "Accounts"
           "Airbrake/*"
           "GCP"
