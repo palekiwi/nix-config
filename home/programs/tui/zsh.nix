@@ -6,7 +6,7 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    initExtra = ''
+    initContent = ''
       source ~/.config/zsh/aliases.d/index.zsh
       if [[ -z $SSH_CONNECTION ]]; then
         export GPG_TTY="$(tty)"
