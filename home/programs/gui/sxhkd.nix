@@ -86,7 +86,7 @@ in
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
       "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
-      "XF86Launch7; c" = ''${typeText} "4242 4242 4242 4242"'';
+      "XF86Launch7; c" = ''${typeText} "5200 0000 0000 1005"'';
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
