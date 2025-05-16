@@ -111,6 +111,13 @@ alias gsur="git submodule update --remote"
 alias nah="git reset --hard; git clean -dif;"
 alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
+alias gfm="git_fetch_master"
+
+git_fetch_master() {
+    branch=$(git_get_master_branch_name)
+    git fetch origin && git fetch origin ${branch}:${branch}
+}
+
 git_clone_repo() {
   git clone https://github.com/$1
 }
