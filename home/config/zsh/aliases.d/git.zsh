@@ -112,6 +112,11 @@ alias nah="git reset --hard; git clean -dif;"
 alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
+alias gfb="git_fetch_base"
+
+git_fetch_base() {
+    sgh && git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
+}
 
 git_fetch_master() {
     branch=$(git_get_master_branch_name)
