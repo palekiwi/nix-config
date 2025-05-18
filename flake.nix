@@ -9,15 +9,8 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
+  outputs = { nixpkgs, ... }@inputs: {
     nixosConfigurations = {
-      xps16-test = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/xps16-test
-        ];
-      };
-
       pale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
