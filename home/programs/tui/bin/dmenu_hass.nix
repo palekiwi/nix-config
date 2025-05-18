@@ -1,11 +1,19 @@
 { pkgs, lib, config, ... }:
 
 let
-  options = [
-    "light.kitchen_off"
+  lights_kitchen = [
+    "light.kitchen"
+    "light.kitchen_ceiling"
+  ];
+
+  lights = [
     "light.desk"
     "light.workbench"
-  ];
+  ] ++ lights_kitchen;
+
+  options = [
+    "kitchen_off"
+  ] ++ lights;
 
   launcher = pkgs.writeShellScript "launcher" ''
     dmenu -i -nb \#1d1f21 -nf \#D3D7CF -sb \#37ADD4 -sf \#192330 -fn 11 -p "Home Assistant"
@@ -25,13 +33,16 @@ pkgs.writeShellScriptBin "dmenu_hass" ''
   choice=$(echo "${lib.concatStringsSep "\n" options}" | ${launcher})
 
   case "$choice" in
+    kitchen_off)
+      ${hass} state turn_off ${lib.concatStringsSep " " lights_kitchen}
+    ;;
     ${lib.concatMapStrings
-      (option: ''
-        ${option})
+      (light: ''
+        ${light})
           ${hass} state toggle $choice
         ;;
       '')
-      options
+      lights
     }
     *)
       exit 1
