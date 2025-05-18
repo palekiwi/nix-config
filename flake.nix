@@ -42,6 +42,7 @@
         modules = [
           ./hosts/haze
           ./users/pl
+          ./users/git
           inputs.sops-nix.nixosModules.sops
         ];
       };
