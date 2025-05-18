@@ -32,6 +32,7 @@
       gu = "gitui";
       p = "podman";
       v = "nvim";
+      rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -f)";
     };
 
     services.udev.extraRules = ''
