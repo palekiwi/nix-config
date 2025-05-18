@@ -33,6 +33,24 @@ name = "spabreaks-psql"
 path = "~/code/ygt/spabreaks/"
 startup_command = "make psql"
 
+[[session]]
+name = "ygt-env"
+path = "~/code/ygt-env"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo ygt-env"
+
+#-------------------
+#  --- sales ---
+#-------------------
+[[session]]
+name = "sales"
+path = "~/code/ygt/sales/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/sales"
+
+[[session]]
+name = "sales-dev"
+path = "~/code/ygt/sales/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
+
 #-------------------
 #  --- wss-data ---
 #-------------------
@@ -42,8 +60,8 @@ path = "~/code/ygt/wss-data/"
 startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data"
 
 [[session]]
-name = "wss-api-dev"
-path = "~/code/ygt/wss-api/"
+name = "wss-data-dev"
+path = "~/code/ygt/wss-data/"
 startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
 
 #-------------------
@@ -106,9 +124,24 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo nvim"
 #-------------------
 
 [[session]]
-name = "live-test_nvim"
-path = "~/code/neovim/plugins/live-test.nvim/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo live-test_nvim"
+name = "ff_monads"
+path = "~/code/ygt/ff_monads/"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo ff_monads"
+
+[[session]]
+name = "rails-utils.nvim"
+path = "~/code/neovim/plugins/rails-utils.nvim"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo rails-utils.nvim"
+
+[[session]]
+name = "rspec-runner"
+path = "~/code/neovim/plugins/rspec-runner.nvim"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo rspec-runner"
+
+[[session]]
+name = "homelab"
+path = "~/code/homelab"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo homelab"
 
 #-------------------
 #   --- Utils ---
@@ -116,16 +149,17 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo live-test_nvim"
 
 [[session]]
 name = "elia"
-startup_command = "~/.venv/elia/bin/elia"
+path = "~/code/nix/elia"
+startup_command = "nix develop -c ./venv/bin/elia"
 
 [[session]]
-name = "Notes"
+name = "notes"
 path = "~/Nextcloud/Notes"
 startup_command = "nvim index.md"
 
 [[session]]
 name = "ollama"
-startup_command = "~/bin/ollama serve"
+startup_command = "ollama serve"
 
 #-------------------
 #    --- ssh ----

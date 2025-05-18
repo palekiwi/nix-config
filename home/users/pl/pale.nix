@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 
 {
   config = {
@@ -14,16 +14,8 @@
 
     modules = {
       chrome.enable = true;
-      kitty.enable = false;
+      kitty.enable = true;
       ygt.enable = true;
-    };
-
-    fedora = true;
-
-    # kitty is installed from Fedora packages
-    home.file."${config.xdg.configHome}/kitty" = {
-      source = ../../config/kitty;
-      recursive = true;
     };
   };
 

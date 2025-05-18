@@ -2,17 +2,20 @@
   description = "Home Manager Flake";
 
   inputs = {
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      pkgs-unstable = import nixpkgs-unstable { inherit system; };
     in
     {
       defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
@@ -21,7 +24,7 @@
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./users/pl/pale.nix ./options ];
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = { inherit inputs pkgs-unstable;};
         };
 
         "pl@sayuri" = home-manager.lib.homeManagerConfiguration {

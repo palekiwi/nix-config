@@ -6,7 +6,7 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    initExtra = ''
+    initContent = ''
       source ~/.config/zsh/aliases.d/index.zsh
       if [[ -z $SSH_CONNECTION ]]; then
         export GPG_TTY="$(tty)"
@@ -14,9 +14,9 @@
         gpgconf --launch gpg-agent
       fi
 
-      if [[ "$TERM" != "screen-256color" ]]; then
-        tmux attach-session -t "$USER" ||tmux new-session -s "$USER"
-      fi
+      # if [[ "$TERM" != "screen-256color" ]]; then
+      #   tmux attach-session -t "$USER" ||tmux new-session -s "$USER"
+      # fi
     '';
 
     sessionVariables = {
@@ -36,7 +36,7 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "fasd" "pass" "systemd" ];
+      plugins = [ "git" "fasd" "pass" "systemd" "bgnotify" ];
       theme = "avit";
     };
   };

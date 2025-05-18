@@ -9,8 +9,16 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
+  outputs = { nixpkgs, ... }@inputs: {
     nixosConfigurations = {
+      pale = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/pale
+          inputs.sops-nix.nixosModules.sops
+        ];
+      };
+
       sayuri = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [

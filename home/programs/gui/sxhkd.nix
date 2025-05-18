@@ -12,11 +12,24 @@ let
   '';
 
   typeText = pkgs.writeShellScript "typeText" ''
-    sleep 0.1 && xdotool type $@
+    sleep 0.1 && xdotool type "$@"
   '';
 
   screenshot = pkgs.writeShellScript "screenshot" ''
     ${pkgs.maim}/bin/maim --select | xclip -selection clipboard -target image/png
+  '';
+
+  switchToSession = pkgs.writeShellScript "switchToSession" ''
+    session_name=$1
+    tmux list-clients -F '#S' | grep -q "^$session_name$"
+
+    if [[ $? -eq 0 ]]; then
+        # session is already attached, focus it
+        wmctrl -Fa $session_name
+    else
+        # session is not attached, open a terminal and attach
+        kitty -T $session_name -e sesh connect $session_name
+    fi
   '';
 in
 {
@@ -25,8 +38,23 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + space" = "~/.dmenu/tmux";
+      "super + Return" = "~/.dmenu/tmux";
+      "super + Return + control" = "~/.dmenu/tmux --tmux";
       "super + BackSpace" = "kitty --title $USER";
+
+      "super + space; n; a" = "${switchToSession} awesome";
+      "super + space; n; c" = "${switchToSession} nix-config";
+      "super + space; n; e" = "${switchToSession} elia";
+      "super + space; n; t" = "${switchToSession} notes";
+      "super + space; n; v" = "${switchToSession} nvim";
+
+      "super + space; s; c" = "${switchToSession} spabreaks-console";
+      "super + space; s; d" = "${switchToSession} spabreaks-dev";
+      "super + space; s; e" = "${switchToSession} spabreaks";
+      "super + space; s; g" = "${switchToSession} spabreaks-guard";
+
+      "super + space; v; d" = "${switchToSession} vrs-dev";
+      "super + space; v; e" = "${switchToSession} vrs";
 
       "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
@@ -56,9 +84,9 @@ in
       "XF86HomePage; t" = "~/.dmenu/tmux";
       "XF86Search" = "rofi -show window";
 
-      "XF86Launch7; b" = "${typeText} [ci skip]";
+      "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
       "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
-      "XF86Launch7; c" = "${typeText} 4242 4242 4242 4242";
+      "XF86Launch7; c" = ''${typeText} "5200 0000 0000 1005"'';
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
