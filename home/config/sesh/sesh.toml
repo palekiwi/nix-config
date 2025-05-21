@@ -6,7 +6,7 @@
 [[session]]
 name = "spabreaks"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/spabreaks"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/repo spabreaks"
 
 [[session]]
 name = "spabreaks-dev"
@@ -44,7 +44,7 @@ startup_command = "~/nix-config/home/scripts/tmux/git-repo ygt-env"
 [[session]]
 name = "sales"
 path = "~/code/ygt/sales/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/sales"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/repo sales"
 
 [[session]]
 name = "sales-dev"
@@ -57,7 +57,7 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
 [[session]]
 name = "wss-data"
 path = "~/code/ygt/wss-data/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/repo wss-data"
 
 [[session]]
 name = "wss-data-dev"
@@ -70,7 +70,7 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
 [[session]]
 name = "my-account"
 path = "~/code/ygt/my-account/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/repo my-account"
 
 [[session]]
 name = "my-account-dev"
@@ -83,7 +83,7 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
 [[session]]
 name = "vrs"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/vrs"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/repo vrs"
 
 [[session]]
 name = "vrs-dev"
