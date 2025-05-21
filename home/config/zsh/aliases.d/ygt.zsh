@@ -2,16 +2,9 @@
 
 dir=~/code/ygt
 
-ygtshell () {
-    project=$(basename $PWD)
-    file=~/dotfiles/nix/env/ygt/$project/shell.nix
-
-    if [ -f $file ]; then
-        nix-shell $file --command zsh
-    else
-        nix-shell ~/dotfiles/nix/env/ygt/ruby/shell.nix --command zsh
-    fi
-}
+alias sbcp="sb-create-pr"
+alias sbcb="sb-create-branch"
+alias sbcbv="sb-create-branch-variant"
 
 ##### spa
 spa () { cd $dir/spabreaks }
