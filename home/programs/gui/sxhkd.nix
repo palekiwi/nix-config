@@ -15,6 +15,11 @@ let
     sleep 0.1 && xdotool type "$@"
   '';
 
+  autostagedPr = pkgs.writeShellScript "autostaged-pr" ''
+    clipboard="$(xclip -selection clipboard -o 2>/dev/null)"
+    sleep 0.1 && xdotool type "https://pr-$clipboard.staging.spabreaks.com/"
+  '';
+
   screenshot = pkgs.writeShellScript "screenshot" ''
     ${pkgs.maim}/bin/maim --select | xclip -selection clipboard -target image/png
   '';
@@ -85,8 +90,10 @@ in
       "XF86Search" = "rofi -show window";
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
-      "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
       "XF86Launch7; c" = ''${typeText} "5200 0000 0000 1005"'';
+      "XF86Launch7; l; s" = ''${typeText} "localhost:3030"'';
+      "XF86Launch7; p" = autostagedPr;
+      "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
