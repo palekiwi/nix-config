@@ -5,6 +5,8 @@ dir=~/code/ygt
 alias sbcp="sb-create-pr"
 alias sbcb="sb-create-branch"
 alias sbcbv="sb-create-branch-variant"
+alias sbj="sb-jira-card-url | xargs xdg-open"
+alias sba="sb-autostaging-url | xargs xdg-open"
 
 ##### spa
 spa () { cd $dir/spabreaks }
