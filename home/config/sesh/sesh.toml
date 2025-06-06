@@ -21,7 +21,7 @@ startup_command = "make console"
 [[session]]
 name = "spabreaks-cypress"
 path = "~/code/ygt/spabreaks/"
-startup_command = "make cypress"
+startup_command = "make cypress-build-and-up"
 
 [[session]]
 name = "spabreaks-guard"
