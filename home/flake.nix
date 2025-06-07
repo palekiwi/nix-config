@@ -8,6 +8,10 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-desktop = {
+      url = "github:k3d3/claude-desktop-linux-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -22,8 +26,16 @@
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./users/pl/pale.nix ./options ];
-          extraSpecialArgs = { inherit inputs pkgs-unstable;};
+          modules = [
+            ./users/pl/pale.nix
+            ./options
+            {
+              home.packages = [
+                inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
+              ];
+            }
+          ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
         };
 
         "pl@sayuri" = home-manager.lib.homeManagerConfiguration {
