@@ -102,6 +102,7 @@
           "Accounts"
           "Airbrake/*"
           "GCP"
+          "Spabreaks"
           "[Gmail]/Drafts"
           "[Gmail]/Important"
           "[Gmail]/Sent Mail"
