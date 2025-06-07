@@ -7,10 +7,27 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    claude-desktop = {
+      url = "github:k3d3/claude-desktop-linux-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, ... }@inputs: {
+  outputs = { nixpkgs, claude-desktop, ... }@inputs: {
     nixosConfigurations = {
+      vm = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/vm
+          {
+            environment.systemPackages = [
+              claude-desktop.packages.x86_64-linux.claude-desktop-with-fhs
+            ];
+          }
+        ];
+      };
+
       pale = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
