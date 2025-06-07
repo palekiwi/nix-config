@@ -8,11 +8,6 @@
       graphics = true;
       diskSize = 8192;
 
-      resolution = {
-        x = 1338;
-        y = 1418;
-      };
-
       sharedDirectories = {
         my-share = {
           source = "$HOME/claude";
@@ -43,7 +38,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    firefox
     vim
     nodejs_24
   ];
