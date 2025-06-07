@@ -74,17 +74,6 @@
         enable = true;
       };
 
-      neomutt = {
-        enable = true;
-
-        extraMailboxes = [
-          "Accounts"
-          "Airbrake/Production"
-          "Airbrake/Staging"
-          "GCP"
-        ];
-      };
-
       # himalaya = {
       #   enable = true;
       #   settings = {
