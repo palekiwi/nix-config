@@ -36,6 +36,17 @@ let
         kitty -T $session_name -e sesh connect $session_name
     fi
   '';
+
+  switchToAppOrLaunch = pkgs.writeShellScript "switchToAppOrLaunch" ''
+    window_title="$1"
+    cmd="$2"
+
+    if wmctrl -l | grep -q "$window_title"; then
+        wmctrl -Fa "$window_title"
+    else
+        $cmd
+    fi
+  '';
 in
 {
   home.packages = with pkgs; [ sxhkd ];
@@ -49,7 +60,8 @@ in
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
-      "super + space; n; e" = "${switchToSession} elia";
+      # "super + space; n; e" = "${switchToSession} elia";
+      "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} notes";
       "super + space; n; v" = "${switchToSession} nvim";
 
