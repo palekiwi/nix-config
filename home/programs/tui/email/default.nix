@@ -2,7 +2,7 @@
 
 {
   home.packages = [
-    (pkgs.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; })
+    (pkgs.himalaya.override { withFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; })
   ];
 
   programs = {
