@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, claude-desktop-pkg, ... }:
 
 {
   virtualisation.vmVariant = {
@@ -30,14 +30,14 @@
     QT_QPA_PLATFORMTHEME = "gtk3";
   };
 
-  # Basic user
-  users.users.user = {
+  users.users.claude = {
     isNormalUser = true;
     password = "user";
     extraGroups = [ "wheel" ];
   };
 
   environment.systemPackages = with pkgs; [
+    claude-desktop-pkg.claude-desktop-with-fhs
     vim
     nodejs_24
   ];

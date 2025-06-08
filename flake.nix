@@ -14,18 +14,15 @@
     };
   };
 
-  outputs = { nixpkgs, claude-desktop, ... }@inputs: {
+  outputs = { self, nixpkgs, claude-desktop, ... }@inputs: {
     nixosConfigurations = {
-      vm = nixpkgs.lib.nixosSystem {
+      claude-vm = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          ./hosts/vm
-          {
-            environment.systemPackages = [
-              claude-desktop.packages.x86_64-linux.claude-desktop-with-fhs
-            ];
-          }
-        ];
+        modules = [ ./vm/claude/default.nix ];
+
+        specialArgs = {
+          claude-desktop-pkg = claude-desktop.packages.x86_64-linux;
+        };
       };
 
       pale = nixpkgs.lib.nixosSystem {
@@ -63,6 +60,10 @@
           inputs.sops-nix.nixosModules.sops
         ];
       };
+    };
+
+    packages.x86_64-linux = {
+      claude = self.nixosConfigurations.claude-vm.config.system.build.vm;
     };
   };
 }
