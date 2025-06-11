@@ -7,6 +7,7 @@
     git
     gitui
     gnupg
+    inotify-tools
     lm_sensors
     neovim
     sysstat
