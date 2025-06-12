@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-session=$1
+if [[ "$PWD" != "$HOME/code"* ]]; then
+    exit 0
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    exit 0
+fi
+
+session=$(tmux display-message -p '#S')
 
 tmux rename-window -t $session:1 edit
 
