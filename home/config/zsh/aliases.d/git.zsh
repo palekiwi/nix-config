@@ -17,10 +17,10 @@ set_pr_base_from_gh() {
 
     if [ -e $branch ]; then
         unset GIT_BASE
-        unset PR_NUMBER
+        unset GH_PR_NUMBER
     else
         export GIT_BASE=$branch
-        export PR_NUMBER=$number
+        export GH_PR_NUMBER=$number
     fi
 }
 
@@ -100,7 +100,7 @@ alias gscv="git_switch_create_variant"
 alias gsv="git_switch_variant"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
-alias gsm="git_get_master_branch_name | xargs git switch && unset GIT_BASE && unset PR_NUMBER && git pull"
+alias gsm="git_get_master_branch_name | xargs git switch && unset GIT_BASE && unset GH_PR_NUMBER && git pull"
 alias gsb='sgh && gs $GIT_BASE'
 alias gmb='sgh && git merge $GIT_BASE'
 alias gmv='git_merge_variant'
