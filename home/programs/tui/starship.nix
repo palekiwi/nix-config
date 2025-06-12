@@ -42,17 +42,17 @@
       };
       env_var = {
         "1" = {
-          variable = "GIT_BASE";
-          disabled = false;
-          format = " into [$env_value]($style)";
-          style = "yellow bold dimmed";
-        };
-
-        "2" = {
           variable = "GH_PR_NUMBER";
           disabled = false;
           format = " [#$env_value]($style)";
           style = "white dimmed";
+        };
+
+        "2" = {
+          variable = "GIT_BASE";
+          disabled = false;
+          format = " into [$env_value]($style)";
+          style = "yellow bold dimmed";
         };
       };
       nix_shell = {
