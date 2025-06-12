@@ -30,21 +30,30 @@
       git_status = {
         format = "([$all_status$ahead_behind]($style))";
         style = "red";
-        conflicted  = "";
+        conflicted = "";
         ahead = " 󰄿";
         behind = " 󰄼";
         untracked = " ($count)󰄗";
-        modified  = " ($count)󰆢";
-        staged    = " ($count)󰄵";
-        renamed   = " ($count)󰁕";
-        deleted   = " ($count)󰅘";
-        stashed   = " ($count)󰅳";
+        modified = " ($count)󰆢";
+        staged = " ($count)󰄵";
+        renamed = " ($count)󰁕";
+        deleted = " ($count)󰅘";
+        stashed = " ($count)󰅳";
       };
       env_var = {
-        variable = "GIT_BASE";
-        disabled = false;
-        format = " into [$env_value]($style)";
-        style = "yellow bold dimmed";
+        "1" = {
+          variable = "GIT_BASE";
+          disabled = false;
+          format = " into [$env_value]($style)";
+          style = "yellow bold dimmed";
+        };
+
+        "2" = {
+          variable = "GH_PR_NUMBER";
+          disabled = false;
+          format = " [#$env_value]($style)";
+          style = "white dimmed";
+        };
       };
       nix_shell = {
         format = "[\\[$state$symbol(\($name\))\\]]($style)";
