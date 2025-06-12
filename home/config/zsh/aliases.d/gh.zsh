@@ -47,13 +47,48 @@ gh_pr_create_ygt() {
 }
 
 gh_prs() {
-    if [ $# -eq 0 ]; then
-        gh f -p
-    else
-        gh pr checkout "$1"
+    if ! git rev-parse --git-dir &> /dev/null; then
+        echo "Error: Not in a git repository"
+        exit 1
     fi
 
-    set_pr_base_from_gh
+    pr_list=$(gh pr list --json number,title,author,headRefName,baseRefName --template $'{{range .}}\033[32m{{.number}}\033[0m: {{.title}} \033[90m({{.baseRefName}} ← {{.headRefName}})\033[0m\n{{end}}')
+
+    if [[ -z "$pr_list" ]]; then
+        echo "No open PRs found"
+        exit 0
+    fi
+
+    selected=$(echo "$pr_list" | fzf --ansi --border \
+        --prompt="Select PR to checkout: " \
+        --preview-window=top:50% \
+        --preview="echo {} | grep -o '^[0-9]*' | xargs gh pr view")
+
+    if [[ -z "$selected" ]]; then
+        echo "No PR selected"
+        exit 0
+    fi
+
+    pr_number=$(echo "$selected" | grep -o '^[0-9]*')
+
+    # Parse base branch from the selected line (between parentheses, before the arrow)
+    base_branch=$(echo "$selected" | sed -n 's/.*(\([^←]*\) ← .*/\1/p' | xargs)
+
+    if gh pr checkout "$pr_number"; then
+        echo "Successfully checked out PR #$pr_number"
+    else
+        echo "Failed to checkout PR #$pr_number"
+        exit 1
+    fi
+
+    # Set environment variables
+    if [ -z "$base_branch" ]; then
+        unset GIT_BASE 2>/dev/null || true
+        unset GH_PR_NUMBER 2>/dev/null || true
+    else
+        export GIT_BASE="$base_branch"
+        export GH_PR_NUMBER="$pr_number"
+    fi
 }
 
 alias prs="gh_prs"
@@ -61,4 +96,3 @@ alias prw="gh pr view --web"
 alias prc="gh_pr_create"
 alias prcy="gh_pr_create_ygt"
 alias pre="gh_pr_create"
-
