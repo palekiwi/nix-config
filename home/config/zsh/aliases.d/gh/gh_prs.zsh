@@ -16,20 +16,20 @@ gh_prs(){
 
     # If an argument is provided, checkout that PR directly
     if [[ $# -gt 0 ]]; then
-        pr_number="$1"
+        pr_string="$1"
 
         if ! git rev-parse --git-dir &> /dev/null; then
             echo "Error: Not in a git repository"
             return 1
         fi
 
-        # Get PR info for the specified number
-        pr_info=$(gh pr view "$pr_number" --json baseRefName 2>/dev/null)
+        pr_info=$(gh pr view "$pr_string" --json number,baseRefName 2>/dev/null)
         if [[ $? -ne 0 ]]; then
-            echo "Error: Could not find PR #$pr_number"
+            echo "Error: Could not find PR: $pr_string"
             return 1
         fi
 
+        pr_number=$(echo "$pr_info" | jq -r '.number')
         base_branch=$(echo "$pr_info" | jq -r '.baseRefName')
 
         if gh pr checkout "$pr_number"; then
