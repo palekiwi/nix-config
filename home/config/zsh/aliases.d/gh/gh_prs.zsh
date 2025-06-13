@@ -67,7 +67,7 @@ gh_prs(){
     fi
 
     pr_number=$(echo "$selected" | grep -o '^[0-9]*')
-    base_branch=$(echo "$selected" | sed -n 's/.*(\([^←]*\) ← .*/\1/p' | xargs)
+    base_branch=$(echo "$selected" | sed -n 's/.* → \([^)]*\).*/\1/p' | xargs)
 
     if gh pr checkout "$pr_number"; then
         echo "Successfully checked out PR #$pr_number"
