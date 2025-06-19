@@ -45,13 +45,13 @@
           variable = "GH_PR_NUMBER";
           disabled = false;
           format = " [#$env_value]($style)";
-          style = "white dimmed";
+          style = "white bold";
         };
 
         "2" = {
           variable = "GIT_BASE";
           disabled = false;
-          format = " into [$env_value]($style)";
+          format = " [->](white dimmed) [$env_value]($style)";
           style = "yellow bold dimmed";
         };
       };
