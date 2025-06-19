@@ -52,7 +52,7 @@
           variable = "GIT_BASE";
           disabled = false;
           format = " [->](white dimmed) [$env_value]($style)";
-          style = "yellow bold dimmed";
+          style = "white";
         };
       };
       nix_shell = {
