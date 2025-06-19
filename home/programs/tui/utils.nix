@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 
 let
-  extra = [];
+  extra = [ ];
   # extra = if config.fedora
   #         then []
   #         else with pkgs; [ ollama-cuda oterm ];
@@ -30,8 +30,8 @@ in
     unzip
     which
     yubikey-manager
-    zellij
     zoxide
+
     (import ./bin/hass.nix { inherit pkgs config; })
     (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
     (import ./bin/yt-subs.nix { inherit pkgs lib config; })
