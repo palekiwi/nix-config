@@ -45,7 +45,7 @@
           variable = "GH_PR_NUMBER";
           disabled = false;
           format = " [#$env_value]($style)";
-          style = "white bold";
+          style = "green dimmed bold";
         };
 
         "2" = {
