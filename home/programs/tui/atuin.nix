@@ -14,6 +14,8 @@
 
       search_mode = "fuzzy";  # or "exact"
       filter_mode = "global"; # or "host", "session", "directory"
+
+      enter_accept = true;
     };
   };
 }
