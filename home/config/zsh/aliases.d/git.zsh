@@ -113,6 +113,7 @@ alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
 alias gfb="git_fetch_base"
+alias gfmb='git_fetch_base && git merge $GIT_BASE'
 
 git_fetch_base() {
     sgh && git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
