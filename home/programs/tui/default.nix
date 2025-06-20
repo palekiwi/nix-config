@@ -1,6 +1,7 @@
 { ... }: {
 
   imports = [
+    ./atuin.nix
     ./cmus.nix
     ./dev.nix
     ./direnv.nix
