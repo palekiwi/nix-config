@@ -12,10 +12,11 @@
       show_preview = true;
       max_preview_height = 4;
 
+      enter_accept = true;
+
       search_mode = "fuzzy";  # or "exact"
       filter_mode = "global"; # or "host", "session", "directory"
-
-      enter_accept = true;
+      filter_mode_shell_up_key_binding = "directory";
     };
   };
 }
