@@ -54,8 +54,8 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "~/.dmenu/tmux";
-      "super + Return + control" = "~/.dmenu/tmux --tmux";
+      "super + Return" = "~/.dmenu/tmux --tmux";
+      "super + Return + control" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
 
       "super + space; n; a" = "${switchToSession} awesome";
