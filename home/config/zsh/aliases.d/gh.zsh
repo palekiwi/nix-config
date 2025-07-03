@@ -48,8 +48,11 @@ gh_pr_create_ygt() {
     gh pr create --title "$title" --body "$body" $@
 }
 
+alias p="gh_prs"
 alias prs="gh_prs"
 alias prw="gh pr view --web"
 alias prc="gh_pr_create"
 alias prcy="gh_pr_create_ygt"
 alias pre="gh_pr_create"
+alias pitr="gh pr comment --body 'ITR'"
+alias plgtm="gh pr review --approve --body 'LGTM'"
