@@ -36,7 +36,7 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "pass" "systemd" "bgnotify" ];
+      plugins = [ "git" "fasd" "pass" "systemd" "bgnotify" ];
       theme = "avit";
     };
   };
