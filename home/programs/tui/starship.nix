@@ -40,21 +40,21 @@
         deleted = " ($count)󰅘";
         stashed = " ($count)󰅳";
       };
-      env_var = {
-        "1" = {
-          variable = "GH_PR_NUMBER";
-          disabled = false;
-          format = " [#$env_value]($style)";
-          style = "green dimmed bold";
-        };
-
-        "2" = {
-          variable = "GIT_BASE";
-          disabled = false;
-          format = " [->](white dimmed) [$env_value]($style)";
-          style = "white";
-        };
-      };
+      # env_var = {
+      #   "1" = {
+      #     variable = "GH_PR_NUMBER";
+      #     disabled = false;
+      #     format = " [#$env_value]($style)";
+      #     style = "green dimmed bold";
+      #   };
+      #
+      #   "2" = {
+      #     variable = "GIT_BASE";
+      #     disabled = false;
+      #     format = " [->](white dimmed) [$env_value]($style)";
+      #     style = "white";
+      #   };
+      # };
       nix_shell = {
         format = "[\\[$state$symbol(\($name\))\\]]($style)";
         symbol = "󱄅";
@@ -73,7 +73,7 @@
         "$git_state"
         "$git_metrics"
         "$git_status"
-        "$env_var"
+        # "$env_var"
         " "
         "$nix_shell"
         "$line_break"
