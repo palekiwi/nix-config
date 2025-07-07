@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+DEST_FILE=.git/pr-info
+
+# Only run if we're checking out a branch (not individual files)
+if [ "$3" = "1" ]; then
+    if gh pr view &>/dev/null; then
+        pr_info=$(gh pr view --json number,baseRefName 2>/dev/null)
+
+        GH_PR_NUMBER=$(echo "$pr_info" | jq -r '.number')
+        GIT_BASE=$(echo "$pr_info" | jq -r '.baseRefName')
+
+        echo "GH_PR_NUMBER=$GH_PR_NUMBER" > $DEST_FILE
+        echo "GIT_BASE=$GIT_BASE" >> $DEST_FILE
+
+        echo "✓ Updated PR info: #$GH_PR_NUMBER (base: $GIT_BASE)"
+    else
+        rm -f .git/pr-info
+        echo "✓ Cleared PR info (not on a PR branch)"
+    fi
+fi
