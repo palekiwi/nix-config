@@ -8,6 +8,10 @@
       graphics = true;
       diskSize = 8192;
 
+      forwardPorts = [
+        { from = "host"; host.port = 2222; guest.port = 22; }
+      ];
+
       sharedDirectories = {
         my-share = {
           source = "$HOME/claude";
@@ -18,6 +22,7 @@
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
 
   services.xserver = {
     enable = true;
@@ -35,6 +40,20 @@
     password = "user";
     extraGroups = [ "wheel" ];
   };
+
+  networking.firewall.allowedTCPPorts = [ 22 ];
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
+  users.users.claude.openssh.authorizedKeys.keys = [
+    (builtins.readFile ../../users/pl/ssh.pub)
+  ];
 
   environment.systemPackages = with pkgs; [
     claude-desktop-pkg.claude-desktop-with-fhs
