@@ -17,10 +17,10 @@ let
     sessionName = ''#[fg=color7,bold]#(echo "#{session_name}")'';
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
     gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
-    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/pr-info ] && source .git/pr-info && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=white]$GIT_BASE" || echo "")'';
+    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/pr-info ] && source .git/pr-info && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=white,bold]$GIT_BASE" || echo "")'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo}'';
+  statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} '';
 in
 {
   home.packages = with pkgs; [ tmux ];
@@ -81,11 +81,11 @@ in
       set -g status-right-length 80
       set -g status-left-length 140
 
-      setw -g window-status-current-style 'fg=colour15'
-      setw -g window-status-current-format ' |#W'
+      setw -g window-status-current-style "fg=color15"
+      setw -g window-status-current-format '::#W'
 
       setw -g window-status-style 'fg=colour7 dim'
-      setw -g window-status-format ' |#W'
+      setw -g window-status-format '::#W'
 
       setw -g window-status-bell-style 'fg=colour2 bg=colour1 bold'
 
