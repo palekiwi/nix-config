@@ -102,7 +102,7 @@ alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
 alias gsm="git_get_master_branch_name | xargs git switch && git pull"
 alias gsb='gs $GIT_BASE'
-alias gmb='git merge $GIT_BASE'
+alias gmb='git_source_pr_info && git merge $GIT_BASE --no-edit'
 alias gmv='git_merge_variant'
 alias gsr="git_set_remote"
 alias gst="git status"
@@ -113,7 +113,11 @@ alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
 alias gfb="git_fetch_base"
-alias gub='git_fetch_base && git merge $GIT_BASE --no-edit'
+alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
+
+git_source_pr_info() {
+    source .git/pr-info
+}
 
 git_fetch_base() {
     git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
