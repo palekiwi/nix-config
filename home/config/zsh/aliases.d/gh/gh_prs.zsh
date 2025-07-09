@@ -34,7 +34,7 @@ gh_prs(){
 
         if gh pr checkout "$pr_number"; then
             echo "Successfully checked out PR #$pr_number"
-            _set_pr_env "$pr_number" "$base_branch"
+            # _set_pr_env "$pr_number" "$base_branch"
         else
             echo "Failed to checkout PR #$pr_number"
             return 1
@@ -71,7 +71,7 @@ gh_prs(){
 
     if gh pr checkout "$pr_number"; then
         echo "Successfully checked out PR #$pr_number"
-        _set_pr_env "$pr_number" "$base_branch"
+        # _set_pr_env "$pr_number" "$base_branch"
     else
         echo "Failed to checkout PR #$pr_number"
         return 1

@@ -92,7 +92,7 @@ alias grr="rm -rf .git && git init"
 alias grrc="git rm -r --cached ."
 alias grv="git remote -v"
 alias gs="git_switch"
-alias gsl="git switch - && sgh"
+alias gsl="git switch -"
 alias gsar="git_submodule_add_role"
 alias gsc="git switch -c"
 alias gscy="git_switch_create_ygt"
@@ -100,9 +100,9 @@ alias gscv="git_switch_create_variant"
 alias gsv="git_switch_variant"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
-alias gsm="git_get_master_branch_name | xargs git switch && unset GIT_BASE && unset GH_PR_NUMBER && git pull"
-alias gsb='sgh && gs $GIT_BASE'
-alias gmb='sgh && git merge $GIT_BASE'
+alias gsm="git_get_master_branch_name | xargs git switch && git pull"
+alias gsb='gs $GIT_BASE'
+alias gmb='git_source_pr_info && git merge $GIT_BASE --no-edit'
 alias gmv='git_merge_variant'
 alias gsr="git_set_remote"
 alias gst="git status"
@@ -113,10 +113,14 @@ alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
 alias gfb="git_fetch_base"
-alias gub='git_fetch_base && git merge $GIT_BASE --no-edit'
+alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
+
+git_source_pr_info() {
+    source .git/pr-info
+}
 
 git_fetch_base() {
-    sgh && git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
+    git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
 }
 
 git_fetch_master() {
@@ -133,7 +137,7 @@ git_clone_rpi() {
 }
 
 git_switch() {
-  git switch $1 && sgh
+  git switch $1
 }
 
 git_clone_repo_palekiwi() {
