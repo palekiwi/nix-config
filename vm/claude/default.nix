@@ -1,5 +1,7 @@
 { pkgs, claude-desktop-pkg, ... }:
 
+# TODO: install config (setup MCPs, etc)
+
 {
   virtualisation.vmVariant = {
     virtualisation = {
