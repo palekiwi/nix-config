@@ -17,6 +17,10 @@
           source = "$HOME/claude";
           target = "/mnt/shared";
         };
+        labs = {
+          source = "$HOME/code/palekiwi-labs";
+          target = "/mnt/labs";
+        };
       };
     };
   };
