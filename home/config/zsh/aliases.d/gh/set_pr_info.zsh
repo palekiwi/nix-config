@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 DEST_FILE=.git/pr-info
 ORANGE='\033[33m'
