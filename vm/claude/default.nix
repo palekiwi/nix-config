@@ -1,5 +1,7 @@
 { pkgs, claude-desktop-pkg, ... }:
 
+# TODO: install config (setup MCPs, etc)
+
 {
   virtualisation.vmVariant = {
     virtualisation = {
@@ -8,16 +10,25 @@
       graphics = true;
       diskSize = 8192;
 
+      forwardPorts = [
+        { from = "host"; host.port = 2222; guest.port = 22; }
+      ];
+
       sharedDirectories = {
         my-share = {
           source = "$HOME/claude";
           target = "/mnt/shared";
+        };
+        labs = {
+          source = "$HOME/code/palekiwi-labs";
+          target = "/mnt/labs";
         };
       };
     };
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
 
   services.xserver = {
     enable = true;
@@ -35,6 +46,20 @@
     password = "user";
     extraGroups = [ "wheel" ];
   };
+
+  networking.firewall.allowedTCPPorts = [ 22 ];
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
+  users.users.claude.openssh.authorizedKeys.keys = [
+    (builtins.readFile ../../users/pl/ssh.pub)
+  ];
 
   environment.systemPackages = with pkgs; [
     claude-desktop-pkg.claude-desktop-with-fhs

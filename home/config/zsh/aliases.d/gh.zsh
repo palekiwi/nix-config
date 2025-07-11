@@ -48,6 +48,10 @@ gh_pr_create_ygt() {
     gh pr create --title "$title" --body "$body" $@
 }
 
+set_pr_info() {
+    source $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.sh
+}
+
 alias p="gh_prs"
 alias prs="gh_prs"
 alias prw="gh pr view --web"
