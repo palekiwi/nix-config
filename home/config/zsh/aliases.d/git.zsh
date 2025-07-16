@@ -6,27 +6,6 @@ git_grep_focused_test() {
 
 alias gfoc="git_grep_focused_test"
 
-set_pr_base() {
-    export GIT_BASE=$1
-}
-
-set_pr_base_from_gh() {
-    output=$(gh pr view --json baseRefName,number)
-    branch=$(echo $output | jq -r .baseRefName)
-    number=$(echo $output | jq -r .number)
-
-    if [ -e $branch ]; then
-        unset GIT_BASE
-        unset GH_PR_NUMBER
-    else
-        export GIT_BASE=$branch
-        export GH_PR_NUMBER=$number
-    fi
-}
-
-alias spr="set_pr_base"
-alias sgh="set_pr_base_from_gh"
-
 git_switch_create_ygt() {
     if [ $# -lt 2 ]; then
         echo "Need at least 2 arguments"
@@ -116,7 +95,7 @@ alias gfb="git_fetch_base"
 alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
 
 git_source_pr_info() {
-    source $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.sh
+    source $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.zsh
 }
 
 git_fetch_base() {
