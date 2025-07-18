@@ -49,7 +49,7 @@ gh_pr_create_ygt() {
 }
 
 set_pr_info() {
-    $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.zsh
+    $HOME/.config/zsh/aliases.d/gh/set_pr_info.zsh
 }
 
 alias spi="set_pr_info"
