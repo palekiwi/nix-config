@@ -39,7 +39,20 @@ path = "~/code/ygt-env"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
 #-------------------
-#  --- sales ---
+#   --- blog ---
+#-------------------
+[[session]]
+name = "blog"
+path = "~/code/ygt/blog/"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+
+[[session]]
+name = "blog-dev"
+path = "~/code/ygt/blog/"
+startup_command = "~/nix-config/home/scripts/tmux/ygt/blog-dev"
+
+#-------------------
+#   --- sales ---
 #-------------------
 [[session]]
 name = "sales"
