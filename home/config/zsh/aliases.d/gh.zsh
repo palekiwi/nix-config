@@ -52,6 +52,10 @@ set_pr_info() {
     $HOME/.config/zsh/aliases.d/gh/set_pr_info.zsh
 }
 
+gh_clone() {
+    $HOME/.config/zsh/aliases.d/gh/clone_repo.zsh $@
+}
+
 alias spi="set_pr_info"
 
 alias p="gh_prs"
