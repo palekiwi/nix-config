@@ -5,9 +5,14 @@
     "Claude/claude_desktop_config.json".source = ./claude_desktop_config.json;
   };
 
-  home.sessionVariables = {
-    NEO4J_USER = "neo4j";
-    NEO4J_PASSWORD = "$PATH:$HOME/bin";
+  xfconf.settings = {
+    xfce4-screensaver = {
+      "saver/enabled" = false;
+      "saver/mode" = 0;
+      "lock/enabled" = false;
+      "lock/saver-activation/enabled" = false;
+      "lock/user-switching/enabled" = false;
+    };
   };
 
   home.stateVersion = "25.05";
