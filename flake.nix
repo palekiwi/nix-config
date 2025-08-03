@@ -24,6 +24,7 @@
         system = "x86_64-linux";
         modules = [
           ./vm/claude/default.nix
+          inputs.sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
