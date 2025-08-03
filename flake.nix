@@ -12,13 +12,25 @@
       url = "github:k3d3/claude-desktop-linux-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, claude-desktop, ... }@inputs: {
+  outputs = { self, nixpkgs, claude-desktop, home-manager, ... }@inputs: {
     nixosConfigurations = {
       claude-vm = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [ ./vm/claude/default.nix ];
+        modules = [
+          ./vm/claude/default.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.claude = import ./vm/claude/home.nix;
+          }
+        ];
 
         specialArgs = {
           claude-desktop-pkg = claude-desktop.packages.x86_64-linux;
