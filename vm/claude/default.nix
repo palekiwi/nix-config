@@ -3,10 +3,6 @@
 # TODO: install config (setup MCPs, etc)
 
 {
-  imports = [
-    ./sops.nix
-  ];
-
   virtualisation.vmVariant = {
     virtualisation = {
       memorySize = 2048;
