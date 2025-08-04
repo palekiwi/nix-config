@@ -26,7 +26,12 @@
         labs = {
           source = "$HOME/code/palekiwi-labs";
           target = "/mnt/labs";
+          securityModel = "passthrough";
         };
+      };
+
+      fileSystems."/mnt/shared" = {
+        options = [ "ro" ];
       };
     };
   };
@@ -73,6 +78,7 @@
 
   environment.systemPackages = with pkgs; [
     claude-desktop-pkg.claude-desktop-with-fhs
+    git
     vim
     nodejs_24
   ];
