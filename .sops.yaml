@@ -1,6 +1,13 @@
 keys:
   - &primary age12fxeq90ycg4jvvzhlhdmxfjqvw3ud40w8cl8555pr0c9xkr99dks2kc4ax
+  - &claude_vm age1ncxvhd9hx3vde98wu5v6gyuz8mact0es42qf95je65m0mepttcustwgs7p
 creation_rules:
+  - path: secrets/claude-vm.yaml
+    key_groups:
+      - age:
+          - *primary
+          - *claude_vm
+
   - path_regex: secrets/[^/]+\.yaml$
     key_groups:
       - age:

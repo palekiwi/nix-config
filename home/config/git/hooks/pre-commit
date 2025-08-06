@@ -19,12 +19,12 @@ if git grep --cached -l -E -e "f(it|describe|context) ['\"]" -e "Pry::ColorPrint
     exit 1
 fi
 
-if git grep --cached -l -E -e "binding.pry"; then
+if files=$(git grep --cached -l -E -e "binding.pry"); then
     echo -e "\n"
-    echo 'Commit contains debugger statements.'
+    echo "Commit contains debugger statements in:"
+    echo "$files"
     exit 1
 fi
-
 # Run Rubocop on staged .rb files
 rb_files=$(git diff --cached --name-only --diff-filter=ACM | grep ".rb$")
 
