@@ -1,34 +1,28 @@
 { pkgs, claude-desktop-pkg, ... }:
 
-# TODO: install config (setup MCPs, etc)
-
 {
+  imports = [
+    ./shared-dirs.nix
+  ];
+
   virtualisation.vmVariant = {
     virtualisation = {
-      memorySize = 2048;
+      memorySize = 4096;
       cores = 2;
       graphics = true;
       diskSize = 8192;
 
+      qemu.options = [
+        "-vga" "qxl"
+        "-spice" "port=5930,disable-ticketing=on"
+        "-device" "virtio-serial-pci"
+        "-chardev" "spicevmc,id=vdagent,name=vdagent"
+        "-device" "virtserialport,chardev=vdagent,name=com.redhat.spice.0"
+      ];
+
       forwardPorts = [
         { from = "host"; host.port = 2222; guest.port = 22; }
       ];
-
-      sharedDirectories = {
-        my-share = {
-          source = "$HOME/claude";
-          target = "/mnt/shared";
-        };
-        labs = {
-          source = "$HOME/code/palekiwi-labs";
-          target = "/mnt/labs";
-          securityModel = "passthrough";
-        };
-      };
-
-      fileSystems."/mnt/shared" = {
-        options = [ "ro" ];
-      };
     };
   };
 
@@ -68,6 +62,8 @@
     };
   };
 
+  services.spice-vdagentd.enable = true;
+
   users.users.claude.openssh.authorizedKeys.keys = [
     (builtins.readFile ../../users/pl/ssh.pub)
   ];
@@ -77,6 +73,7 @@
     git
     vim
     nodejs_24
+    spice-vdagent
   ];
 
   system.stateVersion = "25.05";
