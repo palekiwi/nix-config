@@ -49,7 +49,7 @@ gh_prs(){
         return 1
     fi
 
-    pr_list=$(gh pr list --json number,title,author,headRefName,baseRefName,labels --template $'{{range .}}\033[32m{{.number}}\033[0m: {{.title}}{{if .labels}} \033[35m[{{range $i, $label := .labels}}{{if $i}}, {{end}}{{$label.name}}{{end}}]\033[0m{{end}} \033[90m(\033[32m{{.headRefName}}\033[90m → \033[90m{{.baseRefName}}\033[90m)\033[0m\n{{end}}')
+    pr_list=$(gh pr list --json number,title,author,headRefName,baseRefName,labels --template $'{{range .}}\033[32m{{.number}}\033[0m: {{.title}}{{if .labels}} \033[35m[{{range $i, $label := .labels}}{{if $i}}, {{end}}{{$label.name}}{{end}}]\033[0m{{end}} \033[90m(\033[32m{{.headRefName}}\033[90m → \033[36m{{.baseRefName}}\033[90m)\033[0m\n{{end}}')
 
     if [[ -z "$pr_list" ]]; then
         echo "No open PRs found"
