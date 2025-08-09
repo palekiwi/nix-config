@@ -27,8 +27,16 @@ git_switch_create_variant() {
     git switch -c $(git branch --show-current)--$@
 }
 
+git_switch_create_wip() {
+    git switch -c $(git branch --show-current)--wip-palekiwi
+}
+
 git_switch_variant() {
     git switch $(git branch --show-current)--$@
+}
+
+git_switch_wip() {
+    git switch $(git branch --show-current)--wip-palekiwi
 }
 
 git_merge_variant() {
@@ -76,7 +84,9 @@ alias gsar="git_submodule_add_role"
 alias gsc="git switch -c"
 alias gscy="git_switch_create_ygt"
 alias gscv="git_switch_create_variant"
+alias gscw="git_switch_create_wip"
 alias gsv="git_switch_variant"
+alias gsw="git_switch_wip"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
 alias gsm="git_get_master_branch_name | xargs git switch && git pull"
