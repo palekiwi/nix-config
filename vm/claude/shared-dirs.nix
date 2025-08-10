@@ -16,12 +16,12 @@
 
         labs = {
           source = "$HOME/code/palekiwi-labs";
-          target = "/mnt/labs";
+          target = "/mnt/palekiwi-labs";
         };
       };
 
       fileSystems = {
-        "/mnt/labs" = { options = [ "ro" ]; };
+        "/mnt/palekiwi-labs" = { options = [ "rw" ]; };
         "/mnt/code/ygt/spabreaks" = { options = [ "rw" ]; };
       };
     };

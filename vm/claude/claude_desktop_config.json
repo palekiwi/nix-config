@@ -7,7 +7,7 @@
         "@modelcontextprotocol/server-filesystem",
         "/mnt/code/ygt/spabreaks",
         "/mnt/documents",
-        "/mnt/labs"
+        "/mnt/palekiwi-labs"
       ]
     },
     "neo4j-aura": {
@@ -25,7 +25,11 @@
       "args": [
         "mcp-server-git",
         "--repository",
-        "/mnt/labs/zero-to-prod/",
+        "/mnt/labs/zero-to-prod",
+        "--repository",
+        "/mnt/labs/prompt-assist",
+        "--repository",
+        "/mnt/labs/fixture-prompt-assist",
         "--repository",
         "/mnt/code/ygt/spabreaks"
       ]
