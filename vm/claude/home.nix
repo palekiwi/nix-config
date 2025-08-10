@@ -15,5 +15,15 @@
     };
   };
 
+  programs.git = {
+    enable = true;
+    userName = "claude";
+    userEmail = "claude@palekiwi.com";
+    extraConfig = {
+      init.defaultBranch = "master";
+      pull.rebase = false;
+    };
+  };
+
   home.stateVersion = "25.05";
 }
