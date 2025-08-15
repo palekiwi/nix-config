@@ -106,6 +106,7 @@ in
       "XF86Launch7; l; s" = ''${typeText} "localhost:3030"'';
       "XF86Launch7; p" = autostagedPr;
       "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
+      "XF86Launch7; w" = ''${typeText} "[WIP] "'';
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "~/.dmenu/audio-sinks";
