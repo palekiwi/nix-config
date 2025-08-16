@@ -7,7 +7,8 @@
         "@modelcontextprotocol/server-filesystem",
         "/mnt/code/ygt/spabreaks",
         "/mnt/documents",
-        "/mnt/palekiwi-labs"
+        "/mnt/palekiwi-labs",
+        "/mnt/Nextcloud"
       ]
     },
     "neo4j-aura": {
