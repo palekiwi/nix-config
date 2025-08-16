@@ -171,6 +171,11 @@ path = "~/Nextcloud/Notes"
 startup_command = "nvim index.md"
 
 [[session]]
+name = "notes-claude"
+path = "~/claude/Nextcloud/Notes/"
+startup_command = "nvim index.md"
+
+[[session]]
 name = "notes-pl"
 path = "~/Nextcloud-pl/Notes"
 startup_command = "nvim index.md"
