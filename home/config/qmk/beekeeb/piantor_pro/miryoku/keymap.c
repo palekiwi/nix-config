@@ -104,12 +104,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                           _______, _______, _______,    KC_BTN3, KC_BTN1, KC_BTN2
                                       //`--------------------------'  `--------------------------'
 ),
- 
+
 [SYM] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,   KC_CAPS, KC_AMPR, KC_AT,   KC_PIPE, KC_ASTR,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,   KC_COLN, KC_EXLM, KC_PERC, KC_EQL,  KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
+     KC_NO,   KC_PERC, KC_EXLM, KC_COLN, KC_EQL,  KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,   KC_TILD, KC_HASH, KC_BSLS, KC_SCLN, KC_EQL,                       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
