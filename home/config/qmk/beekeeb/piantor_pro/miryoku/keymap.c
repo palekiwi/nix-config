@@ -46,7 +46,7 @@ enum layer_names {
 
 // Thumbs layers:
 // Left Thumb
-#define TK_LI LT(MED, KC_ESC)
+#define TK_LI LT(PCT, KC_ESC)
 #define TK_LC LT(NAV, KC_SPC)
 #define TK_LO LT(MOU, KC_TAB)
 
