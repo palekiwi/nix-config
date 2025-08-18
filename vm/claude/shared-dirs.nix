@@ -5,30 +5,30 @@
     virtualisation = {
       sharedDirectories = {
         documents = {
-          source = "$HOME/claude/shared/documents";
-          target = "/mnt/documents";
+          source = "$HOME/claude/documents";
+          target = "/home/claude/Documents";
         };
 
         nextcloud = {
           source = "$HOME/claude/Nextcloud";
-          target = "/mnt/Nextcloud";
+          target = "/home/claude/Nextcloud";
         };
 
         labs = {
           source = "$HOME/code/palekiwi-labs";
-          target = "/mnt/palekiwi-labs";
+          target = "/home/claude/code/palekiwi-labs";
         };
 
         spabreaks = {
-          source = "$HOME/claude/shared/code/ygt/spabreaks";
-          target = "/mnt/code/ygt/spabreaks";
+          source = "$HOME/claude/code/ygt/spabreaks";
+          target = "/home/claude/code/ygt/spabreaks";
         };
       };
 
       fileSystems = {
-        "/mnt/palekiwi-labs" = { options = [ "rw" ]; };
-        "/mnt/Nextcloud" = { options = [ "rw" ]; };
-        "/mnt/code/ygt/spabreaks" = { options = [ "rw" ]; };
+        "/home/claude/code/palekiwi-labs" = { options = [ "rw" ]; };
+        "/home/claude/Nextcloud" = { options = [ "rw" ]; };
+        "/home/claude/code/ygt/spabreaks" = { options = [ "rw" ]; };
       };
     };
   };

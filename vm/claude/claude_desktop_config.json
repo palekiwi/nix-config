@@ -5,10 +5,10 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/mnt/code/ygt/spabreaks",
-        "/mnt/documents",
-        "/mnt/palekiwi-labs",
-        "/mnt/Nextcloud"
+        "/home/claude/code/ygt/spabreaks",
+        "/home/claude/code/palekiwi-labs",
+        "/home/claude/Documents",
+        "/home/claude/Nextcloud"
       ]
     },
     "neo4j-aura": {
@@ -25,16 +25,21 @@
       "command": "uvx",
       "args": [
         "mcp-server-git",
+
         "--repository",
-        "/mnt/code/ygt/spabreaks",
+        "/home/claude/code/ygt/spabreaks",
+
         "--repository",
-        "/mnt/palekiwi-labs/zero-to-prod",
+        "/home/claude/code/palekiwi-labs/zero-to-prod",
+
         "--repository",
-        "/mnt/palekiwi-labs/prompt-assist",
+        "/home/claude/code/palekiwi-labs/prompt-assist",
+
         "--repository",
-        "/mnt/palekiwi-labs/fixture-prompt-assist",
+        "/home/claude/code/palekiwi-labs/fixture-prompt-assist",
+
         "--repository",
-        "/mnt/palekiwi-labs/prctl"
+        "/home/claude/code/palekiwi-labs/prctl"
       ]
     }
   }
