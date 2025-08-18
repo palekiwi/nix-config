@@ -26,13 +26,15 @@
       "args": [
         "mcp-server-git",
         "--repository",
-        "/mnt/labs/zero-to-prod",
+        "/mnt/code/ygt/spabreaks",
         "--repository",
-        "/mnt/labs/prompt-assist",
+        "/mnt/palekiwi-labs/zero-to-prod",
         "--repository",
-        "/mnt/labs/fixture-prompt-assist",
+        "/mnt/palekiwi-labs/prompt-assist",
         "--repository",
-        "/mnt/code/ygt/spabreaks"
+        "/mnt/palekiwi-labs/fixture-prompt-assist",
+        "--repository",
+        "/mnt/palekiwi-labs/prctl"
       ]
     }
   }
