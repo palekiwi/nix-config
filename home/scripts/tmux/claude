@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+session=${1:-$(tmux display-message -p '#S')}
+
+tmux rename-window -t $session:1 vm
+
+tmux new-window -t $session -n spice
+tmux new-window -t $session -n notes
+tmux new-window -t $session -n ssh
+
+tmux send-keys -t $session:1 'nix run ~/nix-config#claude' C-m
+
+tmux select-window -t $session:2
