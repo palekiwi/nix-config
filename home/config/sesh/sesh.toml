@@ -176,11 +176,6 @@ path = "~/claude"
 startup_command = "~/nix-config/home/scripts/tmux/claude"
 
 [[session]]
-name = "claude-notes"
-path = "~/claude/Nextcloud/Notes/"
-startup_command = "nvim index.md"
-
-[[session]]
 name = "notes-pl"
 path = "~/Nextcloud-pl/Notes"
 startup_command = "nvim index.md"
