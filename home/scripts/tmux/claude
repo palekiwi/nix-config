@@ -2,12 +2,15 @@
 
 session=${1:-$(tmux display-message -p '#S')}
 
-tmux rename-window -t $session:1 vm
+tmux rename-window -t $session:1 edit
 
-tmux new-window -t $session -n spice
+tmux new-window -t $session -n gitui
 tmux new-window -t $session -n notes
-tmux new-window -t $session -n ssh
+tmux new-window -t $session -n run
+tmux new-window -t $session -n spice
 
-tmux send-keys -t $session:1 'nix run ~/nix-config#claude' C-m
+tmux send-keys -t $session:3 'cd Nextcloud/Notes && nvim index.md' C-m
+tmux send-keys -t $session:4 'nix run ~/nix-config#claude' C-m
+tmux send-keys -t $session:5 'nix run ~/nix-config#claude-spice' C-m
 
-tmux select-window -t $session:2
+tmux select-window -t $session:1
