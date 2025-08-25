@@ -11,9 +11,6 @@
       username = "pl";
       homeDirectory = "/home/pl";
       stateVersion = "24.11";
-      packages = [
-        pkgs.opencode
-      ];
     };
 
     nixpkgs.config.allowUnfree = true;

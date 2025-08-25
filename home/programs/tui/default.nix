@@ -8,6 +8,7 @@
     ./gh.nix
     ./git.nix
     ./email
+    ./opencode.nix
     ./sesh.nix
     ./starship.nix
     ./tmux.nix
