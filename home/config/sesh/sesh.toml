@@ -180,10 +180,6 @@ name = "notes-pl"
 path = "~/Nextcloud-pl/Notes"
 startup_command = "nvim index.md"
 
-[[session]]
-name = "ollama"
-startup_command = "ollama serve"
-
 #-------------------
 #    --- ssh ----
 #-------------------
