@@ -128,11 +128,6 @@ path = "~/nix-config"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
 [[session]]
-name = "nix-config-agent"
-path = "~/nix-config"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-[[session]]
 name = "nvim"
 path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
@@ -196,6 +191,34 @@ startup_command = "ollama serve"
 [[session]]
 name = "haze"
 startup_command = "ssh haze -A"
+
+#-------------------
+#  --- agents ---
+#-------------------
+
+[[session]]
+name = "spabreaks-agent"
+path = "~/code/ygt/spabreaks/"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
+
+[[session]]
+name = "nix-config-agent"
+path = "~/nix-config"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
+
+name = "awesome-agent"
+path = "~/.config/awesome/"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
+
+[[session]]
+name = "nvim-agent"
+path = "~/.config/nvim/"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
+
+[[session]]
+name = "agent-agent"
+path = "~/code/palekiwi-labs/agents"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 
 #-------------------
 #  --- default ---
