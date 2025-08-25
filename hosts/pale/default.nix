@@ -9,6 +9,7 @@
       ./locale.nix
       ./nvidia.nix
       ./ollama.nix
+      ./open-webui.nix
       ./packages.nix
       ./picom.nix
       ./sound.nix
