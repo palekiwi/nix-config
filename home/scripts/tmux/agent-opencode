@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+session=${1:-$(tmux display-message -p '#S')}
+
+tmux rename-window -t $session:1 opencode
+tmux send-keys -t $session:1 'opencode --port 80 --hostname 0.0.0.0' C-m

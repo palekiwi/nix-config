@@ -128,6 +128,11 @@ path = "~/nix-config"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
 [[session]]
+name = "nix-config-agent"
+path = "~/nix-config"
+startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
+
+[[session]]
 name = "nvim"
 path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
