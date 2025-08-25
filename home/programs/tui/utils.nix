@@ -32,8 +32,9 @@ in
     yubikey-manager
     zoxide
 
-    (import ./bin/hass.nix { inherit pkgs config; })
     (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
+    (import ./bin/generate_port_from_path.nix { inherit pkgs; })
+    (import ./bin/hass.nix { inherit pkgs config; })
     (import ./bin/yt-subs.nix { inherit pkgs lib config; })
   ] ++ extra;
 }
