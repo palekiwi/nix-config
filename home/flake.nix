@@ -8,12 +8,23 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    wrappedOpencode = {
+      url = "path:/home/pl/code/palekiwi-labs/agents";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, wrappedOpencode, ... }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+         inherit system;
+         overlays = [
+           (final: prev: {
+             opencode = wrappedOpencode.packages.x86_64-linux.opencode;
+           })
+         ];
+       };
       pkgs-unstable = import nixpkgs-unstable { inherit system; };
     in
     {
@@ -22,7 +33,10 @@
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./users/pl/pale.nix ./options ];
+          modules = [
+            ./users/pl/pale.nix
+            ./options
+            ];
           extraSpecialArgs = { inherit inputs pkgs-unstable; };
         };
 

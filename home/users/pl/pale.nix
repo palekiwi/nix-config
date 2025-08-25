@@ -1,15 +1,22 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
+  imports = [
+    ../../programs/gui
+    ../../programs/tui
+  ];
+
   config = {
     home = {
       username = "pl";
       homeDirectory = "/home/pl";
       stateVersion = "24.11";
+      packages = [
+        pkgs.opencode
+      ];
     };
 
     nixpkgs.config.allowUnfree = true;
-
     programs.home-manager.enable = true;
 
     modules = {
@@ -18,9 +25,4 @@
       ygt.enable = true;
     };
   };
-
-  imports = [
-    ../../programs/gui
-    ../../programs/tui
-  ];
 }
