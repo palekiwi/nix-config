@@ -10,7 +10,7 @@
     };
     wrappedOpencode = {
       url = "path:/home/pl/code/palekiwi-labs/agents";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
