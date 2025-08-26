@@ -202,6 +202,7 @@ name = "nix-config-agent"
 path = "~/nix-config"
 startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 
+[[session]]
 name = "awesome-agent"
 path = "~/.config/awesome/"
 startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
