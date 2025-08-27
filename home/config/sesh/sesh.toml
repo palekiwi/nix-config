@@ -213,7 +213,7 @@ path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 
 [[session]]
-name = "agent-agent"
+name = "agents-agent"
 path = "~/code/palekiwi-labs/agents"
 startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 
