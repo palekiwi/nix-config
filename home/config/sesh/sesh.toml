@@ -132,6 +132,11 @@ name = "nvim"
 path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
+[[session]]
+name = "opencode"
+path = "~/.config/opencode/"
+startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+
 #-------------------
 #   --- Repos ---
 #-------------------
@@ -205,11 +210,6 @@ startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 [[session]]
 name = "awesome-agent"
 path = "~/.config/awesome/"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-[[session]]
-name = "nvim-agent"
-path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
 
 [[session]]
