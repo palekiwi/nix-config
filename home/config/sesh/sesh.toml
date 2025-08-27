@@ -194,30 +194,6 @@ name = "haze"
 startup_command = "ssh haze -A"
 
 #-------------------
-#  --- agents ---
-#-------------------
-
-[[session]]
-name = "spabreaks-agent"
-path = "~/code/ygt/spabreaks/"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-[[session]]
-name = "nix-config-agent"
-path = "~/nix-config"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-[[session]]
-name = "awesome-agent"
-path = "~/.config/awesome/"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-[[session]]
-name = "agents-agent"
-path = "~/code/palekiwi-labs/agents"
-startup_command = "~/nix-config/home/scripts/tmux/agent-opencode"
-
-#-------------------
 #  --- default ---
 #-------------------
 
