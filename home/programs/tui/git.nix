@@ -35,7 +35,7 @@ in
   programs.git = gitConfig // { enable = true; };
 
   # Org-specific files
-  home.file."code/ygt/.gitignore_org".text = ''
+  home.file."code/ygt/.gitignore".text = ''
     # Global ignores
     ${globalIgnores}
 
@@ -48,7 +48,7 @@ in
       ""
   '';
 
-  home.file."code/ygt/.gitconfig_ygt".text = ''
+  home.file."code/ygt/.gitconfig".text = ''
     [user]
         name = ${gitConfig.userName}
         email = ${gitConfig.userEmail}
@@ -61,6 +61,6 @@ in
     [pull]
         rebase = ${if gitConfig.extraConfig.pull.rebase then "true" else "false"}
     [core]
-        excludesfile = ~/.config/home-manager/some-org/.gitignore_org
+        excludesfile = ~/code/ygt/.gitignore
   '';
 }
