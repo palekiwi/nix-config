@@ -40,12 +40,11 @@ in
     ${globalIgnores}
 
     # YGT-specific ignores
-      ".envrc"
-      ".gutctags"
-      "gemset.nix"
-      "AGENTS.md"
-      ".opencode"
-      ""
+    .envrc
+    .gutctags
+    gemset.nix
+    AGENTS.md
+    .opencode
   '';
 
   home.file."code/ygt/.gitconfig".text = ''
