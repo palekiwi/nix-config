@@ -20,5 +20,9 @@ in
       slack
       sops
     ];
+
+    home.file."code/ygt/spabreaks/.envrc" = {
+      source = ../../config/ygt/spabreaks/.envrc;
+    };
   };
 }
