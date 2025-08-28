@@ -1,0 +1,11 @@
+[
+  "*.swp"
+  ".direnv"
+  "build"
+  "log/test.log.0"
+  "tags"
+  "tags.lock"
+  "tags.temp"
+  "tmux-client-*"
+  "vendor"
+]
