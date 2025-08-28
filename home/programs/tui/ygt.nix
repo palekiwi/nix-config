@@ -23,10 +23,12 @@ in
       sops
     ];
 
+    # :: Environment ::
     home.file."code/ygt/spabreaks/.envrc" = {
       source = ../../config/ygt/spabreaks/.envrc;
     };
 
+    # :: Git Configuration ::
     home.file."code/ygt/.gitignore".text = ''
       # Global ignores
       ${globalIgnores}
