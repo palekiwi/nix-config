@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-launcher='rofi -dmenu -i -theme-str "window { width: 20%; }"'
+launcher='rofi -dmenu -i -theme-str "window { width: 40%; location: center; }"'
 
 options="$(sesh list --tmux | grep -- '-agent$')"
 

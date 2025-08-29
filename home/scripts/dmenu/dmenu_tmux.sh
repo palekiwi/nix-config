@@ -2,7 +2,7 @@
 
 flags=$@
 
-launcher="rofi -dmenu -i"
+launcher='rofi -dmenu -i -theme-str "window { width: 40%; location: center; }"'
 
 options=$(sesh list --json $flags \
     | jq -r '.[] | (.Score|tostring) + "," + .Name + "," + .Src + "," + .Path + "," + (.Attached | if . > 0 then "*" else " " end)' \
@@ -11,7 +11,7 @@ options=$(sesh list --json $flags \
     | cut -d',' -f2- \
     | column -s"," -t)
 
-choice=$(echo "$(printf '%s\n' "${options[@]}")" | $launcher -p 'Tmux sessions')
+choice=$(echo "$(printf '%s\n' "${options[@]}")" | eval "$launcher -p 'Tmux sessions'")
 
 [[ -z "$choice" ]] && { exit 1; }
 
