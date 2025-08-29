@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-launcher='rofi -dmenu -i -theme-str "window { width: 40%; location: center; }"'
+launcher='dmenu -i -nb #1d1f21 -nf #D3D7CF -sb #5294e2 -sf #2f343f -fn 11'
 
 options="$(sesh list --tmux | grep -- '-agent$')"
 
-choice=$(echo "$options" | eval "$launcher -p 'Tmux Agents'")
+choice=$(echo "$options" | $launcher -p 'Tmux Agents')
 
 [[ -z "$choice" ]] && { exit 1; }
 
