@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 
 let
   lights_kitchen = [
@@ -23,14 +23,9 @@ let
     dmenu -i -nb \#1d1f21 -nf \#D3D7CF -sb \#37ADD4 -sf \#192330 -fn 11 -p "Home Assistant"
   '';
 
-  hass = if config.fedora then
-    pkgs.writeShellScript "hass" ''
-      hass-cli --server $(cat ~/.hass_server) --token $(cat ~/.hass_token) $@
-    ''
-  else
-    pkgs.writeShellScript "hass" ''
-      hass-cli --server $(cat /run/secrets/hass/server) --token $(cat /run/secrets/hass/token) $@
-    '';
+  hass = pkgs.writeShellScript "hass" ''
+    hass-cli --server $(cat /run/secrets/hass/server) --token $(cat /run/secrets/hass/token) $@
+  '';
 in
 
 pkgs.writeShellScriptBin "dmenu_hass" ''
