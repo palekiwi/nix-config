@@ -5,15 +5,16 @@
     ./cmus.nix
     ./dev.nix
     ./direnv.nix
+    ./email
     ./gh.nix
     ./git.nix
-    ./email
     ./opencode.nix
+    ./scripts.nix
     ./sesh.nix
+    ./ssh.nix
     ./starship.nix
     ./tmux.nix
     ./utils.nix
-    ./ssh.nix
     ./ygt.nix
     ./zsh.nix
   ];

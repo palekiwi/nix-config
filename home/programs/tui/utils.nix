@@ -1,11 +1,5 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, ... }:
 
-let
-  extra = [ ];
-  # extra = if config.fedora
-  #         then []
-  #         else with pkgs; [ ollama-cuda oterm ];
-in
 {
   home.packages = with pkgs; [
     acpi
@@ -31,10 +25,5 @@ in
     which
     yubikey-manager
     zoxide
-
-    (import ./bin/dmenu_hass.nix { inherit pkgs lib config; })
-    (import ./bin/generate_port_from_path.nix { inherit pkgs; })
-    (import ./bin/hass.nix { inherit pkgs config; })
-    (import ./bin/yt-subs.nix { inherit pkgs lib config; })
-  ] ++ extra;
+  ];
 }
