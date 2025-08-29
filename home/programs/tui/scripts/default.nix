@@ -1,0 +1,8 @@
+{ pkgs, config, lib, ... }:
+
+[
+  (import ./dmenu_hass.nix { inherit pkgs lib config; })
+  (import ./generate_port_from_path.nix { inherit pkgs; })
+  (import ./hass.nix { inherit pkgs config; })
+  (import ./yt-subs.nix { inherit pkgs lib config; })
+]
