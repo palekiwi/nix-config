@@ -55,6 +55,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "~/.dmenu/tmux --tmux";
+      "super + Return + shift" = "~/.dmenu/agents";
       "super + Return + control" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
 
