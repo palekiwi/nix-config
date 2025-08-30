@@ -1,5 +1,10 @@
 { pkgs, ... }:
 
+let
+  orange = "\\033[33m";
+  green = "\\033[32m";
+  reset = "\\033[0m";
+in
 pkgs.writeShellScriptBin "set_pr_info" ''
   DEST_FILE=.git/pr-info
 
@@ -21,12 +26,12 @@ pkgs.writeShellScriptBin "set_pr_info" ''
     # Check if origin/base is ahead of the merge base
     if [ "$(${pkgs.git}/bin/git rev-parse origin/"$GIT_BASE")" != "$merge_base" ]; then
       echo "GIT_BASE_AHEAD=true" >> "$DEST_FILE"
-       printf "\033[33mBase branch '%s' has new commits\033[0m\n" "$GIT_BASE"
+        echo -e "${orange}Base branch '$GIT_BASE' has new commits${reset}"
     fi
 
-     printf "\033[32mUpdated PR info: #%s (base: %s)\033[0m\n" "$GH_PR_NUMBER" "$GIT_BASE"
+      echo -e "${green}Updated PR info: #$GH_PR_NUMBER (base: $GIT_BASE)${reset}"
   else
     rm -f .git/pr-info
-     printf "\033[32mCleared PR info (not on a PR branch)\033[0m\n"
+      echo -e "${green}Cleared PR info (not on a PR branch)${reset}"
   fi
 ''
