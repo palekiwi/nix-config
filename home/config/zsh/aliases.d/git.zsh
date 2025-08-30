@@ -47,14 +47,6 @@ git_branch_delete_variant() {
     git branch -d $(git branch --show-current)--$@
 }
 
-git_get_master_branch_name() {
-    git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
-}
-
-git_branch_name_to_clipboard() {
-    git branch --show-current | ctc
-}
-
 alias gac="git add . && git commit"
 alias gacm="git add . && git commit -m"
 alias gar="git_add_remote"
@@ -93,7 +85,7 @@ alias gsw="git_switch_wip"
 alias gsv="git_switch_variant"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
-alias gsm="git_get_master_branch_name | xargs git switch && git pull"
+alias gsm="get_master_branch_name | xargs git switch && git pull"
 alias gsb='gs $GIT_BASE'
 alias gmb='git_source_pr_info && git merge $GIT_BASE --no-edit'
 alias gmv='git_merge_variant'
@@ -117,7 +109,7 @@ git_fetch_base() {
 }
 
 git_fetch_master() {
-    branch=$(git_get_master_branch_name)
+    branch=$(get_master_branch_name)
     git fetch origin && git fetch origin ${branch}:${branch}
 }
 
