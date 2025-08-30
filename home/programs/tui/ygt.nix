@@ -6,6 +6,13 @@ let
   cfg = config.modules.ygt;
 
   projectConfigs = {
+    my-account = {
+      envrc = ../../config/ygt/my-account/.envrc;
+      gitHooks = {
+        post-checkout = ../../config/ygt/git/hooks/post-checkout;
+        post-merge = ../../config/ygt/git/hooks/post-merge;
+      };
+    };
     sb-voucher-redemptions = {
       envrc = ../../config/ygt/sb-voucher-redemptions/.envrc;
       gitHooks = {
