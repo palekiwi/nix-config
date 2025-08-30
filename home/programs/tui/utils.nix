@@ -8,6 +8,7 @@
     dmenu
     eza
     fasd
+    fd
     fzf
     home-assistant-cli
     jq
