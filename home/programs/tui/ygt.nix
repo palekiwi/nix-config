@@ -30,6 +30,12 @@ let
     };
   };
 
+  commonYgtFiles = {
+    "code/ygt/.envrc".source = ../../config/ygt/.envrc;
+    "code/ygt/.gitconfig".source = ../../config/ygt/.gitconfig;
+    "code/ygt/.gitignore".text = import ../../config/ygt/.gitignore.nix;
+  };
+
   mkProjectFiles = projectName: config: let
     basePath = "code/ygt/${projectName}";
   in
@@ -61,10 +67,6 @@ in
       sops
     ];
 
-    home.file = {
-      "code/ygt/.envrc".source = ../../config/ygt/.envrc;
-      "code/ygt/.gitconfig".source = ../../config/ygt/.gitconfig;
-      "code/ygt/.gitignore".text = import ../../config/ygt/.gitignore.nix;
-    } // allProjectFiles;
+    home.file = commonYgtFiles // allProjectFiles;
   };
 }
