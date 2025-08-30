@@ -27,11 +27,13 @@ in
       "code/ygt/.gitignore".text = import ../../config/ygt/.gitignore.nix;
 
       "code/ygt/sb-voucher-redemptions/.envrc".source = ../../config/ygt/sb-voucher-redemptions/.envrc;
+      "code/ygt/sb-voucher-redemptions/.git/hooks/post-checkout".source = ../../config/ygt/git/hooks/post-checkout;
+      "code/ygt/sb-voucher-redemptions/.git/hooks/post-merge".source = ../../config/ygt/git/hooks/post-merge;
 
       "code/ygt/spabreaks/.envrc".source = ../../config/ygt/spabreaks/.envrc;
       "code/ygt/spabreaks/.git/hooks/pre-commit".source = ../../config/ygt/spabreaks/git/hooks/pre-commit;
-      "code/ygt/spabreaks/.git/hooks/post-checkout".source = ../../config/ygt/spabreaks/git/hooks/post-checkout;
-      "code/ygt/spabreaks/.git/hooks/post-merge".source = ../../config/ygt/spabreaks/git/hooks/post-merge;
+      "code/ygt/spabreaks/.git/hooks/post-checkout".source = ../../config/ygt/git/hooks/post-checkout;
+      "code/ygt/spabreaks/.git/hooks/post-merge".source = ../../config/ygt/git/hooks/post-merge;
     };
   };
 }
