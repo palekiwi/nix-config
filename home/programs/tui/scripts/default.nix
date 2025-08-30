@@ -4,6 +4,7 @@
   (import ./dmenu_hass.nix { inherit pkgs lib config; })
   (import ./generate_port_from_path.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
+  (import ./set_pr_info.nix { inherit pkgs; })
   (import ./sync_opencode_extra_config.nix { inherit pkgs; })
   (import ./yt-subs.nix { inherit pkgs lib config; })
 ]

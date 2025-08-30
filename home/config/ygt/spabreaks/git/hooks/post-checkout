@@ -2,5 +2,5 @@
 
 # Only run if we're checking out a branch (not individual files)
 if [ "$3" = "1" ]; then
-    $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.zsh
+    set_pr_info
 fi

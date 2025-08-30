@@ -109,7 +109,7 @@ alias gfb="git_fetch_base"
 alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
 
 git_source_pr_info() {
-    source $HOME/nix-config/home/config/zsh/aliases.d/gh/set_pr_info.zsh
+    set_pr_info
 }
 
 git_fetch_base() {
