@@ -1,7 +1,10 @@
 { pkgs, ... }:
 
-let
-  gitConfig = {
+{
+  home.packages = with pkgs; [ git gitui ];
+
+  programs.git = {
+    enable = true;
     userName = "Pawel Lisewski";
     userEmail = "dev@palekiwi.com";
     signing = {
@@ -14,10 +17,4 @@ let
       pull.rebase = true;
     };
   };
-in
-
-{
-  home.packages = with pkgs; [ git gitui ];
-
-  programs.git = gitConfig // { enable = true; };
 }
