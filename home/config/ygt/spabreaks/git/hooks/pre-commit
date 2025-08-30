@@ -25,6 +25,7 @@ if files=$(git grep --cached -l -E -e "binding.pry"); then
     echo "$files"
     exit 1
 fi
+
 # Run Rubocop on staged .rb files
 rb_files=$(git diff --cached --name-only --diff-filter=ACM | grep ".rb$")
 

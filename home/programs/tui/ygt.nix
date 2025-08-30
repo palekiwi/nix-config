@@ -26,6 +26,10 @@ in
       "code/ygt/.gitconfig".source = ../../config/ygt/.gitconfig;
       "code/ygt/.gitignore".text = import ../../config/ygt/.gitignore.nix;
       "code/ygt/spabreaks/.envrc".source = ../../config/ygt/spabreaks/.envrc;
+
+      "code/ygt/spabreaks/.git/hooks/pre-commit".source = ../../config/ygt/spabreaks/git/hooks/pre-commit;
+      "code/ygt/spabreaks/.git/hooks/post-checkout".source = ../../config/ygt/spabreaks/git/hooks/post-checkout;
+      "code/ygt/spabreaks/.git/hooks/post-merge".source = ../../config/ygt/spabreaks/git/hooks/post-merge;
     };
   };
 }
