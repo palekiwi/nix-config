@@ -2,7 +2,7 @@
 
 {
   services.open-webui = {
-    enable = true; # TODO: find a way to set a different port
+    enable = false; # TODO: find a way to set a different port, ygt/spabreaks runs on 8080
     environment = {
       ANONYMIZED_TELEMETRY = "False";
       DO_NOT_TRACK = "True";
