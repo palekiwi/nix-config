@@ -2,7 +2,7 @@
 
 {
   services.open-webui = {
-    enable = false; # TODO: find a way to set a different port
+    enable = true; # TODO: find a way to set a different port
     environment = {
       ANONYMIZED_TELEMETRY = "False";
       DO_NOT_TRACK = "True";
