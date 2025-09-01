@@ -19,7 +19,7 @@ if [ -s "$LOG_FILE" ]; then
 fi
 
 # Show rofi with suggestions
-activity=$(echo "$suggestions" | rofi -dmenu -i -p "Current activity:" -lines 10)
+activity=$(echo "$suggestions" | rofi -dmenu -i -fixed-num-lines -kb-accept-entry "" -kb-accept-custom "Return" -p "Current activity:" -lines 10)
 
 # If user selected an entry with time (contains " - "), extract just the activity part
 if [[ "$activity" == *" - "* ]]; then
