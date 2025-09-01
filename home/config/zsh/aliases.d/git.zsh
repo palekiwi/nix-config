@@ -98,7 +98,7 @@ alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
 alias gfb="git_fetch_base"
-alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
+alias gub='git_source_pr_info && git_fetch_base && git merge $(get_pr_base) --no-edit' # TODO: improve error handling
 
 git_source_pr_info() {
     set_pr_info
