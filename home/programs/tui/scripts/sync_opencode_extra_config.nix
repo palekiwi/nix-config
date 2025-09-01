@@ -16,4 +16,9 @@ pkgs.writeShellScriptBin "sync_opencode_extra_config" ''
   else
       echo "Warning: Config directory '$config_dir/$subdir' does not exist"
   fi
+
+  if [[ -f "$config_dir/opencode.json" ]]; then
+      echo "Syncing opencode.json from $config_dir/opencode.json..."
+      cp "$config_dir/opencode.json" "./"
+  fi
 ''

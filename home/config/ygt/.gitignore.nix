@@ -12,4 +12,5 @@ in
   .opencode
   AGENTS.md
   gemset.nix
+  opencode.json
 ''
