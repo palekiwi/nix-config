@@ -15,7 +15,7 @@ if [ -s "$LOG_FILE" ]; then
         time_part=$(echo "$line" | cut -d' ' -f2 | cut -d':' -f1-2)
         activity_part=$(echo "$line" | cut -d' ' -f4-)
         echo "$time_part - $activity_part"
-    done | sort -t: -k1,1n -k2,2n | uniq -s8 | tail -10)
+    done | sort -t: -k1,1nr -k2,2nr | uniq -s8 | tail -10)
 fi
 
 # Show rofi with suggestions
