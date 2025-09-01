@@ -27,7 +27,7 @@ if [[ "$activity" == *" - "* ]]; then
 fi
 
 if [ -n "$activity" ]; then
-    timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    timestamp=$(date "+%Y-%m-%d %H:%M")
     echo "$timestamp - $activity" >> "$LOG_FILE"
     notify-send "Activity Logged" "$activity"
 fi
