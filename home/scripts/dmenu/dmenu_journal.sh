@@ -10,7 +10,7 @@ touch "$LOG_FILE"
 # Get last 10 unique activities as suggestions with time (HH:MM only)
 suggestions=""
 if [ -s "$LOG_FILE" ]; then
-    suggestions=$(tail -20 "$LOG_FILE" | while read line; do
+    suggestions=$(tail -100 "$LOG_FILE" | while read line; do
         # Extract time (HH:MM) and activity from each line
         time_part=$(echo "$line" | cut -d' ' -f2 | cut -d':' -f1-2)
         activity_part=$(echo "$line" | cut -d' ' -f4-)
