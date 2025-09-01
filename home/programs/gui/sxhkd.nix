@@ -59,6 +59,8 @@ in
       "super + Return + shift" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
 
+      "super + l" = "~/.dmenu/journal";
+
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
       # "super + space; n; e" = "${switchToSession} elia";
@@ -96,7 +98,6 @@ in
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";
       "shift + control + XF86AudioRaiseVolume" = "cmus-remote -v 75%; notify-send -t 800 'Cmus Vol:' 75%";
       "Print" = screenshot;
-      "XF86HomePage; l" = "~/.dmenu/journal";
       "XF86HomePage; n" = "~/.dmenu/run";
       "XF86HomePage; p" = "~/.dmenu/process";
       "XF86HomePage; t" = "~/.dmenu/tmux";
