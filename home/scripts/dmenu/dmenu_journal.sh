@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LOG_DIR="$HOME/assistant/Nextcloud/Notes/journal"
+LOG_DIR="$HOME/assistant/Nextcloud/Notes/ygt/log"
 LOG_FILE="$LOG_DIR/$(date "+%Y-%m-%d")"
 
 # Create log directory and file if they don't exist
