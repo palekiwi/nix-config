@@ -63,7 +63,6 @@ in
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
-      # "super + space; n; e" = "${switchToSession} elia";
       "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} notes";
       "super + space; n; v" = "${switchToSession} nvim";

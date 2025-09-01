@@ -133,7 +133,7 @@ path = "~/.config/nvim/"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
 [[session]]
-name = "opencode"
+name = "config-opencode"
 path = "~/.config/agent-opencode/"
 startup_command = "~/nix-config/home/scripts/tmux/git-repo"
 
