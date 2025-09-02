@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Only run if we're checking out a branch (not individual files)
+if [ "$3" = "1" ]; then
+    set_pr_info
+fi

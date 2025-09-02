@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   home.packages = with pkgs; [ git gitui ];
@@ -15,6 +15,12 @@
     extraConfig = {
       init.defaultBranch = "master";
       pull.rebase = true;
+      core.hooksPath = "${config.xdg.configHome}/git/hooks";
     };
+  };
+
+  home.file = {
+    "${config.xdg.configHome}/git/hooks/post-checkout".source = ../../config/git/hooks/post-checkout;
+    "${config.xdg.configHome}/git/hooks/post-merge".source = ../../config/git/hooks/post-merge;
   };
 }

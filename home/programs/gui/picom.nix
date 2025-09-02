@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
   home.file."${config.xdg.configHome}/picom/picom.conf" = {
-	source = ../../config/picom/picom.conf;
+    source = ../../config/picom/picom.conf;
   };
 }
