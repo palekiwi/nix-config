@@ -59,7 +59,7 @@ in
       "super + Return + shift" = "~/.dmenu/tmux";
       "super + BackSpace" = "kitty --title $USER";
 
-      "super + l" = "~/.dmenu/journal";
+      "super + l" = "dmenu_activity_log";
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
