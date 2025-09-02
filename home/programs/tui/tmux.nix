@@ -23,7 +23,9 @@ let
   statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} '';
 in
 {
-  home.packages = with pkgs; [ tmux ];
+  home.packages = with pkgs; [ 
+    tmux 
+  ] ++ (import ./tmux { inherit pkgs; });
 
   programs.tmux = {
     baseIndex = 1;
