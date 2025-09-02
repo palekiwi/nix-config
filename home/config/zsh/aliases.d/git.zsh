@@ -105,7 +105,8 @@ git_source_pr_info() {
 }
 
 git_fetch_base() {
-    git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
+    local base_branch=$(get_pr_base)
+    git fetch origin && git fetch origin ${base_branch}:${base_branch}
 }
 
 git_fetch_master() {
