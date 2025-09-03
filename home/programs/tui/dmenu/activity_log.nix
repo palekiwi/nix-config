@@ -2,7 +2,7 @@
 
 pkgs.writeShellScriptBin "dmenu_activity_log" ''
   LOG_DIR="$HOME/assistant/Nextcloud/Notes/ygt/log"
-  LOG_FILE="$LOG_DIR/$(date "+%Y-%m-%d")"
+  LOG_FILE="$LOG_DIR/$(date "+%Y-%m-%d").md"
 
   # Create log directory and file if they don't exist
   mkdir -p "$LOG_DIR"
