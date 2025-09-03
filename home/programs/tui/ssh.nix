@@ -16,8 +16,9 @@ in
     extraConfig = lib.concatMapStrings
       (host: ''
         Host ${host}
-          user ${user}
-          port ${port}
+          HostName ${host}.paradise-liberty.ts.net
+          User ${user}
+          Port ${port}
       '')
       hosts;
   };
