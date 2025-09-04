@@ -60,6 +60,7 @@ in
       "super + BackSpace" = "kitty --title $USER";
 
       "super + l" = "dmenu_activity_log";
+      "super + l + control" = "dmenu_activity_log --pr";
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";

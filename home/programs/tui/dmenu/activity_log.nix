@@ -19,8 +19,21 @@ pkgs.writeShellScriptBin "dmenu_activity_log" ''
       done | sort -t: -k1,1nr -k2,2nr | uniq -s8 | tail -100)
   fi
 
+  FILTER=""
+
+  # Check if script is called with "--pr" flag
+  if [[ "$1" == "--pr" ]]; then
+      PR_INFO_FILE="$HOME/code/ygt/spabreaks/.git/pr-info"
+      if [[ -f "$PR_INFO_FILE" ]] && GH_PR_NUMBER=$(< "$PR_INFO_FILE" grep -o 'GH_PR_NUMBER=.*' | cut -d= -f2); then
+          FILTER="SB#$GH_PR_NUMBER "
+      fi
+  fi
+
   # Show rofi with suggestions
-  activity=$(echo "$suggestions" | rofi -dmenu -i -fixed-num-lines -kb-accept-entry "" -kb-accept-custom "Return" -p "Current activity:" -lines 10)
+  activity=$(echo "$suggestions" | rofi \
+    -dmenu -i -fixed-num-lines \
+    -kb-accept-entry "" -kb-accept-custom "Return" \
+    -p "Current activity:" -lines 10 -filter "$FILTER")
 
   # If user selected an entry with time (contains " - "), extract just the activity part
   if [[ "$activity" == *" - "* ]]; then
