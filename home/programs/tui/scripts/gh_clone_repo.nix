@@ -56,4 +56,5 @@ pkgs.writeShellScriptBin "gh_clone_repo" ''
   fi
 
   echo "Successfully cloned $AUTHOR_REPO into $CODE_DIR/$AUTHOR/$REPO"
+  cd "$CODE_DIR/$AUTHOR/$REPO"
 ''
