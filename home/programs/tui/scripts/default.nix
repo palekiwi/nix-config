@@ -6,6 +6,7 @@
   (import ./get_master_branch_name.nix { inherit pkgs; })
   (import ./get_pr_base.nix { inherit pkgs; })
   (import ./get_pr_number.nix { inherit pkgs; })
+  (import ./gh_clone_repo.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
   (import ./set_pr_info.nix { inherit pkgs; })
   (import ./sync_opencode_extra_config.nix { inherit pkgs; })
