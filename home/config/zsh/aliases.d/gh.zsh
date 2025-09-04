@@ -52,8 +52,14 @@ gh_clone() {
     $HOME/.config/zsh/aliases.d/gh/clone_repo.zsh $@
 }
 
+gh_pr_link() {
+    PR_NUMBER=$(get_pr_number)
+    echo "https://github.com/ygt/spabreaks/pull/${PR_NUMBER}" # TODO: get the real GH remote
+}
+
 alias p="gh_prs"
 alias prs="gh_prs"
+alias prl="gh_pr_link"
 alias prw="gh pr view --web"
 alias prc="gh_pr_create"
 alias prcy="gh_pr_create_ygt"
