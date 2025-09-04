@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if [[ $(basename $PWD) -ne "spabreaks" ]]; then
+if [[ $(basename $PWD) != "spabreaks" ]]; then
     echo "Not a spabreaks project."
     exit 1
 fi
