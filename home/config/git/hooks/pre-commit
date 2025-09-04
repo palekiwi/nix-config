@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Global pre-commit hook that calls local repository hooks if they exist
+
+# Check if local pre-commit hook exists
+if [ -f ".git/hooks/pre-commit" ] && [ -x ".git/hooks/pre-commit" ]; then
+    echo "Running local pre-commit hook..."
+    .git/hooks/pre-commit "$@"
+    local_exit_code=$?
+
+    # If local hook fails, exit with its error code
+    if [ $local_exit_code -ne 0 ]; then
+        exit $local_exit_code
+    fi
+fi
+
+# Add any global pre-commit logic here if needed
+
+exit 0

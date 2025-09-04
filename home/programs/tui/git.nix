@@ -22,5 +22,6 @@
   home.file = {
     "${config.xdg.configHome}/git/hooks/post-checkout".source = ../../config/git/hooks/post-checkout;
     "${config.xdg.configHome}/git/hooks/post-merge".source = ../../config/git/hooks/post-merge;
+    "${config.xdg.configHome}/git/hooks/pre-commit".source = ../../config/git/hooks/pre-commit;
   };
 }
