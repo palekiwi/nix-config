@@ -142,6 +142,11 @@ startup_command = "_tmux_git-repo"
 #-------------------
 
 [[session]]
+name = "ava-ygt"
+path = "~/ava-ygt"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "ff_monads"
 path = "~/code/ygt/ff_monads/"
 startup_command = "_tmux_git-repo"
