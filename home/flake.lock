@@ -119,8 +119,8 @@
         "nixpkgs-master": "nixpkgs-master"
       },
       "locked": {
-        "lastModified": 1757052616,
-        "narHash": "sha256-pC8QxL++83adv6WXDADjcN+I4fZR8s8HLXCGhG27atU=",
+        "lastModified": 1757059909,
+        "narHash": "sha256-pNyhQ63fkdid+4O+iUqaLj8RfdnKrT9NsEjhboI2i8A=",
         "path": "/home/pl/code/palekiwi-labs/agents",
         "type": "path"
       },
