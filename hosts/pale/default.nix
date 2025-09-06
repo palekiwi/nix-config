@@ -5,6 +5,7 @@
     [
       ./awesome.nix
       ./bluetooth.nix
+      ./firewall-docker.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./nvidia.nix
