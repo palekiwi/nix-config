@@ -101,7 +101,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "vrs-dev"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/vrs-dev"
+startup_command = "_tmux_ygt_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
