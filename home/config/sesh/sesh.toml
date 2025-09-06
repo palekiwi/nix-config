@@ -11,7 +11,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "spabreaks-dev"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/spabreaks-dev"
+startup_command = "_tmux_ygt_spabreaks_dev"
 
 [[session]]
 name = "spabreaks-console"
