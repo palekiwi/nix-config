@@ -22,6 +22,7 @@ pkgs.writeShellScriptBin "_tmux_git-repo" ''
   tmux select-window -t $session:1
 
   if [[ -n "$OPENCODE_WORKSPACE" ]]; then
-      tmux send-keys -t $session:3 'opencode --port 80 --hostname 0.0.0.0' C-m
+      exec_cmd=''${OPENCODE_CMD:-opencode}
+      tmux send-keys -t $session:3 "$exec_cmd --port 80 --hostname 0.0.0.0" C-m
   fi
 ''
