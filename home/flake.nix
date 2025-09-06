@@ -26,6 +26,7 @@
           overlays = [
             (final: prev: {
               opencode = wrappedOpencode.packages.x86_64-linux.opencode;
+              opencode-rust = wrappedOpencode.packages.x86_64-linux.opencode-rust;
               test-runner-mcp = test-runner-mcp.packages.x86_64-linux.default;
             })
           ];

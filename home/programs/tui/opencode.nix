@@ -1,5 +1,9 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [ opencode test-runner-mcp];
+  home.packages = with pkgs; [
+    opencode
+    opencode-rust
+    test-runner-mcp
+  ];
 }
