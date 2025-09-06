@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "_tmux_git-repo" ''
-  #!/usr/bin/env bash
-
   if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
       echo "Error: Not in a git repository"
       exit 1
