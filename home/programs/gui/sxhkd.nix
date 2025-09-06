@@ -54,9 +54,9 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "~/.dmenu/tmux --tmux";
+      "super + Return" = "dmenu_tmux --tmux";
       "super + Return + control" = "~/.dmenu/agents";
-      "super + Return + shift" = "~/.dmenu/tmux";
+      "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
 
       "super + l" = "dmenu_activity_log";
@@ -100,7 +100,6 @@ in
       "Print" = screenshot;
       "XF86HomePage; n" = "~/.dmenu/run";
       "XF86HomePage; p" = "~/.dmenu/process";
-      "XF86HomePage; t" = "~/.dmenu/tmux";
       "XF86HomePage; x" = "dmenu_xrandr";
       "XF86Search" = "rofi -show window";
 
