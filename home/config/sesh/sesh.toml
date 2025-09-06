@@ -49,7 +49,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "blog-dev"
 path = "~/code/ygt/blog/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/blog-dev"
+startup_command = "_tmux_ygt_blog_dev"
 
 #-------------------
 #   --- sales ---
@@ -62,7 +62,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "sales-dev"
 path = "~/code/ygt/sales/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
+startup_command = "_tmux_ygt_sales_dev"
 
 #-------------------
 #  --- wss-data ---
@@ -75,7 +75,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "wss-data-dev"
 path = "~/code/ygt/wss-data/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
+startup_command = "_tmux_ygt_wss_data_dev"
 
 #-------------------
 # --- my-account ---
@@ -88,7 +88,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "my-account-dev"
 path = "~/code/ygt/my-account/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
+startup_command = "_tmux_ygt_my_account_dev"
 
 #-------------------
 #    --- VRS ---
