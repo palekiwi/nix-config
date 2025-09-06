@@ -6,5 +6,5 @@
   home.file.".dmenu/process".source = ../../scripts/dmenu/dmenu_process.sh;
   home.file.".dmenu/run".source = ../../scripts/dmenu/dmenu_run.sh;
   home.file.".dmenu/tmux".source = ../../scripts/dmenu/dmenu_tmux.sh;
-  home.file.".dmenu/xrandr".source = ../../scripts/dmenu/dmenu_xrandr.sh;
+
 }

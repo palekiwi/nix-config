@@ -101,7 +101,7 @@ in
       "XF86HomePage; n" = "~/.dmenu/run";
       "XF86HomePage; p" = "~/.dmenu/process";
       "XF86HomePage; t" = "~/.dmenu/tmux";
-      "XF86HomePage; x" = "~/.dmenu/xrandr";
+      "XF86HomePage; x" = "dmenu_xrandr";
       "XF86Search" = "rofi -show window";
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
