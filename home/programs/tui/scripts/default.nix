@@ -2,6 +2,7 @@
 
 [
   (import ./dmenu_hass.nix { inherit pkgs lib config; })
+  (import ./docker_ps_short.nix { inherit pkgs lib config; })
   (import ./generate_port_from_path.nix { inherit pkgs; })
   (import ./get_master_branch_name.nix { inherit pkgs; })
   (import ./get_pr_base.nix { inherit pkgs; })
