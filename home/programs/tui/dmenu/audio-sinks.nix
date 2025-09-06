@@ -2,7 +2,6 @@
 
 pkgs.writers.writeNuBin "dmenu_audio-sinks" ''
   let options_pale = ["TOZO OpenBuds", "Speaker"]
-  let launcher = 'dmenu -i -nb #1d1f21 -nf #D3D7CF -sb #5294e2 -sf #2f343f -fn 11'
 
   if (hostname | str trim) == "pale" {
     let dmenu_options = ["-i" "-nb" "#1d1f21" "-nf" "#D3D7CF" "-sb" "#5294e2" "-sf" "#2f343f" "-fn" "11" "-p" "PulseAudio Sink: "]
