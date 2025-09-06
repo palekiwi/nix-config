@@ -158,8 +158,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1757136370,
-        "narHash": "sha256-92dfc3urtoQnLb4E2JvkfEYIa30SkX5M2znfTXSRj24=",
+        "lastModified": 1757155298,
+        "narHash": "sha256-SQcIquC2OSCMnru0nJYYHiTj0+Ay2Yh0NpK3/ULiWqk=",
         "path": "/home/pl/code/palekiwi-labs/test-runner-mcp",
         "type": "path"
       },
@@ -177,8 +177,8 @@
         "nixpkgs-master": "nixpkgs-master"
       },
       "locked": {
-        "lastModified": 1757081908,
-        "narHash": "sha256-+EZMEHREcyxp3mP+KxrRNmBo66qE6aWojV86/hhS6aI=",
+        "lastModified": 1757156121,
+        "narHash": "sha256-nwWyZuUKCqctntne5AoEtdiSHKoZJvPJQrz4X29bI5c=",
         "path": "/home/pl/code/palekiwi-labs/agents",
         "type": "path"
       },
