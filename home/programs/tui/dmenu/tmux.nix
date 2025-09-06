@@ -1,28 +1,40 @@
 { pkgs }:
 
-pkgs.writeShellScriptBin "dmenu_tmux" ''
-  flags=$@
+pkgs.writers.writeNuBin "dmenu_tmux" ''
+  def main [
+    --tmux
+  ] {
+    let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" "Tmux sessions"]
 
-  launcher='rofi -dmenu -i -theme-str "window { width: 40%; location: center; }"'
+    let sessions = if $tmux {
+      run-external "sesh" "list" "--json" "--tmux" | from json
+    } else {
+      run-external "sesh" "list" "--json" | from json
+    }
 
-  options=$(sesh list --json $flags \
-      | jq -r '.[] | (.Score|tostring) + "," + .Name + "," + .Src + "," + .Path + "," + (.Attached | if . > 0 then "*" else " " end)' \
-      | sort -k 2,2 -k 4,4 -t"," --stable --unique \
-      | sort -nk 1 -t"," --stable \
-      | cut -d',' -f2- \
-      | column -s"," -t)
+    let options = ($sessions 
+      | each { |session| 
+          let attached_marker = if $session.Attached > 0 { "*" } else { " " }
+          $"($session.Name),($session.Src),($session.Path),($attached_marker)"
+        }
+      | sort-by {|item| $item | split row "," | get 0}
+      | sort-by {|item| $item | split row "," | get 2}
+      | uniq
+      | str join "\n"
+      | run-external "column" "-s," "-t")
 
-  choice=$(echo "$(printf '%s\n' "''${options[@]}")" | eval "$launcher -p 'Tmux sessions'")
+    let choice = ($options | run-external "rofi" ...$launcher_args)
 
-  [[ -z "$choice" ]] && { exit 1; }
+    if ($choice | is-empty) {
+      exit 1
+    }
 
-  session_name=$(echo "$choice" | cut -d' ' -f1)
+    let session_name = ($choice | split row " " | get 0)
 
-  if [[ $choice =~ \*$ ]]; then
-      # session is already attached, focus it
-      wmctrl -Fa $session_name
-  else
-      # session is not attached, open a terminal and attach
-      kitty -T $session_name -e sesh connect $session_name
-  fi
+    if ($choice | str ends-with "*") {
+      run-external "wmctrl" "-Fa" $session_name
+    } else {
+      run-external "kitty" "-T" $session_name "-e" "sesh" "connect" $session_name
+    }
+  }
 ''
