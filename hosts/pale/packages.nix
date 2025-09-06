@@ -10,6 +10,7 @@
     inotify-tools
     lm_sensors
     neovim
+    nushell
     sysstat
     tree
     wget
