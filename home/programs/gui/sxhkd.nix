@@ -112,7 +112,7 @@ in
       "XF86Launch7; w" = ''${typeText} "[WIP] "'';
 
       "XF86Launch8" = "dmenu_hass";
-      "XF86Launch9" = "~/.dmenu/audio-sinks";
+      "XF86Launch9" = "dmenu_audio-sinks";
     };
   };
 }
