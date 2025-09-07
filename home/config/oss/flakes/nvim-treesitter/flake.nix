@@ -13,6 +13,7 @@
       in
       {
         devShells.default = pkgs.mkShell {
+          name = "nvim-treesitter-dev-shell";
           buildInputs = with pkgs; [
             # Required linting and formatting tools
             luajitPackages.luacheck
