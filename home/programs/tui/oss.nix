@@ -8,6 +8,7 @@ let
   commonOssFiles = {
     "code/oss/.gitconfig".source = ../../config/oss/.gitconfig;
     "code/oss/.gitignore".text = import ../../config/oss/.gitignore.nix;
+    "code/oss/flakes".source = ../../config/oss/flakes;
   };
 in
 {
