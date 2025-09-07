@@ -7,6 +7,7 @@
   (import ./get_pr_base.nix { inherit pkgs; })
   (import ./get_pr_number.nix { inherit pkgs; })
   (import ./gh_clone_repo.nix { inherit pkgs; })
+  (import ./gh_pr_from_branch_name.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
   (import ./opencode-container-name.nix { inherit pkgs; })
   (import ./set_pr_info.nix { inherit pkgs; })
