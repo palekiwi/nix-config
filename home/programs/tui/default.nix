@@ -10,6 +10,7 @@
     ./gh.nix
     ./git.nix
     ./opencode.nix
+    ./oss.nix
     ./scripts.nix
     ./sesh.nix
     ./ssh.nix
