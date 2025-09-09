@@ -1,32 +1,22 @@
 { pkgs, ... }:
 
 pkgs.writers.writeNuBin "gh_prs" ''
-  def set_pr_env [pr_num: int, base_ref?: string] {
-      if ($base_ref | is-empty) {
-          $env.GIT_BASE = null
-          $env.GH_PR_NUMBER = null
-      } else {
-          $env.GIT_BASE = $base_ref
-          $env.GH_PR_NUMBER = $pr_num
-      }
-  }
-
   def build_pr_tree [prs: list] {
-      # Get the default branch (main/master)
+      # Get the default branch
       let default_branch_result = (do { gh repo view --json defaultBranchRef } | complete)
       let default_branch = if $default_branch_result.exit_code == 0 {
           ($default_branch_result.stdout | from json).defaultBranchRef.name
       } else {
-          "main"
+          "master"
       }
 
       # Build a map of branch -> PR for quick lookup
-      let branch_to_pr = ($prs | reduce -f {} { |pr, acc| 
-          $acc | upsert $pr.headRefName $pr 
+      let branch_to_pr = ($prs | reduce -f {} { |pr, acc|
+          $acc | upsert $pr.headRefName $pr
       })
 
       # Find root PRs (those that target the default branch or non-PR branches)
-      let root_prs = ($prs | where { |pr| 
+      let root_prs = ($prs | where { |pr|
           $pr.baseRefName == $default_branch or ($branch_to_pr | get -i $pr.baseRefName) == null
       })
 
@@ -35,20 +25,20 @@ pkgs.writers.writeNuBin "gh_prs" ''
           if ($pr.headRefName in $visited) {
               return []
           }
-          
+
           let new_visited = ($visited | append $pr.headRefName)
-          let children = ($branch_map | columns | where { |branch| 
+          let children = ($branch_map | columns | where { |branch|
               ($branch_map | get $branch).baseRefName == $pr.headRefName
           } | each { |branch|
               build_subtree ($branch_map | get $branch) $branch_map $new_visited ($depth + 1)
           } | flatten)
-          
+
           [{pr: $pr, depth: $depth, children: $children}]
       }
 
       # Build the full tree
-      let tree = ($root_prs | each { |pr| 
-          build_subtree $pr $branch_to_pr [] 0 
+      let tree = ($root_prs | each { |pr|
+          build_subtree $pr $branch_to_pr [] 0
       } | flatten)
 
       $tree
@@ -57,12 +47,12 @@ pkgs.writers.writeNuBin "gh_prs" ''
   def format_tree_entry [entry: record] {
       let pr = $entry.pr
       let depth = $entry.depth
-      
+
       # Create indentation
-      let indent = if $depth == 0 { "" } else { 
+      let indent = if $depth == 0 { "" } else {
           (0..($depth - 1) | each { "│ " } | str join) + "├─"
       }
-      
+
       # Format labels
       let labels_str = if ($pr.labels | is-not-empty) {
           let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
@@ -72,10 +62,10 @@ pkgs.writers.writeNuBin "gh_prs" ''
       }
 
       let green = "\u{001b}[32m"
-      let reset = "\u{001b}[0m" 
+      let reset = "\u{001b}[0m"
       let gray = "\u{001b}[90m"
       let tree_color = "\u{001b}[37m"
-      
+
       $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray)\)($reset)"
   }
 
@@ -85,7 +75,7 @@ pkgs.writers.writeNuBin "gh_prs" ''
           let children = ($entry.children | each { |child| flatten_entry $child } | flatten)
           $current | append $children
       }
-      
+
       $tree | each { |entry| flatten_entry $entry } | flatten
   }
 
@@ -112,7 +102,6 @@ pkgs.writers.writeNuBin "gh_prs" ''
           let checkout_result = (do { gh pr checkout $pr_number } | complete)
           if $checkout_result.exit_code == 0 {
               print $"Successfully checked out PR #($pr_number)"
-              # set_pr_env $pr_number $base_branch
           } else {
               print $"Failed to checkout PR #($pr_number)"
               exit 1
@@ -157,7 +146,6 @@ pkgs.writers.writeNuBin "gh_prs" ''
       let checkout_result = (do { gh pr checkout $pr_number } | complete)
       if $checkout_result.exit_code == 0 {
           print $"Successfully checked out PR #($pr_number)"
-          # set_pr_env $pr_number $base_branch
       } else {
           print $"Failed to checkout PR #($pr_number)"
           exit 1
