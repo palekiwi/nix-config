@@ -7,5 +7,7 @@
 
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
-  sops.secrets."jira-cli-token" = { owner = "pl"; };
+  sops.secrets."jira/token" = { owner = "pl"; };
+  sops.secrets."jira/email" = { owner = "pl"; };
+  sops.secrets."github/prompt-assist" = { owner = "pl"; };
 }

@@ -17,13 +17,15 @@ let
     sessionName = ''#[fg=color7,bold]#(echo "#{session_name}")'';
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
     gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
-    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/pr-info ] && source .git/pr-info && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=white,bold]$GIT_BASE" || echo "")'';
+    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/pr-info ] && source .git/pr-info && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=$([ "$GIT_BASE_AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$GIT_BASE" || echo "")'';
   };
 
   statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} '';
 in
 {
-  home.packages = with pkgs; [ tmux ];
+  home.packages = with pkgs; [ 
+    tmux 
+  ] ++ (import ./tmux { inherit pkgs; });
 
   programs.tmux = {
     baseIndex = 1;

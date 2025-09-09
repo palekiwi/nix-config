@@ -5,10 +5,12 @@
     [
       ./awesome.nix
       ./bluetooth.nix
+      ./firewall-docker.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./nvidia.nix
       ./ollama.nix
+      ./open-webui.nix
       ./packages.nix
       ./picom.nix
       ./sound.nix

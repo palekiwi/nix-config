@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-source ~/.config/zsh/aliases.d/gh/gh_prs.zsh
-
 gh_pr_create() {
     title=$1
     body=$2
@@ -48,8 +46,14 @@ gh_pr_create_ygt() {
     gh pr create --title "$title" --body "$body" $@
 }
 
+gh_pr_link() {
+    PR_NUMBER=$(get_pr_number)
+    echo "https://github.com/ygt/spabreaks/pull/${PR_NUMBER}" # TODO: get the real GH remote
+}
+
 alias p="gh_prs"
 alias prs="gh_prs"
+alias prl="gh_pr_link"
 alias prw="gh pr view --web"
 alias prc="gh_pr_create"
 alias prcy="gh_pr_create_ygt"

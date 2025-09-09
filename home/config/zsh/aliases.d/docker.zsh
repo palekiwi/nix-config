@@ -3,4 +3,4 @@
 alias d="docker"
 alias dc="docker-compose"
 alias dcd="docker-compose down"
-alias dps="docker ps"
+alias dps="docker_ps_short"

@@ -54,13 +54,16 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "~/.dmenu/tmux --tmux";
-      "super + Return + control" = "~/.dmenu/tmux";
+      "super + Return" = "dmenu_tmux --tmux";
+      "super + Return + control" = "~/.dmenu/agents";
+      "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
+
+      "super + l" = "dmenu_activity_log";
+      "super + l + control" = "dmenu_activity_log --pr";
 
       "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
-      # "super + space; n; e" = "${switchToSession} elia";
       "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} notes";
       "super + space; n; v" = "${switchToSession} nvim";
@@ -77,7 +80,7 @@ in
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
       "super + 3" = "rofi-pass --root ~/.password-store 2> /tmp/rofi-pass.log";
-      "super + Delete" = "~/.dmenu/quit";
+      "super + Delete" = "dmenu_quit";
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
       "super + control + Escape" = "xscreensaver-command -a";
@@ -95,10 +98,9 @@ in
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";
       "shift + control + XF86AudioRaiseVolume" = "cmus-remote -v 75%; notify-send -t 800 'Cmus Vol:' 75%";
       "Print" = screenshot;
-      "XF86HomePage; p" = "~/.dmenu/process";
-      "XF86HomePage; x" = "~/.dmenu/xrandr";
       "XF86HomePage; n" = "~/.dmenu/run";
-      "XF86HomePage; t" = "~/.dmenu/tmux";
+      "XF86HomePage; p" = "~/.dmenu/process";
+      "XF86HomePage; x" = "dmenu_xrandr";
       "XF86Search" = "rofi -show window";
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
@@ -106,9 +108,10 @@ in
       "XF86Launch7; l; s" = ''${typeText} "localhost:3030"'';
       "XF86Launch7; p" = autostagedPr;
       "XF86Launch7; s" = "${typeText} staging.spabreaks.com";
+      "XF86Launch7; w" = ''${typeText} "[WIP] "'';
 
       "XF86Launch8" = "dmenu_hass";
-      "XF86Launch9" = "~/.dmenu/audio-sinks";
+      "XF86Launch9" = "dmenu_audio-sinks";
     };
   };
 }

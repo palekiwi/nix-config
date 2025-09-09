@@ -6,12 +6,12 @@
 [[session]]
 name = "spabreaks"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "spabreaks-dev"
 path = "~/code/ygt/spabreaks/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/spabreaks-dev"
+startup_command = "_tmux_ygt_spabreaks_dev"
 
 [[session]]
 name = "spabreaks-console"
@@ -36,20 +36,33 @@ startup_command = "make psql"
 [[session]]
 name = "ygt-env"
 path = "~/code/ygt-env"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 #-------------------
-#  --- sales ---
+#   --- blog ---
+#-------------------
+[[session]]
+name = "blog"
+path = "~/code/ygt/blog/"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "blog-dev"
+path = "~/code/ygt/blog/"
+startup_command = "_tmux_ygt_blog_dev"
+
+#-------------------
+#   --- sales ---
 #-------------------
 [[session]]
 name = "sales"
 path = "~/code/ygt/sales/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "sales-dev"
 path = "~/code/ygt/sales/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
+startup_command = "_tmux_ygt_sales_dev"
 
 #-------------------
 #  --- wss-data ---
@@ -57,12 +70,12 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/sales-dev"
 [[session]]
 name = "wss-data"
 path = "~/code/ygt/wss-data/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "wss-data-dev"
 path = "~/code/ygt/wss-data/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
+startup_command = "_tmux_ygt_wss_data_dev"
 
 #-------------------
 # --- my-account ---
@@ -70,12 +83,12 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/wss-data-dev"
 [[session]]
 name = "my-account"
 path = "~/code/ygt/my-account/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "my-account-dev"
 path = "~/code/ygt/my-account/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
+startup_command = "_tmux_ygt_my_account_dev"
 
 #-------------------
 #    --- VRS ---
@@ -83,12 +96,12 @@ startup_command = "~/nix-config/home/scripts/tmux/ygt/my-account-dev"
 [[session]]
 name = "vrs"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "vrs-dev"
 path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "~/nix-config/home/scripts/tmux/ygt/vrs-dev"
+startup_command = "_tmux_ygt_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
@@ -102,55 +115,60 @@ startup_command = "make psql"
 [[session]]
 name = "awesome"
 path = "~/.config/awesome/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "dotfiles"
 path = "~/dotfiles"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "nix-config"
 path = "~/nix-config"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "nvim"
 path = "~/.config/nvim/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "config-opencode"
+path = "~/.config/agent-opencode/"
+startup_command = "_tmux_git-repo"
 
 #-------------------
 #   --- Repos ---
 #-------------------
 
 [[session]]
+name = "ava-ygt"
+path = "~/ava-ygt"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "ff_monads"
 path = "~/code/ygt/ff_monads/"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "rails-utils.nvim"
 path = "~/code/neovim/plugins/rails-utils.nvim"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "rspec-runner"
 path = "~/code/neovim/plugins/rspec-runner.nvim"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "homelab"
 path = "~/code/homelab"
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"
 
 #-------------------
 #   --- Utils ---
 #-------------------
-
-[[session]]
-name = "elia"
-path = "~/code/nix/elia"
-startup_command = "nix develop -c ./venv/bin/elia"
 
 [[session]]
 name = "notes"
@@ -158,8 +176,9 @@ path = "~/Nextcloud/Notes"
 startup_command = "nvim index.md"
 
 [[session]]
-name = "ollama"
-startup_command = "ollama serve"
+name = "notes-pl"
+path = "~/Nextcloud-pl/Notes"
+startup_command = "nvim index.md"
 
 #-------------------
 #    --- ssh ----
@@ -174,4 +193,4 @@ startup_command = "ssh haze -A"
 #-------------------
 
 [default_session]
-startup_command = "~/nix-config/home/scripts/tmux/git-repo"
+startup_command = "_tmux_git-repo"

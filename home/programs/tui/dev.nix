@@ -12,9 +12,10 @@
     nixpkgs-fmt
     nodePackages.prettier
     nodePackages.typescript-language-server
-    nodejs_22
+    nodejs_24
     python3
     rustup
+    tree-sitter
     universal-ctags
     vscode-langservers-extracted
   ];

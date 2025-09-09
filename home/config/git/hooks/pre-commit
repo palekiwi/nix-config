@@ -1,58 +1,19 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-if [[ $(basename $PWD) -ne "spabreaks" ]]; then
-    echo "Not a spabreaks project."
-    exit 1
-fi
+# Global pre-commit hook that calls local repository hooks if they exist
 
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# Check if local pre-commit hook exists
+if [ -f ".git/hooks/pre-commit" ] && [ -x ".git/hooks/pre-commit" ]; then
+    echo "Running local pre-commit hook..."
+    .git/hooks/pre-commit "$@"
+    local_exit_code=$?
 
-if [ "$BRANCH" = "master" ] || [ "$BRANCH" = "main" ]; then
-    echo "ERROR: You are trying to commit directly to the $BRANCH branch, which is not allowed."
-    echo "Please create a feature branch and use pull requests instead."
-    exit 1
-fi
-
-if git grep --cached -l -E -e "f(it|describe|context) ['\"]" -e "Pry::ColorPrinter\.pp\(\w*)"; then
-    echo -e "\n"
-    echo 'Commit contains focused tests or puts statements.'
-    exit 1
-fi
-
-if git grep --cached -l -E -e "binding.pry"; then
-    echo -e "\n"
-    echo 'Commit contains debugger statements.'
-    exit 1
-fi
-
-# Run Rubocop on staged .rb files
-rb_files=$(git diff --cached --name-only --diff-filter=ACM | grep ".rb$")
-
-cmd="docker-compose exec test rubocop"
-
-if [[ $rb_files ]]; then
-    if ! $cmd $rb_files; then
-        echo "Rubocop failed on staged file. Please fix the errors and try again."
-        exit 1
+    # If local hook fails, exit with its error code
+    if [ $local_exit_code -ne 0 ]; then
+        exit $local_exit_code
     fi
 fi
 
-ts_files=$(git diff --cached --name-only --diff-filter=ACM | grep ".ts$")
-prettier_cmd="prettier -l"
+# Add any global pre-commit logic here if needed
 
-if [[ $ts_files ]]; then
-    if ! $prettier_cmd $ts_files; then
-        echo "Prettier failed on a staged file. Please fix the errors and try again."
-        exit 1
-    fi
-fi
-
-erb_files=$(git diff --cached --name-only --diff-filter=ACM | grep ".erb$")
-erb_cmd="docker exec spabreaks bundle exec erb_lint --lint-all"
-
-if [[ $erb_files ]]; then
-    if ! $erb_cmd; then
-        echo "Erb failed on a staged file. Please fix the errors and try again."
-        exit 1
-    fi
-fi
+exit 0

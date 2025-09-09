@@ -6,27 +6,6 @@ git_grep_focused_test() {
 
 alias gfoc="git_grep_focused_test"
 
-set_pr_base() {
-    export GIT_BASE=$1
-}
-
-set_pr_base_from_gh() {
-    output=$(gh pr view --json baseRefName,number)
-    branch=$(echo $output | jq -r .baseRefName)
-    number=$(echo $output | jq -r .number)
-
-    if [ -e $branch ]; then
-        unset GIT_BASE
-        unset GH_PR_NUMBER
-    else
-        export GIT_BASE=$branch
-        export GH_PR_NUMBER=$number
-    fi
-}
-
-alias spr="set_pr_base"
-alias sgh="set_pr_base_from_gh"
-
 git_switch_create_ygt() {
     if [ $# -lt 2 ]; then
         echo "Need at least 2 arguments"
@@ -48,8 +27,16 @@ git_switch_create_variant() {
     git switch -c $(git branch --show-current)--$@
 }
 
+git_switch_create_wip() {
+    git switch -c $(git branch --show-current)--wip-palekiwi
+}
+
 git_switch_variant() {
     git switch $(git branch --show-current)--$@
+}
+
+git_switch_wip() {
+    git switch $(git branch --show-current)--wip-palekiwi
 }
 
 git_merge_variant() {
@@ -58,14 +45,6 @@ git_merge_variant() {
 
 git_branch_delete_variant() {
     git branch -d $(git branch --show-current)--$@
-}
-
-git_get_master_branch_name() {
-    git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
-}
-
-git_branch_name_to_clipboard() {
-    git branch --show-current | ctc
 }
 
 alias gac="git add . && git commit"
@@ -97,12 +76,18 @@ alias gsar="git_submodule_add_role"
 alias gsc="git switch -c"
 alias gscy="git_switch_create_ygt"
 alias gscv="git_switch_create_variant"
+alias gscw="git_switch_create_wip"
+alias gmw='git merge --squash $(git branch --show-current)--wip-palekiwi'
+alias gbdw='git branch -d $(git branch --show-current)--wip-palekiwi'
+alias gbDw='git branch -D $(git branch --show-current)--wip-palekiwi'
+alias gbDrw='git push origin --delete $(git branch --show-current)--wip-palekiwi'
+alias gsw="git_switch_wip"
 alias gsv="git_switch_variant"
 alias gbdv="git_branch_delete_variant"
 alias gsd="git switch dev"
-alias gsm="git_get_master_branch_name | xargs git switch && git pull"
-alias gsb='gs $GIT_BASE'
-alias gmb='git_source_pr_info && git merge $GIT_BASE --no-edit'
+alias gsm="get_master_branch_name | xargs git switch && git pull"
+alias gsb='gs $(get_pr_base)'
+alias gmb='git_source_pr_info && git merge $(get_pr_base) --no-edit'
 alias gmv='git_merge_variant'
 alias gsr="git_set_remote"
 alias gst="git status"
@@ -113,18 +98,19 @@ alias gbn="git rev-parse --abbrev-ref HEAD"
 alias gbnc="git_branch_name_to_clipboard"
 alias gfm="git_fetch_master"
 alias gfb="git_fetch_base"
-alias gub='git_source_pr_info && git_fetch_base && git merge $GIT_BASE --no-edit'
+alias gub='git_source_pr_info && git_fetch_base && git merge $(get_pr_base) --no-edit' # TODO: improve error handling
 
 git_source_pr_info() {
-    source .git/pr-info
+    set_pr_info
 }
 
 git_fetch_base() {
-    git fetch origin && git fetch origin ${GIT_BASE}:${GIT_BASE}
+    local base_branch=$(get_pr_base)
+    git fetch origin && git fetch origin ${base_branch}:${base_branch}
 }
 
 git_fetch_master() {
-    branch=$(git_get_master_branch_name)
+    branch=$(get_master_branch_name)
     git fetch origin && git fetch origin ${branch}:${branch}
 }
 

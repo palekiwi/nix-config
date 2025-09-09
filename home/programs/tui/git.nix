@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   home.packages = with pkgs; [ git gitui ];
@@ -11,26 +11,17 @@
       key = "848E5BB30B98EB1D2714BCCB44766C74B3546A52";
       signByDefault = true;
     };
-    ignores = [
-      "*.swp"
-      ".direnv"
-      ".envrc"
-      ".gutctags"
-      "build"
-      "gemset.nix"
-      "log/test.log.0"
-      "tags"
-      "tags.lock"
-      "tags.temp"
-      "tmux-client-*"
-      "vendor"
-    ];
-    # hooks = {
-    #   pre-commit = ../config/git/hooks/pre-commit;
-    # };
+    ignores = import ./gitignores.nix;
     extraConfig = {
       init.defaultBranch = "master";
-      pull.rebase = false;
+      pull.rebase = true;
+      core.hooksPath = "${config.xdg.configHome}/git/hooks";
     };
+  };
+
+  home.file = {
+    "${config.xdg.configHome}/git/hooks/post-checkout".source = ../../config/git/hooks/post-checkout;
+    "${config.xdg.configHome}/git/hooks/post-merge".source = ../../config/git/hooks/post-merge;
+    "${config.xdg.configHome}/git/hooks/pre-commit".source = ../../config/git/hooks/pre-commit;
   };
 }

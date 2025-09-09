@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/claude/code/ygt/spabreaks",
+        "/home/claude/code/palekiwi-labs",
+        "/home/claude/Documents",
+        "/home/claude/Nextcloud"
+      ]
+    },
+    "neo4j-aura": {
+      "command": "uvx",
+      "args": ["mcp-neo4j-cypher@0.3.0", "--transport", "stdio"],
+      "env": {
+        "NEO4J_URI": "bolt://10.0.2.2:7687",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "ZJ7vSaUtJJyr0hgi",
+        "NEO4J_DATABASE": "neo4j"
+      }
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+
+        "--repository",
+        "/home/claude/code/ygt/spabreaks",
+
+        "--repository",
+        "/home/claude/code/palekiwi-labs/zero-to-prod",
+
+        "--repository",
+        "/home/claude/code/palekiwi-labs/prompt-assist",
+
+        "--repository",
+        "/home/claude/code/palekiwi-labs/fixture-prompt-assist",
+
+        "--repository",
+        "/home/claude/code/palekiwi-labs/prctl"
+      ]
+    }
+  }
+}
