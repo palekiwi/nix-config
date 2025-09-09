@@ -73,10 +73,9 @@ def format_tree_entry [entry: record] {
     let green = "\u{001b}[32m"
     let reset = "\u{001b}[0m" 
     let gray = "\u{001b}[90m"
-    let cyan = "\u{001b}[36m"
     let tree_color = "\u{001b}[37m"
     
-    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray) → ($cyan)($pr.baseRefName)($gray)\)($reset)"
+    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray)\)($reset)"
 }
 
 def flatten_tree [tree: list] {
@@ -153,7 +152,6 @@ def main [pr_string?: string] {
 
     # Extract PR number from selection (handle tree prefixes)
     let pr_number = ($selected | parse --regex '(\d+):' | get capture0.0 | into int)
-    let base_branch = ($selected | parse --regex ' → ([^)]+)\)' | get capture0.0)
 
     let checkout_result = (do { gh pr checkout $pr_number } | complete)
     if $checkout_result.exit_code == 0 {
