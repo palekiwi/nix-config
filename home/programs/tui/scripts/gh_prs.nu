@@ -10,6 +10,85 @@ def set_pr_env [pr_num: int, base_ref?: string] {
     }
 }
 
+def build_pr_tree [prs: list] {
+    # Get the default branch (main/master)
+    let default_branch_result = (do { gh repo view --json defaultBranchRef } | complete)
+    let default_branch = if $default_branch_result.exit_code == 0 {
+        ($default_branch_result.stdout | from json).defaultBranchRef.name
+    } else {
+        "main"
+    }
+
+    # Build a map of branch -> PR for quick lookup
+    let branch_to_pr = ($prs | reduce -f {} { |pr, acc| 
+        $acc | upsert $pr.headRefName $pr 
+    })
+
+    # Find root PRs (those that target the default branch or non-PR branches)
+    let root_prs = ($prs | where { |pr| 
+        $pr.baseRefName == $default_branch or ($branch_to_pr | get -i $pr.baseRefName) == null
+    })
+
+    # Recursive function to build tree structure
+    def build_subtree [pr: record, branch_map: record, visited: list, depth: int] {
+        if ($pr.headRefName in $visited) {
+            return []
+        }
+        
+        let new_visited = ($visited | append $pr.headRefName)
+        let children = ($branch_map | columns | where { |branch| 
+            ($branch_map | get $branch).baseRefName == $pr.headRefName
+        } | each { |branch|
+            build_subtree ($branch_map | get $branch) $branch_map $new_visited ($depth + 1)
+        } | flatten)
+        
+        [{pr: $pr, depth: $depth, children: $children}]
+    }
+
+    # Build the full tree
+    let tree = ($root_prs | each { |pr| 
+        build_subtree $pr $branch_to_pr [] 0 
+    } | flatten)
+
+    $tree
+}
+
+def format_tree_entry [entry: record] {
+    let pr = $entry.pr
+    let depth = $entry.depth
+    
+    # Create indentation
+    let indent = if $depth == 0 { "" } else { 
+        (0..($depth - 1) | each { "│   " } | str join) + "├── "
+    }
+    
+    # Format labels
+    let labels_str = if ($pr.labels | is-not-empty) {
+        let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
+        $" \u{001b}[35m[($label_names)]\u{001b}[0m"
+    } else {
+        ""
+    }
+
+    let green = "\u{001b}[32m"
+    let reset = "\u{001b}[0m" 
+    let gray = "\u{001b}[90m"
+    let cyan = "\u{001b}[36m"
+    let tree_color = "\u{001b}[37m"
+    
+    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray) → ($cyan)($pr.baseRefName)($gray)\)($reset)"
+}
+
+def flatten_tree [tree: list] {
+    def flatten_entry [entry: record] {
+        let current = [$entry]
+        let children = ($entry.children | each { |child| flatten_entry $child } | flatten)
+        $current | append $children
+    }
+    
+    $tree | each { |entry| flatten_entry $entry } | flatten
+}
+
 def main [pr_string?: string] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
@@ -59,33 +138,21 @@ def main [pr_string?: string] {
         return
     }
 
-    # Format PR list for display
-    let formatted_prs = ($prs | each { |pr|
-        let labels_str = if ($pr.labels | is-not-empty) {
-            let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
-            $" \u{001b}[35m[($label_names)]\u{001b}[0m"
-        } else {
-            ""
-        }
-
-        let green = "\u{001b}[32m"
-        let reset = "\u{001b}[0m" 
-        let gray = "\u{001b}[90m"
-        let cyan = "\u{001b}[36m"
-        
-        $"($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray) → ($cyan)($pr.baseRefName)($gray)\)($reset)"
-    })
+    # Build and format tree
+    let tree = (build_pr_tree $prs)
+    let flat_tree = (flatten_tree $tree)
+    let formatted_prs = ($flat_tree | each { |entry| format_tree_entry $entry })
 
     # Use fzf for interactive selection
-    let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '^[0-9]*' | xargs gh pr view")
+    let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --tac)
 
     if ($selected | is-empty) {
         print "No PR selected"
         return
     }
 
-    # Extract PR number from selection
-    let pr_number = ($selected | parse --regex '^(\d+):' | get capture0.0 | into int)
+    # Extract PR number from selection (handle tree prefixes)
+    let pr_number = ($selected | parse --regex '(\d+):' | get capture0.0 | into int)
     let base_branch = ($selected | parse --regex ' → ([^)]+)\)' | get capture0.0)
 
     let checkout_result = (do { gh pr checkout $pr_number } | complete)
