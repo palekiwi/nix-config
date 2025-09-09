@@ -10,6 +10,7 @@ in
   .envrc
   .gutctags
   .opencode
+  .agents
   AGENTS.md
   gemset.nix
   opencode.json
