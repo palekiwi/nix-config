@@ -59,7 +59,7 @@ def format_tree_entry [entry: record] {
     
     # Create indentation
     let indent = if $depth == 0 { "" } else { 
-        (0..($depth - 1) | each { "│   " } | str join) + "├── "
+        (0..($depth - 1) | each { "│ " } | str join) + "├─"
     }
     
     # Format labels
