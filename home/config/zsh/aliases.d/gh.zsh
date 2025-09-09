@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-source ~/.config/zsh/aliases.d/gh/gh_prs.zsh
-
 gh_pr_create() {
     title=$1
     body=$2

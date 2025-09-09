@@ -13,10 +13,11 @@ pkgs.writers.writeNuBin "gh_pr_from_branch_name" ''
       | str replace --regex "[-_]" " " --all
       | str capitalize)
 
-    let draft_flag = if $draft { " --draft" } else { "" }
-    let base_flag = if ($base | is-empty) { "" } else { $" --base ($base)" }
+    mut args = ["--title" $title "--body" $body]
+    if $draft { $args = ($args | append "--draft") }
+    if not ($base | is-empty) { $args = ($args | append ["--base" $base]) }
 
     print $"Creating PR with title: ($title)"
-    gh pr create --title $title --body $body $draft_flag $base_flag
+    gh pr create ...$args
   }
 ''

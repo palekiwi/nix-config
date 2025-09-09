@@ -1,0 +1,12 @@
+[user]
+    name = Pawel Lisewski
+    email = dev@palekiwi.com
+    signingkey = 848E5BB30B98EB1D2714BCCB44766C74B3546A52
+[commit]
+    gpgsign = true
+[init]
+    defaultBranch = main
+[pull]
+    rebase = true
+[core]
+    excludesfile = ~/code/oss/.gitignore

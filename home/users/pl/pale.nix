@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -19,6 +19,7 @@
     modules = {
       chrome.enable = true;
       kitty.enable = true;
+      oss.enable = true;
       ygt.enable = true;
     };
   };
