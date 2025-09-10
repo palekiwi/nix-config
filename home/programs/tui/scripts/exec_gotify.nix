@@ -7,8 +7,8 @@ pkgs.writers.writeBashBin "exec_gotify" ''
     exit 1
   fi
 
-  # Store the command for notification
-  cmd="$1"
+  # Store the full command with args for notification
+  cmd="$*"
 
   # Function to send notification on exit
   send_notification() {
