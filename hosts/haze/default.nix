@@ -4,6 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ./gotify.nix
       ../../modules/docker.nix
       ../../modules/server.nix
     ];
