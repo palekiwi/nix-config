@@ -158,14 +158,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1757313089,
-        "narHash": "sha256-h/31NWsXnGsNwxFdWJt47y5XEWrXNlTkk3KxzGZjOhA=",
-        "path": "/home/pl/code/palekiwi-labs/test-runner-mcp",
-        "type": "path"
+        "lastModified": 1757313079,
+        "narHash": "sha256-UpG+m69rt0N5L6SEnKy7NTYVrCkuf3p0xaxthvIbWXM=",
+        "owner": "palekiwi-labs",
+        "repo": "test-runner-mcp",
+        "rev": "ceab68af1948f9213861e8ff4ad98af033164220",
+        "type": "github"
       },
       "original": {
-        "path": "/home/pl/code/palekiwi-labs/test-runner-mcp",
-        "type": "path"
+        "owner": "palekiwi-labs",
+        "repo": "test-runner-mcp",
+        "type": "github"
       }
     },
     "wrappedOpencode": {
@@ -177,14 +180,17 @@
         "nixpkgs-master": "nixpkgs-master"
       },
       "locked": {
-        "lastModified": 1757156393,
-        "narHash": "sha256-xJDKAJdYp5Ys8Xj7SvHaHfND2+GvMaCY95Pr+AxMj3E=",
-        "path": "/home/pl/code/palekiwi-labs/agents",
-        "type": "path"
+        "lastModified": 1757512183,
+        "narHash": "sha256-ps0vwtaIGBEN+tyMkmfzW6F8aZm4iTqnpG67hLEWv8o=",
+        "owner": "palekiwi-labs",
+        "repo": "agents",
+        "rev": "b64591b96266e46a3472eb5887d99f79931150c6",
+        "type": "github"
       },
       "original": {
-        "path": "/home/pl/code/palekiwi-labs/agents",
-        "type": "path"
+        "owner": "palekiwi-labs",
+        "repo": "agents",
+        "type": "github"
       }
     }
   },
