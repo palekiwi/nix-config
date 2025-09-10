@@ -14,9 +14,9 @@ pkgs.writers.writeBashBin "exec_gotify" ''
   send_notification() {
     exit_code=$?
     if [ $exit_code -eq 0 ]; then
-      curl -s -X POST http://0.0.0.0:33222/gotify -H "Content-Type: application/json" -d "{\"title\": \"Command Completed\", \"message\": \"$cmd\"}"
+      curl -s -X POST http://0.0.0.0:33222/gotify -H "Content-Type: application/json" -d "{\"title\": \"Command Completed\", \"message\": \"$cmd\"}" > /dev/null
     elif [ $exit_code -ne 130 ]; then
-      curl -s -X POST http://0.0.0.0:33222/gotify -H "Content-Type: application/json" -d "{\"title\": \"Command Failed\", \"message\": \"$cmd failed with exit code $exit_code\"}"
+      curl -s -X POST http://0.0.0.0:33222/gotify -H "Content-Type: application/json" -d "{\"title\": \"Command Failed\", \"message\": \"$cmd failed with exit code $exit_code\"}" > /dev/null
     fi
     exit $exit_code
   }
