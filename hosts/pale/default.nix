@@ -7,7 +7,6 @@
       ./bluetooth.nix
       ./firewall-docker.nix
       ./hardware-configuration.nix
-      ./gotify.nix
       ./locale.nix
       ./nvidia.nix
       ./ollama.nix
