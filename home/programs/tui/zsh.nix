@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [ zsh ];
@@ -21,9 +21,10 @@
 
     sessionVariables = {
       EDITOR = "nvim";
-      GTK_IM_MODULE="ibus";
-      QT_IM_MODULE="ibus";
-      XMODIFIERS="fcitx";
+    } // lib.optionalAttrs config.gui {
+      GTK_IM_MODULE = "ibus";
+      QT_IM_MODULE = "ibus";
+      XMODIFIERS = "fcitx";
     };
 
     history = {

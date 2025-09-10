@@ -51,6 +51,12 @@
           modules = [ ./users/pl/sayuri.nix ./options ];
           extraSpecialArgs = { inherit inputs; };
         };
+
+        "pl@kyomu" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./users/pl/kyomu.nix ./options ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
+        };
       };
     };
 }

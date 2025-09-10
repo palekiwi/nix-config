@@ -63,8 +63,9 @@ in
       gnumake
       go-task
       google-cloud-sdk
-      slack
       sops
+    ] ++ lib.optionals config.gui [
+      slack
     ];
 
     home.file = commonYgtFiles // allProjectFiles;

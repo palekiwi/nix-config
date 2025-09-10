@@ -1,18 +1,16 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
     acpi
     bat
     cmus
-    dmenu
     eza
     fasd
     fd
     fzf
     home-assistant-cli
     jq
-    maim
     neovim
     pass
     ranger
@@ -26,5 +24,8 @@
     which
     yubikey-manager
     zoxide
+  ] ++ lib.optionals config.gui [
+    dmenu
+    maim
   ];
 }
