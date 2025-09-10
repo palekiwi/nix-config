@@ -1,5 +1,6 @@
 [
   "*.swp"
+  ".agents"
   ".direnv"
   "build"
   "log/test.log.0"
