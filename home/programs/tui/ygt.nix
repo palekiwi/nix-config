@@ -66,7 +66,7 @@ in
       sops
     ] ++ lib.optionals config.gui [
       slack
-    ];
+    ] ++ (import ./scripts/ygt { inherit pkgs; });
 
     home.file = commonYgtFiles // allProjectFiles;
   };
