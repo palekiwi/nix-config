@@ -37,8 +37,9 @@ let
     fi
   '';
 
-  switchToKyomu = pkgs.writeShellScript "switchToKyomu" ''
-    window_name="kyomu"
+  switchToKyomuSession = pkgs.writeShellScript "switchToKyomuSession" ''
+    tmux_session="$1"
+    window_name="kyomu-''${tmux_session}"
 
     if wmctrl -l | grep -q "\b$window_name\b"; then
         wmctrl -Fa $window_name
@@ -65,7 +66,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "${switchToKyomu}";
+      # "super + Return + control" = "${switchToKyomuSession} spabreaks";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
 
@@ -77,6 +78,8 @@ in
       "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} ava-ygt";
       "super + space; n; v" = "${switchToSession} nvim";
+
+      "super + space; k; e" = "${switchToKyomuSession} spabreaks";
 
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
