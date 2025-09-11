@@ -4,6 +4,7 @@
   imports =
     [
       ./firewall-docker.nix
+      ./firewall-ygt.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./packages.nix
