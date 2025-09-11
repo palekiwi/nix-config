@@ -38,13 +38,13 @@ let
   '';
 
   switchToKyomuSession = pkgs.writeShellScript "switchToKyomuSession" ''
-    tmux_session="$1"
-    window_name="kyomu-''${tmux_session}"
+    session_name="$1"
+    window_name="kyomu-''${session_name}"
 
     if wmctrl -l | grep -q "\b$window_name\b"; then
         wmctrl -Fa $window_name
     else
-        kitty -T $window_name -e ssh pl@kyomu -A
+        kitty -T $window_name -e ssh pl@kyomu -A -t "sesh connect $session_name"
     fi
   '';
 
@@ -66,7 +66,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      # "super + Return + control" = "${switchToKyomuSession} spabreaks";
+      "super + Return + control" = "dmenu_remote_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
 

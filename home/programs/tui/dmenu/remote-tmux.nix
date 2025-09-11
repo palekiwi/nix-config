@@ -1,11 +1,17 @@
 { pkgs }:
 
 pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
-  def main [] {
+  def main [
+    --tmux
+  ] {
     let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" "Kyomu tmux sessions"]
 
     let sessions = try {
-      run-external "ssh" "kyomu" "sesh" "list" "--json" | from json
+      if $tmux {
+        run-external "ssh" "kyomu" "sesh" "list" "--json" "--tmux" | from json
+      } else {
+        run-external "ssh" "kyomu" "sesh" "list" "--json" | from json
+      }
     } catch {
       print "Error: Could not connect to kyomu or retrieve sessions"
       exit 1
