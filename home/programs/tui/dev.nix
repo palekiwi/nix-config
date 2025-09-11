@@ -19,4 +19,8 @@
     universal-ctags
     vscode-langservers-extracted
   ];
+
+  home.file.".npmrc".text = ''
+    prefix=~/.npm-global
+  '';
 }
