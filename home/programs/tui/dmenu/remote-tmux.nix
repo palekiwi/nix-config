@@ -4,6 +4,8 @@ pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
   def main [
     --tmux
   ] {
+    run-external "notify-send" "Remote Tmux" "Fetching sessions from kyomu..."
+    
     let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" "Kyomu tmux sessions"]
 
     let sessions = try {
@@ -18,7 +20,7 @@ pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
     }
 
     if ($sessions | is-empty) {
-      print "No tmux sessions found on kyomu"
+      run-external "notify-send" "Remote Tmux" "No sessions found on kyomu"
       exit 1
     }
 
