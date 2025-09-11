@@ -17,6 +17,7 @@
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/sops.nix
+      ../../modules/yubikey-headless.nix
     ];
 
   config = {
