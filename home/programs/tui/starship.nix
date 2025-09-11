@@ -51,15 +51,9 @@
       };
       hostname = {
         ssh_only = true;
-        format = "on [$hostname](bold blue) ";
-        style = "bold green";
-      };
-      username = {
-        format = "[$user](bold yellow) ";
-        show_always = false;
+        format = "[$hostname](bold blue):";
       };
       format = lib.concatStrings [
-        "$username"
         "$hostname"
         ""
         "$directory"
