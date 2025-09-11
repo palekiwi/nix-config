@@ -3,7 +3,7 @@
   users.users.pl = {
     isNormalUser = true;
     description = "pl";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "scard" "plugdev" ];
     shell = pkgs.zsh;
   };
 
