@@ -14,7 +14,7 @@
     };
     wrappedOpencode = {
       url = "github:palekiwi-labs/agents";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
