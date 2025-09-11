@@ -8,7 +8,7 @@
     enableCompletion = true;
     initContent = ''
       source ~/.config/zsh/aliases.d/index.zsh
-      if [[ -z $SSH_CONNECTION ]] || [[ $(hostname) == "kyomu" ]]; then
+      if [[ -z $SSH_CONNECTION ]]; then
         export GPG_TTY="$(tty)"
         export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
         gpgconf --launch gpg-agent
