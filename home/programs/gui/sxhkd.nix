@@ -81,6 +81,10 @@ in
 
       "super + space; k; e" = "${switchToKyomuSession} spabreaks";
       "super + space; k; d" = "${switchToKyomuSession} spabreaks-dev";
+      "super + space; k; c" = "${switchToKyomuSession} spabreaks-console";
+
+      "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
+      "super + space; k; n; v" = "${switchToKyomuSession} nvim";
 
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
