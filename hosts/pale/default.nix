@@ -33,7 +33,7 @@
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-    boot.kernelPackages = pkgs.linuxPackages_6_15;
+    boot.kernelPackages = pkgs.linuxPackages_6_16;
 
     boot.initrd.luks.devices = {
       "luks-f9d8ffcf-b76f-4a3e-acad-90a6665d1bfc" = {
