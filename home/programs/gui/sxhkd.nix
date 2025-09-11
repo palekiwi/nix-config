@@ -39,7 +39,7 @@ let
 
   switchToKyomuSession = pkgs.writeShellScript "switchToKyomuSession" ''
     session_name="$1"
-    window_name="kyomu-''${session_name}"
+    window_name="kyomu:''${session_name}"
 
     if wmctrl -l | grep -q "\b$window_name\b"; then
         wmctrl -Fa $window_name
