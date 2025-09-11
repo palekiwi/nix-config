@@ -34,7 +34,8 @@
       pkgs-unstable = import nixpkgs-unstable { inherit system; };
     in
     {
-      defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+      # defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+      defaultPackage.x86_64-linux = home-manager.packages.x86_64-linux.default;
 
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
