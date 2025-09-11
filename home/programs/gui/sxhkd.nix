@@ -80,6 +80,7 @@ in
       "super + space; n; v" = "${switchToSession} nvim";
 
       "super + space; k; e" = "${switchToKyomuSession} spabreaks";
+      "super + space; k; d" = "${switchToKyomuSession} spabreaks-dev";
 
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
