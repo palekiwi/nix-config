@@ -37,6 +37,16 @@ let
     fi
   '';
 
+  switchToKyomu = pkgs.writeShellScript "switchToKyomu" ''
+    window_name="kyomu"
+
+    if wmctrl -l | grep -q "\b$window_name\b"; then
+        wmctrl -Fa $window_name
+    else
+        kitty -T $window_name -e ssh pl@kyomu -A
+    fi
+  '';
+
   switchToAppOrLaunch = pkgs.writeShellScript "switchToAppOrLaunch" ''
     window_title="$1"
     cmd="$2"
@@ -55,7 +65,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "~/.dmenu/agents";
+      "super + Return + control" = "${switchToKyomu}";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
 
