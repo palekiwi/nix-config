@@ -8,7 +8,10 @@
   };
 
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  services.pcscd.enable = true;
+  services.pcscd = {
+    enable = true;
+    extraArgs = [ "--disable-polkit" ];
+  };
 
   environment.systemPackages = [ pkgs.age-plugin-yubikey ];
 }
