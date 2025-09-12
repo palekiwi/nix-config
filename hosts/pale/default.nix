@@ -11,6 +11,7 @@
       ./nvidia.nix
       ./ollama.nix
       ./open-webui.nix
+      ./notifications-server.nix
       ./packages.nix
       ./picom.nix
       ./sound.nix

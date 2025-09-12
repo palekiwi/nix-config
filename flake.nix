@@ -16,9 +16,13 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    notifications-server = {
+      url = "path:/home/pl/code/palekiwi-labs/notifications-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, claude-desktop, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, claude-desktop, home-manager, notifications-server, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
@@ -45,6 +49,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/pale
+            notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
