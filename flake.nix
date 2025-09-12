@@ -17,7 +17,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     notifications-server = {
-      url = "path:/home/pl/code/palekiwi-labs/notifications-server";
+      url = "github:palekiwi-labs/notifications-server/5372a03626257be9a262222f318403e3b193cb7f";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

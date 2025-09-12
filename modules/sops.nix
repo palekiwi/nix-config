@@ -10,5 +10,5 @@
   sops.secrets."jira/token" = { owner = "pl"; };
   sops.secrets."jira/email" = { owner = "pl"; };
   sops.secrets."github/prompt-assist" = { owner = "pl"; };
-  sops.secrets."gotify/token" = { owner = "pl"; };
+  sops.secrets."gotify/token" = { owner = "notifications-server"; };
 }

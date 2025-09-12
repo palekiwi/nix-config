@@ -106,14 +106,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1757638158,
-        "narHash": "sha256-mJql8yYkURR7MmFNX3npq5nxlVYbxVuPnYfXDwoK9bw=",
-        "path": "/home/pl/code/palekiwi-labs/notifications-server",
-        "type": "path"
+        "lastModified": 1757638157,
+        "narHash": "sha256-BmRrxsUE8sDDS1+61UMJHhh/ojSrHsk7UOoHUQ0H84c=",
+        "owner": "palekiwi-labs",
+        "repo": "notifications-server",
+        "rev": "5372a03626257be9a262222f318403e3b193cb7f",
+        "type": "github"
       },
       "original": {
-        "path": "/home/pl/code/palekiwi-labs/notifications-server",
-        "type": "path"
+        "owner": "palekiwi-labs",
+        "repo": "notifications-server",
+        "rev": "5372a03626257be9a262222f318403e3b193cb7f",
+        "type": "github"
       }
     },
     "root": {
