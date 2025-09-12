@@ -6,6 +6,5 @@
      hostname = "0.0.0.0";
      notifyCommand = "notify-send \"$NOTIFY_TITLE\" \"$NOTIFY_MESSAGE\"";
      gotifyTokenFile = "/run/secrets/gotify/token";
-     openFirewall = true;
    };
 }
