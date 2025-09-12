@@ -106,17 +106,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1757638157,
-        "narHash": "sha256-BmRrxsUE8sDDS1+61UMJHhh/ojSrHsk7UOoHUQ0H84c=",
+        "lastModified": 1757652954,
+        "narHash": "sha256-byRLLkmF09Ytz1kO/oZW3kjMEJrwryyKppDDfYvmP5Y=",
         "owner": "palekiwi-labs",
         "repo": "notifications-server",
-        "rev": "5372a03626257be9a262222f318403e3b193cb7f",
+        "rev": "103a196af5207df2006ee3bd5f575daa6d9b8cf8",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "notifications-server",
-        "rev": "5372a03626257be9a262222f318403e3b193cb7f",
+        "rev": "103a196af5207df2006ee3bd5f575daa6d9b8cf8",
         "type": "github"
       }
     },
