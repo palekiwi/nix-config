@@ -7,6 +7,7 @@
       ./firewall-ygt.nix
       ./hardware-configuration.nix
       ./locale.nix
+      ./notifications-server.nix
       ./packages.nix
       ./ssh.nix
       ./system.nix

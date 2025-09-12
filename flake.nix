@@ -86,6 +86,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/kyomu
+            notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
