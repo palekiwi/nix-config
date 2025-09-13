@@ -158,16 +158,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1757313079,
-        "narHash": "sha256-UpG+m69rt0N5L6SEnKy7NTYVrCkuf3p0xaxthvIbWXM=",
+        "lastModified": 1757685660,
+        "narHash": "sha256-5ZKs1F2eBLI37jitfEnM6ACzKXCnn/RvTol17q2l/YQ=",
         "owner": "palekiwi-labs",
         "repo": "test-runner-mcp",
-        "rev": "ceab68af1948f9213861e8ff4ad98af033164220",
+        "rev": "a7bd4b152ac4aa8a32419f0a8c86bf55a178bcf4",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "test-runner-mcp",
+        "rev": "a7bd4b152ac4aa8a32419f0a8c86bf55a178bcf4",
         "type": "github"
       }
     },

@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     test-runner-mcp = {
-      url = "github:palekiwi-labs/test-runner-mcp";
+      url = "github:palekiwi-labs/test-runner-mcp/a7bd4b152ac4aa8a32419f0a8c86bf55a178bcf4";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedOpencode = {
