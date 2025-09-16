@@ -22,13 +22,6 @@ pkgs.writeShellScriptBin "sync_opencode_extra_config" ''
       cp "$config_dir/opencode.json" "./"
   fi
 
-  # Sync docs directory if it exists
-  if [[ -d "$config_dir/docs" ]]; then
-      echo "Syncing docs from $config_dir/docs..."
-      mkdir -p ".agents/docs"
-      rsync -av --delete "$config_dir/docs/" ".agents/docs/"
-  fi
-
   # Recursively sync all AGENTS.md files
   echo "Syncing AGENTS.md files from $config_dir..."
   ${pkgs.fd}/bin/fd "AGENTS.md" "$config_dir" -t f | while IFS= read -r agent_file; do
