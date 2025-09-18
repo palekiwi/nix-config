@@ -133,7 +133,7 @@ pkgs.writers.writeNuBin "gh_prs" ''
       let formatted_prs = ($flat_tree | each { |entry| format_tree_entry $entry })
 
       # Use fzf for interactive selection
-      let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --tac)
+      let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)" --tac)
 
       if ($selected | is-empty) {
           print "No PR selected"
