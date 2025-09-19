@@ -43,6 +43,7 @@
     networking.firewall.interfaces."tailscale0" = {
       allowedTCPPorts = [
         3002 # firecrawl
+        3003 # firecrawl-mcp
         5050 # app-daemon
         8080 # zigbee
         8088 # nextcloud
