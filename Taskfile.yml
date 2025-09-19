@@ -4,3 +4,10 @@ tasks:
   gpg-import-keys:
     cmds:
       - gpg --import ~/nix-config/users/pl/pgp.asc
+
+  stub-sops-keys:
+    vars:
+      SOPS_AGE_DIR: ~/.config/sops/age
+    cmds:
+      - mkdir -p {{.SOPS_AGE_DIR}}
+      - test -f {{.SOPS_AGE_DIR}}/keys.txt || echo "AGE-SECRET-KEY-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" > {{.SOPS_AGE_DIR}}/keys.txt
