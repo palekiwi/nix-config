@@ -45,6 +45,15 @@
           };
         };
 
+        deck = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/deck
+            notifications-server.nixosModules.default
+            inputs.sops-nix.nixosModules.sops
+          ];
+        };
+
         pale = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
