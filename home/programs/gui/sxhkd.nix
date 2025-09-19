@@ -37,6 +37,17 @@ let
     fi
   '';
 
+  switchToKyomuSession = pkgs.writeShellScript "switchToKyomuSession" ''
+    session_name="$1"
+    window_name="kyomu:''${session_name}"
+
+    if wmctrl -l | grep -q "\b$window_name\b"; then
+        wmctrl -Fa $window_name
+    else
+        kitty -T $window_name -e ssh pl@kyomu -A -t "sesh connect $session_name"
+    fi
+  '';
+
   switchToAppOrLaunch = pkgs.writeShellScript "switchToAppOrLaunch" ''
     window_title="$1"
     cmd="$2"
@@ -55,7 +66,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "~/.dmenu/agents";
+      "super + Return + control" = "dmenu_remote_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "kitty --title $USER";
 
@@ -67,6 +78,13 @@ in
       "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} ava-ygt";
       "super + space; n; v" = "${switchToSession} nvim";
+
+      "super + space; k; e" = "${switchToKyomuSession} spabreaks";
+      "super + space; k; d" = "${switchToKyomuSession} spabreaks-dev";
+      "super + space; k; c" = "${switchToKyomuSession} spabreaks-console";
+
+      "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
+      "super + space; k; n; v" = "${switchToKyomuSession} nvim";
 
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";

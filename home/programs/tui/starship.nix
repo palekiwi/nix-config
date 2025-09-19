@@ -49,8 +49,11 @@
       directory = {
         truncate_to_repo = true;
       };
+      hostname = {
+        ssh_only = true;
+        format = "[$hostname](bold blue):";
+      };
       format = lib.concatStrings [
-        "$username"
         "$hostname"
         ""
         "$directory"

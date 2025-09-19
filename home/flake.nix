@@ -9,12 +9,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     test-runner-mcp = {
-      url = "path:/home/pl/code/palekiwi-labs/test-runner-mcp";
+      url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedOpencode = {
-      url = "path:/home/pl/code/palekiwi-labs/agents";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      url = "github:palekiwi-labs/agents/93f459e7484f8e0c60419d650fc28845a39afd78";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -27,6 +27,7 @@
             (final: prev: {
               opencode = wrappedOpencode.packages.x86_64-linux.opencode;
               opencode-rust = wrappedOpencode.packages.x86_64-linux.opencode-rust;
+              opencode-rust-enhanced = wrappedOpencode.packages.x86_64-linux.opencode-rust-enhanced;
               test-runner-mcp = test-runner-mcp.packages.x86_64-linux.default;
             })
           ];
@@ -34,7 +35,8 @@
       pkgs-unstable = import nixpkgs-unstable { inherit system; };
     in
     {
-      defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+      # defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+      defaultPackage.x86_64-linux = home-manager.packages.x86_64-linux.default;
 
       homeConfigurations = {
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
@@ -50,6 +52,12 @@
           inherit pkgs;
           modules = [ ./users/pl/sayuri.nix ./options ];
           extraSpecialArgs = { inherit inputs; };
+        };
+
+        "pl@kyomu" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./users/pl/kyomu.nix ./options ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
         };
       };
     };

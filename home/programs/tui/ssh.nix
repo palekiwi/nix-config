@@ -5,6 +5,7 @@ let
   hosts = [
     "akemi"
     "haze"
+    "kyomu"
     "pale"
     "sayuri"
   ];

@@ -16,9 +16,13 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    notifications-server = {
+      url = "github:palekiwi-labs/notifications-server/103a196af5207df2006ee3bd5f575daa6d9b8cf8";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, claude-desktop, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, claude-desktop, home-manager, notifications-server, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
@@ -45,6 +49,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/pale
+            notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
@@ -73,6 +78,15 @@
             ./hosts/haze
             ./users/pl
             ./users/git
+            inputs.sops-nix.nixosModules.sops
+          ];
+        };
+
+        kyomu = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/kyomu
+            notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };

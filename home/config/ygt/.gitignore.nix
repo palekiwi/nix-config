@@ -14,4 +14,6 @@ in
   AGENTS.md
   gemset.nix
   opencode.json
+  cypress/cypress/screenshots
+  cypress/cypress/snapshots
 ''

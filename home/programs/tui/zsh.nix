@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [ zsh ];
@@ -8,7 +8,7 @@
     enableCompletion = true;
     initContent = ''
       source ~/.config/zsh/aliases.d/index.zsh
-      if [[ -z $SSH_CONNECTION ]]; then
+      if [[ -z $SSH_CONNECTION ]] || [[ $(hostname) == "kyomu" ]]; then
         export GPG_TTY="$(tty)"
         export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
         gpgconf --launch gpg-agent
@@ -21,9 +21,10 @@
 
     sessionVariables = {
       EDITOR = "nvim";
-      GTK_IM_MODULE="ibus";
-      QT_IM_MODULE="ibus";
-      XMODIFIERS="fcitx";
+    } // lib.optionalAttrs config.gui {
+      GTK_IM_MODULE = "ibus";
+      QT_IM_MODULE = "ibus";
+      XMODIFIERS = "fcitx";
     };
 
     history = {
@@ -37,7 +38,6 @@
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "fasd" "pass" "systemd" "bgnotify" ];
-      theme = "avit";
     };
   };
 

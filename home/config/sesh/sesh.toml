@@ -188,6 +188,10 @@ startup_command = "nvim index.md"
 name = "haze"
 startup_command = "ssh haze -A"
 
+[[session]]
+name = "kyomu"
+startup_command = "ssh kyomu"
+
 #-------------------
 #  --- default ---
 #-------------------
