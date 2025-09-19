@@ -31,11 +31,11 @@
         "rust-analyzer-src": "rust-analyzer-src_2"
       },
       "locked": {
-        "lastModified": 1758004879,
-        "narHash": "sha256-kV7tQzcNbmo58wg2uE2MQ/etaTx+PxBMHeNrLP8vOgk=",
+        "lastModified": 1758177713,
+        "narHash": "sha256-4Mesi0sOxCzrwnFHeAhL/vv1K1Wcwsl4D9duQ7ndYS8=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "07e5ce53dd020e6b337fdddc934561bee0698fa2",
+        "rev": "60316bdc00603b483992560baa14841e42e58a7b",
         "type": "github"
       },
       "original": {
@@ -117,11 +117,11 @@
     },
     "nixpkgs-unstable_2": {
       "locked": {
-        "lastModified": 1757487488,
-        "narHash": "sha256-zwE/e7CuPJUWKdvvTCB7iunV4E/+G0lKfv4kk/5Izdg=",
+        "lastModified": 1758035966,
+        "narHash": "sha256-qqIJ3yxPiB0ZQTT9//nFGQYn8X/PBoJbofA7hRKZnmE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ab0f3607a6c7486ea22229b92ed2d355f1482ee0",
+        "rev": "8d4ddb19d03c65a36ad8d189d001dc32ffb0306b",
         "type": "github"
       },
       "original": {
@@ -221,17 +221,17 @@
         "nixpkgs-unstable": "nixpkgs-unstable_2"
       },
       "locked": {
-        "lastModified": 1758090260,
-        "narHash": "sha256-m9vetTNYfDkGlJj3BFFXeR3vR7VQp0nwROd2yEmI8rI=",
+        "lastModified": 1758243387,
+        "narHash": "sha256-UuoO4TTzF0mXbJKt5a9/4ymsp8hdqEkxC16kM8YlR6M=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "93f459e7484f8e0c60419d650fc28845a39afd78",
+        "rev": "a9901551bb6f1873a89a51f97a0306ffac81ded4",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "93f459e7484f8e0c60419d650fc28845a39afd78",
+        "rev": "a9901551bb6f1873a89a51f97a0306ffac81ded4",
         "type": "github"
       }
     }
