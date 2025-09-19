@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedOpencode = {
-      url = "github:palekiwi-labs/agents/93f459e7484f8e0c60419d650fc28845a39afd78";
+      url = "github:palekiwi-labs/agents/a9901551bb6f1873a89a51f97a0306ffac81ded4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
