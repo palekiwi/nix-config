@@ -39,6 +39,15 @@
       defaultPackage.x86_64-linux = home-manager.packages.x86_64-linux.default;
 
       homeConfigurations = {
+        "pl@deck" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./users/pl/deck.nix
+            ./options
+          ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
+        };
+
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
