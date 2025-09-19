@@ -48,6 +48,7 @@ in
       bind -n M-e select-window -t2
       bind -n M-i select-window -t3
       bind -n M-o select-window -t4
+      bind -n M-h select-window -t5
 
       bind -n M-C-y send-keys -R\; clear-history
 
