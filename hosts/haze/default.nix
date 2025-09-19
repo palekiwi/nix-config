@@ -33,14 +33,22 @@
       gu = "gitui";
       p = "podman";
       v = "nvim";
-      rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -f)";
+      rebuild = "sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -f)";
     };
 
     services.udev.extraRules = ''
       KERNEL=="ttyUSB0", OWNER="pl"
     '';
 
-    networking.firewall.allowedTCPPorts = [ 8080 8123 5050 8088 ];
+    networking.firewall.interfaces."tailscale0" = {
+      allowedTCPPorts = [
+        3002 # firecrawl
+        5050 # app-daemon
+        8080 # zigbee
+        8088 # nextcloud
+        8123 # home-assistant
+      ];
+    };
 
     # networking.firewall.allowedUDPPorts = [ ... ];
 
