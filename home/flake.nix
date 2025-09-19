@@ -9,11 +9,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     test-runner-mcp = {
-      url = "github:palekiwi-labs/test-runner-mcp/4cff2c4588cf52187bd7a2772992d4ff103a5c06";
+      url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedOpencode = {
-      url = "github:palekiwi-labs/agents";
+      url = "github:palekiwi-labs/agents/93f459e7484f8e0c60419d650fc28845a39afd78";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -27,6 +27,7 @@
             (final: prev: {
               opencode = wrappedOpencode.packages.x86_64-linux.opencode;
               opencode-rust = wrappedOpencode.packages.x86_64-linux.opencode-rust;
+              opencode-rust-enhanced = wrappedOpencode.packages.x86_64-linux.opencode-rust-enhanced;
               test-runner-mcp = test-runner-mcp.packages.x86_64-linux.default;
             })
           ];

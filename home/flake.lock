@@ -22,6 +22,28 @@
         "type": "github"
       }
     },
+    "fenix_2": {
+      "inputs": {
+        "nixpkgs": [
+          "wrappedOpencode",
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": "rust-analyzer-src_2"
+      },
+      "locked": {
+        "lastModified": 1758004879,
+        "narHash": "sha256-kV7tQzcNbmo58wg2uE2MQ/etaTx+PxBMHeNrLP8vOgk=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "07e5ce53dd020e6b337fdddc934561bee0698fa2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -135,6 +157,23 @@
         "type": "github"
       }
     },
+    "rust-analyzer-src_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1757362324,
+        "narHash": "sha256-/PAhxheUq4WBrW5i/JHzcCqK5fGWwLKdH6/Lu1tyS18=",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "rev": "9edc9cbe5d8e832b5864e09854fa94861697d2fd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rust-lang",
+        "ref": "nightly",
+        "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
     "systems": {
       "locked": {
         "lastModified": 1681028828,
@@ -158,22 +197,23 @@
         ]
       },
       "locked": {
-        "lastModified": 1757933370,
-        "narHash": "sha256-j3ZwtK/fI5bLYcU2+etShVU3llbOl7kjCII/jDfru0s=",
+        "lastModified": 1757937123,
+        "narHash": "sha256-mD8Qxo+NoFsrmXCRDOLB8e/ldVHUvb56lqeK6iT+a0Q=",
         "owner": "palekiwi-labs",
         "repo": "test-runner-mcp",
-        "rev": "4cff2c4588cf52187bd7a2772992d4ff103a5c06",
+        "rev": "13d05835c8d8a3829a6f07776b6e646571944ab3",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "test-runner-mcp",
-        "rev": "4cff2c4588cf52187bd7a2772992d4ff103a5c06",
+        "rev": "13d05835c8d8a3829a6f07776b6e646571944ab3",
         "type": "github"
       }
     },
     "wrappedOpencode": {
       "inputs": {
+        "fenix": "fenix_2",
         "flake-utils": "flake-utils",
         "nixpkgs": [
           "nixpkgs"
@@ -181,16 +221,17 @@
         "nixpkgs-unstable": "nixpkgs-unstable_2"
       },
       "locked": {
-        "lastModified": 1757600696,
-        "narHash": "sha256-AMAI6eCo5PcDPcifmQcuTDgj4wDIxkDTPxetYvYulbg=",
+        "lastModified": 1758090260,
+        "narHash": "sha256-m9vetTNYfDkGlJj3BFFXeR3vR7VQp0nwROd2yEmI8rI=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "d9019a12e1c812a78836840761edd471b8bee580",
+        "rev": "93f459e7484f8e0c60419d650fc28845a39afd78",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "agents",
+        "rev": "93f459e7484f8e0c60419d650fc28845a39afd78",
         "type": "github"
       }
     }
