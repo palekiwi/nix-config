@@ -4,6 +4,7 @@ let
   port = "438";
   hosts = [
     "akemi"
+    "deck"
     "haze"
     "kyomu"
     "pale"

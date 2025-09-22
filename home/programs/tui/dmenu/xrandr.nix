@@ -8,7 +8,7 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   let options_nuc = ["xasus", "dual", "huion", "tv"]
   let options_deck = ["external", "builtin", "dual", "presentation"]
 
-  let deck_builtin = "eDP --rotate right"
+  let deck_builtin = "eDP-1 --rotate right"
   let deck_external = "DisplayPort-0"
 
   let nuc_tv = "HDMI-A-0"

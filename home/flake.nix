@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedOpencode = {
-      url = "github:palekiwi-labs/agents/a9901551bb6f1873a89a51f97a0306ffac81ded4";
+      url = "github:palekiwi-labs/agents/27d6e168df78cf3e514bca85f1037ac12f3c392b";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -39,6 +39,15 @@
       defaultPackage.x86_64-linux = home-manager.packages.x86_64-linux.default;
 
       homeConfigurations = {
+        "pl@deck" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./users/pl/deck.nix
+            ./options
+          ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
+        };
+
         "pl@pale" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
