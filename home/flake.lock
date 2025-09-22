@@ -25,7 +25,7 @@
     "fenix_2": {
       "inputs": {
         "nixpkgs": [
-          "wrappedOpencode",
+          "wrappedAgents",
           "nixpkgs"
         ],
         "rust-analyzer-src": "rust-analyzer-src_2"
@@ -137,7 +137,7 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "test-runner-mcp": "test-runner-mcp",
-        "wrappedOpencode": "wrappedOpencode"
+        "wrappedAgents": "wrappedAgents"
       }
     },
     "rust-analyzer-src": {
@@ -211,7 +211,7 @@
         "type": "github"
       }
     },
-    "wrappedOpencode": {
+    "wrappedAgents": {
       "inputs": {
         "fenix": "fenix_2",
         "flake-utils": "flake-utils",
@@ -221,17 +221,17 @@
         "nixpkgs-unstable": "nixpkgs-unstable_2"
       },
       "locked": {
-        "lastModified": 1758432471,
-        "narHash": "sha256-xigHWlWzVXoxrqVC1QOXwkq3CDztaqHekyse4xhekF8=",
+        "lastModified": 1758540598,
+        "narHash": "sha256-38DSA7sKiVqR4UwEvTW0pfxCDLYBU32SgPqZ2TUqC5Q=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "27d6e168df78cf3e514bca85f1037ac12f3c392b",
+        "rev": "ee7a11ac14566bd1e093ab7e13fb7e9f813a4394",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "27d6e168df78cf3e514bca85f1037ac12f3c392b",
+        "rev": "ee7a11ac14566bd1e093ab7e13fb7e9f813a4394",
         "type": "github"
       }
     }
