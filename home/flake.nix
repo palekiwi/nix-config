@@ -16,20 +16,25 @@
       url = "github:palekiwi-labs/agents/1dd58e49c73081ac2bb7bc350decce3ce2128d05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mcp-gemini-cli = {
+      url = "github:palekiwi-labs/mcp-gemini-cli/02b7d1711eb3bee5ff300ab4590d7d012f49fe04";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-unstable, home-manager, wrappedAgents, test-runner-mcp, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
           overlays = [
             (final: prev: {
-              opencode = wrappedAgents.packages.x86_64-linux.opencode;
-              opencode-rust = wrappedAgents.packages.x86_64-linux.opencode-rust;
-              opencode-rust-enhanced = wrappedAgents.packages.x86_64-linux.opencode-rust-enhanced;
-              gemini-cli = wrappedAgents.packages.x86_64-linux.gemini-cli;
-              test-runner-mcp = test-runner-mcp.packages.x86_64-linux.default;
+              opencode = inputs.wrappedAgents.packages.x86_64-linux.opencode;
+              opencode-rust = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust;
+              opencode-rust-enhanced = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust-enhanced;
+              gemini-cli = inputs.wrappedAgents.packages.x86_64-linux.gemini-cli;
+              test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
+              mcp-gemini-cli = inputs.mcp-gemini-cli.packages.x86_64-linux.default;
             })
           ];
       };
