@@ -1,6 +1,7 @@
 { lib, ... }: {
 
   imports = [
+    ./awesome.nix
     ./chrome.nix
     ./dmenu.nix
     ./firefox.nix

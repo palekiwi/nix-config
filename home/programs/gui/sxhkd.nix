@@ -73,7 +73,6 @@ in
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
 
-      "super + space; n; a" = "${switchToSession} awesome";
       "super + space; n; c" = "${switchToSession} nix-config";
       "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
       "super + space; n; t" = "${switchToSession} ava-ygt";
