@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedAgents = {
-      url = "github:palekiwi-labs/agents/a5cdc72ee0fb47548bfb0f06aed88acf2fafe2e8";
+      url = "github:palekiwi-labs/agents/6d87dc8c1ff057326b8bd46844ea134f31b31f52";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-gemini-cli = {
