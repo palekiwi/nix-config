@@ -9,6 +9,7 @@
     ./email
     ./gh.nix
     ./git.nix
+    ./nvim.nix
     ./opencode.nix
     ./oss.nix
     ./scripts.nix
