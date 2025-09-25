@@ -113,11 +113,6 @@ startup_command = "make psql"
 #-------------------
 
 [[session]]
-name = "awesome"
-path = "~/.config/awesome/"
-startup_command = "_tmux_git-repo"
-
-[[session]]
 name = "dotfiles"
 path = "~/dotfiles"
 startup_command = "_tmux_git-repo"
