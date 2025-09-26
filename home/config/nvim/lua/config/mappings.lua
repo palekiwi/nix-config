@@ -8,6 +8,7 @@ local telescope_utils = require('config.utils.telescope')
 local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local nvim_utils = require('config.utils.nvim')
+local qf_utils = require('config.utils.quickfix')
 
 local set = vim.keymap.set
 
@@ -108,6 +109,8 @@ local base = {
   { "<leader>et",      telescope_utils.search_tags,                                            desc = "Search tags" },
   { "<leader>fe",      "<cmd>only<cr>",                                                        desc = "Only" },
   { "<leader>fh",      "<cmd>hide<cr>",                                                        desc = "Hide" },
+  { "<leader>fq",      qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
+  { "<leader>fQ",      "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",       group = "[Git]" },
   { "<leader>gH",      require('config.utils.telescope.hunk_grep'),                            desc = "Hunk grep" },
   { "<leader>ga",      telescope_utils.git_commits,                                            desc = "[Telescope] All commits" },
