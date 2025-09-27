@@ -21,6 +21,12 @@ local search_tags_opts = {
   only_sort_tags = true
 }
 
+M.find_in_agents = function()
+  local branch_name = custom_helpers.current_git_branch()
+
+  builtin.find_files({ cwd = ".agents/" .. branch_name})
+end
+
 M.search_cword = function()
   builtin.grep_string {
     default_text = vim.fn.expand("<cfile>"),
@@ -353,16 +359,16 @@ M.git_pr_commits = function(opts)
 
       map('i', '<C-q>', function()
         local hash = action_state.get_selected_entry().value ---@type string
-        
+
         actions.close(prompt_bufnr)
-        
+
         local files = vim.fn.systemlist("git diff-tree --no-commit-id --name-only -r " .. hash)
-        
+
         if vim.v.shell_error ~= 0 or #files == 0 then
           vim.notify("No files found for commit " .. hash, vim.log.levels.WARN)
           return
         end
-        
+
         local qf_list = {}
         for _, file in ipairs(files) do
           table.insert(qf_list, {
@@ -370,7 +376,7 @@ M.git_pr_commits = function(opts)
             text = "Modified in commit " .. hash
           })
         end
-        
+
         vim.fn.setqflist({}, 'r', { title = 'Files modified in commit ' .. hash, items = qf_list })
         vim.cmd('copen')
       end)

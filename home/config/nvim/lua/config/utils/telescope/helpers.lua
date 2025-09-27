@@ -13,4 +13,17 @@ M.last_commit_on_base = function()
   return vim.trim(last_commit_on_base)
 end
 
+M.current_git_branch = function()
+  local current_branch = vim.fn.system({
+    "git",
+    "rev-parse",
+    "--abbrev-ref",
+    "HEAD"
+  })
+
+  assert(vim.v.shell_error == 0, current_branch)
+
+  return vim.trim(current_branch)
+end
+
 return M
