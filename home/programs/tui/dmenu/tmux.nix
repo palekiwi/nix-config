@@ -4,7 +4,7 @@ pkgs.writers.writeNuBin "dmenu_tmux" ''
   def main [
     --tmux
   ] {
-    let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" "Tmux sessions"]
+    let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; height: 50%; location: center; }" "-p" "Tmux sessions"]
 
     let sessions = if $tmux {
       run-external "sesh" "list" "--json" "--tmux" | from json
@@ -12,8 +12,8 @@ pkgs.writers.writeNuBin "dmenu_tmux" ''
       run-external "sesh" "list" "--json" | from json
     }
 
-    let options = ($sessions 
-      | each { |session| 
+    let options = ($sessions
+      | each { |session|
           let attached_marker = if $session.Attached > 0 { "*" } else { " " }
           $"($session.Name),($session.Src),($session.Path),($attached_marker)"
         }
