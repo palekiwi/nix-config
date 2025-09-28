@@ -1,5 +1,5 @@
 { pkgs, lib, ... }:
 
 {
-  home.packages = import ./dmenu { inherit pkgs lib; };
+  home.packages = [ pkgs.dmenu ] ++ import ./dmenu { inherit pkgs lib; };
 }
