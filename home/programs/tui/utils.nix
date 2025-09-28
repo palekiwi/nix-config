@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -24,8 +24,5 @@
     which
     yubikey-manager
     zoxide
-  ] ++ lib.optionals config.gui [
-    dmenu
-    maim
   ];
 }

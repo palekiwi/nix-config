@@ -8,9 +8,11 @@ in
 {
   home.packages = with pkgs; [
     arc-icon-theme
+    dmenu
     gpick
     insomnia
     libnotify
+    maim
     maim
     playerctl
     pulseaudio
@@ -21,5 +23,6 @@ in
     wmctrl
     xclip
     xdotool
+
   ] ++ extra;
 }
