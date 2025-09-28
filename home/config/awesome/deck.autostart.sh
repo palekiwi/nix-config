@@ -30,10 +30,8 @@ function run_app {
 
 xrandr --output eDP --rotate right
 
-export SXHKDRC="$HOME/.config/sxhkd/dmenu.sxhkdrc $HOME/.config/sxhkd/sxhkdrc"
-
 run picom -b --config $HOME/.config/picom/picom.conf
-run sxhkd -c $SXHKDRC
+run sxhkd
 run ibus-daemon -drxR
 run unclutter --timeout 1 --start-hidden --ignore-scrolling
 
