@@ -15,10 +15,10 @@ pkgs.writers.writeNuBin "dmenu_tmux" ''
     let options = ($sessions
       | each { |session|
           let attached_marker = if $session.Attached > 0 { "*" } else { " " }
-          $"($session.Name),($session.Src),($session.Path),($attached_marker)"
+          $"($session.Score),($session.Name),($session.Src),($session.Path),($attached_marker)"
         }
-      | sort-by {|item| $item | split row "," | get 0}
-      | sort-by {|item| $item | split row "," | get 2}
+      | sort-by {|item| 0 - ($item | split row "," | get 0 | into float)} {|item| $item | split row "," | get 1} {|item| $item | split row "," | get 3}
+      | each {|item| $item | split row "," | skip 1 | str join ","}
       | uniq
       | str join "\n"
       | run-external "column" "-s," "-t")
