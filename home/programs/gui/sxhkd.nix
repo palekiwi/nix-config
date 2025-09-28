@@ -91,7 +91,7 @@ in
       "super + space; v; d" = "${switchToSession} vrs-dev";
       "super + space; v; e" = "${switchToSession} vrs";
 
-      "super + 0" = if config.fedora then "flatpak run com.google.Chrome" else "google-chrome-stable";
+      "super + 0" = "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
       "super + 3" = "rofi-pass --root ~/.password-store 2> /tmp/rofi-pass.log";
