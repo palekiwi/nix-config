@@ -116,7 +116,7 @@ in
       "XF86HomePage; n" = "~/.dmenu/run";
       "XF86HomePage; p" = "~/.dmenu/process";
       "XF86HomePage; x" = "dmenu_xrandr";
-      "XF86Search" = "rofi -show window";
+      "XF86Search" = "dmenu_windows";
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
       "XF86Launch7; c" = ''${typeText} "5200 0000 0000 1005"'';
