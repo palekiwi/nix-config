@@ -1,13 +1,9 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
-let
-  extra = if config.fedora
-          then []
-          else with pkgs; [ nextcloud-client ];
-in
 {
   home.packages = with pkgs; [
     arc-icon-theme
+    dmenu
     gpick
     insomnia
     libnotify
@@ -21,5 +17,5 @@ in
     wmctrl
     xclip
     xdotool
-  ] ++ extra;
+  ];
 }

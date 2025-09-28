@@ -113,10 +113,10 @@ in
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";
       "shift + control + XF86AudioRaiseVolume" = "cmus-remote -v 75%; notify-send -t 800 'Cmus Vol:' 75%";
       "Print" = screenshot;
-      "XF86HomePage; n" = "~/.dmenu/run";
-      "XF86HomePage; p" = "~/.dmenu/process";
+      "XF86HomePage; n" = "dmenu_wrapped_run";
+      "XF86HomePage; p" = "dmenu_process";
       "XF86HomePage; x" = "dmenu_xrandr";
-      "XF86Search" = "rofi -show window";
+      "XF86Search" = "dmenu_windows";
 
       "XF86Launch7; b" = ''${typeText} "[ci skip]"'';
       "XF86Launch7; c" = ''${typeText} "5200 0000 0000 1005"'';

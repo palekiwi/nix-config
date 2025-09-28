@@ -5,7 +5,6 @@
     ./cmus.nix
     ./dev.nix
     ./direnv.nix
-    ./dmenu.nix
     ./email
     ./gh.nix
     ./git.nix
