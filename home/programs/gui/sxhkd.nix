@@ -114,7 +114,7 @@ in
       "shift + control + XF86AudioRaiseVolume" = "cmus-remote -v 75%; notify-send -t 800 'Cmus Vol:' 75%";
       "Print" = screenshot;
       "XF86HomePage; n" = "dmenu_wrapped_run";
-      "XF86HomePage; p" = "~/.dmenu/process";
+      "XF86HomePage; p" = "dmenu_process";
       "XF86HomePage; x" = "dmenu_xrandr";
       "XF86Search" = "dmenu_windows";
 
