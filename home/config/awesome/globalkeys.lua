@@ -1,6 +1,5 @@
 local gears = require("gears")
 local awful = require("awful")
-local naughty = require("naughty")
 
 local capslock = require('widgets.capslock')
 local mic = require('widgets.mic')
@@ -17,28 +16,25 @@ local function resize_fake_screen(delta)
   screen[2]:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
 end
 
-local function fullscreen_fake_screen()
-  if (screen.count() ~= 2) then
+local function remove_fake_screen_fullscreen()
+  if screen.count() ~= 2 then
     return
   end
-  local focused = awful.screen.focused()
-  local full_width = screen[1].geometry.width + screen[2].geometry.width
-  local height = screen[1].geometry.height
 
-  for s in screen do
-    if s == focused then
-      s:fake_resize(0, 0, full_width, height)
-    else
-      s:fake_resize(0, 0, 0, height)
-    end
-  end
+  -- Get total geometry
+  local geo1 = screen[1].geometry
+  local geo2 = screen[2].geometry
+  local min_x = math.min(geo1.x, geo2.x)
+  local full_width = geo1.width + geo2.width
+  local height = geo1.height
+  local y = geo1.y
+
+  -- Remove the fake screen (screen 2)
+  screen[2].fake_remove(screen[2])
+
+  -- Resize screen 1 to take full width
+  screen[1]:fake_resize(min_x, y, full_width, height)
 end
-
---- local function exit_fake_fullscreen()
----     if (screen.count() ~= 2) then
----        return
----     end
---- end
 
 local function set_clients_opacity(m, opacity)
   for _, x in ipairs(mouse.screen.selected_tag:clients()) do
@@ -47,16 +43,6 @@ local function set_clients_opacity(m, opacity)
     end
   end
 end
-
---- local function notifyScreenFocus()
----     naughty.notify({
----         title = "Active screen",
----         position = "bottom_middle",
----         timeout = 1,
----         width = 120,
----         height = 32
----     })
---- end
 
 local function undim_clients()
   for _, x in ipairs(mouse.screen.selected_tag:clients()) do
@@ -340,7 +326,7 @@ local globalkeys = gears.table.join(
 
   awful.key({ MODKEY, "Control", "Shift" }, "i",
     function()
-      fullscreen_fake_screen()
+      remove_fake_screen_fullscreen()
     end, { description = "Resize main fake screen up", group = "global" }
   ),
 
