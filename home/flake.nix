@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     wrappedAgents = {
-      url = "github:palekiwi-labs/agents";
+      url = "github:palekiwi-labs/agents/1c915e076eaf17cbe91008432921336058210bff";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-gemini-cli = {
@@ -30,6 +30,7 @@
           overlays = [
             (final: prev: {
               opencode = inputs.wrappedAgents.packages.x86_64-linux.opencode;
+              opencode-ruby = inputs.wrappedAgents.packages.x86_64-linux.opencode-ruby;
               opencode-rust = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust;
               gemini-cli = inputs.wrappedAgents.packages.x86_64-linux.gemini-cli;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
