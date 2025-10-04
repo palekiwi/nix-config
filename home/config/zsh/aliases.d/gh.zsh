@@ -60,3 +60,6 @@ alias prcy="gh_pr_create_ygt"
 alias pre="gh_pr_create"
 alias pitr="gh pr comment --body 'ITR'"
 alias plgtm="gh pr review --approve --body 'LGTM'"
+
+alias gprc="gh_pr_from_branch_name && set_pr_info"
+alias gprcd="gh_pr_from_branch_name --draft && set_pr_info"
