@@ -53,11 +53,11 @@
         "rust-analyzer-src": "rust-analyzer-src_3"
       },
       "locked": {
-        "lastModified": 1758955069,
-        "narHash": "sha256-YYIsyGsTiQ2aKoEmYaqRqe44yE3TjpzirR35Cqj50LU=",
+        "lastModified": 1759473677,
+        "narHash": "sha256-9AFDP5AhXe06aXXPsV7bDGH7KA9Wo4uUtK7pRrsxuFQ=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "73494b26b031328fd959e7a3da0f9fdc8957d86c",
+        "rev": "8532b07ced6a95d57650124c79534a3c770431ab",
         "type": "github"
       },
       "original": {
@@ -215,11 +215,11 @@
     },
     "nixpkgs-unstable_2": {
       "locked": {
-        "lastModified": 1758690382,
-        "narHash": "sha256-NY3kSorgqE5LMm1LqNwGne3ZLMF2/ILgLpFr1fS4X3o=",
+        "lastModified": 1759381078,
+        "narHash": "sha256-gTrEEp5gEspIcCOx9PD8kMaF1iEmfBcTbO0Jag2QhQs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e643668fd71b949c53f8626614b21ff71a07379d",
+        "rev": "7df7ff7d8e00218376575f0acdcc5d66741351ee",
         "type": "github"
       },
       "original": {
@@ -292,11 +292,11 @@
     "rust-analyzer-src_3": {
       "flake": false,
       "locked": {
-        "lastModified": 1758918110,
-        "narHash": "sha256-wxOmbk6MH6qgvShZUrD7pJnM7m2lFaoBeVJjVoNeVT8=",
+        "lastModified": 1759301569,
+        "narHash": "sha256-7StxDed3v2fAWLkl+Hse9FlpjT7Dk7Cn/4vxTFyEhIg=",
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "f5e049d09dc17d0b61de2ec179b3607cf1e431b2",
+        "rev": "472037b789cf593172d6adf3b8d9f7a429f6cd9b",
         "type": "github"
       },
       "original": {
@@ -369,17 +369,17 @@
         "nixpkgs-unstable": "nixpkgs-unstable_2"
       },
       "locked": {
-        "lastModified": 1759549756,
-        "narHash": "sha256-ZDQBvyVxw1ZblmKT1WN3nB2aCZSSAPhkCRWi8vn6f/8=",
+        "lastModified": 1759552781,
+        "narHash": "sha256-WxUCxLnmb4WcAt/utHl/DNLd+0ejOCsi7rzbeil/JSQ=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "1c915e076eaf17cbe91008432921336058210bff",
+        "rev": "c81c5dcb4e8f2e8b45276d888697b36b35f7888f",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "1c915e076eaf17cbe91008432921336058210bff",
+        "rev": "c81c5dcb4e8f2e8b45276d888697b36b35f7888f",
         "type": "github"
       }
     }
