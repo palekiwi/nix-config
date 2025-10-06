@@ -13,8 +13,22 @@ local function toggle_git_tree(action, toggle)
   })
 end
 
+local function fetch_base_branch()
+  local handle = io.popen("get_pr_base")
+  local base_branch = vim.g.git_master or "master"     -- fallback
+  if handle then
+    local result = handle:read("*a"):gsub("%s+", "") --[[@as string]]
+    if result ~= "" then
+      base_branch = result
+    end
+    handle:close()
+  end
+
+  return base_branch
+end
+
 local function set_base_branch(branch)
-  local base_branch = branch or vim.g.git_master or "master"
+  local base_branch = branch or fetch_base_branch()
 
   vim.g.git_base = base_branch
 

@@ -1,6 +1,6 @@
 local create_autocmd = vim.api.nvim_create_autocmd
 
---- Sets master branch name on startup 
+--- Sets master branch name on startup
 local function set_master_branch_name()
   create_autocmd("VimEnter", {
     callback = function()
@@ -19,7 +19,7 @@ local function set_master_branch_name()
   })
 end
 
---- Sets opencode port on startup 
+--- Sets opencode port on startup
 local function set_opencode_port()
   create_autocmd("VimEnter", {
     callback = function()
@@ -32,7 +32,7 @@ local function set_opencode_port()
   })
 end
 
---- Sets git base name on startup 
+--- Sets git base name on startup
 local function set_git_base()
   create_autocmd("VimEnter", { -- TODO: consider other events to update the value when the branch changes
     callback = function()
