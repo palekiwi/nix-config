@@ -27,8 +27,9 @@ pkgs.writeShellScriptBin "set_pr_info" ''
     if [ "$(${pkgs.git}/bin/git rev-parse origin/"$GIT_BASE")" != "$merge_base" ]; then
       echo "true" > "$DEST_DIR/GIT_BASE_AHEAD"
         echo -e "${orange}Base branch '$GIT_BASE' has new commits${reset}"
+    else
+      rm -f "$DEST_DIR/GIT_BASE_AHEAD"
     fi
-
       echo -e "${green}Updated PR info: #$GH_PR_NUMBER (base: $GIT_BASE)${reset}"
   else
     rm -f .git/GH_PR_NUMBER .git/GIT_BASE .git/GIT_BASE_AHEAD
