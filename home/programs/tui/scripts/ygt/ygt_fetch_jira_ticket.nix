@@ -7,5 +7,6 @@ pkgs.writeShellScriptBin "ygt_fetch_jira_ticket" ''
   API_URL="$JIRA_URL/rest/api/2/issue/$TICKET"
 
   # Make the API request and extract the description
-  curl -s -u "$JIRA_EMAIL:$JIRA_TOKEN" -X GET -H "Content-Type: application/json" "$API_URL?expand=renderedFields" | jq -r '.renderedFields.description'
+  curl -s -u "$JIRA_EMAIL:$JIRA_TOKEN" -X GET -H "Content-Type: application/json" "$API_URL?expand=renderedFields" \
+    | jq -r '{title: .fields.summary, description: .renderedFields.description, technical_notes: .renderedFields.customfield_10136}'
 ''
