@@ -13,6 +13,7 @@
   (import ./hass.nix { inherit pkgs; })
   (import ./opencode-container-name.nix { inherit pkgs; })
   (import ./opencode-cleanup.nix { inherit pkgs; })
+  (import ./opencode-run.nix { inherit pkgs; })
   (import ./set_pr_info.nix { inherit pkgs; })
   (import ./sync_opencode_extra_config.nix { inherit pkgs; })
   (import ./yt-subs.nix { inherit pkgs lib config; })
