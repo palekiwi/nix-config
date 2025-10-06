@@ -1,7 +1,8 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "ygt_fetch_jira_ticket" ''
-  TICKET=$(ygt_jira_ticket_from_branch)
+  # Use provided ticket or get from branch
+  TICKET="''${1:-$(ygt_jira_ticket_from_branch)}"
 
   # Construct the API URL
   API_URL="$JIRA_URL/rest/api/2/issue/$TICKET"
