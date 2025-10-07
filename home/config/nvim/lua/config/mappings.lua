@@ -47,7 +47,6 @@ local base = {
   { "<A-w>",           telescope_utils.search_cword,                                           desc = "Live Grep" },
   { "<A-x>",           "<cmd>BufferClose<cr>",                                                 desc = "Close Buffer All But Current" },
   { "<A-z>",           "za",                                                                   desc = "Toggle Fold" },
-  { "<C-a>",           telescope_utils.find_in_agents,                                         desc = "Search agents files" },
   { "<C-b>",           "<cmd>Telescope buffers ignore_current_buffer=false sort_mru=true<cr>", desc = "Buffers" },
   { "<C-d>",           "<cmd>Telescope diagnostics<cr>",                                       desc = "[LSP] diagnostics" },
   { "<C-e>",           "<cmd>Telescope oldfiles cwd_only=true<cr>",                            desc = "Recent Files" },
