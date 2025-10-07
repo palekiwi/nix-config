@@ -23,6 +23,7 @@ alias rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -s)"
 alias v="nvim_fg"
 alias xo="xdg-open"
 alias orun="opencode-run"
+alias gemini="gemini-cli"
 
 alias s.="sesh connect ."
 
