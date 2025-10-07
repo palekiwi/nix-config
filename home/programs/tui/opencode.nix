@@ -2,7 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    gemini-cli
+    gemini
     opencode
     opencode-ruby
     opencode-rust
