@@ -22,6 +22,7 @@ alias update="home-manager switch --flake ~/nix-config/home#"$(whoami)@$(hostnam
 alias rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -s)"
 alias v="nvim_fg"
 alias xo="xdg-open"
+alias orun="opencode-run"
 
 alias s.="sesh connect ."
 

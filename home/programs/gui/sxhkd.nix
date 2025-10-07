@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 
 let
   cplay = pkgs.writeShellScript "cplay" ''
@@ -73,8 +73,9 @@ in
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
 
+      "super + space; n; a" = "${switchToSession} agents";
       "super + space; n; c" = "${switchToSession} nix-config";
-      "super + space; n; e" = "${switchToAppOrLaunch} Claude claude-desktop";
+      "super + space; n; o" = "${switchToSession} agent-opencode";
       "super + space; n; t" = "${switchToSession} ava-ygt";
 
       "super + space; k; e" = "${switchToKyomuSession} spabreaks";
