@@ -29,12 +29,12 @@
         inherit system;
           overlays = [
             (final: prev: {
+              gemini = inputs.wrappedAgents.packages.x86_64-linux.gemini;
+              mcp-gemini-cli = inputs.mcp-gemini-cli.packages.x86_64-linux.default;
               opencode = inputs.wrappedAgents.packages.x86_64-linux.opencode;
               opencode-ruby = inputs.wrappedAgents.packages.x86_64-linux.opencode-ruby;
               opencode-rust = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust;
-              gemini-cli = inputs.wrappedAgents.packages.x86_64-linux.gemini-cli;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
-              mcp-gemini-cli = inputs.mcp-gemini-cli.packages.x86_64-linux.default;
             })
           ];
       };
