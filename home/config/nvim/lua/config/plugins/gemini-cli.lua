@@ -1,6 +1,7 @@
 return {
   {
     "marcinjahn/gemini-cli.nvim",
+    enabled = false,
     cmd = "Gemini",
     keys = {
       { "<space>g/", "<cmd>Gemini toggle<cr>",   desc = "Toggle Gemini CLI" },
