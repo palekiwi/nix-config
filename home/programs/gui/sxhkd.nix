@@ -79,9 +79,9 @@ in
       "super + space; n; c" = "${switchToSession} nix-config";
       "super + space; n; t" = "${switchToSession} ava-ygt";
 
-      "super + space; k; e" = "${switchToKyomuSession} spabreaks";
-      "super + space; k; d" = "${switchToKyomuSession} spabreaks-dev";
-      "super + space; k; c" = "${switchToKyomuSession} spabreaks-console";
+      "super + space; k; s; e" = "${switchToKyomuSession} spabreaks";
+      "super + space; k; s; d" = "${switchToKyomuSession} spabreaks-dev";
+      "super + space; k; s; c" = "${switchToKyomuSession} spabreaks-console";
 
       "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
 
