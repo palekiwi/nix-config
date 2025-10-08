@@ -73,9 +73,10 @@ in
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
 
-      "super + space; n; a" = "${switchToSession} agents";
+      "super + space; e; c" = "${switchToSession} agent-opencode";
+      "super + space; e; r" = "${switchToSession} agents";
+
       "super + space; n; c" = "${switchToSession} nix-config";
-      "super + space; n; o" = "${switchToSession} agent-opencode";
       "super + space; n; t" = "${switchToSession} ava-ygt";
 
       "super + space; k; e" = "${switchToKyomuSession} spabreaks";
