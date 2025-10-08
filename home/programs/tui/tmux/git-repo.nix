@@ -20,15 +20,6 @@ pkgs.writeShellScriptBin "_tmux_git-repo" ''
   tmux select-window -t $session:1
 
   if [[ -n "$OPENCODE_WORKSPACE" ]]; then
-      if [[ -f "Cargo.toml" ]]; then
-          project_agent="opencode-rust"
-      elif [[ -f "Gemfile" ]]; then
-          project_agent="opencode-ruby"
-      else
-          project_agent="opencode"
-      fi
-
-      exec_cmd=''${OPENCODE_CMD:-$project_agent}
-      tmux send-keys -t $session:3 "$exec_cmd --port 80 --hostname 0.0.0.0" C-m
+      tmux send-keys -t $session:3 "orun" C-m
   fi
 ''
