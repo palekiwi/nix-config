@@ -5,7 +5,11 @@ tasks:
     cmds:
       - gpg --import ~/nix-config/users/pl/pgp.asc
 
-  stub-sops-keys:
+  sops-edit-keys:
+    cmds:
+      - sops secrets/secrets.yaml
+
+  sops-stub-keys:
     vars:
       SOPS_AGE_DIR: ~/.config/sops/age
     cmds:
