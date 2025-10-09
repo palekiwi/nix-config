@@ -12,6 +12,7 @@ in
   .opencode
   .agents
   AGENTS.md
+  ai_docs
   gemset.nix
   opencode.json
   cypress/cypress/screenshots
