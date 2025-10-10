@@ -8,6 +8,9 @@ return {
       local oc = require("opencode")
 
       vim.g.opencode_opts = {
+
+        on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
+
         -- load port from an var set on a project basis or use a custom default
         port = tonumber(vim.g.opencode_port) or 49000,
         -- prompts = {}
