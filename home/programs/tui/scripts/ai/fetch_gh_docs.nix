@@ -5,9 +5,33 @@
 # - [x] Validate that the file link to is a markdown file
 # - [ ] Fix the subdir path, it is now specific to a particular repo
 # - [ ] Extract the subdir from repo name as these will all be gh links
-# - [ ] Allow passing a regular gh link but convert it to a "raw" file url befor fetching
+# - [x] Allow passing a regular gh link but convert it to a "raw" file url befor fetching
 
 pkgs.writers.writeNuBin "fetch_gh_docs" ''
+  def validate_markdown [url: string] {
+    if not ($url | str ends-with ".md") {
+      error make {
+        msg: "Invalid file type"
+        label: {
+          text: $"URL must be a markdown file: ($url)"
+          span: (metadata $url).span
+        }
+      }
+    }
+  }
+
+  def validate_github_url [url: string] {
+    if not (($url | str contains "github.com") or ($url | str contains "githubusercontent.com")) {
+      error make {
+        msg: "Invalid URL source"
+        label: {
+          text: $"URL must be from GitHub: ($url)"
+          span: (metadata $url).span
+        }
+      }
+    }
+  }
+
   def main [
     --docs-file (-f): string = "ai_docs/gh_docs.txt"
     --output-dir (-o): string = "ai_docs/gemini-cli"
@@ -20,20 +44,18 @@ pkgs.writers.writeNuBin "fetch_gh_docs" ''
         $url != "" and not ($url | str starts-with "#")
       }
     | each { |url|
-        if not ($url | str ends-with ".md") {
-          error make {
-            msg: "Invalid file type"
-            label: {
-              text: $"URL must be a markdown file: ($url)"
-              span: (metadata $url).span
-            }
-          }
-        }
-        
-        let filename = ($url | path basename)
+        validate_markdown $url
+        validate_github_url $url
+
+        let raw_url = (
+          $url
+          | str replace --regex 'github\.com/([^/]+)/([^/]+)/blob/' 'raw.githubusercontent.com/$1/$2/'
+        )
+
+        let filename = ($raw_url | path basename)
 
         let subdir = (
-          $url
+          $raw_url
           | parse --regex '.*/docs/(?P<subdir>.*)/[^/]*$'
           | get -i 0.subdir
           | default ""
@@ -46,8 +68,8 @@ pkgs.writers.writeNuBin "fetch_gh_docs" ''
           $"($output_dir)/($filename)"
         }
 
-        print $"Fetching ($url) -> ($output_path)"
-        http get $url | save -f $output_path
+        print $"Fetching ($raw_url) -> ($output_path)"
+        http get $raw_url | save -f $output_path
       }
 
     print "Done!"
