@@ -35,6 +35,7 @@ in
     prefix = "M-g";
     plugins = [
       pkgs.tmuxPlugins.sensible
+      pkgs.tmuxPlugins.tmux-thumbs
       pkgs.tmuxPlugins.yank
     ];
 
