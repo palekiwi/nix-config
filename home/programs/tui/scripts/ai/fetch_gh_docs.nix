@@ -2,7 +2,7 @@
 
 # TODO:
 # - [x] Accept command line arguments for docs file and output dir with defaults
-# - [ ] Validate that the file link to is a markdown file
+# - [x] Validate that the file link to is a markdown file
 # - [ ] Fix the subdir path, it is now specific to a particular repo
 # - [ ] Extract the subdir from repo name as these will all be gh links
 # - [ ] Allow passing a regular gh link but convert it to a "raw" file url befor fetching
@@ -20,6 +20,16 @@ pkgs.writers.writeNuBin "fetch_gh_docs" ''
         $url != "" and not ($url | str starts-with "#")
       }
     | each { |url|
+        if not ($url | str ends-with ".md") {
+          error make {
+            msg: "Invalid file type"
+            label: {
+              text: $"URL must be a markdown file: ($url)"
+              span: (metadata $url).span
+            }
+          }
+        }
+        
         let filename = ($url | path basename)
 
         let subdir = (
