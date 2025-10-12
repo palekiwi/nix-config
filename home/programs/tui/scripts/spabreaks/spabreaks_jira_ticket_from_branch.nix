@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-pkgs.writers.writeNuBin "ygt_jira_ticket_from_branch" ''
+pkgs.writers.writeNuBin "spabreaks_jira_ticket_from_branch" ''
   def main [] {
     let branch = (git branch --show-current)
 

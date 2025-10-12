@@ -1,17 +1,17 @@
 { pkgs, ... }:
 
-pkgs.writeShellScriptBin "ygt_spabreaks_sync" ''
+pkgs.writeShellScriptBin "spabreaks_sync" ''
   set -euo pipefail
   
   if [ $# -ne 1 ]; then
-    echo "Usage: ygt_spabreaks_sync <target_host>"
-    echo "Example: ygt_spabreaks_sync prod"
+    echo "Usage: spabreaks_sync <target_host>"
+    echo "Example: spabreaks_sync prod"
     exit 1
   fi
   
   TARGET_HOST="$1"
   CODE_DIR="$HOME/code"
-  PROJECT_DIR="ygt/spabreaks"
+  PROJECT_DIR="spabreaks/spabreaks"
   PROJECT_PATH="$CODE_DIR/$PROJECT_DIR"
 
   # Files to sync
