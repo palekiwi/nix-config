@@ -5,26 +5,52 @@ return {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
     config = function()
-       vim.g.opencode_opts = {
+      local oc = require("opencode")
+
+      vim.g.opencode_opts = {
+
+        on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
+
         -- load port from an var set on a project basis or use a custom default
         port = tonumber(vim.g.opencode_port) or 49000,
+
+        prompts = {
+          ["add_buffer"] = { prompt = "@buffer" },
+          ["add_this"] = { prompt = "@this" },
+          ["ask"] = { prompt = "", ask = true, submit = true },
+          ["diagnostics"] = { prompt = "Explain @diagnostics", submit = true },
+          ["diff"] = { prompt = "Review the following git diff for correctness and readability: @diff", submit = true },
+          ["document"] = { prompt = "Add comments documenting @this", submit = true },
+          ["explain"] = { prompt = "Explain @this and its context", submit = true },
+          ["fix"] = { prompt = "Fix @diagnostics", submit = true },
+          ["optimize"] = { prompt = "Optimize @this for performance and readability", submit = true },
+          ["pr:explain"] = { prompt = "/pr:explain", submit = true },
+          ["pr:fusion-review"] = { prompt = "/pr:fusion-review", submit = true },
+          ["review"] = { prompt = "Review @buffer for correctness and readability", submit = true },
+          ["test"] = { prompt = "Add tests for @this", submit = true },
+        }
       }
-    end,
-    keys = {
-      -- Recommended keymaps
-      { '<S-C-d>',    function() require('opencode').command('messages_half_page_down') end, desc = 'Scroll messages down', },
-      { '<S-C-u>',    function() require('opencode').command('messages_half_page_up') end, desc = 'Scroll messages up', },
-      { '<space>a', function() require('opencode').ask() end, desc = 'Ask opencode', },
-      { '<space>ec', function() require('opencode').prompt("Explain @cursor and its context") end, desc = "Explain code near cursor", },
-      { '<space>ee', function() require('opencode').prompt('/pr:explain') end, desc = 'PR: Explain', },
-      { '<space>er', function() require('opencode').prompt('/pr:fusion-review') end, desc = 'PR: Fusion Review', },
-      { '<space>f', function() require('opencode').ask('@buffer: ') end, desc = 'Ask about buffer', mode = 'n', },
-      { '<space>i', function() require('opencode').ask('@cursor: ') end, desc = 'Ask at cursor', mode = 'n', },
-      { '<space>i', function() require('opencode').ask('@selection: ') end, desc = 'Ask opencode about selection', mode = 'v', },
-      { '<space>n', function() require('opencode').command('session_new') end, desc = 'New session', },
-      { '<space>p', function() require('opencode').select() end, desc = 'Select prompt', mode = { 'n', 'v', }, },
-      { '<space>rb', function() require('opencode').prompt('Fix: @diagnostics ') end, desc = 'Fix diagnostics', },
-      { '<space>y', function() require('opencode').command('messages_copy') end, desc = 'Copy last message', },
-    },
+
+      vim.opt.autoread = true
+
+      local opts = { submit = true }
+      local keymaps = {
+        { "n",          "<space>a",  function() oc.ask() end,                                         "Ask opencode", },
+        { "n",          "<space>et", function() oc.prompt("Explain @this and its context", opts) end, "Explain this" },
+        { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", opts) end,                          "Ask about this" },
+        { "n",          "<space>f",  function() oc.ask("@buffer: ", opts) end,                        "Ask about buffer" },
+        { "n",          "<space>d",  function() oc.ask("@diff: ", opts) end,                          "Ask about diff" },
+        { "n",          "<space>n",  function() oc.command("session_new") end,                        "New session" },
+        { "n",          "<space>+",  function() oc.prompt("@this") end,                               "Add this" },
+        { "n",          "<space>pe", function() oc.prompt("/pr:explain", opts) end,                   "PR: Explain" },
+        { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", opts) end,             "PR: Fusion Review" },
+        { "n",          "<space>s",  function() oc.select() end,                                      "Select prompt" },
+        { "n",          "<space>y",  function() oc.command("messages_copy") end,                      "Copy last message" },
+      }
+
+      for _, m in ipairs(keymaps) do
+        vim.keymap.set(m[1], m[2], m[3], { desc = m[4] })
+      end
+    end
   }
 }

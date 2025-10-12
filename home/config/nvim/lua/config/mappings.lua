@@ -38,8 +38,9 @@ local base = {
   { "<A-PageUp>",      "<cmd>lprev<cr>",                                                       desc = "[Loclist] Prev" },
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                       desc = "[Loclist] Next" },
   -- mod
-  { "<A-f>",           "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
+  { "<A-a>",           telescope_utils.find_in_agents,                                         desc = "Search agent files" },
   { "<A-d>",           telescope_utils.diffview_since,                                         desc = "Search changed files" },
+  { "<A-f>",           "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",           "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
   { "<A-m>",           "zMzA",                                                                 desc = "Toggle Fold" },
   { "<A-p>",           telescope_utils.changed_files_since,                                    desc = "Search changed files" },

@@ -35,11 +35,14 @@ in
     prefix = "M-g";
     plugins = [
       pkgs.tmuxPlugins.sensible
+      pkgs.tmuxPlugins.tmux-thumbs
       pkgs.tmuxPlugins.yank
     ];
 
     extraConfig = ''
       set -ga terminal-overrides ",xterm-256color:Tc"
+
+      set -g @thumbs-command 'echo -n {} | xclip -selection clipboard'
 
       bind -n M-C-e split-window -v ${tmux_list_sessions}
       bind -n M-C-m run-shell ${tmux_view_output}
