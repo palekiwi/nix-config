@@ -34,7 +34,7 @@ pkgs.writers.writeNuBin "fetch_gh_docs" ''
 
   def main [
     --docs-file (-f): string = "ai_docs/gh_docs.txt"
-    --output-dir (-o): string = "ai_docs/gemini-cli"
+    --output-dir (-o): string = "ai_docs"
   ] {
     mkdir $output_dir
 
