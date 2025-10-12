@@ -1,12 +1,5 @@
 { pkgs, ... }:
 
-# TODO:
-# - [x] Accept command line arguments for docs file and output dir with defaults
-# - [x] Validate that the file link to is a markdown file
-# - [ ] Fix the subdir path, it is now specific to a particular repo
-# - [ ] Extract the subdir from repo name as these will all be gh links
-# - [x] Allow passing a regular gh link but convert it to a "raw" file url befor fetching
-
 pkgs.writers.writeNuBin "fetch_gh_docs" ''
   def validate_markdown [url: string] {
     if not ($url | str ends-with ".md") {
@@ -54,12 +47,22 @@ pkgs.writers.writeNuBin "fetch_gh_docs" ''
 
         let filename = ($raw_url | path basename)
 
-        let subdir = (
+        let parsed = (
           $raw_url
-          | parse --regex '.*/docs/(?P<subdir>.*)/[^/]*$'
-          | get -i 0.subdir
-          | default ""
+          | parse --regex 'raw\.githubusercontent\.com/[^/]+/(?P<repo>[^/]+)/[^/]+/(?P<filepath>.*)'
+          | get -i 0
         )
+
+        let subdir = if ($parsed != null) {
+          let parent_dir = ($parsed.filepath | path dirname)
+          if ($parent_dir == "" or $parent_dir == ".") {
+            $parsed.repo
+          } else {
+            $"($parsed.repo)/($parent_dir)"
+          }
+        } else {
+          ""
+        }
 
         let output_path = if ($subdir != "") {
           mkdir $"($output_dir)/($subdir)"

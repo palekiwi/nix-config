@@ -1,5 +1,5 @@
 { pkgs, ... }:
 
 [
-  (import ./set_pr_info.nix { inherit pkgs; })
+  (import ./fetch_gh_docs.nix { inherit pkgs; })
 ]
