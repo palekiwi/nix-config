@@ -48,7 +48,7 @@
 
   accounts.email.accounts = {
     spabreaks = {
-      primary = false;
+      primary = true;
 
       flavor = "gmail.com";
 
