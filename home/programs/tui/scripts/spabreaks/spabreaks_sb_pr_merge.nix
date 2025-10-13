@@ -11,10 +11,22 @@
 pkgs.writeShellScriptBin "sb_pr_merge" ''
   set -euo pipefail
 
-  echo "Checking current PR for Elasticsearch view changes..."
+  echo "Checking current PR merge status..."
 
-  PR_FILES=$(${pkgs.gh}/bin/gh pr view --json files --jq '.files[].path')
+  PR_DATA=$(${pkgs.gh}/bin/gh pr view --json files,mergeStateStatus)
+  PR_FILES=$(echo "$PR_DATA" | ${pkgs.jq}/bin/jq -r '.files[].path')
+  MERGE_STATE=$(echo "$PR_DATA" | ${pkgs.jq}/bin/jq -r '.mergeStateStatus')
 
+  # Check PR merge state status first
+  if [ "$MERGE_STATE" != "CLEAN" ]; then
+    echo "Cannot merge this PR!"
+    echo "Current merge state: $MERGE_STATE"
+    echo "The PR must be in CLEAN state before merging."
+    echo "Please resolve any conflicts, ensure all checks pass, and get required approvals."
+    exit 1
+  fi
+
+  # Check for Elasticsearch view changes
   if echo "$PR_FILES" | grep -q '^db/views/es_.*\.sql$'; then
     CURRENT_MINUTE=$(date +%M)
 
