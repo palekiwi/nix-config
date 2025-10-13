@@ -30,7 +30,10 @@ let
     };
     spabreak-terraform = {
       envrc = ../../config/ygt/spabreak-terraform/.envrc;
-      gitHooks = {};
+      gitHooks = {
+        post-checkout = ../../config/ygt/git/hooks/post-checkout;
+        post-merge = ../../config/ygt/git/hooks/post-merge;
+      };
     };
   };
 
