@@ -28,6 +28,10 @@ let
         post-merge = ../../config/ygt/git/hooks/post-merge;
       };
     };
+    spabreak-terraform = {
+      envrc = ../../config/ygt/spabreak-terraform/.envrc;
+      gitHooks = {};
+    };
   };
 
   commonYgtFiles = {
