@@ -43,5 +43,5 @@ pkgs.writeShellScriptBin "sb_pr_merge" ''
   fi
 
   echo "✓ Safe to merge current PR"
-  ${pkgs.gh}/bin/gh pr merge --merge
+  echo "Would run: ${pkgs.gh}/bin/gh pr merge --merge"
 ''
