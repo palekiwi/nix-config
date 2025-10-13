@@ -1,12 +1,15 @@
 { pkgs, ... }:
 
-# script: sb_pr_merge
-# This script merges a PR with `gh` cli checking whether safe conditions for merge are met.
-# If they are not, it aborts with a message.
-# Conditions:
-# - Does the PR create or modify any of the files matching `/db/views/es_*`, e.g. `/db/views/es_packages_v03.sql`
-# - If it does, check whether the time is between *:10 and *:30
-# - If the time window matches, abort with a message
+# sb_pr_merge - Safe PR merge wrapper for spabreaks repository
+#
+# Merges a GitHub PR after validating safety conditions:
+#
+# 1. PR merge state must be CLEAN (no conflicts, checks passing, approvals met)
+# 2. If PR modifies Elasticsearch views (db/views/es_*.sql), blocks merge during
+#    *:10-*:30 time window when ES indexing runs to avoid conflicts
+#
+# Usage: sb_pr_merge [flags]
+#   Flags are passed through to `gh pr merge --merge`
 
 pkgs.writeShellScriptBin "sb_pr_merge" ''
   set -euo pipefail
