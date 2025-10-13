@@ -119,8 +119,8 @@ function inbox.create(opts)
   }
 
   local function update()
-    local countInbox = count_by('tag:unread AND path:"ygt/Inbox/**"')
-    local countAS = count_by('tag:unread AND path:"ygt/Airbrake/Staging/**"')
+    local countInbox = count_by('tag:unread AND path:"spabreaks/Inbox/**"')
+    local countAS = count_by('tag:unread AND path:"spabreaks/Airbrake/Staging/**"')
 
     local activeInbox = countInbox > 0
     local activeAS = countAS > 0
