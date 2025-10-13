@@ -69,6 +69,11 @@ function inbox.create(opts)
     widget = wibox.widget.textbox
   }
 
+  local production_text_widget = wibox.widget {
+    markup = span(),
+    widget = wibox.widget.textbox
+  }
+
   local icon_widget = wibox.widget {
     image = gears.color.recolor_image(icon_path, colors.fg_active),
     resize = true,
@@ -84,6 +89,15 @@ function inbox.create(opts)
 
   local padded_widget = wibox.widget {
     inbox_content,
+    left = 4,
+    right = 4,
+    top = 1,
+    bottom = 1,
+    widget = wibox.container.margin
+  }
+
+  local padded_widget_middle = wibox.widget {
+    production_text_widget,
     left = 4,
     right = 4,
     top = 1,
@@ -109,6 +123,13 @@ function inbox.create(opts)
     widget = wibox.container.background
   }
 
+  local inbox_widget_middle = wibox.widget {
+    padded_widget_middle,
+    bg = colors.bg_inactive,
+    shape = gears.shape.rectangle,
+    widget = wibox.container.background
+  }
+
   local inbox_widget_right = wibox.widget {
     padded_widget_right,
     bg = colors.bg_inactive,
@@ -120,13 +141,17 @@ function inbox.create(opts)
 
   local function update()
     local countInbox = count_by('tag:unread AND path:"spabreaks/Inbox/**"')
+    local countAP = count_by('tag:unread AND path:"spabreaks/Airbrake/Production/**"')
     local countAS = count_by('tag:unread AND path:"spabreaks/Airbrake/Staging/**"')
 
     local activeInbox = countInbox > 0
+    local activeAP = countAP > 0
     local activeAS = countAS > 0
 
     local fg_color = activeInbox and colors.fg_active or colors.fg_inactive
     local bg_color = activeInbox and colors.bg_active or colors.bg_inactive
+    local fg_color_ap = activeAP and colors.fg_active or colors.fg_inactive
+    local bg_color_ap = activeAP and colors.bg_active or colors.bg_inactive
     local fg_color_as = activeAS and colors.fg_active or colors.fg_inactive
     local bg_color_as = activeAS and colors.bg_active or colors.bg_inactive
 
@@ -137,6 +162,9 @@ function inbox.create(opts)
     inbox_text_widget.markup = span(text, fg_color)
     inbox_widget_left.bg = bg_color
     icon_widget.image = icon
+
+    inbox_widget_middle.bg = bg_color_ap
+    production_text_widget.markup = span(tostring(countAP), fg_color_ap)
 
     inbox_widget_right.bg = bg_color_as
     staging_text_widget.markup = span(tostring(countAS), fg_color_as)
@@ -155,6 +183,7 @@ function inbox.create(opts)
       layout = wibox.layout.fixed.horizontal,
       spacing = 1,
       inbox_widget_left,
+      inbox_widget_middle,
       inbox_widget_right
     },
     margins = MARGINS,
