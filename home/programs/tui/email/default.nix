@@ -114,5 +114,54 @@
         enable = true;
       };
     };
+
+    spabreaks = {
+      primary = false;
+
+      flavor = "gmail.com";
+
+      userName = "pawel.lisewski@spabreaks.com";
+      realName = "Pawel Lisewski";
+      address = "pawel.lisewski@spabreaks.com";
+      passwordCommand = "${pkgs.pass}/bin/pass spabreaks/gmail/nixos";
+
+      maildir.path = "spabreaks";
+
+      imap = {
+        port = 993;
+        host = "imap.gmail.com";
+        tls.enable = true;
+      };
+
+      smtp = {
+        port = 465;
+        host = "smtp.gmail.com";
+      };
+
+      notmuch = {
+        enable = true;
+      };
+
+      mbsync = {
+        enable = true;
+        create = "maildir";
+        expunge = "both";
+        patterns = [
+          "INBOX"
+          "Accounts"
+          "Airbrake/*"
+          "GCP"
+          "Spabreaks"
+          "[Gmail]/Drafts"
+          "[Gmail]/Important"
+          "[Gmail]/Sent Mail"
+          "[Gmail]/Starred"
+        ];
+      };
+
+      msmtp = {
+        enable = true;
+      };
+    };
   };
 }
