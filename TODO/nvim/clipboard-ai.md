@@ -9,3 +9,7 @@ Add dedicated neovim functions that copy the following information to the system
 - [ ] copy diagnostic on current line (cursor position)
 - [ ] copy diagnostics for the entire file
 - [ ] copy the file with the range of visual selection
+
+## Implementation
+
+Implement function in a module in: `home/config/nvim/lua/config/utils/context_clipboard.lua`

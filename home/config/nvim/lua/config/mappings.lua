@@ -9,6 +9,7 @@ local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
+local ctx_clipboard = require('config.utils.context_clipboard')
 
 local set = vim.keymap.set
 
@@ -139,6 +140,11 @@ local base = {
   { "<leader>yh",      gh_utils.copy_blame_hash_short,                                         desc = "GH file: short hash" },
   { "<leader>ym",      function() gh_utils.copy_file_url({ branch = "master" }) end,           desc = "GH file: master" },
   { "<leader>yp",      function() gh_utils.copy_file_url({ branch = vim.fn.getreg("+") }) end, desc = "GH file: clipboard" },
+  { "<leader>ya",      group = "[AI Context]" },
+  { "<leader>yac",     ctx_clipboard.copy_file_path_with_cursor,                               desc = "File path with cursor" },
+  { "<leader>yad",     ctx_clipboard.copy_diagnostic_on_line,                                  desc = "Diagnostic on line" },
+  { "<leader>yaD",     ctx_clipboard.copy_diagnostics_for_file,                                desc = "All file diagnostics" },
+  { "<leader>yav",     ctx_clipboard.copy_file_with_visual_range,                              desc = "File with visual range", mode = "v" },
 }
 
 set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
