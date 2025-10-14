@@ -20,7 +20,8 @@ Given a JSON file containing AI-generated comments about git diff hunks, display
       "line_start": 712,
       "line_end": 725,
       "change_type": "logic",
-      "comment": "Adds retry logic with exponential backoff when connection fails"
+      "comment": "Adds retry logic with exponential backoff when connection fails",
+      "diff": "@@ -712,5 +712,8 @@ function connectToServer() {\n-  const result = await fetch(url);\n+  let retries = 0;\n+  while (retries < 3) {\n+    try {\n+      const result = await fetch(url);\n+      break;\n+    } catch (error) {\n+      retries++;\n+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000));\n+    }\n+  }"
     },
     {
       "id": "hunk_2",
@@ -28,7 +29,8 @@ Given a JSON file containing AI-generated comments about git diff hunks, display
       "line_start": 45,
       "line_end": 48,
       "change_type": "formatting",
-      "comment": "Line break added after opening tag for readability"
+      "comment": "Formatting only: Line break added after opening tag",
+      "diff": "@@ -45,3 +45,4 @@ <div class=\"header\">\n-<div class=\"title\">Dashboard</div>\n+\n+<div class=\"title\">Dashboard</div>"
     }
   ]
 }

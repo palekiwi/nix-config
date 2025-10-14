@@ -116,6 +116,7 @@ local base = {
   { "<leader>fQ",      "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",       group = "[Git]" },
   { "<leader>gH",      require('config.utils.telescope.hunk_grep'),                            desc = "Hunk grep" },
+  { "<leader>gh",      require('config.utils.hunk-comments').show_hunk_comments_telescope,     desc = "Hunk comments" },
   { "<leader>ga",      telescope_utils.git_commits,                                            desc = "[Telescope] All commits" },
   { "<leader>gb",      git_utils.diffview_blame,                                               desc = "Diffview blame line" },
   { "<C-h>",           telescope_utils.git_pr_commits,                                         desc = "[Telescope] Branch commits" },
@@ -144,7 +145,7 @@ local base = {
   { "<leader>yac",     ctx_clipboard.copy_file_path_with_cursor,                               desc = "File path with cursor" },
   { "<leader>yad",     ctx_clipboard.copy_diagnostic_on_line,                                  desc = "Diagnostic on line" },
   { "<leader>yaD",     ctx_clipboard.copy_diagnostics_for_file,                                desc = "All file diagnostics" },
-  { "<leader>yav",     ctx_clipboard.copy_file_with_visual_range,                              desc = "File with visual range", mode = "v" },
+  { "<leader>yav",     ctx_clipboard.copy_file_with_visual_range,                              desc = "File with visual range",            mode = "v" },
 }
 
 set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
