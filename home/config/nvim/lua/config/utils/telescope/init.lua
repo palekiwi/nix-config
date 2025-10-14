@@ -34,7 +34,14 @@ M.file_review = function()
 
   local review_dir = ".agents/" .. branch_name .. "/review/files/" .. subdir
 
-  builtin.find_files({ cwd = review_dir, search_file =  "review.md", no_ignore = true})
+  builtin.find_files({
+    cwd = review_dir,
+    search_file = "review.md",
+    no_ignore = true,
+    layout_config = {
+      preview_height = 0.9,
+    }
+  })
 end
 
 M.search_cword = function()
