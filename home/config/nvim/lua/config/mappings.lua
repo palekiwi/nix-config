@@ -10,6 +10,7 @@ local git_utils = require('config.utils.git')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
 local ctx_clipboard = require('config.utils.context_clipboard')
+local hunk_comments = require('config.utils.hunk-comments')
 
 local set = vim.keymap.set
 
@@ -115,8 +116,8 @@ local base = {
   { "<leader>fq",      qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
   { "<leader>fQ",      "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",       group = "[Git]" },
-  { "<leader>gH",      require('config.utils.telescope.hunk_grep'),                            desc = "Hunk grep" },
-  { "<leader>gh",      require('config.utils.hunk-comments').show_hunk_comments_telescope,     desc = "Hunk comments" },
+  { "<leader>gh",      hunk_comments.show,                                                     desc = "Hunk comments" },
+  { "<leader>gH",      function() hunk_comments.show({ all = true }) end,                      desc = "Hunk comments for all files" },
   { "<leader>ga",      telescope_utils.git_commits,                                            desc = "[Telescope] All commits" },
   { "<leader>gb",      git_utils.diffview_blame,                                               desc = "Diffview blame line" },
   { "<C-h>",           telescope_utils.git_pr_commits,                                         desc = "[Telescope] Branch commits" },

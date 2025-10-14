@@ -1,6 +1,9 @@
 local M = {}
 
-function M.show_hunk_comments_telescope()
+function M.show(opts)
+  opts = opts or {}
+  local all_hunks = opts.all or false
+
   local pickers = require('telescope.pickers')
   local finders = require('telescope.finders')
   local conf = require('telescope.config').values
@@ -39,24 +42,34 @@ function M.show_hunk_comments_telescope()
     return
   end
 
-  -- Filter comments for current buffer
-  local buffer_hunks = {}
-  for _, hunk in ipairs(data.hunks or {}) do
-    if hunk.file == relative_path then
-      table.insert(buffer_hunks, hunk)
+  -- Filter comments
+  local filtered_hunks = {}
+  if all_hunks then
+    -- Show all hunks
+    filtered_hunks = data.hunks or {}
+  else
+    -- Filter comments for current buffer
+    for _, hunk in ipairs(data.hunks or {}) do
+      if hunk.file == relative_path then
+        table.insert(filtered_hunks, hunk)
+      end
     end
   end
 
-  if #buffer_hunks == 0 then
-    print("No hunk comments for current buffer")
+  if #filtered_hunks == 0 then
+    if all_hunks then
+      print("No hunk comments found")
+    else
+      print("No hunk comments for current buffer")
+    end
     return
   end
 
   -- Create telescope picker
   pickers.new({}, {
-    prompt_title = "Hunk Comments",
+    prompt_title = all_hunks and "All Hunk Comments" or "Hunk Comments",
     finder = finders.new_table({
-      results = buffer_hunks,
+      results = filtered_hunks,
       entry_maker = function(hunk)
         local display_comment = hunk.comment:sub(1, 60)
         if #hunk.comment > 60 then
@@ -94,7 +107,7 @@ function M.show_hunk_comments_telescope()
           "Comment:",
           entry.value.comment
         }
-        
+
         if entry.value.diff then
           table.insert(lines, "")
           table.insert(lines, "Diff:")
@@ -103,9 +116,9 @@ function M.show_hunk_comments_telescope()
             table.insert(lines, diff_line)
           end
         end
-        
+
         vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-        
+
         -- Apply diff syntax highlighting
         utils.highlighter(bufnr, "diff")
       end
