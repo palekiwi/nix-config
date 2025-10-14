@@ -104,7 +104,6 @@ function M.show(opts)
           "Lines: " .. entry.value.line_start .. "-" .. entry.value.line_end,
           "Type: " .. entry.value.change_type,
           "",
-          "Comment:",
           entry.value.comment
         }
 
@@ -125,7 +124,5 @@ function M.show(opts)
     })
   }):find()
 end
-
-
 
 return M
