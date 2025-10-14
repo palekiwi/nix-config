@@ -24,7 +24,17 @@ local search_tags_opts = {
 M.find_in_agents = function()
   local branch_name = custom_helpers.current_git_branch()
 
-  builtin.find_files({ cwd = ".agents/" .. branch_name})
+  builtin.find_files({ cwd = ".agents/" .. branch_name })
+end
+
+M.file_review = function()
+  local branch_name = custom_helpers.current_git_branch()
+  local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
+  local subdir = file_name:gsub("/", "_")
+
+  local review_dir = ".agents/" .. branch_name .. "/review/files/" .. subdir
+
+  builtin.find_files({ cwd = review_dir, search_file =  "review.md", no_ignore = true})
 end
 
 M.search_cword = function()
