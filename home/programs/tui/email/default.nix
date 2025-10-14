@@ -47,17 +47,17 @@
   };
 
   accounts.email.accounts = {
-    ygt = {
+    spabreaks = {
       primary = true;
 
       flavor = "gmail.com";
 
-      userName = "pawel.lisewski@yourgolftravel.com";
+      userName = "pawel.lisewski@spabreaks.com";
       realName = "Pawel Lisewski";
-      address = "pawel.lisewski@yourgolftravel.com";
-      passwordCommand = "${pkgs.pass}/bin/pass pawel.lisewski@yourgolftravel.com";
+      address = "pawel.lisewski@spabreaks.com";
+      passwordCommand = "${pkgs.pass}/bin/pass spabreaks/gmail/nixos";
 
-      maildir.path = "ygt";
+      maildir.path = "spabreaks";
 
       imap = {
         port = 993;
@@ -73,25 +73,6 @@
       notmuch = {
         enable = true;
       };
-
-      # himalaya = {
-      #   enable = true;
-      #   settings = {
-      #     backend = {
-      #       type = "maildir";
-      #       root-dir = "~/Maildir";
-      #     };
-
-      #     folder.alias = {
-      #       inbox = "ygt/Inbox";
-      #       airbrake-s = "ygt/Airbrake/Staging";
-      #       airbrake-p = "ygt/Airbrake/Production";
-      #       sent = "ygt/[Gmail]/'Sent Mail'";
-      #       important = "ygt/[Gmail]/Important";
-      #       drafts = "ygt/[Gmail]/Drafts";
-      #     };
-      #   };
-      # };
 
       mbsync = {
         enable = true;

@@ -28,6 +28,13 @@ let
         post-merge = ../../config/ygt/git/hooks/post-merge;
       };
     };
+    spabreak-terraform = {
+      envrc = ../../config/ygt/spabreak-terraform/.envrc;
+      gitHooks = {
+        post-checkout = ../../config/ygt/git/hooks/post-checkout;
+        post-merge = ../../config/ygt/git/hooks/post-merge;
+      };
+    };
   };
 
   commonYgtFiles = {
@@ -66,7 +73,7 @@ in
       sops
     ] ++ lib.optionals config.gui [
       slack
-    ] ++ (import ./scripts/ygt { inherit pkgs; });
+    ] ++ (import ./scripts/spabreaks/default.nix { inherit pkgs; });
 
     home.file = commonYgtFiles // allProjectFiles;
   };
