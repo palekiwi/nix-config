@@ -78,8 +78,7 @@ function M.show(opts)
 
         return {
           value = hunk,
-          display = string.format("Lines %d-%d [%s]: %s",
-            hunk.line_start, hunk.line_end, hunk.change_type, display_comment),
+          display = string.format("[%s]: %s", hunk.change_type, display_comment),
           ordinal = hunk.comment .. " " .. hunk.change_type .. " " .. hunk.line_start .. " " .. hunk.line_end
         }
       end
@@ -90,8 +89,15 @@ function M.show(opts)
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
         if selection then
-          -- Jump to the hunk location
-          vim.api.nvim_win_set_cursor(0, { selection.value.line_start, 0 })
+          if all_hunks and selection.value.file ~= relative_path then
+            -- Open the file in a new buffer and jump to the hunk
+            local full_path = git_root .. '/' .. selection.value.file
+            vim.cmd('edit ' .. full_path)
+            vim.api.nvim_win_set_cursor(0, { selection.value.line_start, 0 })
+          else
+            -- Jump to the hunk location in current buffer
+            vim.api.nvim_win_set_cursor(0, { selection.value.line_start, 0 })
+          end
         end
       end)
       return true
