@@ -69,7 +69,7 @@ in
       gcc
       gnumake
       go-task
-      google-cloud-sdk
+      (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       sops
     ] ++ lib.optionals config.gui [
       slack
