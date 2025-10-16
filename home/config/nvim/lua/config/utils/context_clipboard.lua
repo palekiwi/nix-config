@@ -58,10 +58,12 @@ M.copy_diagnostics_for_file = function()
 end
 
 M.copy_file_with_visual_range = function()
-  local start_pos = vim.fn.getpos("'<")
-  local end_pos = vim.fn.getpos("'>")
-  local start_line = start_pos[2]
-  local end_line = end_pos[2]
+  local start_line = vim.fn.line('v')
+  local end_line = vim.fn.line('.')
+
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
 
   local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
   local result = string.format("%s L%d-L%d", filepath, start_line, end_line)
