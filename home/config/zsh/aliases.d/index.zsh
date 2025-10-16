@@ -34,6 +34,13 @@ alias pgpom="pass git push origin master"
 alias pgpul="pass git pull origin master"
 alias pi="pass_insert"
 
+gemini-detached() {
+    local session="$(tmux display-message -p '#S')-gemini"
+    tmux new-session -d -c "$PWD" -s "$session" 2>/dev/null
+    tmux send-keys -t $session 'gemini' C-m
+    kitty -T "$session" tmux attach -t "$session" &
+}
+
 pass_insert () {
     len=$1
     name=$2
