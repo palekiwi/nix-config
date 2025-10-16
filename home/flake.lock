@@ -369,11 +369,11 @@
         "nixpkgs-unstable": "nixpkgs-unstable_2"
       },
       "locked": {
-        "lastModified": 1760575487,
-        "narHash": "sha256-9Akemq+XgoNSIFCOIUTtx7M7PqQll5CEjaHs9JPL9XU=",
+        "lastModified": 1760581909,
+        "narHash": "sha256-Z9WnhSVmNlj5449z+Er8+KdtgF2IjBFsJiu7EkqXIBg=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "7a80640acf2946c0aee38ec2d29188ec3a415b8b",
+        "rev": "f6d6539468bac2dfeb5c07d9a6000e766e0ce1b9",
         "type": "github"
       },
       "original": {
