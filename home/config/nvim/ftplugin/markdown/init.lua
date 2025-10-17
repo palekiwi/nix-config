@@ -71,6 +71,6 @@ M.previous_heading = function()
 end
 
 -- define the keymaps
-vim.keymap.set("n", "<A-j>", M.next_heading)
+vim.keymap.set({"n", "v"}, "<A-}>", M.next_heading)
 
-vim.keymap.set("n", "<A-k>", M.previous_heading)
+vim.keymap.set({"n", "v"}, "<A-{>", M.previous_heading)
