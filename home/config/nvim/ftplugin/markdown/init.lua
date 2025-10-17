@@ -70,6 +70,11 @@ M.previous_heading = function()
     ts_utils.goto_node(M.captures[#M.captures - M.count + 1])
 end
 
+-- Set treesitter folding for markdown
+vim.opt_local.foldmethod = "expr"
+vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt_local.foldlevel = 1
+
 -- define the keymaps
 vim.keymap.set({"n", "v"}, "<A-}>", M.next_heading)
 
