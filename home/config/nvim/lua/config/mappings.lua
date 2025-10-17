@@ -54,7 +54,7 @@ local base = {
   { "<C-b>",           "<cmd>Telescope buffers ignore_current_buffer=false sort_mru=true<cr>", desc = "Buffers" },
   { "<C-d>",           "<cmd>Telescope diagnostics<cr>",                                       desc = "[LSP] diagnostics" },
   { "<C-e>",           "<cmd>Telescope oldfiles cwd_only=true<cr>",                            desc = "Recent Files" },
-  { "<C-f>",           "<cmd>Telescope find_files<cr>",                                        desc = "Find File" },
+  { "<C-f>",           "<cmd>Telescope find_files hidden=true<cr>",                            desc = "Find File" },
   { "<C-p>",           telescope_utils.changed_files,                                          desc = "Search changed files" },
   { "<C-q>",           "<cmd>Telescope quickfix show_line=false<cr>",                          desc = "Quickfix" },
   { "<C-u>",           telescope_utils.lsp_references,                                         desc = "Ref" },
