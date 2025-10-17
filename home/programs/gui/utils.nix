@@ -8,6 +8,7 @@
     insomnia
     libnotify
     maim
+    nextcloud-client
     playerctl
     pulseaudio
     signal-desktop
