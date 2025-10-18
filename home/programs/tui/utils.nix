@@ -15,6 +15,7 @@
     pass
     ranger
     ripgrep
+    slides
     starship
     tldr
     tree
