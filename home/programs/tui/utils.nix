@@ -9,6 +9,7 @@
     fasd
     fd
     fzf
+    graph-easy
     home-assistant-cli
     jq
     neovim
