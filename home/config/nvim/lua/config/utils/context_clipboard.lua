@@ -1,12 +1,16 @@
 local M = {}
 
-M.copy_file_path_with_cursor = function()
+M.copy_file_path = function(include_cursor)
   local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local line = cursor[1]
-  local col = cursor[2] + 1
+  local result = filepath
 
-  local result = string.format("%s L%d:C%d", filepath, line, col)
+  if include_cursor then
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local line = cursor[1]
+    local col = cursor[2] + 1
+    result = string.format("%s L%d:C%d", filepath, line, col)
+  end
+
   vim.fn.setreg('+', result)
   vim.notify(string.format("Copied: %s", result), vim.log.levels.INFO)
 end
@@ -59,14 +63,19 @@ end
 
 M.copy_file_with_visual_range = function()
   local start_line = vim.fn.line('v')
-  local end_line = vim.fn.line('.')
+  local end_line = vim.fn.line('.')  ---@type integer
 
   if start_line > end_line then
     start_line, end_line = end_line, start_line
   end
 
   local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
-  local result = string.format("%s L%d-L%d", filepath, start_line, end_line)
+  local result ---@type string
+  if start_line == end_line then
+    result = string.format("%s L%d", filepath, start_line)
+  else
+    result = string.format("%s L%d-L%d", filepath, start_line, end_line)
+  end
 
   vim.fn.setreg('+', result)
   vim.notify(string.format("Copied: %s", result), vim.log.levels.INFO)
