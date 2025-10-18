@@ -6,7 +6,7 @@
   sops.age.keyFile = "/home/pl/.config/sops/age/keys.txt";
 
   sops.secrets."airbrake/api_key" = { owner = "pl"; };
-  sops.secrets."github/prompt-assist" = { owner = "pl"; };
+  sops.secrets."github/pats/palekiwi/gemini-cli" = { owner = "pl"; };
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
   sops.secrets."jira/email" = { owner = "pl"; };
