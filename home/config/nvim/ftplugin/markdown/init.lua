@@ -73,7 +73,7 @@ end
 -- Set treesitter folding for markdown
 vim.opt_local.foldmethod = "expr"
 vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt_local.foldlevel = 1
+vim.opt_local.foldlevel = 99
 
 -- define the keymaps
 vim.keymap.set({"n", "v"}, "<A-}>", M.next_heading)
