@@ -9,14 +9,12 @@
     fasd
     fd
     fzf
-    graph-easy
     home-assistant-cli
     jq
     neovim
     pass
     ranger
     ripgrep
-    slides
     starship
     tldr
     tree
