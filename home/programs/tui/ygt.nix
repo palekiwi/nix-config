@@ -71,6 +71,7 @@ in
       go-task
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       sops
+      terraform-ls
     ] ++ lib.optionals config.gui [
       slack
     ] ++ (import ./scripts/spabreaks/default.nix { inherit pkgs; });
