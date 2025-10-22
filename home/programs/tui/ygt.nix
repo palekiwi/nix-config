@@ -6,6 +6,13 @@ let
   cfg = config.modules.ygt;
 
   projectConfigs = {
+    booking-transform = {
+      envrc = ../../config/ygt/booking-transform/.envrc;
+      gitHooks = {
+        post-checkout = ../../config/ygt/git/hooks/post-checkout;
+        post-merge = ../../config/ygt/git/hooks/post-merge;
+      };
+    };
     my-account = {
       envrc = ../../config/ygt/my-account/.envrc;
       gitHooks = {
