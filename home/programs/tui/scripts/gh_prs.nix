@@ -79,7 +79,7 @@ pkgs.writers.writeNuBin "gh_prs" ''
       $tree | each { |entry| flatten_entry $entry } | flatten
   }
 
-  def main [pr_string?: string] {
+  def main [--print, pr_string?: string] {
       # Check if we're in a git repository
       if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
           print "Error: Not in a git repository"
@@ -131,6 +131,12 @@ pkgs.writers.writeNuBin "gh_prs" ''
       let tree = (build_pr_tree $prs)
       let flat_tree = (flatten_tree $tree)
       let formatted_prs = ($flat_tree | each { |entry| format_tree_entry $entry })
+
+      # If --print flag is set, output tree to stdout and exit
+      if $print {
+          print ($formatted_prs | str join "\n")
+          return
+      }
 
       # Use fzf for interactive selection
       let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)" --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)" --tac)
