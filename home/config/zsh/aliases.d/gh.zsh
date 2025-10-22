@@ -48,7 +48,8 @@ gh_pr_create_ygt() {
 
 gh_pr_link() {
     PR_NUMBER=$(get_pr_number)
-    echo "https://github.com/ygt/spabreaks/pull/${PR_NUMBER}" # TODO: get the real GH remote
+    REPO_URL=$(gh repo view --json url --jq '.url')
+    echo "${REPO_URL}/pull/${PR_NUMBER}"
 }
 
 alias p="gh_prs"
