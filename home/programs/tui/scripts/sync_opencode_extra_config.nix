@@ -29,7 +29,7 @@ pkgs.writers.writeNuBin "sync_opencode_extra_config" ''
         let target_dir = ($relative_path | path dirname)
 
         if ($target_dir != "." and ($target_dir | path exists)) {
-          print $"Copying ($agent_file) to ($relative_path)"
+          print $"Copying ($agent_file) to ($relative_path)" # TODO: this is broken
           ^cp $agent_file $relative_path
         } else if ($target_dir == ".") {
           print $"Copying ($agent_file) to AGENTS.md"
