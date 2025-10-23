@@ -55,7 +55,7 @@ in
 
       bind -n M-C-y send-keys -R\; clear-history
 
-      bind-key -n M-y copy-mode
+      bind-key -n M-y copy-mode -e
       bind-key -T copy-mode-vi v send-keys -X begin-selection
       bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
       bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
