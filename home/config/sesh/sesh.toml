@@ -162,20 +162,6 @@ path = "~/code/homelab"
 startup_command = "_tmux_git-repo"
 
 #-------------------
-#   --- Utils ---
-#-------------------
-
-[[session]]
-name = "notes"
-path = "~/Nextcloud/Notes"
-startup_command = "nvim index.md"
-
-[[session]]
-name = "notes-pl"
-path = "~/Nextcloud-pl/Notes"
-startup_command = "nvim index.md"
-
-#-------------------
 #    --- ssh ----
 #-------------------
 
