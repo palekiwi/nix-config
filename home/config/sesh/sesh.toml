@@ -136,6 +136,7 @@ name = "notes-pl"
 path = "~/Nextcloud-pl/Notes"
 startup_command = "_tmux_git-repo"
 
+[[session]]
 name = "notes-sb"
 path = "~/Nextcloud-sb/Notes"
 startup_command = "_tmux_git-repo"
