@@ -77,7 +77,8 @@ in
       "super + space; e; r" = "${switchToSession} agents";
 
       "super + space; n; c" = "${switchToSession} nix-config";
-      "super + space; n; t" = "${switchToSession} ava-ygt";
+      "super + space; n; p" = "${switchToSession} notes-pl";
+      "super + space; n; t" = "${switchToSession} notes-sb";
 
       "super + space; k; s; c" = "${switchToKyomuSession} spabreaks-console";
       "super + space; k; s; d" = "${switchToKyomuSession} spabreaks-dev";
