@@ -32,6 +32,7 @@ return {
               fallback()
             end
           end, { 'i', 's' }),
+          ["<C-y>"] = require('minuet').make_cmp_map(),
           ['<Tab>'] = cmp.mapping(function(fallback)
             if luasnip.expand_or_locally_jumpable() then
               luasnip.expand_or_jump()
@@ -56,17 +57,21 @@ return {
               return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
             end
           },
-          { name = 'luasnip' },
-          { name = 'codeium' },
-          { name = 'path' },
           { name = 'buffer' },
+          { name = 'codeium' },
+          { name = 'luasnip' },
+          { name = 'minuet' },
           { name = 'nvim_lsp_signature_help' },
+          { name = 'path' },
         }),
+        performance = {
+          fetching_timeout = 2000,
+        },
         ---@diagnostic disable: missing-fields
         formatting = {
           format = lspkind.cmp_format({
-            mode = 'symbol_text', -- show only symbol annotations
-            maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            mode = 'symbol_text',  -- show only symbol annotations
+            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
             ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
 
             -- The function below will be called before any actual modifications from lspkind
