@@ -58,9 +58,7 @@ return {
             end
           },
           { name = 'buffer' },
-          { name = 'codeium' },
           { name = 'luasnip' },
-          { name = 'minuet' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'path' },
         }),
