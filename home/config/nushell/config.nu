@@ -1,4 +1,5 @@
 source aliases/main.nu
+source aliases/git.nu
 
 $env.config.hooks.env_change.PWD = [{ ||
     if (which direnv | is-empty) { return }
