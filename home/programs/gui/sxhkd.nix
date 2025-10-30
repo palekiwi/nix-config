@@ -68,7 +68,7 @@ in
       "super + Return" = "dmenu_tmux --tmux";
       "super + Return + control" = "dmenu_remote_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
-      "super + BackSpace" = "kitty --title $USER";
+      "super + BackSpace" = "kitty --title $env.USER";
 
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
