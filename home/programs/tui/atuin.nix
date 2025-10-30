@@ -3,7 +3,8 @@
 {
   programs.atuin = {
     enable = true;
-    enableZshIntegration = true;   # if you use zsh
+    enableZshIntegration = true;
+    enableNushellIntegration = true;
 
     settings = {
       auto_sync = false;
