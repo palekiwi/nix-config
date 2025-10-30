@@ -15,7 +15,8 @@ in
 
     programs.kitty = {
       enable = true;
-      shellIntegration.enableZshIntegration = true;
+      shellIntegration.enableZshIntegration = false;
+      shellIntegration.mode = null;
 
       settings = {
         confirm_os_window_close = "0";
