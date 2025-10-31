@@ -3,6 +3,8 @@ source aliases/git.nu
 
 source atuin.nu
 
+$env.config.show_banner = false
+
 $env.config.keybindings ++= [
   {
     name: insert_last_token
