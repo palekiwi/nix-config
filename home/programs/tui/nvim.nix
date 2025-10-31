@@ -1,10 +1,11 @@
-{ pkgs, config, ... }:
+{ config, pkgs, ... }:
+
+let
+  nvimPath = "${config.home.homeDirectory}/nix-config/home/config/nvim";
+in
 
 {
   home.packages = with pkgs; [ neovim ];
 
-  home.file."${config.xdg.configHome}/nvim" = {
-	  source = ../../config/nvim;
-	  recursive = true;
-  };
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink nvimPath;
 }
