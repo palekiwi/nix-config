@@ -4,6 +4,7 @@ source aliases/git.nu
 source atuin.nu
 
 $env.config.show_banner = false
+$env.config.table.mode = "compact"
 
 $env.config.keybindings ++= [
   {
