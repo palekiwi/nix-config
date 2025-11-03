@@ -9,8 +9,18 @@ use modules/gcp.nu
 $env.EDITOR = "nvim"
 
 $env.config.buffer_editor = "nvim"
+$env.config.edit_mode = 'vi'
 $env.config.show_banner = false
 $env.config.table.mode = "compact"
+
+$env.config.cursor_shape = {
+    vi_insert: line
+    vi_normal: block
+    emacs: underscore
+}
+
+$env.PROMPT_INDICATOR_VI_INSERT = ""
+$env.PROMPT_INDICATOR_VI_NORMAL = ""
 
 $env.config.keybindings ++= [
   {
