@@ -5,6 +5,7 @@ source aliases/main.nu
 source integrations/atuin.nu
 
 use modules/gcp.nu
+use modules/sb.nu
 
 $env.EDITOR = "nvim"
 
