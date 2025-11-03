@@ -24,7 +24,7 @@ in
         cursor = "none";
         cursor_beam_thickness = "1.0";
         cursor_blink_interval = "0";
-        cursor_shape = "block";
+        cursor_shape = "beam";
         cursor_shape_unfocused = "hollow";
         enable_audio_bell = "no";
         term = "xterm-256color";
