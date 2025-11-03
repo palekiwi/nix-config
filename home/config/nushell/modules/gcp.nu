@@ -7,3 +7,11 @@ export def "buckets ls" [] {
     | from csv
     | into datetime creation_time
 }
+
+export def builds [--limit:int = 50] {
+    gcloud builds list --format=json --limit=$"($limit)"
+    | from json
+    | select substitutions.REPO_NAME? status finishTime?
+    | rename repo status finishTime
+    | update finishTime { |row| try { $row.finishTime | into datetime } catch { null } }
+}
