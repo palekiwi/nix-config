@@ -11,7 +11,7 @@ export def "buckets ls" [] {
 export def builds [--limit:int = 50] {
     gcloud builds list --format=json --limit=$"($limit)"
     | from json
-    | select substitutions.REPO_NAME? status finishTime?
-    | rename repo status finishTime
+    | select substitutions.REPO_NAME? substitutions.SHORT_SHA? status finishTime?
     | update finishTime { |row| try { $row.finishTime | into datetime } catch { null } }
+    | rename repo commit status finished
 }
