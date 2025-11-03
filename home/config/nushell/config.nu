@@ -3,6 +3,9 @@ source aliases/git.nu
 
 source atuin.nu
 
+$env.EDITOR = "nvim"
+
+$env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 $env.config.table.mode = "compact"
 
