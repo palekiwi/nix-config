@@ -4,6 +4,8 @@ source aliases/main.nu
 
 source integrations/atuin.nu
 
+use modules/gcp.nu
+
 $env.EDITOR = "nvim"
 
 $env.config.buffer_editor = "nvim"
