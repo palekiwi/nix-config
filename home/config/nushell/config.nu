@@ -1,7 +1,7 @@
 source aliases/main.nu
 source aliases/git.nu
 
-source atuin.nu
+source integrations/atuin.nu
 
 $env.EDITOR = "nvim"
 
