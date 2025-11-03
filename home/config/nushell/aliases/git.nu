@@ -67,7 +67,7 @@ export def grr [] {
 }
 export alias grrc = git rm -r --cached .
 export alias grv = git remote -v
-export alias gs = git_switch
+export alias gs = git switch
 export alias gsl = git switch -
 export alias gsar = git_submodule_add_role
 export alias gsc = git switch -c
