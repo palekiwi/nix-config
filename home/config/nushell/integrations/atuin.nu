@@ -89,7 +89,7 @@ $env.config = (
             name: atuin
             modifier: none
             keycode: up
-            mode: [emacs, vi_normal, vi_insert]
+            mode: [emacs, vi_insert]
             event: {
                 until: [
                     {send: menuup}
