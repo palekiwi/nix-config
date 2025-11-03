@@ -76,7 +76,7 @@ def flatten_tree [tree: list] {
     $tree | each { |entry| flatten_entry $entry } | flatten
 }
 
-def main [--print, pr_string?: string] {
+def main [--print, --authors: string, pr_string?: string] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
         print "Error: Not in a git repository"
@@ -118,6 +118,19 @@ def main [--print, pr_string?: string] {
     }
 
     let prs = ($pr_list_result.stdout | from json)
+
+    # Filter by authors if provided
+    let authors_list = if ($authors | is-not-empty) {
+        $authors | split row ","
+    } else {
+        []
+    }
+
+    let prs = if ($authors_list | is-not-empty) {
+        $prs | where { |pr| $pr.author.login in $authors_list }
+    } else {
+        $prs
+    }
 
     if ($prs | is-empty) {
         print "No open PRs found"
