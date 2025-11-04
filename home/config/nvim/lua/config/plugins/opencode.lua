@@ -1,6 +1,7 @@
 return {
   {
     'NickvanDyke/opencode.nvim',
+    commit = "69c94dc",
     dependencies = {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
