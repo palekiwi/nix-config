@@ -31,8 +31,8 @@ in
 
         font_family = "FiraCode Nerd Font Mono";
         bold_font = "auto";
-        italic_font = "auto";
-        bold_italic_font = "auto";
+        italic_font = "FiraCode Nerd Font Mono Italic";
+        bold_italic_font = "FiraCode Nerd Font Mono Bold Italic";
         font_size = "16.0";
 
         foreground = "#c5c8c6";
