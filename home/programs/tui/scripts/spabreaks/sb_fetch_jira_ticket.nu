@@ -1,4 +1,4 @@
-def main [ticket?: string] {
+def main [ticket?: string, --md, --save] {
     let ticket = if $ticket != null {
         $ticket
     } else {
@@ -15,10 +15,32 @@ def main [ticket?: string] {
     )
 
 
-    $response
+    let filtered = $response
     | {
          title: $in.fields.summary,
          description: $in.renderedFields.description,
          technical_notes: $in.renderedFields.customfield_10174
+    }
+
+    let content = if $md {
+        $filtered
+        | items { |key, value| {key: $key, value: ($value | pandoc -f html -t markdown --shift-heading-level-by=1) }}
+        | $"# ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
+    } else {
+        $filtered
+    }
+
+
+    if $save {
+        let branch = git branch --show-current
+        let output_dir = $".agents/($branch)"
+        let ext = if $md { "md" } else { "json" }
+        let filename = $"ticket.($ext)"
+
+        mkdir $output_dir
+
+        $content | save -f $"($output_dir)/($filename)"
+    } else {
+        $content
     }
 }
