@@ -13,6 +13,7 @@
     jrnl
     jq
     neovim
+    pandoc
     pass
     ranger
     ripgrep
