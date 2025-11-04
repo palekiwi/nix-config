@@ -1,7 +1,7 @@
 return {
   {
     'NickvanDyke/opencode.nvim',
-    commit = "69c94dc",
+    -- commit = "c7594f8",
     dependencies = {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
@@ -10,7 +10,7 @@ return {
 
       vim.g.opencode_opts = {
 
-        on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
+        -- on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
 
         -- load port from an var set on a project basis or use a custom default
         port = tonumber(vim.g.opencode_port) or 49000,
