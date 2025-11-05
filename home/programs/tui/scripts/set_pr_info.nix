@@ -6,6 +6,8 @@ let
   reset = "\\033[0m";
 in
 pkgs.writeShellScriptBin "set_pr_info" ''
+  # TODO: save the common ancestor for better diffing
+  # TODO: rewrite in nushell
   DEST_DIR=.git
 
   pr_info=$(${pkgs.gh}/bin/gh pr view --json number,baseRefName 2>/dev/null)
