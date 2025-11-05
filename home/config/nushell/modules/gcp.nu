@@ -8,7 +8,10 @@ export def "buckets ls" [] {
     | into datetime creation_time
 }
 
-export def builds [--limit:int = 50, --project="production-servers"] {
+export def builds [
+    --limit(-l):int = 50
+    --project(-p)="production-servers"
+] {
     gcloud builds list --format=json --limit=$"($limit)" --project=$"($project)"
     | from json
     | select substitutions.REPO_NAME? substitutions.COMMIT_SHA? status finishTime?
@@ -31,3 +34,5 @@ export def "logs spabreaks" [--limit:int = 50] {
     gcloud logging read --format=json --limit=$"($limit)" $query
     | from json
 }
+
+export alias b = builds
