@@ -8,12 +8,13 @@ export def "buckets ls" [] {
     | into datetime creation_time
 }
 
-export def builds [--limit:int = 50] {
-    gcloud builds list --format=json --limit=$"($limit)"
+export def builds [--limit:int = 50, --project="production-servers"] {
+    gcloud builds list --format=json --limit=$"($limit)" --project=$"($project)"
     | from json
-    | select substitutions.REPO_NAME? substitutions.SHORT_SHA? status finishTime?
+    | select substitutions.REPO_NAME? substitutions.COMMIT_SHA? status finishTime?
     | update finishTime { |row| try { $row.finishTime | into datetime } catch { null } }
     | rename repo commit status finished
+    | update commit { |row| $row.commit | str substring 0..7 }
 }
 
 # TODO: This is just an example
