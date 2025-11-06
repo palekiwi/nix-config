@@ -79,6 +79,9 @@ def flatten_tree [tree: list] {
 def main [
     pr_string?: string
     --authors(-a): string
+    --exclude-authors(-A): string
+    --labels(-l): string
+    --exclude-labels(-L): string
     --draft(-d)
     --print
 ] {
@@ -125,7 +128,7 @@ def main [
     let prs = ($pr_list_result.stdout | from json)
 
     # Include drafts only if `--draft` passed
-    let $prs = if $draft {
+    let prs = if $draft {
         $prs
     } else {
         $prs | where { |pr| $pr.isDraft == false }
@@ -138,8 +141,49 @@ def main [
         []
     }
 
+    let exclude_authors_list = if ($exclude_authors | is-not-empty) {
+        $exclude_authors | split row ","
+    } else {
+        []
+    }
+
     let prs = if ($authors_list | is-not-empty) {
         $prs | where { |pr| $pr.author.login in $authors_list }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_authors_list | is-not-empty) {
+        $prs | where { |pr| $pr.author.login not-in $exclude_authors_list }
+    } else {
+        $prs
+    }
+
+    # Filter by labels if provided
+    let labels_list = if ($labels | is-not-empty) {
+        $labels | split row ","
+    } else {
+        []
+    }
+
+    let exclude_labels_list = if ($exclude_labels | is-not-empty) {
+        $exclude_labels | split row ","
+    } else {
+        []
+    }
+
+    let prs = if ($labels_list | is-not-empty) {
+        $prs | where { |pr| 
+            ($pr.labels | any { |l| $l.name in $labels_list })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_labels_list | is-not-empty) {
+        $prs | where { |pr| 
+            ($pr.labels | all { |l| $l.name not-in $exclude_labels_list })
+        }
     } else {
         $prs
     }
