@@ -39,7 +39,7 @@ in
         bold_font = "auto";
         italic_font = "auto";
         bold_italic_font = "auto";
-        font_size = "17.0";
+        font_size = "17.5";
 
         foreground = "#c5c8c6";
         background = "#0F1319";
