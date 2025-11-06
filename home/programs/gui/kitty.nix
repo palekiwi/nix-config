@@ -29,11 +29,17 @@ in
         enable_audio_bell = "no";
         term = "xterm-256color";
 
-        font_family = "FiraCode Nerd Font Mono";
+        # font_family = "FiraCode Nerd Font Mono";
+        # bold_font = "auto";
+        # italic_font = "FiraCode Nerd Font Mono Italic";
+        # bold_italic_font = "FiraCode Nerd Font Mono Bold Italic";
+        # font_size = "16.0";
+
+        font_family = "Iosevka Nerd Font Mono";
         bold_font = "auto";
-        italic_font = "FiraCode Nerd Font Mono Italic";
-        bold_italic_font = "FiraCode Nerd Font Mono Bold Italic";
-        font_size = "16.0";
+        italic_font = "auto";
+        bold_italic_font = "auto";
+        font_size = "17.0";
 
         foreground = "#c5c8c6";
         background = "#0F1319";
