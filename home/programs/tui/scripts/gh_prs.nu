@@ -76,7 +76,12 @@ def flatten_tree [tree: list] {
     $tree | each { |entry| flatten_entry $entry } | flatten
 }
 
-def main [--print, --authors: string, pr_string?: string] {
+def main [
+    pr_string?: string
+    --authors(-a): string
+    --draft(-d)
+    --print
+] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
         print "Error: Not in a git repository"
@@ -109,7 +114,7 @@ def main [--print, --authors: string, pr_string?: string] {
 
     # Original interactive flow if no argument provided
     let pr_list_result = (do {
-        gh pr list --json number,title,author,headRefName,baseRefName,labels
+        gh pr list --json number,title,author,headRefName,baseRefName,labels,isDraft
     } | complete)
 
     if $pr_list_result.exit_code != 0 {
@@ -118,6 +123,13 @@ def main [--print, --authors: string, pr_string?: string] {
     }
 
     let prs = ($pr_list_result.stdout | from json)
+
+    # Include drafts only if `--draft` passed
+    let $prs = if $draft {
+        $prs
+    } else {
+        $prs | where { |pr| $pr.isDraft == false }
+    }
 
     # Filter by authors if provided
     let authors_list = if ($authors | is-not-empty) {
