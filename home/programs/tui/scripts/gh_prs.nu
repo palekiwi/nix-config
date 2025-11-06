@@ -136,45 +136,45 @@ def main [
 
     # Filter by authors if provided
     let authors_list = if ($authors | is-not-empty) {
-        $authors | split row ","
+        $authors | split row "," | each { |a| $a | str downcase }
     } else {
         []
     }
 
     let exclude_authors_list = if ($exclude_authors | is-not-empty) {
-        $exclude_authors | split row ","
+        $exclude_authors | split row "," | each { |a| $a | str downcase }
     } else {
         []
     }
 
     let prs = if ($authors_list | is-not-empty) {
-        $prs | where { |pr| $pr.author.login in $authors_list }
+        $prs | where { |pr| ($pr.author.login | str downcase) in $authors_list }
     } else {
         $prs
     }
 
     let prs = if ($exclude_authors_list | is-not-empty) {
-        $prs | where { |pr| $pr.author.login not-in $exclude_authors_list }
+        $prs | where { |pr| ($pr.author.login | str downcase) not-in $exclude_authors_list }
     } else {
         $prs
     }
 
     # Filter by labels if provided
     let labels_list = if ($labels | is-not-empty) {
-        $labels | split row ","
+        $labels | split row "," | each { |l| $l | str downcase }
     } else {
         []
     }
 
     let exclude_labels_list = if ($exclude_labels | is-not-empty) {
-        $exclude_labels | split row ","
+        $exclude_labels | split row "," | each { |l| $l | str downcase }
     } else {
         []
     }
 
     let prs = if ($labels_list | is-not-empty) {
         $prs | where { |pr| 
-            ($pr.labels | any { |l| $l.name in $labels_list })
+            ($pr.labels | any { |l| ($l.name | str downcase) in $labels_list })
         }
     } else {
         $prs
@@ -182,7 +182,7 @@ def main [
 
     let prs = if ($exclude_labels_list | is-not-empty) {
         $prs | where { |pr| 
-            ($pr.labels | all { |l| $l.name not-in $exclude_labels_list })
+            ($pr.labels | all { |l| ($l.name | str downcase) not-in $exclude_labels_list })
         }
     } else {
         $prs
