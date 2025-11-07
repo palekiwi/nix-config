@@ -8,6 +8,7 @@ use modules/gcp.nu
 use modules/sb.nu
 
 $env.EDITOR = "nvim"
+$env.GPG_TTY = ^tty
 
 $env.config.buffer_editor = "nvim"
 $env.config.edit_mode = 'vi'
