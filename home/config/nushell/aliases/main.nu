@@ -28,11 +28,14 @@ def pass_insert [len: int, name: string] {
     pass edit $name
 }
 
+def ll [] {
+    ls -la | select name type size mode user group created accessed modified | sort-by type
+}
+
 alias cat = bat -p
 alias ctc = cat_to_clipboard
 alias gu = gitui
 alias hms = home-manager switch --flake $"($nu.home-path)/nix-config/home#(whoami)@(hostname -s)"
-alias ll = ls -la
 alias orun = opencode-run
 alias orunx = with-env { OPENCODE_WORKSPACE: "." } { opencode-run }
 alias pc = pass -c
