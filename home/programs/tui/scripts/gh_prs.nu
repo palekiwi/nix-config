@@ -63,7 +63,7 @@ def format_tree_entry [entry: record] {
     let gray = "\u{001b}[90m"
     let tree_color = "\u{001b}[37m"
 
-    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray)\)($reset)"
+    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray)\) - @($pr.author.login)($reset)"
 }
 
 def flatten_tree [tree: list] {
