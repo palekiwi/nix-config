@@ -10,6 +10,10 @@ use modules/sb.nu
 $env.EDITOR = "nvim"
 $env.GPG_TTY = ^tty
 
+if ($env.SSH_CONNECTION? == null) or ((hostname) == "kyomu") {
+    $env.SSH_AUTH_SOCK = (gpgconf --list-dirs agent-ssh-socket | str trim)
+}
+
 $env.config.buffer_editor = "nvim"
 $env.config.edit_mode = 'vi'
 $env.config.show_banner = false
