@@ -62,8 +62,18 @@ def format_tree_entry [entry: record] {
     let reset = "\u{001b}[0m"
     let gray = "\u{001b}[90m"
     let tree_color = "\u{001b}[37m"
+    let blue = "\u{001b}[34m"
 
-    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($labels_str) ($gray)\(($green)($pr.headRefName)($gray)\) - @($pr.author.login)($reset)"
+    let unique_reviewers = ($pr | get reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
+    let approvals = ($pr | get reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
+    let reviewer_count = ($unique_reviewers | length)
+    let reviews_str = if $reviewer_count > 0 {
+        $" ($gray)($approvals)/($reviewer_count)($reset)"
+    } else {
+        ""
+    }
+
+    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($reviews_str) ($labels_str)($gray)\(($green)($pr.headRefName)($gray)\) - @($pr.author.login)($reset)"
 }
 
 def flatten_tree [tree: list] {
@@ -79,11 +89,15 @@ def flatten_tree [tree: list] {
 def main [
     pr_string?: string
     --authors(-a): string
-    --exclude-authors(-A): string
-    --labels(-l): string
-    --exclude-labels(-L): string
     --draft(-d)
+    --exclude-authors(-A): string
+    --exclude-labels(-L): string
+    --exclude-lgtm(-G)
+    --exclude-reviewed(-R)
+    --labels(-l): string
+    --lgtm(-g)
     --print
+    --reviewed(-r)
 ] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
@@ -117,7 +131,7 @@ def main [
 
     # Original interactive flow if no argument provided
     let pr_list_result = (do {
-        gh pr list --json number,title,author,headRefName,baseRefName,labels,isDraft
+        gh pr list --json number,title,author,headRefName,baseRefName,labels,isDraft,reviews
     } | complete)
 
     if $pr_list_result.exit_code != 0 {
@@ -173,7 +187,7 @@ def main [
     }
 
     let prs = if ($labels_list | is-not-empty) {
-        $prs | where { |pr| 
+        $prs | where { |pr|
             ($pr.labels | any { |l| ($l.name | str downcase) in $labels_list })
         }
     } else {
@@ -181,8 +195,40 @@ def main [
     }
 
     let prs = if ($exclude_labels_list | is-not-empty) {
-        $prs | where { |pr| 
+        $prs | where { |pr|
             ($pr.labels | all { |l| ($l.name | str downcase) not-in $exclude_labels_list })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if $lgtm {
+        $prs | where { |pr|
+            $pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" }
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if $LGTM {
+        $prs | where { |pr|
+            not ($pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if $reviewed {
+        $prs | where { |pr|
+            $pr.author.login != "palekiwi" and ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if $exclude_reviewed {
+        $prs | where { |pr|
+            $pr.author.login == "palekiwi" or not ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
         }
     } else {
         $prs
