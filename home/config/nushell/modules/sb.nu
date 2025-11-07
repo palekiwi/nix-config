@@ -11,7 +11,35 @@ export def "ticket url" [--org = "spabreaks", --id = "SB", --open] {
     $url
 }
 
-export def "ticket view" [ticket?: string, --json, --save] {
+export def "ticket view" [ticket?: string, --json] {
+    let data = ticket fetch $ticket
+    if $json { $data } else { ticket-to-md $data }
+}
+
+def ticket-to-md [data: record] {
+    $data
+    | items { |key, value| {key: $key, value: ($value | pandoc -f html -t markdown --shift-heading-level-by=1) }}
+    | $"# ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
+}
+
+export def "ticket save" [ticket?: string, --json] {
+    let data = ticket fetch $ticket
+    let content = if $json { $data } else { ticket-to-md $data }
+
+    let branch = git branch --show-current
+    let output_dir = $".agents/($branch)"
+    let ext = if $json { "json" } else { "md" }
+    let filename = $"ticket.($ext)"
+    let target = $"($output_dir)/($filename)"
+
+    mkdir $output_dir
+
+    $content | save -f $target
+
+    $target
+}
+
+export def "ticket fetch" [ticket?: string] {
     let ticket = if $ticket != null {
         $ticket
     } else {
@@ -20,45 +48,15 @@ export def "ticket view" [ticket?: string, --json, --save] {
 
     let api_url = $"($env.JIRA_URL)/rest/api/2/issue/($ticket)"
 
-    let response = (
+    (
         http get
             --user $env.JIRA_EMAIL --password $env.JIRA_TOKEN
             --headers [Content-Type application/json]
             $"($api_url)?expand=renderedFields"
     )
-
-
-    let filtered = $response
     | {
          title: $in.fields.summary,
          description: $in.renderedFields.description,
          technical_notes: $in.renderedFields.customfield_10174
-    }
-
-    let content = if $json {
-        $filtered
-    } else {
-        $filtered
-        | items { |key, value| {key: $key, value: ($value | pandoc -f html -t markdown --shift-heading-level-by=1) }}
-        | $"# ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
-    }
-
-
-    if $save {
-        let branch = git branch --show-current
-        let output_dir = $".agents/($branch)"
-        let ext = if $json { "json" } else { "md" }
-        let filename = $"ticket.($ext)"
-
-        mkdir $output_dir
-
-        let target = $"($output_dir)/($filename)"
-
-        $content | save -f $target
-
-        $target
-
-    } else {
-        $content
     }
 }
