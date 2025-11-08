@@ -58,22 +58,24 @@ def format_tree_entry [entry: record] {
         ""
     }
 
-    let green = "\u{001b}[32m"
-    let reset = "\u{001b}[0m"
-    let gray = "\u{001b}[90m"
-    let tree_color = "\u{001b}[37m"
-    let blue = "\u{001b}[34m"
+    let colors = {
+        green: "\u{001b}[32m",
+        reset: "\u{001b}[0m",
+        gray: "\u{001b}[90m",
+        tree_color: "\u{001b}[37m",
+        blue: "\u{001b}[34m"
+    }
 
     let unique_reviewers = ($pr | get reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
     let approvals = ($pr | get reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
     let reviewer_count = ($unique_reviewers | length)
     let reviews_str = if $reviewer_count > 0 {
-        $" ($gray)($approvals)/($reviewer_count)($reset)"
+        $" ($colors.gray)($approvals)/($reviewer_count)($colors.reset)"
     } else {
         ""
     }
 
-    $"($tree_color)($indent)($reset)($green)($pr.number)($reset): ($pr.title)($reviews_str) ($labels_str)($gray)\(($green)($pr.headRefName)($gray)\) - @($pr.author.login)($reset)"
+    $"($colors.tree_color)($indent)($colors.reset)($colors.green)($pr.number)($colors.reset): ($pr.title)($reviews_str) ($labels_str)($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
 }
 
 def flatten_tree [tree: list] {
