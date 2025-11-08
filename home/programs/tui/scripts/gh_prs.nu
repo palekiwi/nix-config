@@ -87,6 +87,111 @@ def flatten_tree [tree: list] {
     $tree | each { |entry| flatten_entry $entry } | flatten
 }
 
+def filter_prs [
+    prs: list
+    draft?: bool
+    authors?: string
+    exclude_authors?: string
+    labels?: string
+    exclude_labels?: string
+    lgtm?: bool
+    exclude_lgtm?: bool
+    reviewed?: bool
+    exclude_reviewed?: bool
+] {
+    let prs = if ($draft | default false) {
+        $prs
+    } else {
+        $prs | where { |pr| $pr.isDraft == false }
+    }
+
+    let authors_list = if ($authors | is-not-empty) {
+        $authors | split row "," | each { |a| $a | str downcase }
+    } else {
+        []
+    }
+
+    let exclude_authors_list = if ($exclude_authors | is-not-empty) {
+        $exclude_authors | split row "," | each { |a| $a | str downcase }
+    } else {
+        []
+    }
+
+    let prs = if ($authors_list | is-not-empty) {
+        $prs | where { |pr| ($pr.author.login | str downcase) in $authors_list }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_authors_list | is-not-empty) {
+        $prs | where { |pr| ($pr.author.login | str downcase) not-in $exclude_authors_list }
+    } else {
+        $prs
+    }
+
+    let labels_list = if ($labels | is-not-empty) {
+        $labels | split row "," | each { |l| $l | str downcase }
+    } else {
+        []
+    }
+
+    let exclude_labels_list = if ($exclude_labels | is-not-empty) {
+        $exclude_labels | split row "," | each { |l| $l | str downcase }
+    } else {
+        []
+    }
+
+    let prs = if ($labels_list | is-not-empty) {
+        $prs | where { |pr|
+            ($pr.labels | any { |l| ($l.name | str downcase) in $labels_list })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_labels_list | is-not-empty) {
+        $prs | where { |pr|
+            ($pr.labels | all { |l| ($l.name | str downcase) not-in $exclude_labels_list })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($lgtm | default false) {
+        $prs | where { |pr|
+            $pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" }
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_lgtm | default false) {
+        $prs | where { |pr|
+            not ($pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($reviewed | default false) {
+        $prs | where { |pr|
+            $pr.author.login != "palekiwi" and ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
+    let prs = if ($exclude_reviewed | default false) {
+        $prs | where { |pr|
+            $pr.author.login == "palekiwi" or not ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
+    $prs
+}
+
 def format_table [prs: list] {
     $prs | each { |pr|
         let unique_reviewers = ($pr.reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
@@ -163,98 +268,7 @@ def main [
 
     let prs = ($pr_list_result.stdout | from json)
 
-    # Include drafts only if `--draft` passed
-    let prs = if $draft {
-        $prs
-    } else {
-        $prs | where { |pr| $pr.isDraft == false }
-    }
-
-    # Filter by authors if provided
-    let authors_list = if ($authors | is-not-empty) {
-        $authors | split row "," | each { |a| $a | str downcase }
-    } else {
-        []
-    }
-
-    let exclude_authors_list = if ($exclude_authors | is-not-empty) {
-        $exclude_authors | split row "," | each { |a| $a | str downcase }
-    } else {
-        []
-    }
-
-    let prs = if ($authors_list | is-not-empty) {
-        $prs | where { |pr| ($pr.author.login | str downcase) in $authors_list }
-    } else {
-        $prs
-    }
-
-    let prs = if ($exclude_authors_list | is-not-empty) {
-        $prs | where { |pr| ($pr.author.login | str downcase) not-in $exclude_authors_list }
-    } else {
-        $prs
-    }
-
-    # Filter by labels if provided
-    let labels_list = if ($labels | is-not-empty) {
-        $labels | split row "," | each { |l| $l | str downcase }
-    } else {
-        []
-    }
-
-    let exclude_labels_list = if ($exclude_labels | is-not-empty) {
-        $exclude_labels | split row "," | each { |l| $l | str downcase }
-    } else {
-        []
-    }
-
-    let prs = if ($labels_list | is-not-empty) {
-        $prs | where { |pr|
-            ($pr.labels | any { |l| ($l.name | str downcase) in $labels_list })
-        }
-    } else {
-        $prs
-    }
-
-    let prs = if ($exclude_labels_list | is-not-empty) {
-        $prs | where { |pr|
-            ($pr.labels | all { |l| ($l.name | str downcase) not-in $exclude_labels_list })
-        }
-    } else {
-        $prs
-    }
-
-    let prs = if $lgtm {
-        $prs | where { |pr|
-            $pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" }
-        }
-    } else {
-        $prs
-    }
-
-    let prs = if $exclude_lgtm {
-        $prs | where { |pr|
-            not ($pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" })
-        }
-    } else {
-        $prs
-    }
-
-    let prs = if $reviewed {
-        $prs | where { |pr|
-            $pr.author.login != "palekiwi" and ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
-        }
-    } else {
-        $prs
-    }
-
-    let prs = if $exclude_reviewed {
-        $prs | where { |pr|
-            $pr.author.login == "palekiwi" or not ($pr.reviews | any { |r| $r.author.login == "palekiwi" })
-        }
-    } else {
-        $prs
-    }
+    let prs = (filter_prs $prs $draft $authors $exclude_authors $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed)
 
     if ($prs | is-empty) {
         print "No open PRs found"
@@ -282,11 +296,7 @@ def main [
         return
     }
 
-    let pr_number = if $tree {
-        ($selected | parse --regex '(\d+):' | get capture0.0 | into int)
-    } else {
-        ($selected | parse --regex '│\s*(\d+)\s*│' | get capture0.0 | into int)
-    }
+    let pr_number = ($selected | parse --regex '(\d+)' | get capture0.0 | into int)
 
     let checkout_result = (do { gh pr checkout $pr_number } | complete)
     if $checkout_result.exit_code == 0 {
