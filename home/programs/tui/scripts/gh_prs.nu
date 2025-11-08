@@ -51,8 +51,12 @@ def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_
     let depth = $entry.depth
 
     # Create indentation
-    let indent = if $depth == 0 { "" } else {
-        (0..($depth - 1) | each { "│ " } | str join) + "├─"
+    let indent = if $depth == 0 { 
+        "" 
+    } else if $depth == 1 {
+        "├─"
+    } else {
+        (0..($depth - 2) | each { "│ " } | str join) + "├─"
     }
 
     let line_index = ($pr_to_index | get ($pr.number | into string))
