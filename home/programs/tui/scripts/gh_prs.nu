@@ -87,6 +87,24 @@ def flatten_tree [tree: list] {
     $tree | each { |entry| flatten_entry $entry } | flatten
 }
 
+def format_table [prs: list] {
+    $prs | each { |pr|
+        let unique_reviewers = ($pr.reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
+        let approvals = ($pr.reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
+        let reviewer_count = ($unique_reviewers | length)
+
+        {
+            index: $"(ansi green)($pr.number)(ansi reset)"
+            title: $"(ansi default)($pr.title)(ansi reset)"
+            labels: $"(ansi purple)($pr.labels | each { |l| $l.name } | str join ', ')(ansi reset)"
+            cr: $"(ansi teal)($approvals)/($reviewer_count)(ansi reset)"
+            branch: $"(ansi green)($pr.headRefName)(ansi reset)"
+            base: $pr.baseRefName
+            author: $"(ansi blue)($pr.author.login)(ansi reset)"
+        }
+    }
+}
+
 def main [
     pr_string?: string
     --authors(-a): string
@@ -99,6 +117,7 @@ def main [
     --lgtm(-g)
     --print
     --reviewed(-r)
+    --tree(-t)
 ] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
@@ -240,27 +259,32 @@ def main [
         return
     }
 
-    # Build and format tree
-    let tree = (build_pr_tree $prs)
-    let flat_tree = (flatten_tree $tree)
-    let formatted_prs = ($flat_tree | each { |entry| format_tree_entry $entry })
+    let formatted_output = if $tree {
+        let tree = (build_pr_tree $prs)
+        let flat_tree = (flatten_tree $tree)
+        ($flat_tree | each { |entry| format_tree_entry $entry } | str join "\n")
+    } else {
+        let table_data = (format_table $prs)
+        ($table_data | table -e --theme none | to text | lines | skip 1 | to text)
+    }
 
-    # If --print flag is set, output tree to stdout and exit
     if $print {
-        print ($formatted_prs | str join "\n")
+        print $formatted_output
         return
     }
 
-    # Use fzf for interactive selection
-    let selected = ($formatted_prs | str join "\n" | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)" --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)" --tac)
+    let selected = ($formatted_output | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)" --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)" --tac)
 
     if ($selected | is-empty) {
         print "No PR selected"
         return
     }
 
-    # Extract PR number from selection (handle tree prefixes)
-    let pr_number = ($selected | parse --regex '(\d+):' | get capture0.0 | into int)
+    let pr_number = if $tree {
+        ($selected | parse --regex '(\d+):' | get capture0.0 | into int)
+    } else {
+        ($selected | parse --regex '│\s*(\d+)\s*│' | get capture0.0 | into int)
+    }
 
     let checkout_result = (do { gh pr checkout $pr_number } | complete)
     if $checkout_result.exit_code == 0 {
