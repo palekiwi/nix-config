@@ -46,7 +46,7 @@ def build_pr_tree [prs: list] {
     | flatten
 }
 
-def format_tree_entry [entry: record] {
+def format_tree_entry [entry: record, formatted_lines: list, pr_to_index: record] {
     let pr = $entry.pr
     let depth = $entry.depth
 
@@ -55,22 +55,10 @@ def format_tree_entry [entry: record] {
         (0..($depth - 1) | each { "│ " } | str join) + "├─"
     }
 
-    # Format labels
-    let label_names = ($pr.labels | each { |l| sanitize_text $l.name } | str join ", ")
-    let labels_str = $"(ansi purple)[($label_names)](ansi purple)"
+    let line_index = ($pr_to_index | get ($pr.number | into string))
+    let formatted_line = ($formatted_lines | get $line_index)
 
-    let unique_reviewers = ($pr | get reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
-    let approvals = ($pr | get reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
-    let reviewer_count = ($unique_reviewers | length)
-    let reviews_str = if $reviewer_count > 0 {
-        $" (ansi teal)($approvals)/($reviewer_count)(ansi reset)"
-    } else {
-        ""
-    }
-
-    let pr_color = if $pr.isDraft { (ansi white) } else { ansi green }
-
-    $"(ansi white)($indent)($pr_color)($pr.number)(ansi reset): (ansi default)(sanitize_text $pr.title) ($labels_str)($reviews_str) (ansi white)\((ansi green)($pr.headRefName)(ansi white)\) - @($pr.author.login)(ansi reset)"
+    $"(ansi white)($indent)(ansi reset)($formatted_line)"
 }
 
 def flatten_tree [tree: list] {
@@ -271,9 +259,14 @@ def main [
     }
 
     let formatted_output = if $tree {
+        let formatted_lines = (format_table $prs | table -e --theme none | to text | lines | skip 1)
+        let pr_to_index = ($prs | enumerate | reduce -f {} { |item, acc|
+            $acc | upsert ($item.item.number | into string) $item.index
+        })
+
         build_pr_tree $prs
         | flatten_tree $in
-        | each { |entry| format_tree_entry $entry } | str join "\n"
+        | each { |entry| format_tree_entry $entry $formatted_lines $pr_to_index } | str join "\n"
     } else {
         format_table $prs
         | table -e --theme none | to text | lines | skip 1 | to text
