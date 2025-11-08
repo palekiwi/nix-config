@@ -204,7 +204,6 @@ def format_table [prs: list] {
         let unique_reviewers = ($pr.reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
         let approvals = ($pr.reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
         let reviewer_count = ($unique_reviewers | length)
-        let number_color = if $pr.isDraft { "white" } else { "green" }
         let $reviews_str = if $reviewer_count > 0 { $"($approvals)/($reviewer_count)" } else { "" }
 
         {
@@ -273,9 +272,9 @@ def main [
         exit 1
     }
 
-    let prs = ($pr_list_result.stdout | from json)
-
-    let prs = (filter_prs $prs $draft $authors $exclude_authors $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed)
+    let prs = $pr_list_result.stdout
+    | from json
+    | filter_prs $in $draft $authors $exclude_authors $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed
 
     if ($prs | is-empty) {
         print "No open PRs found"
@@ -283,12 +282,12 @@ def main [
     }
 
     let formatted_output = if $tree {
-        let tree = (build_pr_tree $prs)
-        let flat_tree = (flatten_tree $tree)
-        ($flat_tree | each { |entry| format_tree_entry $entry } | str join "\n")
+        build_pr_tree $prs
+        | flatten_tree $in
+        | each { |entry| format_tree_entry $entry } | str join "\n"
     } else {
-        let table_data = (format_table $prs)
-        ($table_data | table -e --theme none | to text | lines | skip 1 | to text)
+        format_table $prs
+        | table -e --theme none | to text | lines | skip 1 | to text
     }
 
     if $print {
