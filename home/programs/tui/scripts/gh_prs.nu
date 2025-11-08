@@ -46,7 +46,7 @@ def build_pr_tree [prs: list] {
     | flatten
 }
 
-def format_tree_entry [entry: record, formatted_lines: list, pr_to_index: record] {
+def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_pr_width: int] {
     let pr = $entry.pr
     let depth = $entry.depth
 
@@ -56,9 +56,24 @@ def format_tree_entry [entry: record, formatted_lines: list, pr_to_index: record
     }
 
     let line_index = ($pr_to_index | get ($pr.number | into string))
-    let formatted_line = ($formatted_lines | get $line_index)
+    let row = ($pr_table | get $line_index)
 
-    $"(ansi white)($indent)(ansi reset)($formatted_line)"
+    # Pad PR number to consistent width
+    let pr_number = ($pr.number | into string | fill -a left -w $max_pr_width)
+    let colored_pr_number = $"((if $pr.isDraft { ansi white } else { ansi green }))($pr_number)(ansi reset)"
+
+    # Combine indent + pr number + title into one field
+    let combined_id_title = $"(ansi white)($indent)(ansi reset)($colored_pr_number) ($row.title)"
+
+    # Create new row with combined id+title field first, then other columns
+    {
+        id: $combined_id_title,
+        labels: $row.labels,
+        cr: $row.cr,
+        branch: $row.branch,
+        base: $row.base,
+        author: $row.author
+    }
 }
 
 def flatten_tree [tree: list] {
@@ -259,17 +274,19 @@ def main [
     }
 
     let formatted_output = if $tree {
-        let formatted_lines = (format_table $prs | table -e --theme none -i false | to text | lines | skip 1 | each { |ln| $ln | str substring 1..})
+        let pr_table = format_table $prs
+        let max_pr_width = ($prs | each { |pr| $pr.number | into string | str length } | math max)
         let pr_to_index = ($prs | enumerate | reduce -f {} { |item, acc|
             $acc | upsert ($item.item.number | into string) $item.index
         })
 
         build_pr_tree $prs
         | flatten_tree $in
-        | each { |entry| format_tree_entry $entry $formatted_lines $pr_to_index } | str join "\n"
+        | each { |entry| format_tree_entry $entry $pr_table $pr_to_index $max_pr_width }
+        | table -e --theme none -i false| to text | lines | skip 1 | to text
     } else {
         format_table $prs
-        | table -e --theme none | to text | lines | skip 1 | to text
+        | table -e --theme none -i false | to text | lines | skip 1 | to text
     }
 
     if $print {
