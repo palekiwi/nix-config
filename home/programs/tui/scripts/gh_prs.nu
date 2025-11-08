@@ -300,7 +300,6 @@ def main [
         | fzf --ansi --border --prompt="Select PR to checkout: "
             --preview-window=top:50%
             --preview="echo {q} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
-            --bind="ctrl-h:execute-silent(echo {q} | grep -oE '[0-9]+' | head -1 | xclip -selection clipboard)"
             --bind="ctrl-y:execute-silent(echo {q} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
             --tac
         )
