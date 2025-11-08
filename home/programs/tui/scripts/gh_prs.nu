@@ -75,7 +75,9 @@ def format_tree_entry [entry: record] {
         ""
     }
 
-    $"($colors.tree_color)($indent)($colors.reset)($colors.green)($pr.number)($colors.reset): ($pr.title)($reviews_str) ($labels_str)($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
+    let pr_color = if $pr.isDraft { $colors.tree_color } else { $colors.green }
+
+    $"($colors.tree_color)($indent)($colors.reset)($pr_color)($pr.number)($colors.reset): ($pr.title)($reviews_str) ($labels_str)($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
 }
 
 def flatten_tree [tree: list] {
