@@ -92,9 +92,10 @@ def format_table [prs: list] {
         let unique_reviewers = ($pr.reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
         let approvals = ($pr.reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
         let reviewer_count = ($unique_reviewers | length)
+        let number_color = if $pr.isDraft { "white" } else { "green" }
 
         {
-            index: $"(ansi green)($pr.number)(ansi reset)"
+            index: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
             title: $"(ansi default)($pr.title)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($approvals)/($reviewer_count)(ansi reset)"
