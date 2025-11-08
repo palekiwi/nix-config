@@ -50,34 +50,31 @@ def format_tree_entry [entry: record] {
         (0..($depth - 1) | each { "│ " } | str join) + "├─"
     }
 
-    # Format labels
-    let labels_str = if ($pr.labels | is-not-empty) {
-        let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
-        $" \u{001b}[35m[($label_names)]\u{001b}[0m"
-    } else {
-        ""
+    let colors = {
+        blue: "\u{001b}[34m"
+        gray: "\u{001b}[90m",
+        green: "\u{001b}[32m",
+        purple: "\u{001b}[35m"
+        reset: "\u{001b}[0m",
+        tree_color: "\u{001b}[37m",
     }
 
-    let colors = {
-        green: "\u{001b}[32m",
-        reset: "\u{001b}[0m",
-        gray: "\u{001b}[90m",
-        tree_color: "\u{001b}[37m",
-        blue: "\u{001b}[34m"
-    }
+    # Format labels
+    let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
+    let labels_str = $"($colors.purple)[($label_names)]($colors.reset)"
 
     let unique_reviewers = ($pr | get reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
     let approvals = ($pr | get reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
     let reviewer_count = ($unique_reviewers | length)
     let reviews_str = if $reviewer_count > 0 {
-        $" ($colors.gray)($approvals)/($reviewer_count)($colors.reset)"
+        $" ($colors.tree_color)($approvals)/($reviewer_count)($colors.reset)"
     } else {
         ""
     }
 
     let pr_color = if $pr.isDraft { $colors.tree_color } else { $colors.green }
 
-    $"($colors.tree_color)($indent)($colors.reset)($pr_color)($pr.number)($colors.reset): ($pr.title)($reviews_str) ($labels_str)($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
+    $"($colors.tree_color)($indent)($colors.reset)($pr_color)($pr.number)($colors.reset): ($pr.title) ($labels_str)($reviews_str) ($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
 }
 
 def flatten_tree [tree: list] {
