@@ -74,6 +74,7 @@ def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_
         id: $combined_id_title,
         labels: $row.labels,
         cr: $row.cr,
+        created: $row.created,
         branch: $row.branch,
         base: $row.base,
         author: $row.author
@@ -207,6 +208,7 @@ def format_table [prs: list] {
             title: $"(ansi default)(sanitize_text $pr.title)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($reviews_str)(ansi reset)"
+            created: $"(ansi white)(($pr.createdAt | into datetime | date humanize))(ansi reset)"
             branch: $"(ansi green)($pr.headRefName)(ansi reset)"
             base: $pr.baseRefName
             author: $"(ansi blue)($pr.author.login)(ansi reset)"
@@ -260,7 +262,7 @@ def main [
 
     # Original interactive flow if no argument provided
     let pr_list_result = (do {
-        gh pr list --json number,title,author,headRefName,baseRefName,labels,isDraft,reviews
+        gh pr list --json number,title,author,headRefName,baseRefName,labels,isDraft,reviews,createdAt
     } | complete)
 
     if $pr_list_result.exit_code != 0 {
