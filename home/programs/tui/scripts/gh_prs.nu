@@ -184,7 +184,7 @@ def format_table [prs: list] {
         let $reviews_str = if $reviewer_count > 0 { $"($approvals)/($reviewer_count)" } else { "" }
 
         {
-            index: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
+            id: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
             title: $"(ansi default)(sanitize_text $pr.title)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($reviews_str)(ansi reset)"
@@ -259,7 +259,7 @@ def main [
     }
 
     let formatted_output = if $tree {
-        let formatted_lines = (format_table $prs | table -e --theme none | to text | lines | skip 1)
+        let formatted_lines = (format_table $prs | table -e --theme none -i false | to text | lines | skip 1 | each { |ln| $ln | str substring 1..})
         let pr_to_index = ($prs | enumerate | reduce -f {} { |item, acc|
             $acc | upsert ($item.item.number | into string) $item.index
         })
