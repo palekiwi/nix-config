@@ -292,9 +292,9 @@ def main [
     let selected = ($formatted_output
         | fzf --ansi --border --prompt="Select PR to checkout: "
             --preview-window=top:50%
-            --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view"
-            --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)"
-            --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)"
+            --preview="echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
+            --bind="ctrl-h:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xclip -selection clipboard)"
+            --bind="ctrl-y:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
             --tac
         )
 
