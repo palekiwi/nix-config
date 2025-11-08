@@ -210,7 +210,7 @@ def main [
         $prs
     }
 
-    let prs = if $LGTM {
+    let prs = if $exclude_lgtm {
         $prs | where { |pr|
             not ($pr.reviews | any { |r| $r.state == "APPROVED" and $r.author.login == "palekiwi" })
         }
