@@ -287,7 +287,7 @@ def main [
         build_pr_tree $prs
         | flatten_tree $in
         | each { |entry| format_tree_entry $entry $pr_table $pr_to_index $max_pr_width }
-        | table -e --theme none -i false| to text | lines | skip 1 | to text
+        | table -e --theme none -i false --width 9999 | to text | lines | skip 1 | to text
     } else {
         format_table $prs
         | table -e --theme none -i false | to text | lines | skip 1 | to text
