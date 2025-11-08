@@ -277,6 +277,7 @@ def main [
         return
     }
 
+    # TODO: Fix ctrl-y binding, it grabs the wrong item
     let selected = ($formatted_output
         | fzf --ansi --border --prompt="Select PR to checkout: "
             --preview-window=top:50%
