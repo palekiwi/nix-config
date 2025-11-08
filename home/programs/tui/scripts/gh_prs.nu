@@ -93,12 +93,13 @@ def format_table [prs: list] {
         let approvals = ($pr.reviews | where { |r| $r.state == "APPROVED" } | each { |r| $r.author.login } | uniq | length)
         let reviewer_count = ($unique_reviewers | length)
         let number_color = if $pr.isDraft { "white" } else { "green" }
+        let $reviews_str = if $reviewer_count > 0 { $"($approvals)/($reviewer_count)" } else { "" }
 
         {
             index: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
             title: $"(ansi default)($pr.title)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| $l.name } | str join ', ')(ansi reset)"
-            cr: $"(ansi teal)($approvals)/($reviewer_count)(ansi reset)"
+            cr: $"(ansi teal)($reviews_str)(ansi reset)"
             branch: $"(ansi green)($pr.headRefName)(ansi reset)"
             base: $pr.baseRefName
             author: $"(ansi blue)($pr.author.login)(ansi reset)"
