@@ -1,3 +1,10 @@
+def sanitize_text [text: string] {
+    $text
+    | str replace --all "'" "'"
+    | str replace --all '"' '„'
+    | str replace --all "`" "´"
+}
+
 def build_pr_tree [prs: list] {
     # Get the default branch
     let default_branch_result = (do { gh repo view --json defaultBranchRef } | complete)
@@ -60,7 +67,7 @@ def format_tree_entry [entry: record] {
     }
 
     # Format labels
-    let label_names = ($pr.labels | each { |l| $l.name } | str join ", ")
+    let label_names = ($pr.labels | each { |l| sanitize_text $l.name } | str join ", ")
     let labels_str = $"($colors.purple)[($label_names)]($colors.reset)"
 
     let unique_reviewers = ($pr | get reviews | each { |r| $r.author.login } | uniq | where $it != "gemini-code-assist" | where $it != $pr.author.login)
@@ -74,7 +81,7 @@ def format_tree_entry [entry: record] {
 
     let pr_color = if $pr.isDraft { $colors.tree_color } else { $colors.green }
 
-    $"($colors.tree_color)($indent)($colors.reset)($pr_color)($pr.number)($colors.reset): ($pr.title) ($labels_str)($reviews_str) ($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
+    $"($colors.tree_color)($indent)($colors.reset)($pr_color)($pr.number)($colors.reset): (sanitize_text $pr.title) ($labels_str)($reviews_str) ($colors.gray)\(($colors.green)($pr.headRefName)($colors.gray)\) - @($pr.author.login)($colors.reset)"
 }
 
 def flatten_tree [tree: list] {
@@ -202,8 +209,8 @@ def format_table [prs: list] {
 
         {
             index: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
-            title: $"(ansi default)($pr.title)(ansi reset)"
-            labels: $"(ansi purple)($pr.labels | each { |l| $l.name } | str join ', ')(ansi reset)"
+            title: $"(ansi default)(sanitize_text $pr.title)(ansi reset)"
+            labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($reviews_str)(ansi reset)"
             branch: $"(ansi green)($pr.headRefName)(ansi reset)"
             base: $pr.baseRefName
@@ -292,9 +299,9 @@ def main [
     let selected = ($formatted_output
         | fzf --ansi --border --prompt="Select PR to checkout: "
             --preview-window=top:50%
-            --preview="echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
-            --bind="ctrl-h:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xclip -selection clipboard)"
-            --bind="ctrl-y:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
+            --preview="echo {q} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
+            --bind="ctrl-h:execute-silent(echo {q} | grep -oE '[0-9]+' | head -1 | xclip -selection clipboard)"
+            --bind="ctrl-y:execute-silent(echo {q} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
             --tac
         )
 
