@@ -226,7 +226,7 @@ def main [
     --lgtm(-g)
     --print
     --reviewed(-r)
-    --tree(-t)
+    --no-tree(-T)
 ] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
@@ -277,7 +277,7 @@ def main [
         return
     }
 
-    let formatted_output = if $tree {
+    let formatted_output = if (not $no_tree) {
         let pr_table = format_table $prs
         let max_pr_width = ($prs | each { |pr| $pr.number | into string | str length } | math max)
         let pr_to_index = ($prs | enumerate | reduce -f {} { |item, acc|
