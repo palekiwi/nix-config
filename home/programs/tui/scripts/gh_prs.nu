@@ -289,7 +289,14 @@ def main [
         return
     }
 
-    let selected = ($formatted_output | fzf --ansi --border --prompt="Select PR to checkout: " --preview-window=top:50% --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view" --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)" --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)" --tac)
+    let selected = ($formatted_output
+        | fzf --ansi --border --prompt="Select PR to checkout: "
+            --preview-window=top:50%
+            --preview="echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view"
+            --bind="ctrl-h:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xclip -selection clipboard)"
+            --bind="ctrl-y:execute-silent(echo {} | grep -o '[0-9]*:' | sed 's/://' | xargs gh pr view --web)"
+            --tac
+        )
 
     if ($selected | is-empty) {
         print "No PR selected"
