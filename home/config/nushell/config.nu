@@ -60,7 +60,8 @@ $env.config.completions = {
     }
 }
 
-$env.config.hooks.env_change.PWD = [{ ||
+# $env.config.hooks.env_change.PWD = [{ ||
+$env.config.hooks.pre_prompt = [{ ||
     if (which direnv | is-empty) { return }
     direnv export json | from json | default {} | load-env
     $env.PATH = $env.PATH | split row (char env_sep)
