@@ -96,6 +96,7 @@ def filter_prs [
     draft?: bool
     authors?: string
     exclude_authors?: string
+    exclude_draft?: bool
     labels?: string
     exclude_labels?: string
     lgtm?: bool
@@ -104,9 +105,11 @@ def filter_prs [
     exclude_reviewed?: bool
 ] {
     let prs = if ($draft | default false) {
-        $prs
-    } else {
+        $prs | where { |pr| $pr.isDraft == true }
+    } else if ($exclude_draft | default false) {
         $prs | where { |pr| $pr.isDraft == false }
+    } else {
+        $prs
     }
 
     let authors_list = if ($authors | is-not-empty) {
@@ -220,6 +223,7 @@ def main [
     pr_string?: string
     --authors(-a): string
     --draft(-d)
+    --exclude-draft(-D)
     --exclude-authors(-A): string
     --exclude-labels(-L): string
     --exclude-lgtm(-G)
@@ -272,7 +276,7 @@ def main [
 
     let prs = $pr_list_result.stdout
     | from json
-    | filter_prs $in $draft $authors $exclude_authors $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed
+    | filter_prs $in $draft $authors $exclude_authors $exclude_draft $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed
 
     if ($prs | is-empty) {
         print "No open PRs found"
