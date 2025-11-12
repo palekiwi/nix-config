@@ -10,8 +10,10 @@
     fd
     fzf
     home-assistant-cli
+    jrnl
     jq
     neovim
+    pandoc
     pass
     ranger
     ripgrep

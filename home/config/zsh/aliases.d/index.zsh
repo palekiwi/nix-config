@@ -23,7 +23,6 @@ alias rebuild="sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -s)"
 alias v="nvim_fg"
 alias xo="xdg-open"
 alias orun="OPENCODE_WORKSPACE=. opencode-run"
-alias orun-detached="kitty -T $(tmux display-message -p '#S'):agent opencode-run &"
 
 alias s.="sesh connect ."
 
@@ -33,6 +32,20 @@ alias pgpa="pass git remote | xargs -L1 pass git push --all"
 alias pgpom="pass git push origin master"
 alias pgpul="pass git pull origin master"
 alias pi="pass_insert"
+
+opencode-detached() {
+    local session="$(tmux display-message -p '#S')-opencode"
+    tmux new-session -d -c "$PWD" -s "$session" 2>/dev/null
+    tmux send-keys -t $session 'opencode-run' C-m
+    kitty -T "$session" tmux attach -t "$session" &
+}
+
+gemini-detached() {
+    local session="$(tmux display-message -p '#S')-gemini"
+    tmux new-session -d -c "$PWD" -s "$session" 2>/dev/null
+    tmux send-keys -t $session 'gemini' C-m
+    kitty -T "$session" tmux attach -t "$session" &
+}
 
 pass_insert () {
     len=$1

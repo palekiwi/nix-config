@@ -15,7 +15,8 @@ in
 
     programs.kitty = {
       enable = true;
-      shellIntegration.enableZshIntegration = true;
+      shellIntegration.enableZshIntegration = false;
+      shellIntegration.mode = null;
 
       settings = {
         confirm_os_window_close = "0";
@@ -23,16 +24,22 @@ in
         cursor = "none";
         cursor_beam_thickness = "1.0";
         cursor_blink_interval = "0";
-        cursor_shape = "block";
+        cursor_shape = "beam";
         cursor_shape_unfocused = "hollow";
         enable_audio_bell = "no";
         term = "xterm-256color";
 
-        font_family = "FiraCode Nerd Font Mono";
+        # font_family = "FiraCode Nerd Font Mono";
+        # bold_font = "auto";
+        # italic_font = "FiraCode Nerd Font Mono Italic";
+        # bold_italic_font = "FiraCode Nerd Font Mono Bold Italic";
+        # font_size = "16.0";
+
+        font_family = "Iosevka Nerd Font Mono";
         bold_font = "auto";
         italic_font = "auto";
         bold_italic_font = "auto";
-        font_size = "16.0";
+        font_size = "17.5";
 
         foreground = "#c5c8c6";
         background = "#0F1319";

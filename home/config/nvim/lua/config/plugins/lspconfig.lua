@@ -58,6 +58,12 @@ return {
         flags = lsp_flags,
       }
 
+      vim.lsp.config.nushell = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        flags = lsp_flags,
+      }
+
       vim.lsp.config.nixd = {
         on_attach = on_attach,
         capabilities = capabilities,
@@ -84,6 +90,12 @@ return {
         offset_encoding = "utf-8",
       }
 
+      vim.lsp.config.terraformls = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        flags = lsp_flags,
+      }
+
       vim.lsp.config.ts_ls = {
         on_attach = on_attach,
         capabilities = capabilities,
@@ -99,8 +111,10 @@ return {
       vim.lsp.enable('eslint')
       vim.lsp.enable('lua_ls')
       vim.lsp.enable('nixd')
+      vim.lsp.enable('nushell')
       vim.lsp.enable('ruby_lsp')
       vim.lsp.enable('stimulus_ls')
+      vim.lsp.enable('terraformls')
       vim.lsp.enable('ts_ls')
     end,
   }

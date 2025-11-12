@@ -6,6 +6,13 @@ let
   cfg = config.modules.ygt;
 
   projectConfigs = {
+    booking-transform = {
+      envrc = ../../config/ygt/booking-transform/.envrc;
+      gitHooks = {
+        post-checkout = ../../config/ygt/git/hooks/post-checkout;
+        post-merge = ../../config/ygt/git/hooks/post-merge;
+      };
+    };
     my-account = {
       envrc = ../../config/ygt/my-account/.envrc;
       gitHooks = {
@@ -69,8 +76,9 @@ in
       gcc
       gnumake
       go-task
-      google-cloud-sdk
+      (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       sops
+      terraform-ls
     ] ++ lib.optionals config.gui [
       slack
     ] ++ (import ./scripts/spabreaks/default.nix { inherit pkgs; });
