@@ -6,6 +6,9 @@ return {
         options = {
           transparent = true,
           dim_inactive = false,
+          styles = {
+            comments = "italic",
+          },
         },
       })
       vim.cmd("colorscheme nordfox")

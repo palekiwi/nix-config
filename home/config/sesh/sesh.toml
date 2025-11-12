@@ -171,7 +171,7 @@ startup_command = "ssh haze -A"
 
 [[session]]
 name = "kyomu"
-startup_command = "ssh kyomu"
+startup_command = "ssh kyomu -A"
 
 #-------------------
 #  --- default ---

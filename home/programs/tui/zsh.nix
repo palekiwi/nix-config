@@ -4,7 +4,7 @@
   home.packages = with pkgs; [ zsh ];
 
   programs.zsh = {
-    enable = true;
+    enable = false;
     enableCompletion = true;
     initContent = ''
       source ~/.config/zsh/aliases.d/index.zsh

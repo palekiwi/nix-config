@@ -6,6 +6,7 @@
   programs.starship = {
     enable = true;
     enableBashIntegration = true;
+    enableNushellIntegration = true;
     enableZshIntegration = true;
     settings = {
       add_newline = true;
@@ -46,6 +47,11 @@
         style = "bold blue";
         impure_msg = "";
       };
+      direnv = {
+        format =  "[$loaded]($style)";
+        disabled = false;
+        loaded_msg = "";
+      };
       directory = {
         truncate_to_repo = true;
       };
@@ -63,6 +69,8 @@
         "$git_status"
         " "
         "$nix_shell"
+        " "
+        "$direnv"
         "$line_break"
         "$character"
       ];

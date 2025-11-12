@@ -68,7 +68,7 @@ in
       "super + Return" = "dmenu_tmux --tmux";
       "super + Return + control" = "dmenu_remote_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
-      "super + BackSpace" = "kitty --title $USER";
+      "super + BackSpace" = "kitty --title $env.USER";
 
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
@@ -99,7 +99,7 @@ in
       "super + 0" = "google-chrome-stable";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
-      "super + 3" = "rofi-pass --root ~/.password-store 2> /tmp/rofi-pass.log";
+      "super + 3" = "rofi-pass --root ~/.password-store e>| /tmp/rofi-pass.log";
       "super + Delete" = "dmenu_quit";
       "super + equal" = "virt-manager";
       "super + shift + Escape" = "playerctl -a pause; xscreensaver-command -l";
