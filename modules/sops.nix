@@ -13,6 +13,9 @@
   sops.secrets."jira/token" = { owner = "pl"; };
   sops.secrets."opencode/api_key" = { owner = "pl"; };
   sops.secrets."zai_coding_plan/api_key" = { owner = "pl"; };
+  sops.secrets."context7/api_key" = { owner = "pl"; };
+
+  sops.secrets."ygt/gemini/api_key" = { owner = "pl"; };
 
   sops.secrets."gotify/token" = { owner = "notifications-server"; };
 }

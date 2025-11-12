@@ -46,14 +46,14 @@ M.diffthis = function(vertical) gs.diffthis(nil, { vertical = vertical }) end
 
 M.diffview_this = function(vertical)
   local base = vim.g.git_base or vim.g.git_master or "master"
-  vim.cmd("DiffviewOpen " .. base)
+  vim.cmd("DiffviewOpen " .. base .."...HEAD")
 end
 
 ---@param range boolean
 M.diffview_file_history = function(range)
   if range then
     local base = vim.g.git_base or vim.g.git_master or "master"
-    vim.cmd("DiffviewFileHistory % --range=" .. base .. "..HEAD")
+    vim.cmd("DiffviewFileHistory % --range=" .. base .. "...HEAD")
   else
     vim.cmd("DiffviewFileHistory %")
   end

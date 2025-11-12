@@ -1,11 +1,12 @@
-{ pkgs, ... }:
+{ pkgs-unstable, ... }:
 
-{
-  home.packages = with pkgs; [ gh gh-f gh-s ];
+with pkgs-unstable; {
+  home.packages = [ gh-f gh-s ];
 
   programs.gh = {
     enable = true;
-    extensions = [ pkgs.gh-f pkgs.gh-s ];
+    extensions = [ gh-f gh-s ];
+    package = pkgs-unstable.gh;
     settings = {
       aliases = {
         pw = "pr view --web";

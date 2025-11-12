@@ -6,9 +6,9 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
 
   let options_pale = ["builtin", "external", "dual", "presentation"]
   let options_nuc = ["xasus", "dual", "huion", "tv"]
-  let options_deck = ["external", "builtin", "dual", "presentation"]
+  let options_deck = ["builtin", "external", "dual", "presentation"]
 
-  let deck_builtin = "eDP-1 --rotate right"
+  let deck_builtin = "eDP-1"
   let deck_external = "DisplayPort-0"
 
   let nuc_tv = "HDMI-A-0"
@@ -57,13 +57,13 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
           restart_wm
         }
         "builtin" => {
-          run-external "xrandr" "--output" $deck_builtin "--auto" "--primary"
+          run-external "xrandr" "--output" $deck_builtin "--rotate right" "--auto" "--primary"
           run-external "xrandr" "--output" $deck_external "--off"
           restart_wm
         }
         "dual" => {
           run-external "xrandr" "--output" $deck_external "--auto" "--primary"
-          run-external "xrandr" "--output" $deck_builtin "--auto" "--below" $deck_external
+          run-external "xrandr" "--output" $deck_builtin "--rotate right" "--auto" "--below" $deck_external
           restart_wm
         }
         "presentation" => {
