@@ -60,3 +60,6 @@ export def "ticket fetch" [ticket?: string] {
          technical_notes: $in.renderedFields.customfield_10174
     }
 }
+
+# TODO: rewrite this in nushell
+export alias "pr create" = sb-create-pr
