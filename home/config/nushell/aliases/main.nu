@@ -33,6 +33,7 @@ def ll [] {
 }
 
 alias cat = bat -p
+alias gemini-cli-tool = ~/code/ygt/gemini-cli-tool/run.sh
 alias ctc = cat_to_clipboard
 alias gu = gitui
 alias hms = home-manager switch --flake $"($nu.home-path)/nix-config/home#(whoami)@(hostname -s)"
