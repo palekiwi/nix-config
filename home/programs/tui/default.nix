@@ -14,6 +14,7 @@
     ./oss.nix
     ./scripts.nix
     ./sesh.nix
+    ./spabreaks.nix
     ./ssh.nix
     ./starship.nix
     ./tmux.nix
