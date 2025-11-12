@@ -1,6 +1,7 @@
 return {
   {
     'NickvanDyke/opencode.nvim',
+    commit = "c7594f8",
     dependencies = {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
@@ -9,7 +10,7 @@ return {
 
       vim.g.opencode_opts = {
 
-        on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
+        -- on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
 
         -- load port from an var set on a project basis or use a custom default
         port = tonumber(vim.g.opencode_port) or 49000,
@@ -33,19 +34,18 @@ return {
 
       vim.opt.autoread = true
 
-      local opts = { submit = true }
       local keymaps = {
-        { "n",          "<space>a",  function() oc.ask() end,                                         "Ask opencode", },
-        { "n",          "<space>et", function() oc.prompt("Explain @this and its context", opts) end, "Explain this" },
-        { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", opts) end,                          "Ask about this" },
-        { "n",          "<space>f",  function() oc.ask("@buffer: ", opts) end,                        "Ask about buffer" },
-        { "n",          "<space>d",  function() oc.ask("@diff: ", opts) end,                          "Ask about diff" },
-        { "n",          "<space>n",  function() oc.command("session_new") end,                        "New session" },
-        { "n",          "<space>+",  function() oc.prompt("@this") end,                               "Add this" },
-        { "n",          "<space>pe", function() oc.prompt("/pr:explain", opts) end,                   "PR: Explain" },
-        { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", opts) end,             "PR: Fusion Review" },
-        { "n",          "<space>s",  function() oc.select() end,                                      "Select prompt" },
-        { "n",          "<space>y",  function() oc.command("messages_copy") end,                      "Copy last message" },
+        { "n",          "<space>a",  function() oc.ask() end,                                                      "Ask opencode", },
+        { "n",          "<space>et", function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
+        { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
+        { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
+        { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
+        { "n",          "<space>n",  function() oc.command("session_new") end,                                     "New session" },
+        { "n",          "<space>+",  function() oc.prompt("@this") end,                                            "Add this" },
+        { "n",          "<space>pe", function() oc.prompt("/pr:explain", { submit = true }) end,                   "PR: Explain" },
+        { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", { submit = true }) end,             "PR: Fusion Review" },
+        { "n",          "<space>s",  function() oc.select() end,                                                   "Select prompt" },
+        { "n",          "<space>y",  function() oc.command("messages_copy") end,                                   "Copy last message" },
       }
 
       for _, m in ipairs(keymaps) do

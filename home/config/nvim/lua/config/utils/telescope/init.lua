@@ -153,7 +153,7 @@ M.changed_files_since = function(opts)
   end
 
   local base = vim.g.git_base or vim.g.git_master or "master"
-  local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "..HEAD --no-merges")
+  local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "...HEAD --no-merges")
 
   local files = {};
 
@@ -185,7 +185,7 @@ M.diffview_since = function()
   end
 
   local base = vim.g.git_base or vim.g.git_master or "master"
-  local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "..HEAD --no-merges")
+  local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "...HEAD --no-merges")
 
   local files = {};
 

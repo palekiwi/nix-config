@@ -4,10 +4,10 @@
   programs = {
       direnv = {
         enable = true;
-        enableZshIntegration = true;
+        enableZshIntegration = false;
         nix-direnv.enable = true;
       };
 
-      zsh.enable = true;
+      zsh.enable = false;
     };
 }

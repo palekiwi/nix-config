@@ -40,6 +40,8 @@ in
     ];
 
     extraConfig = ''
+      set -g default-terminal "tmux"
+
       set -ga terminal-overrides ",xterm-256color:Tc"
 
       set -g @thumbs-command 'echo -n {} | xclip -selection clipboard'
