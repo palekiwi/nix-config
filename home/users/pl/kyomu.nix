@@ -19,7 +19,6 @@
 
     modules = {
       oss.enable = true;
-      ygt.enable = true;
       spabreaks.enable = true;
     };
   };

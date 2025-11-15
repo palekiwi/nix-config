@@ -19,7 +19,6 @@
     ./starship.nix
     ./tmux.nix
     ./utils.nix
-    ./ygt.nix
     ./zsh.nix
   ];
 }
