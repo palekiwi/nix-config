@@ -9,7 +9,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "spabreaks-dev"
 path = "~/code/spabreaks/spabreaks/"
-startup_command = "_tmux_ygt_spabreaks_dev"
+startup_command = "_tmux_spabreaks_spabreaks_dev"
 
 [[session]]
 name = "spabreaks-console"
@@ -47,7 +47,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "blog-dev"
 path = "~/code/spabreaks/blog/"
-startup_command = "_tmux_ygt_blog_dev"
+startup_command = "_tmux_spabreaks_blog_dev"
 
 #-------------------
 #   --- sales ---
@@ -60,7 +60,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "sales-dev"
 path = "~/code/spabreaks/sales/"
-startup_command = "_tmux_ygt_sales_dev"
+startup_command = "_tmux_spabreaks_sales_dev"
 
 #-------------------
 #  --- wss-data ---
@@ -73,7 +73,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "wss-data-dev"
 path = "~/code/spabreaks/wss-data/"
-startup_command = "_tmux_ygt_wss_data_dev"
+startup_command = "_tmux_spabreaks_wss_data_dev"
 
 #-------------------
 # --- my-account ---
@@ -86,7 +86,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "my-account-dev"
 path = "~/code/spabreaks/my-account/"
-startup_command = "_tmux_ygt_my_account_dev"
+startup_command = "_tmux_spabreaks_my_account_dev"
 
 #-------------------
 #    --- VRS ---
@@ -99,7 +99,7 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "vrs-dev"
 path = "~/code/spabreaks/sb-voucher-redemptions/"
-startup_command = "_tmux_ygt_vrs_dev"
+startup_command = "_tmux_spabreaks_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
