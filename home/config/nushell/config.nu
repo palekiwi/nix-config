@@ -11,6 +11,10 @@ use modules/sb.nu
 $env.EDITOR = "nvim"
 $env.GPG_TTY = ^tty
 
+$env.CONTEXT7_API_KEY = (cat /run/secrets/context7/api_key)
+$env.OPENCODE_API_KEY = (cat /run/secrets/opencode/api_key)
+$env.ZAI_CODING_PLAN_API_KEY = (cat /run/secrets/zai_coding_plan/api_key)
+
 if ($env.SSH_CONNECTION? == null) or ((hostname) == "kyomu") {
     $env.SSH_AUTH_SOCK = (gpgconf --list-dirs agent-ssh-socket | str trim)
 }

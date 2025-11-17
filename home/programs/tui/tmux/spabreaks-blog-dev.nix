@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-pkgs.writeShellScriptBin "_tmux_ygt_blog_dev" ''
+pkgs.writeShellScriptBin "_tmux_spabreaks_blog_dev" ''
   session="blog-dev"
 
   tmux rename-window -t $session:1 dev

@@ -20,7 +20,7 @@
       chrome.enable = true;
       kitty.enable = true;
       oss.enable = true;
-      ygt.enable = true;
+      spabreaks.enable = true;
     };
   };
 }

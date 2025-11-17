@@ -15,7 +15,7 @@
     modules = {
       chrome.enable = true;
       kitty.enable = true;
-      ygt.enable = true;
+      spabreaks.enable = true;
     };
   };
 

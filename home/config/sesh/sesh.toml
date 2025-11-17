@@ -1,41 +1,39 @@
-# --- YGT ---
-
 #-------------------
 # --- Spabreaks ---
 #-------------------
 [[session]]
 name = "spabreaks"
-path = "~/code/ygt/spabreaks/"
+path = "~/code/spabreaks/spabreaks/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "spabreaks-dev"
-path = "~/code/ygt/spabreaks/"
-startup_command = "_tmux_ygt_spabreaks_dev"
+path = "~/code/spabreaks/spabreaks/"
+startup_command = "_tmux_spabreaks_spabreaks_dev"
 
 [[session]]
 name = "spabreaks-console"
-path = "~/code/ygt/spabreaks/"
+path = "~/code/spabreaks/spabreaks/"
 startup_command = "make console"
 
 [[session]]
 name = "spabreaks-cypress"
-path = "~/code/ygt/spabreaks/"
+path = "~/code/spabreaks/spabreaks/"
 startup_command = "task cypress:build-and-up"
 
 [[session]]
 name = "spabreaks-guard"
-path = "~/code/ygt/spabreaks/"
+path = "~/code/spabreaks/spabreaks/"
 startup_command = "make guard"
 
 [[session]]
 name = "spabreaks-psql"
-path = "~/code/ygt/spabreaks/"
+path = "~/code/spabreaks/spabreaks/"
 startup_command = "make psql"
 
 [[session]]
-name = "ygt-env"
-path = "~/code/ygt-env"
+name = "spabreaks-env"
+path = "~/code/spabreaks-env"
 startup_command = "_tmux_git-repo"
 
 #-------------------
@@ -43,69 +41,69 @@ startup_command = "_tmux_git-repo"
 #-------------------
 [[session]]
 name = "blog"
-path = "~/code/ygt/blog/"
+path = "~/code/spabreaks/blog/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "blog-dev"
-path = "~/code/ygt/blog/"
-startup_command = "_tmux_ygt_blog_dev"
+path = "~/code/spabreaks/blog/"
+startup_command = "_tmux_spabreaks_blog_dev"
 
 #-------------------
 #   --- sales ---
 #-------------------
 [[session]]
 name = "sales"
-path = "~/code/ygt/sales/"
+path = "~/code/spabreaks/sales/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "sales-dev"
-path = "~/code/ygt/sales/"
-startup_command = "_tmux_ygt_sales_dev"
+path = "~/code/spabreaks/sales/"
+startup_command = "_tmux_spabreaks_sales_dev"
 
 #-------------------
 #  --- wss-data ---
 #-------------------
 [[session]]
 name = "wss-data"
-path = "~/code/ygt/wss-data/"
+path = "~/code/spabreaks/wss-data/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "wss-data-dev"
-path = "~/code/ygt/wss-data/"
-startup_command = "_tmux_ygt_wss_data_dev"
+path = "~/code/spabreaks/wss-data/"
+startup_command = "_tmux_spabreaks_wss_data_dev"
 
 #-------------------
 # --- my-account ---
 #-------------------
 [[session]]
 name = "my-account"
-path = "~/code/ygt/my-account/"
+path = "~/code/spabreaks/my-account/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "my-account-dev"
-path = "~/code/ygt/my-account/"
-startup_command = "_tmux_ygt_my_account_dev"
+path = "~/code/spabreaks/my-account/"
+startup_command = "_tmux_spabreaks_my_account_dev"
 
 #-------------------
 #    --- VRS ---
 #-------------------
 [[session]]
 name = "vrs"
-path = "~/code/ygt/sb-voucher-redemptions/"
+path = "~/code/spabreaks/sb-voucher-redemptions/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "vrs-dev"
-path = "~/code/ygt/sb-voucher-redemptions/"
-startup_command = "_tmux_ygt_vrs_dev"
+path = "~/code/spabreaks/sb-voucher-redemptions/"
+startup_command = "_tmux_spabreaks_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
-path = "~/code/ygt/sb-voucher-redemptions/"
+path = "~/code/spabreaks/sb-voucher-redemptions/"
 startup_command = "make psql"
 
 #-------------------
@@ -143,7 +141,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "ff_monads"
-path = "~/code/ygt/ff_monads/"
+path = "~/code/spabreaks/ff_monads/"
 startup_command = "_tmux_git-repo"
 
 [[session]]

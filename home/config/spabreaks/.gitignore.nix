@@ -6,7 +6,7 @@ in
   # Global ignores
   ${globalIgnores}
 
-  # YGT-specific ignores
+  # Spabreaks-specific ignores
   .envrc
   .gutctags
   .opencode

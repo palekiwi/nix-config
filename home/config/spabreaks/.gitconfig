@@ -9,4 +9,4 @@
 [pull]
     rebase = true
 [core]
-    excludesfile = ~/code/ygt/.gitignore
+    excludesfile = ~/code/spabreaks/.gitignore
