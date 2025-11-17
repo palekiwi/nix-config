@@ -7,7 +7,6 @@ pkgs.writeShellScriptBin "_tmux_spabreaks_spabreaks_dev" ''
 
   tmux new-window -t $session -n debug
   tmux new-window -t $session -n mcp-rspec
-  tmux new-window -t $session -n mcp-ask-gemini
 
   tmux send-keys -t $session:1 'make dev' C-m
   tmux send-keys -t $session:2 'sleep 1; task debug-web' C-m
