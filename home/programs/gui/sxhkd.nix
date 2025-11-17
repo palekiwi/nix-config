@@ -83,7 +83,7 @@ in
       "super + space; k; s; c" = "${switchToKyomuSession} spabreaks-console";
       "super + space; k; s; d" = "${switchToKyomuSession} spabreaks-dev";
       "super + space; k; s; e" = "${switchToKyomuSession} spabreaks";
-      "super + space; k; s; t" = "${switchToKyomuSession} spabreak-terraform";
+      "super + space; k; s; t" = "${switchToKyomuSession} terraform";
 
       "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
 
@@ -91,7 +91,7 @@ in
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
       "super + space; s; e" = "${switchToSession} spabreaks";
       "super + space; s; g" = "${switchToSession} spabreaks-guard";
-      "super + space; s; t" = "${switchToSession} spabreak-terraform";
+      "super + space; s; t" = "${switchToSession} terraform";
 
       "super + space; v; d" = "${switchToSession} vrs-dev";
       "super + space; v; e" = "${switchToSession} vrs";
