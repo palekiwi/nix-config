@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ./gotify.nix
+      ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
     ];

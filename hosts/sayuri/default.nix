@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ../../modules/awesome.nix
+      ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/ibus.nix
