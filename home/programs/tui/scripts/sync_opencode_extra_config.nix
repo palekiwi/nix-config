@@ -19,24 +19,12 @@ pkgs.writers.writeNuBin "sync_opencode_extra_config" ''
       ^cp $"($config_dir)/opencode.json" "./"
     }
 
-    # Sync AGENTS.md files if flag is set
+    # Sync AGENTS.md file if flag is set
     if $sync_agents {
-      print "Syncing AGENTS.md files from ($config_dir)..."
-      let agent_files = (${pkgs.fd}/bin/fd "AGENTS.md" $config_dir -t f | lines)
-
-      for agent_file in $agent_files {
-        let relative_path = ($agent_file | path relative-to $config_dir)
-        let target_dir = ($relative_path | path dirname)
-
-        if ($target_dir != "." and ($target_dir | path exists)) {
-          print $"Copying ($agent_file) to ($relative_path)" # TODO: this is broken
-          ^cp $agent_file $relative_path
-        } else if ($target_dir == ".") {
-          print $"Copying ($agent_file) to AGENTS.md"
-          ^cp $agent_file "AGENTS.md"
-        } else {
-          print $"Skipping ($agent_file) - target directory ($target_dir) does not exist"
-        }
+      let agents_file = ($config_dir | path join "AGENTS.md")
+      if ($agents_file | path exists) {
+        print $"Copying ($agents_file) to AGENTS.md"
+        ^cp $agents_file "AGENTS.md"
       }
     }
   }
