@@ -8,18 +8,10 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    test-runner-mcp = {
-      url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-    wrappedAgents = {
-      url = "github:palekiwi-labs/agents/137e07883605385f8989bbe96849a3da82923df9";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    mcp-gemini-cli = {
-      url = "github:palekiwi-labs/mcp-gemini-cli/02b7d1711eb3bee5ff300ab4590d7d012f49fe04";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    mcp-gemini-cli.url = "github:palekiwi-labs/mcp-gemini-cli/02b7d1711eb3bee5ff300ab4590d7d012f49fe04";
+    mcp-rspec.url = "github:palekiwi/mcp-rspec/43de60dfb4ae5ae910041b9989e4b39145578693";
+    test-runner-mcp.url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
+    wrappedAgents.url = "github:palekiwi-labs/agents/137e07883605385f8989bbe96849a3da82923df9";
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -31,6 +23,7 @@
             (final: prev: {
               gemini = inputs.wrappedAgents.packages.x86_64-linux.gemini;
               mcp-gemini-cli = inputs.mcp-gemini-cli.packages.x86_64-linux.default;
+              mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
               opencode = inputs.wrappedAgents.packages.x86_64-linux.opencode;
               opencode-ruby = inputs.wrappedAgents.packages.x86_64-linux.opencode-ruby;
               opencode-rust = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust;
