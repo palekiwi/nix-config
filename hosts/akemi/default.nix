@@ -4,6 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
     ];

@@ -6,6 +6,8 @@
   sops.age.keyFile = "/home/pl/.config/sops/age/keys.txt";
 
   sops.secrets."airbrake/api_key" = { owner = "pl"; };
+  sops.secrets."cachix/personal/token" = { owner = "pl"; };
+  sops.secrets."cachix/github_actions/token" = { owner = "pl"; };
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
   sops.secrets."jira/email" = { owner = "pl"; };

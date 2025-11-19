@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     acpi
     bat
+    cachix
     cmus
     eza
     fasd
