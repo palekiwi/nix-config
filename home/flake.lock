@@ -230,22 +230,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-unstable_2": {
-      "locked": {
-        "lastModified": 1761114652,
-        "narHash": "sha256-f/QCJM/YhrV/lavyCVz8iU3rlZun6d+dAiC3H+CDle4=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "01f116e4df6a15f4ccdffb1bcd41096869fb385c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1761016216,
@@ -307,6 +291,40 @@
         "owner": "NixOS",
         "ref": "nixos-25.05",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_6": {
+      "locked": {
+        "lastModified": 1762156382,
+        "narHash": "sha256-Yg7Ag7ov5+36jEFC1DaZh/12SEXo6OO3/8rqADRxiqs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7241bcbb4f099a66aafca120d37c65e8dda32717",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "opencode": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1763535067,
+        "narHash": "sha256-msW3T/8IPA5y/+GPlH4NwrJ5jcOANiXV/KNkpfVRwxE=",
+        "owner": "sst",
+        "repo": "opencode",
+        "rev": "0068cb305f617a99556289c72b8a5ddc2bbda746",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sst",
+        "repo": "opencode",
         "type": "github"
       }
     },
@@ -442,20 +460,19 @@
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-ruby": "nixpkgs-ruby",
-        "nixpkgs-unstable": "nixpkgs-unstable_2"
+        "opencode": "opencode"
       },
       "locked": {
-        "lastModified": 1763341635,
-        "narHash": "sha256-uetLVIGBytE6n7VBZrLI2LhNifvCJDjRbHUAQrEKd58=",
+        "lastModified": 1763541399,
+        "narHash": "sha256-BviTNEL5aj/W0mXhaV/Gy84TGDP2MriwLZiLANktRSE=",
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "137e07883605385f8989bbe96849a3da82923df9",
+        "rev": "9b506bb2f93a2844b515df2e57224370de906cad",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "agents",
-        "rev": "137e07883605385f8989bbe96849a3da82923df9",
         "type": "github"
       }
     }
