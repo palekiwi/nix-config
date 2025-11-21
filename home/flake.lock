@@ -164,17 +164,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1763446472,
-        "narHash": "sha256-1E4V3Z0Hy94rnNumW7vDzlGvYQJ+TC4xHBTD8sX+noQ=",
+        "lastModified": 1763647507,
+        "narHash": "sha256-SjQsdQ9XO4G7PC4ZHFjJHONbZa+9OVkSJGIV19qrP44=",
         "owner": "palekiwi",
         "repo": "mcp-rspec",
-        "rev": "f4bf92f6f859ab35b060a3a932e7b7930d31d504",
+        "rev": "8492458b873e8f3e8b06f45250e955b534b28c3c",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi",
         "repo": "mcp-rspec",
-        "rev": "f4bf92f6f859ab35b060a3a932e7b7930d31d504",
         "type": "github"
       }
     },
