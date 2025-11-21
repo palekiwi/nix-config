@@ -20,3 +20,21 @@ export def "pr body" [pr_number?: int, --save] {
         $content
     }
 }
+
+export def "run list" [
+    --commit(-c): string
+    --workflow(-w): string
+] {
+    let $commit = if $commit != null { $commit } else {git rev-parse HEAD }
+    let workflow_flag = if $workflow != null { ["-w" $workflow] } else { [] }
+
+    (
+        gh run list
+            --json workflowName,databaseId,displayTitle,status,conclusion,createdAt
+            -c $commit
+            ...$workflow_flag
+    )
+    | from json
+    | into datetime createdAt
+    | rename result created id title status name
+}
