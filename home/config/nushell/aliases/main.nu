@@ -38,6 +38,7 @@ alias ctc = cat_to_clipboard
 alias gu = gitui
 alias hms = home-manager switch --flake $"($nu.home-path)/nix-config/home#(whoami)@(hostname -s)"
 alias orun = opencode-run
+alias odet = opencode-detach
 alias orunx = with-env { OPENCODE_WORKSPACE: "." } { opencode-run }
 alias pc = pass -c
 alias pgpom = pass git push origin master
