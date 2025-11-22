@@ -3,15 +3,15 @@ local kiwi = require('kiwi')
 require("config.keymaps.rails")
 local keymaps_telescope = require("config.keymaps.telescope")
 
-local helpers = require('config.utils.helpers')
-local telescope_utils = require('config.utils.telescope')
 local agents_utils = require('config.utils.agents')
+local ctx_clipboard = require('config.utils.context_clipboard')
 local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
+local helpers = require('config.utils.helpers')
+local hunk_comments = require('config.utils.hunk-comments')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
-local ctx_clipboard = require('config.utils.context_clipboard')
-local hunk_comments = require('config.utils.hunk-comments')
+local telescope_utils = require('config.utils.telescope')
 
 local set = vim.keymap.set
 
@@ -53,7 +53,7 @@ local base = {
   { "<A-x>",             "<cmd>BufferClose<cr>",                                                 desc = "Close Buffer All But Current" },
   { "<A-z>",             "za",                                                                   desc = "Toggle Fold" },
   { "<C-b>",             "<cmd>Telescope buffers ignore_current_buffer=false sort_mru=true<cr>", desc = "Buffers" },
-  { "<C-d>",             "<cmd>Telescope diagnostics<cr>",                                       desc = "[LSP] diagnostics" },
+  { "<C-d>",             telescope_utils.diagnostics,                                            desc = "[LSP] diagnostics" },
   { "<C-e>",             "<cmd>Telescope oldfiles cwd_only=true<cr>",                            desc = "Recent Files" },
   { "<C-f>",             "<cmd>Telescope find_files hidden=true<cr>",                            desc = "Find File" },
   { "<C-p>",             telescope_utils.changed_files,                                          desc = "Search changed files" },

@@ -4,7 +4,7 @@ local conf = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local make_entry = require "telescope.make_entry"
-local builtin = require 'telescope.builtin'
+local builtin = require 'telescope.builtin' ---@type table
 
 local git_utils = require('config.utils.git')
 local gh_utils = require('config.utils.gh')
@@ -13,13 +13,24 @@ local custom_entry_makers = require('config.utils.telescope.entry_makers')
 local git_helpers = require('config.utils.helpers.git')
 local custom_previewers = require('config.utils.telescope.previewers')
 
-M = {}
+local M = {}
 
 local search_tags_opts = {
   fname_width = 60,
   show_line = false,
   only_sort_tags = true
 }
+
+M.diagnostics = function()
+  builtin.diagnostics({
+    layout_strategy = "vertical",
+    preview = false,
+    layout_config = {
+      preview_height = 0.5,
+    },
+    line_width = 90,
+  })
+end
 
 M.file_review = function()
   local branch_name = git_helpers.current_git_branch()
