@@ -32,6 +32,7 @@ M.file_review = function()
     cwd = review_dir,
     search_file = "review.md",
     no_ignore = true,
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.9,
     }
@@ -263,6 +264,7 @@ M.git_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },
@@ -398,6 +400,7 @@ M.git_pr_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },
@@ -455,6 +458,7 @@ M.git_pr_merge_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Merge Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },
