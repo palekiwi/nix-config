@@ -1,7 +1,7 @@
 local gs = require('gitsigns')
 local nt = require('neo-tree.command')
 
-M = {}
+local M = {}
 
 local function toggle_git_tree(action, toggle)
   nt.execute({
