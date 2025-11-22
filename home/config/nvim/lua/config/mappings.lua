@@ -5,7 +5,7 @@ local keymaps_telescope = require("config.keymaps.telescope")
 
 local helpers = require('config.utils.helpers')
 local telescope_utils = require('config.utils.telescope')
-local agent_utils = require('config.utils.agent')
+local agents_utils = require('config.utils.agents')
 local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local nvim_utils = require('config.utils.nvim')
@@ -42,7 +42,7 @@ local base = {
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                       desc = "[Loclist] Next" },
   -- mod
   { "<space>r",        telescope_utils.file_review,                                            desc = "File review" },
-  { "<A-a>",           telescope_utils.find_in_agents,                                         desc = "Search agent files" },
+  { "<A-a>",           agents_utils.find_files,                                                desc = "[Agents] Find files" },
   { "<A-d>",           telescope_utils.diffview_since,                                         desc = "Search changed files" },
   { "<A-f>",           "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",           "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
@@ -112,7 +112,7 @@ local base = {
   { "<leader>eh",      "<cmd>Telescope help_tags<cr>",                                         desc = "Help tags" },
   { "<leader>es",      "<cmd>Telescope current_buffer_tags show_line=true<cr>",                desc = "Tags" },
   { "<leader>et",      telescope_utils.search_tags,                                            desc = "Search tags" },
-  { "<leader>fs",      agent_utils.create_spec,                                                desc = "[Agents] Spec.md" },
+  { "<leader>fs",      agents_utils.create_spec,                                               desc = "[Agents] Spec.md" },
   { "<leader>fq",      qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
   { "<leader>fQ",      "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",       group = "[Git]" },

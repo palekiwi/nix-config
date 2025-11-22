@@ -21,12 +21,6 @@ local search_tags_opts = {
   only_sort_tags = true
 }
 
-M.find_in_agents = function()
-  local branch_name = git_helpers.current_git_branch()
-
-  builtin.find_files({ cwd = ".agents/" .. branch_name })
-end
-
 M.file_review = function()
   local branch_name = git_helpers.current_git_branch()
   local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
