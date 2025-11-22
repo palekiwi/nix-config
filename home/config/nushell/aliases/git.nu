@@ -75,6 +75,7 @@ export alias gscy = git_switch_create_ygt
 export alias gscv = git_switch_create_variant
 export alias gscw = git_switch_create_wip
 export alias gmw = git merge --squash $"(git branch --show-current)--wip-palekiwi"
+export alias gbd = git branch -d
 export alias gbdw = git branch -d $"(git branch --show-current)--wip-palekiwi"
 export alias gbDw = git branch -D $"(git branch --show-current)--wip-palekiwi"
 export alias gbDrw = git push origin --delete $"(git branch --show-current)--wip-palekiwi"
