@@ -24,11 +24,11 @@ local search_tags_opts = {
 M.diagnostics = function()
   builtin.diagnostics({
     layout_strategy = "vertical",
-    preview = false,
     layout_config = {
       preview_height = 0.5,
     },
     line_width = 90,
+    no_sign = true,
   })
 end
 
