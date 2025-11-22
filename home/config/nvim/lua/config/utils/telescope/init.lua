@@ -10,7 +10,7 @@ local git_utils = require('config.utils.git')
 local gh_utils = require('config.utils.gh')
 
 local custom_entry_makers = require('config.utils.telescope.entry_makers')
-local custom_helpers = require('config.utils.telescope.helpers')
+local git_helpers = require('config.utils.helpers.git')
 local custom_previewers = require('config.utils.telescope.previewers')
 
 M = {}
@@ -22,13 +22,13 @@ local search_tags_opts = {
 }
 
 M.find_in_agents = function()
-  local branch_name = custom_helpers.current_git_branch()
+  local branch_name = git_helpers.current_git_branch()
 
   builtin.find_files({ cwd = ".agents/" .. branch_name })
 end
 
 M.file_review = function()
-  local branch_name = custom_helpers.current_git_branch()
+  local branch_name = git_helpers.current_git_branch()
   local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
   local subdir = file_name:gsub("/", "_")
 
@@ -75,7 +75,7 @@ end
 --- search in files that have changed since a particular commit (base branch)
 ---@param search_dir string?
 M.changed_files = function(search_dir)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     vim.api.nvim_echo({
@@ -117,7 +117,7 @@ end
 -- live grep in change files
 ---@param search_dir string?
 M.grep_changed_files = function(search_dir)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     vim.api.nvim_echo({
@@ -144,7 +144,7 @@ M.grep_changed_files = function(search_dir)
 end
 
 M.changed_files_since = function(opts)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     return vim.api.nvim_echo({
@@ -176,7 +176,7 @@ M.changed_files_since = function(opts)
 end
 
 M.diffview_since = function()
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     return vim.api.nvim_echo({

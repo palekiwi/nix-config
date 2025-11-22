@@ -5,6 +5,7 @@ local keymaps_telescope = require("config.keymaps.telescope")
 
 local helpers = require('config.utils.helpers')
 local telescope_utils = require('config.utils.telescope')
+local agent_utils = require('config.utils.agent')
 local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local nvim_utils = require('config.utils.nvim')
@@ -111,8 +112,7 @@ local base = {
   { "<leader>eh",      "<cmd>Telescope help_tags<cr>",                                         desc = "Help tags" },
   { "<leader>es",      "<cmd>Telescope current_buffer_tags show_line=true<cr>",                desc = "Tags" },
   { "<leader>et",      telescope_utils.search_tags,                                            desc = "Search tags" },
-  { "<leader>fe",      "<cmd>only<cr>",                                                        desc = "Only" },
-  { "<leader>fh",      "<cmd>hide<cr>",                                                        desc = "Hide" },
+  { "<leader>fs",      agent_utils.create_spec,                                                desc = "[Agents] Spec.md" },
   { "<leader>fq",      qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
   { "<leader>fQ",      "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",       group = "[Git]" },
