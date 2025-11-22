@@ -40,7 +40,7 @@ return {
         { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
         { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
         { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
-        { "n",          "<space>n",  function() oc.command("session_new") end,                                     "New session" },
+        { "n",          "<space>n",  function() oc.command("session.new") end,                                     "New session" },
         { "n",          "<space>+",  function() oc.prompt("@this") end,                                            "Add this" },
         { "n",          "<space>pe", function() oc.prompt("/pr:explain", { submit = true }) end,                   "PR: Explain" },
         { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", { submit = true }) end,             "PR: Fusion Review" },
