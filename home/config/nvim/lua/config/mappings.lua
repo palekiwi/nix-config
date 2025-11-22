@@ -58,6 +58,7 @@ local base = {
   { "<C-p>",           telescope_utils.changed_files,                                          desc = "Search changed files" },
   { "<C-q>",           "<cmd>Telescope quickfix show_line=false<cr>",                          desc = "Quickfix" },
   { "<C-u>",           telescope_utils.lsp_references,                                         desc = "Ref" },
+  { "<C-w>h",          "<cmd>hide<cr>",                                                        desc = "Hide" },
   { "<Esc><Esc>",      "<C-\\><C-n>",                                                          desc = "Exit termina mode",            mode = "t" },
   -- F keys
   { "<F4>",            "<C-R>=strftime('%T')<cr>",                                             desc = "Insert time",                  mode = "i" },
