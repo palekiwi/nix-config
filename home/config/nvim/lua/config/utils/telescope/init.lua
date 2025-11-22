@@ -177,7 +177,7 @@ M.changed_files_since = function(opts)
       entry_maker = make_entry.gen_from_file(opts)
     },
     previewer = custom_previewers.file_diff_previewer,
-    sorter = conf.generic_sorter(opts),
+    sorter = conf.generic_sorter(opts), ---@diagnostic disable-line: no-unknown
   }):find()
 end
 
@@ -346,7 +346,7 @@ M.git_pr_commits = function(opts)
       end)
 
       map('i', '<C-y>', function()
-        local picker = action_state.get_current_picker(prompt_bufnr)
+        local picker = action_state.get_current_picker(prompt_bufnr) ---@type table
         local selection = picker:get_multi_selection() ---@type table?
 
         if selection == nil or vim.tbl_isempty(selection) then
@@ -375,7 +375,7 @@ M.git_pr_commits = function(opts)
 
       map('i', '<C-b>', function()
         actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
+        local selection = action_state.get_selected_entry() ---@type table
         local git_base = selection.value ---@type string
 
         git_utils.set_base_branch(git_base)
@@ -386,7 +386,7 @@ M.git_pr_commits = function(opts)
 
         actions.close(prompt_bufnr)
 
-        local files = vim.fn.systemlist("git diff-tree --no-commit-id --name-only -r " .. hash)
+        files = vim.fn.systemlist("git diff-tree --no-commit-id --name-only -r " .. hash)
 
         if vim.v.shell_error ~= 0 or #files == 0 then
           vim.notify("No files found for commit " .. hash, vim.log.levels.WARN)
