@@ -4,16 +4,16 @@ local conf = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local make_entry = require "telescope.make_entry"
-local builtin = require 'telescope.builtin'
+local builtin = require 'telescope.builtin' ---@type table
 
 local git_utils = require('config.utils.git')
 local gh_utils = require('config.utils.gh')
 
 local custom_entry_makers = require('config.utils.telescope.entry_makers')
-local custom_helpers = require('config.utils.telescope.helpers')
+local git_helpers = require('config.utils.helpers.git')
 local custom_previewers = require('config.utils.telescope.previewers')
 
-M = {}
+local M = {}
 
 local search_tags_opts = {
   fname_width = 60,
@@ -21,14 +21,19 @@ local search_tags_opts = {
   only_sort_tags = true
 }
 
-M.find_in_agents = function()
-  local branch_name = custom_helpers.current_git_branch()
-
-  builtin.find_files({ cwd = ".agents/" .. branch_name })
+M.diagnostics = function()
+  builtin.diagnostics({
+    layout_strategy = "vertical",
+    layout_config = {
+      preview_height = 0.5,
+    },
+    line_width = 90,
+    no_sign = true,
+  })
 end
 
 M.file_review = function()
-  local branch_name = custom_helpers.current_git_branch()
+  local branch_name = git_helpers.current_git_branch()
   local file_name = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
   local subdir = file_name:gsub("/", "_")
 
@@ -38,6 +43,7 @@ M.file_review = function()
     cwd = review_dir,
     search_file = "review.md",
     no_ignore = true,
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.9,
     }
@@ -75,7 +81,7 @@ end
 --- search in files that have changed since a particular commit (base branch)
 ---@param search_dir string?
 M.changed_files = function(search_dir)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     vim.api.nvim_echo({
@@ -117,7 +123,7 @@ end
 -- live grep in change files
 ---@param search_dir string?
 M.grep_changed_files = function(search_dir)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     vim.api.nvim_echo({
@@ -144,7 +150,7 @@ M.grep_changed_files = function(search_dir)
 end
 
 M.changed_files_since = function(opts)
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     return vim.api.nvim_echo({
@@ -171,12 +177,12 @@ M.changed_files_since = function(opts)
       entry_maker = make_entry.gen_from_file(opts)
     },
     previewer = custom_previewers.file_diff_previewer,
-    sorter = conf.generic_sorter(opts),
+    sorter = conf.generic_sorter(opts), ---@diagnostic disable-line: no-unknown
   }):find()
 end
 
 M.diffview_since = function()
-  local success, result = pcall(custom_helpers.last_commit_on_base)
+  local success, result = pcall(git_helpers.last_commit_on_base)
 
   if not success then
     return vim.api.nvim_echo({
@@ -269,6 +275,7 @@ M.git_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },
@@ -339,7 +346,7 @@ M.git_pr_commits = function(opts)
       end)
 
       map('i', '<C-y>', function()
-        local picker = action_state.get_current_picker(prompt_bufnr)
+        local picker = action_state.get_current_picker(prompt_bufnr) ---@type table
         local selection = picker:get_multi_selection() ---@type table?
 
         if selection == nil or vim.tbl_isempty(selection) then
@@ -368,7 +375,7 @@ M.git_pr_commits = function(opts)
 
       map('i', '<C-b>', function()
         actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
+        local selection = action_state.get_selected_entry() ---@type table
         local git_base = selection.value ---@type string
 
         git_utils.set_base_branch(git_base)
@@ -379,7 +386,7 @@ M.git_pr_commits = function(opts)
 
         actions.close(prompt_bufnr)
 
-        local files = vim.fn.systemlist("git diff-tree --no-commit-id --name-only -r " .. hash)
+        files = vim.fn.systemlist("git diff-tree --no-commit-id --name-only -r " .. hash)
 
         if vim.v.shell_error ~= 0 or #files == 0 then
           vim.notify("No files found for commit " .. hash, vim.log.levels.WARN)
@@ -404,6 +411,7 @@ M.git_pr_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },
@@ -461,6 +469,7 @@ M.git_pr_merge_commits = function(opts)
 
   pickers.new(opts, {
     prompt_title = "PR Merge Commits",
+    layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
     },

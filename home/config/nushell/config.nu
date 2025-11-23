@@ -15,6 +15,8 @@ $env.CONTEXT7_API_KEY = (cat /run/secrets/context7/api_key)
 $env.OPENCODE_API_KEY = (cat /run/secrets/opencode/api_key)
 $env.ZAI_CODING_PLAN_API_KEY = (cat /run/secrets/zai_coding_plan/api_key)
 
+$env.OPENCODE_ENABLE_EXPERIMENTAL_MODELS = true
+
 $env.CACHIX_AUTH_TOKEN = (cat /run/secrets/cachix/personal/token)
 
 if ($env.SSH_CONNECTION? == null) or ((hostname) == "kyomu") {

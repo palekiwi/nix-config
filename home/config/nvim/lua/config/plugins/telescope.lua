@@ -14,6 +14,7 @@ return {
     },
     config = function()
       local actions = require("telescope.actions")
+      local actions_layout = require("telescope.actions.layout")
 
       require("telescope").setup {
         extensions = {
@@ -25,20 +26,28 @@ return {
         defaults = {
           mappings = {
             i = {
-              ["<C-s>"] = actions.cycle_previewers_next,
               ["<C-a>"] = actions.cycle_previewers_prev,
+              ["<C-p>"] = actions_layout.toggle_preview,
+              ["<C-x>"] = actions_layout.cycle_layout_next,
+              ["<C-s>"] = actions.cycle_previewers_next,
             }
           },
           sorting_strategy = "ascending",
-          layout_strategy = "vertical",
+          layout_strategy = "flex",
           layout_config = {
+            horizontal = {
+              height = 0.95,
+              preview_cutoff = 120,
+              prompt_position = "top",
+              width = 0.95
+            },
             vertical = {
               height = 0.95,
               mirror = true,
-              prompt_position = "top",
               preview_cutoff = 0,
-              preview_height = 0.75,
-              width = 0.8
+              preview_height = 0.65,
+              prompt_position = "top",
+              width = 0.95
             }
           }
         }

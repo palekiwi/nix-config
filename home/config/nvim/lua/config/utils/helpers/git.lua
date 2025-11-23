@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 M.last_commit_on_base = function()
   local last_commit_on_base = vim.fn.system({

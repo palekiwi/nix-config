@@ -77,3 +77,7 @@ export def "run view" [run_id: int, --log, --save] {
         | from json
     }
 }
+
+export def "repo clone" [repo: string] {
+    gh_clone_repo $repo
+}
