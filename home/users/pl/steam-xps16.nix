@@ -11,9 +11,11 @@
     ../../programs/tui/direnv.nix
     ../../programs/tui/starship.nix
     ../../programs/tui/gh.nix
+    ../../programs/tui/dev.nix
     ../../programs/tui/atuin.nix
     ../../programs/tui/sesh.nix
     ../../programs/tui/utils.nix
+    ../../programs/tui/scripts.nix
 
     # Minimal GUI applications
     ../../programs/gui/kitty.nix
