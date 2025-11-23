@@ -4,8 +4,10 @@
   home.packages = with pkgs; [
     ansible
     ansible-lint
+    gcc
     gnumake
     go
+    go-task
     lua
     lua-language-server
     nixd
