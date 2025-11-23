@@ -23,6 +23,9 @@
   services.xserver = {
     enable = true;
 
+    # Enable touchpad support (XPS16 is a laptop)
+    libinput.enable = true;
+
     xkb = {
       layout = "us";
       variant = "";
