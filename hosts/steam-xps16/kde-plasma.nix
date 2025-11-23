@@ -9,6 +9,12 @@
     wayland.enable = true;
   };
 
+  # Enable automatic login for gaming convenience
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "pl";
+  };
+
   # Enable graphical server infrastructure
   # Despite the name "xserver", this is required for both X11 and Wayland sessions
   # KDE Plasma 6 will offer both session types at login:
