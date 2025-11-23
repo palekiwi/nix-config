@@ -65,6 +65,12 @@
           modules = [ ./users/pl/kyomu.nix ./options ];
           extraSpecialArgs = { inherit inputs pkgs-unstable; };
         };
+
+        "pl@steam-xps16" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./users/pl/steam-xps16.nix ./options ];
+          extraSpecialArgs = { inherit inputs pkgs-unstable; };
+        };
       };
     };
 }
