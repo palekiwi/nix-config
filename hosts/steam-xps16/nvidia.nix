@@ -51,5 +51,5 @@
   boot.kernelModules = [ "i915" ];
 
   # Intel Arc graphics settings
-  hardware.intelgpu.driver = "xe"; # Modern Intel driver for Arc
+  # hardware.intelgpu.driver = "xe"; # Modern Intel driver for Arc
 }
