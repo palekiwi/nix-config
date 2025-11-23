@@ -18,5 +18,5 @@
 
   sops.secrets."spabreaks/gemini_api_key" = { owner = "pl"; };
 
-  sops.secrets."gotify/token" = { owner = "notifications-server"; };
+  # sops.secrets."gotify/token" = { owner = "notifications-server"; };
 }
