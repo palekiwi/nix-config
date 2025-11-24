@@ -20,6 +20,12 @@ export def builds [
     | update commit { |row| $row.commit | str substring 0..7 }
 }
 
+export def "projects list" [--full] {
+    let fields = [name projectId projectNumber]
+
+    gcloud projects list --format=json | from json | if $full { $in } else { select  ...$fields }
+}
+
 # TODO: This is just an example
 export def "logs spabreaks" [--limit:int = 50] {
     let query = [
