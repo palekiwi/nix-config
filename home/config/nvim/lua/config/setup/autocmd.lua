@@ -32,4 +32,10 @@ return function()
     end,
   })
 
+  create_autocmd("User", {
+    pattern = "TelescopePreviewerLoaded",
+    callback = function(_args)
+      vim.wo.wrap = false
+    end,
+  })
 end
