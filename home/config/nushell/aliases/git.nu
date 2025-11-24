@@ -90,7 +90,6 @@ export def gsm [] {
 export def git_switch_integration_branch [] {
     let branch_name = $env | get -i SPABREAKS_INTEGRATION_BRANCH
     if ($branch_name | is-not-empty) {
-        print "Integration branch found"
         git switch $env.SPABREAKS_INTEGRATION_BRANCH
         git pull
     } else {
