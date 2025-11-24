@@ -87,7 +87,20 @@ export def gsm [] {
     git switch (get_master_branch_name)
     git pull
 }
+export def git_switch_integration_branch [] {
+    let branch_name = $env | get -i SPABREAKS_INTEGRATION_BRANCH
+    if ($branch_name | is-not-empty) {
+        print "Integration branch found"
+        git switch $env.SPABREAKS_INTEGRATION_BRANCH
+        git pull
+    } else {
+        print $"(ansi red) No integration branch set (ansi reset)"
+        return 1
+    }
+}
+
 export alias gsb = gs (get_pr_base)
+export alias gsi = git_switch_integration_branch
 export def gmb [] {
     set_pr_info
     git merge (get_pr_base) --no-edit
