@@ -228,6 +228,7 @@ def main [
     --exclude-labels(-L): string
     --exclude-lgtm(-G)
     --exclude-reviewed(-R)
+    --fuzzy(-f)
     --labels(-l): string
     --lgtm(-g)
     --print
@@ -310,6 +311,7 @@ def main [
             --preview="echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
             --bind="ctrl-y:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
             --tac
+            ...(if $fuzzy { [] } else { [--exact] })
         )
 
     if ($selected | is-empty) {
