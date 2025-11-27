@@ -209,7 +209,7 @@ def format_table [prs: list] {
 
         {
             id: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
-            title: $"(ansi default)(sanitize_text $pr.title)(ansi reset)"
+            title: $"(ansi default)(sanitize_text $pr.title | str substring 0..64)(ansi reset)"
             author_name: $"(ansi blue)(($pr.author?.name? | default '') | split row ' ' | first)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($reviews_str)(ansi reset)"
