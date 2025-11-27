@@ -72,6 +72,7 @@ def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_
     # Create new row with combined id+title field first, then other columns
     {
         id: $combined_id_title,
+        author_name: $row.author_name,
         labels: $row.labels,
         cr: $row.cr,
         created: $row.created,
@@ -209,6 +210,7 @@ def format_table [prs: list] {
         {
             id: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
             title: $"(ansi default)(sanitize_text $pr.title)(ansi reset)"
+            author_name: $"(ansi blue)(($pr.author?.name? | default '') | split row ' ' | first)(ansi reset)"
             labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)"
             cr: $"(ansi teal)($reviews_str)(ansi reset)"
             created: $"(ansi white)(($pr.createdAt | into datetime | date humanize))(ansi reset)"
