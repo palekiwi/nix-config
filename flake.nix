@@ -99,6 +99,14 @@
             inputs.sops-nix.nixosModules.sops
           ];
         };
+
+        steam-xps16 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/steam-xps16
+            inputs.sops-nix.nixosModules.sops
+          ];
+        };
       };
 
       packages.x86_64-linux = {
