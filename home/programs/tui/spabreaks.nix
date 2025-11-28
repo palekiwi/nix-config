@@ -48,6 +48,7 @@ let
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
+    };
   };
 
   commonSpabreaksFiles = {
