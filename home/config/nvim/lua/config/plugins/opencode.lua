@@ -36,7 +36,7 @@ return {
 
       local keymaps = {
         { "n",          "<space>a",  function() oc.ask() end,                                                      "Ask opencode", },
-        { "n",          "<space>et", function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
+        { "n",          "<space>e", function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
         { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
         { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
         { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
