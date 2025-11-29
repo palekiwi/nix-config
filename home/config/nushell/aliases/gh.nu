@@ -14,6 +14,8 @@ def gprc [...args] {
 }
 
 alias p = gh_prs
+alias pp = gh_prs -a palekiwi
+alias pP = gh_prs -A palekiwi
 alias pgrev = gh pr comment --body "/gemini review"
 alias pitr = gh pr comment --body 'ITR'
 alias plgtm = gh pr review --approve --body 'LGTM'

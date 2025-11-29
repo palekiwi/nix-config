@@ -20,6 +20,10 @@ export def builds [
     | update commit { |row| $row.commit | str substring 0..7 }
 }
 
+export def "config get-value" [value: string] {
+    gcloud config get-value $value
+}
+
 export def "projects list" [--full] {
     let fields = [name projectId projectNumber]
 
