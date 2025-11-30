@@ -6,6 +6,8 @@
       ./hardware-configuration.nix
       ./gotify.nix
       ./mosquitto.nix
+      ./sops.nix
+      ./zigbee2mqtt.nix
       ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
@@ -37,10 +39,6 @@
       v = "nvim";
       rebuild = "sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -f)";
     };
-
-    services.udev.extraRules = ''
-      KERNEL=="ttyUSB0", OWNER="pl"
-    '';
 
     networking.firewall.interfaces."tailscale0" = {
       allowedTCPPorts = [
