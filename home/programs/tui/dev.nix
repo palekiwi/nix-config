@@ -2,8 +2,6 @@
 
 {
   home.packages = with pkgs; [
-    ansible
-    ansible-lint
     gnumake
     go
     lua
