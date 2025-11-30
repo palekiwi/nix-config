@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ./gotify.nix
+      ./homeassistant.nix
       ./mosquitto.nix
       ./sops.nix
       ./zigbee2mqtt.nix
