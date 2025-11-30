@@ -6,6 +6,7 @@
       ./hardware-configuration.nix
       ./gotify.nix
       ./mosquitto.nix
+      ./sops.nix
       ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
