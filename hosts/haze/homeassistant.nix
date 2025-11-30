@@ -62,6 +62,8 @@
     wants = [ "network-online.target" ];
   };
 
+  # TODO: study https://github.com/Mic92/dotfiles/tree/393539385b0abfc3618e886cd0bf545ac24aeb67/machines/eve/modules/home-assistant
+
   # TODO: AppDaemon migration - add after Home Assistant is verified working
   # See .agents/homelab/ha/ha.kube.yml for current container config
 }
