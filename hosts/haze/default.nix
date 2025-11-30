@@ -5,6 +5,7 @@
     [
       ./hardware-configuration.nix
       ./gotify.nix
+      ./mosquitto.nix
       ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
@@ -43,6 +44,7 @@
 
     networking.firewall.interfaces."tailscale0" = {
       allowedTCPPorts = [
+        1883 # mosquitto/mqtt
         3002 # firecrawl
         3003 # firecrawl-mcp
         5050 # app-daemon

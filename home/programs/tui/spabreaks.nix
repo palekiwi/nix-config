@@ -42,6 +42,13 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    gemini-cli-tool = {
+      envrc = ../../config/spabreaks/gemini-cli-tool/.envrc;
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
   };
 
   commonSpabreaksFiles = {
