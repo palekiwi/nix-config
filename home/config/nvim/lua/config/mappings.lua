@@ -114,6 +114,7 @@ local base = {
   { "<leader>eh",        "<cmd>Telescope help_tags<cr>",                                         desc = "Help tags" },
   { "<leader>es",        "<cmd>Telescope current_buffer_tags show_line=true<cr>",                desc = "Tags" },
   { "<leader>et",        telescope_utils.search_tags,                                            desc = "Search tags" },
+  { "<leader><leader>c", agents_utils.create_commit_dir,                                         desc = "[Agents] Spec.md" },
   { "<leader><leader>s", agents_utils.create_spec,                                               desc = "[Agents] Spec.md" },
   { "<leader>fq",        qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
   { "<leader>fQ",        "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },

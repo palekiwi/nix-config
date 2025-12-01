@@ -16,6 +16,16 @@ M.create_spec = function()
   vim.cmd.edit(path)
 end
 
+-- create directory .agents/<current-branch-name>/<current-commit>/
+M.create_commit_dir = function()
+  local branch = git_helpers.current_git_branch()
+  local commit = git_helpers.current_git_commit(true)
+  local path = AGENTS_DIR .. branch .. "/" .. commit
+
+  vim.fn.mkdir(path, "p")
+  vim.notify("Created agent directory: " .. path, vim.log.levels.INFO)
+  return path
+end
 
 -- search in .agents/<branch-name>
 M.find_files = function()
