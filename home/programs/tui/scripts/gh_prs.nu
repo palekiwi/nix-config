@@ -21,7 +21,7 @@ def build_pr_tree [prs: list] {
 
     # Find root PRs (those that target the default branch or non-PR branches)
     let root_prs = ($prs | where { |pr|
-        $pr.baseRefName == $default_branch or ($branch_to_pr | get -i $pr.baseRefName) == null
+        $pr.baseRefName == $default_branch or ($branch_to_pr | get $pr.baseRefName) == null
     })
 
     # Recursive function to build tree structure
