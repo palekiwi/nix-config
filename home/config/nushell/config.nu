@@ -4,6 +4,7 @@ source aliases/main.nu
 
 source integrations/atuin.nu
 
+use modules/agents.nu
 use modules/gcp.nu
 use modules/gh-utils.nu
 use modules/sb.nu
