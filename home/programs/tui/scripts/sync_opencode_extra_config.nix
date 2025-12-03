@@ -8,7 +8,7 @@ pkgs.writers.writeNuBin "sync_opencode_extra_config" ''
     if ($config_dir | path join $subdir | path exists) {
       print $"Syncing opencode extra config from ($config_dir)/($subdir)..."
       mkdir .opencode
-      ^rsync -av --delete $"($config_dir)/($subdir)/" ".opencode/"
+      ^rsync -av --delete --exclude='node_modules' $"($config_dir)/($subdir)/" ".opencode/"
     } else {
       print $"Warning: Config directory '($config_dir)/($subdir)' does not exist"
     }
