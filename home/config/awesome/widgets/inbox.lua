@@ -39,7 +39,7 @@ local function count_by(term)
   return count
 end
 
----@param opts InboxWidget.Opts
+---@param opts? InboxWidget.Opts
 function inbox.create(opts)
   opts = opts or {}
   local colors = opts.colors or default_colors
