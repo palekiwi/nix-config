@@ -31,7 +31,7 @@ end
 M.find_files = function(opts)
   opts = opts or {}
   local branch_name = git_helpers.current_git_branch()
-  local telescope_opts = { cwd = AGENTS_DIR .. branch_name }
+  local telescope_opts = { cwd = AGENTS_DIR .. branch_name, follow = true }
 
   if opts.current_commit then
     local commit = git_helpers.current_git_commit(true)
