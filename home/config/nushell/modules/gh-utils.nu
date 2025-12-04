@@ -81,3 +81,45 @@ export def "run view" [run_id: int, --log, --save] {
 export def "repo clone" [repo: string] {
     gh_clone_repo $repo
 }
+
+export def "review comments" [pr_number?: int, --full] {
+    let pr_number = $pr_number | default ""
+    
+    # Get PR data to extract repository info
+    let pr_response = (do { gh pr view ($pr_number) --json number,headRepository,headRepositoryOwner } | complete)
+    if $pr_response.exit_code != 0 {
+        error make { msg: $pr_response.stderr }
+    }
+
+    let pr_data = $pr_response.stdout | from json
+    let owner = $pr_data.headRepositoryOwner.login
+    let repo = $pr_data.headRepository.name
+    let pr_num = $pr_data.number
+    
+    # Fetch review comments directly using the correct API endpoint
+    let comments_response = (do {
+        gh api $"repos/($owner)/($repo)/pulls/($pr_num)/comments"
+    } | complete)
+    
+    if $comments_response.exit_code != 0 {
+        error make { msg: $comments_response.stderr }
+    }
+
+    if $full {
+        # Return full JSON payload with all metadata
+        $comments_response.stdout
+    } else {
+        # Return filtered JSON optimized for AI agents (default)
+        $comments_response.stdout 
+        | from json 
+        | each {|c| {
+            id: $c.id
+            in_reply_to_id: ($c.in_reply_to_id? | default null)
+            author: $c.user.login
+            path: $c.path
+            body: $c.body
+            diff_hunk: $c.diff_hunk
+        }}
+        | to json
+    }
+}

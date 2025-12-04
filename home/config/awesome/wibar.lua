@@ -94,9 +94,10 @@ local function setup_right_widgets()
       myvolume,
       cmus_widget {},
       battery_widget(),
-      timeAbroad("ON", "America/Toronto"),
+      timeAbroad("CA", "America/Toronto"),
       timeAbroad("UK", "Europe/London"),
       timeAbroad("PL", "Europe/Warsaw"),
+      timeAbroad("GE", "Asia/Tbilisi"),
       timeAbroad("JP", "Asia/Tokyo"),
       timeHome("Asia/Taipei"),
       mysystray
