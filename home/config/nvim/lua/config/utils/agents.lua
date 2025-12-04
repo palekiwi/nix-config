@@ -10,7 +10,8 @@ AGENTS_DIR = ".agents/"
 -- create the spec.md file
 M.create_spec = function()
   local branch = git_helpers.current_git_branch()
-  local path = AGENTS_DIR .. branch .. "/spec.md"
+  local commit = git_helpers.current_git_commit(true)
+  local path = AGENTS_DIR .. branch .. "/" .. commit .. "/spec.md"
 
   vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
   vim.cmd.edit(path)
