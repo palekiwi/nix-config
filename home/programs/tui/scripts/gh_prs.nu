@@ -108,6 +108,7 @@ def filter_prs [
     exclude_lgtm?: bool
     reviewed?: bool
     exclude_reviewed?: bool
+    review_requested?: bool
 ] {
     let prs = if ($draft | default false) {
         $prs | where { |pr| $pr.isDraft == true }
@@ -201,6 +202,14 @@ def filter_prs [
         $prs
     }
 
+    let prs = if ($review_requested | default false) {
+        $prs | where { |pr|
+            ($pr.reviewRequests? | default [] | any { |req| $req.login == "palekiwi" })
+        }
+    } else {
+        $prs
+    }
+
     $prs
 }
 
@@ -241,6 +250,7 @@ def main [
     --labels(-l): string
     --lgtm(-g)
     --print
+    --review-requested(-q)
     --reviewed(-r)
     --no-tree(-T)
 ] {
@@ -286,7 +296,7 @@ def main [
 
     let prs = $pr_list_result.stdout
     | from json
-    | filter_prs $in $draft $authors $exclude_authors $exclude_draft $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed
+    | filter_prs $in $draft $authors $exclude_authors $exclude_draft $labels $exclude_labels $lgtm $exclude_lgtm $reviewed $exclude_reviewed $review_requested
 
     if ($prs | is-empty) {
         print "No open PRs found"
