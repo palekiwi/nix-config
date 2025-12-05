@@ -8,7 +8,22 @@
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
-    notmuch. enable = true;
+
+    notmuch = {
+      enable = true;
+
+      extraConfig = {
+        index = {
+          "header.GitHubReason" = "X-GitHub-Reason";
+        };
+      };
+
+      hooks = {
+        postNew = ''
+          notmuch tag +review-requested -- tag:new and GitHubReason:review_requested
+        '';
+      };
+    };
 
     # himalaya = {
     #   enable = true;
