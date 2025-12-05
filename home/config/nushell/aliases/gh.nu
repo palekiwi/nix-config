@@ -13,11 +13,15 @@ def gprc [...args] {
     set_pr_info
 }
 
+def pitr [] {
+    gh pr edit --add-reviewer palekiwi
+    gh pr comment --body 'ITR'
+}
+
 alias p = gh_prs
 alias pp = gh_prs -a palekiwi
 alias pP = gh_prs -A palekiwi
 alias pgrev = gh pr comment --body "/gemini review"
-alias pitr = gh pr comment --body 'ITR'
 alias plgtm = gh pr review --approve --body 'LGTM'
 alias pre = gh_pr_create
 alias prl = gh_pr_link
