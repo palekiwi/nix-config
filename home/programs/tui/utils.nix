@@ -2,7 +2,7 @@
 
 let
   # Rename taskwarrior's 'task' binary to 'tw' to avoid conflict with go-task
-  tw = pkgs.symlinkJoin {
+  wrapped-taskwarrior = pkgs.symlinkJoin {
     name = "taskwarrior3";
     paths = [ pkgs.taskwarrior3 ];
     buildInputs = [ pkgs.makeWrapper ];
@@ -10,7 +10,7 @@ let
       # Remove the conflicting 'task' binary
       rm $out/bin/task
       # Create a renamed symlink 'tw' instead
-      ln -s ${pkgs.taskwarrior3}/bin/task $out/bin/tw
+      ln -s ${pkgs.taskwarrior3}/bin/task $out/bin/taskwarrior3
       # Remove conflicting share
       rm -rf $out/share
     '';
@@ -44,6 +44,6 @@ in
     which
     yubikey-manager
     zoxide
-    tw
+    wrapped-taskwarrior
   ];
 }
