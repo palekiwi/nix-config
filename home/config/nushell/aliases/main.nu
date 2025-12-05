@@ -32,8 +32,7 @@ def ll [] {
     ls -la | select name type size mode user group created accessed modified | sort-by type
 }
 
-alias t = taskwarrior3 rc:~/tasks/spabreaks/taskrc
-alias tp = taskwarrior3 rc:~/tasks/pl/taskrc
+alias t = ~/.nix-profile/bin/task
 alias cat = bat -p
 alias gemini-cli-tool = ~/code/spabreaks/gemini-cli-tool/run.sh
 alias ctc = cat_to_clipboard

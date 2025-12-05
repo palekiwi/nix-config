@@ -1,21 +1,5 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
-let
-  # Rename taskwarrior's 'task' binary to 'tw' to avoid conflict with go-task
-  wrapped-taskwarrior = pkgs.symlinkJoin {
-    name = "taskwarrior3";
-    paths = [ pkgs.taskwarrior3 ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      # Remove the conflicting 'task' binary
-      rm $out/bin/task
-      # Create a renamed symlink 'tw' instead
-      ln -s ${pkgs.taskwarrior3}/bin/task $out/bin/taskwarrior3
-      # Remove conflicting share
-      rm -rf $out/share
-    '';
-  };
-in
 {
   home.packages = with pkgs; [
     acpi
@@ -26,7 +10,7 @@ in
     fasd
     fd
     fzf
-    go-task
+    (lib.lowPrio go-task)
     home-assistant-cli
     jrnl
     jq
@@ -36,6 +20,8 @@ in
     ranger
     ripgrep
     starship
+    taskwarrior-tui
+    taskwarrior3
     tldr
     tree
     typescript
@@ -44,6 +30,5 @@ in
     which
     yubikey-manager
     zoxide
-    wrapped-taskwarrior
   ];
 }

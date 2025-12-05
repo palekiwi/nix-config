@@ -82,7 +82,6 @@ in
       docker-compose
       gcc
       gnumake
-      go-task
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       sops
       terraform-ls
