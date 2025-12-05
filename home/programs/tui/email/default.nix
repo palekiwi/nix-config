@@ -14,30 +14,6 @@
     #   enable = true;
     #   package = pkgs-unstable.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; };
     # };
-
-    neomutt = {
-      enable = true;
-      vimKeys = true;
-
-      sidebar = {
-        enable = true;
-        width = 30;
-        shortPath = false;
-      };
-
-      settings = {
-        mail_check_stats = "yes";
-      };
-
-      extraConfig = ''
-        macro index,pager gi "<change-folder>=Inbox<Enter>" "Go to inbox"
-
-        macro index,pager \cb "<pipe-message> ${pkgs.urlscan}/bin/urlscan<Enter>" "Extract URLs"
-
-        ${builtins.readFile ./neomutt/dracula-theme.muttrc}
-
-      '';
-    };
   };
 
   services.mbsync = {
