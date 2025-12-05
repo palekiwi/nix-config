@@ -172,6 +172,14 @@ name = "kyomu"
 startup_command = "ssh kyomu -A"
 
 #-------------------
+#   --- tools ----
+#-------------------
+
+[[session]]
+name = "taskwarrior"
+startup_command = "taskwarrior-tui"
+
+#-------------------
 #  --- default ---
 #-------------------
 
