@@ -33,6 +33,7 @@ def ll [] {
 }
 
 alias t = ~/.nix-profile/bin/task
+alias tt = taskwarrior-tui
 alias cat = bat -p
 alias gemini-cli-tool = ~/code/spabreaks/gemini-cli-tool/run.sh
 alias ctc = cat_to_clipboard
