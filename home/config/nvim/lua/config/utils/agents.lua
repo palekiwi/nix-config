@@ -34,9 +34,8 @@ M.find_files = function(opts)
   local branch_name = git_helpers.current_git_branch()
   local telescope_opts = { cwd = AGENTS_DIR .. branch_name, follow = true }
 
-  if opts.current_commit then
-    local commit = git_helpers.current_git_commit(true)
-    telescope_opts.default_text = commit
+  if opts.latest then
+    telescope_opts.cwd = AGENTS_DIR .. branch_name .. "/latest"
   end
 
   telescope.find_files(telescope_opts)
