@@ -107,9 +107,16 @@ export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c)] {
     # Capture pipeline input immediately before any conditional logic
     let piped_input = $in
 
-    # Validate flag combinations
+    # Validate flag combinations and input
     if ($empty and ($clipboard or not ($piped_input | is-empty))) or ($clone and ($empty or $clipboard or not ($piped_input | is-empty))) {
         error make { msg: "Invalid flag combination" }
+    }
+    
+    # Check if we have content when no flags are provided
+    if (not $empty) and (not $clone) and (not $clipboard) and ($piped_input | is-empty) {
+        error make { 
+            msg: "No input provided. Use: --empty, --clipboard, --clone, or pipe content"
+        }
     }
 
     # Get git info once
