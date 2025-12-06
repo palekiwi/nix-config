@@ -70,22 +70,15 @@ def save-file-and-create-symlink [
     $commit_file
 }
 
-# Helper function to handle update content
-def handle-update-content [filename: string, branch_name: string, piped_input: any] {
+# Helper function to handle clone content
+def handle-clone-content [filename: string, branch_name: string] {
     let latest_file = $"($AGENTS_DIR)/($branch_name)/latest/($filename)"
     if not ($latest_file | path exists) {
         error make { msg: $"File ($filename) does not exist in latest" }
     }
 
     # Read content from latest file
-    let latest_content = (open $latest_file)
-
-    # If there's piped input, append it to the existing content
-    if not ($piped_input | is-empty) {
-        ($latest_content + $piped_input)
-    } else {
-        $latest_content
-    }
+    open $latest_file
 }
 
 # Helper function to handle clipboard content
@@ -104,18 +97,18 @@ def handle-clipboard-content [] {
     $clipboard_content.stdout
 }
 
-export def add [filename: string, --clipboard(-c), --empty(-e), --update(-u)] {
+export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c)] {
     # Save input content to .agents directory structure
     # Usage: some-command | agents add <filename>
-    #        agents add <filename> --clipboard (-c)
+    #        agents add <filename> --clipboard (-C)
     #        agents add <filename> --empty (-e)
-    #        agents add <filename> --update (-u) [with piped input to append]
+    #        agents add <filename> --clone (-c)
 
     # Capture pipeline input immediately before any conditional logic
     let piped_input = $in
 
     # Validate flag combinations
-    if ($empty and ($clipboard or not ($piped_input | is-empty))) or ($update and ($empty or $clipboard)) {
+    if ($empty and ($clipboard or not ($piped_input | is-empty))) or ($clone and ($empty or $clipboard or not ($piped_input | is-empty))) {
         error make { msg: "Invalid flag combination" }
     }
 
@@ -125,8 +118,8 @@ export def add [filename: string, --clipboard(-c), --empty(-e), --update(-u)] {
     # Determine content based on flags
     let content = if $empty {
         ""
-    } else if $update {
-        handle-update-content $filename $git_info.branch_name $piped_input
+    } else if $clone {
+        handle-clone-content $filename $git_info.branch_name
     } else if $clipboard {
         handle-clipboard-content
     } else {
