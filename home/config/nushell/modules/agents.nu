@@ -4,12 +4,20 @@ export def main [] {
     "Agents module for managing content and files"
 }
 
-export def add [filename: string, --clipboard] {
+export def add [filename: string, --clipboard(-c), --empty(-e)] {
     # Save input content to .agents directory structure
     # Usage: some-command | agents add <filename>
-    #        agents add <filename> --clipboard
+    #        agents add <filename> --clipboard (-c)
+    #        agents add <filename> --empty (-e)
 
-    let content = if $clipboard {
+    # Validate flag combinations
+    if $empty and ($clipboard or not ($in | is-empty)) {
+        error make { msg: "Cannot use --empty flag with piped input or --clipboard" }
+    }
+
+    let content = if $empty {
+        ""
+    } else if $clipboard {
         # TODO: Check if xclip is available
 
         # Read clipboard content
