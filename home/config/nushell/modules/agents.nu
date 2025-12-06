@@ -47,11 +47,23 @@ def save-file-and-create-symlink [
     filename: string,
     commit_dir: string,
     latest_dir: string,
-    commit_hash: string
+    commit_hash: string,
+    force: bool
 ] {
     # Save content to commit-specific location
     let commit_file = $"($commit_dir)/($filename)"
-    $content | save -f $commit_file
+    
+    # Check if file exists and force is not set
+    if ($commit_file | path exists) and (not $force) {
+        error make { msg: $"File ($filename) already exists. Use --force (-f) to overwrite." }
+    }
+    
+    # Save with force flag if needed
+    if $force {
+        $content | save -f $commit_file
+    } else {
+        $content | save $commit_file
+    }
 
     # Create symlink in latest directory
     let latest_file = $"($latest_dir)/($filename)"
@@ -97,12 +109,13 @@ def handle-clipboard-content [] {
     $clipboard_content.stdout
 }
 
-export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c)] {
+export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c), --force(-f)] {
     # Save input content to .agents directory structure
     # Usage: some-command | agents add <filename>
     #        agents add <filename> --clipboard (-C)
     #        agents add <filename> --empty (-e)
     #        agents add <filename> --clone (-c)
+    #        agents add <filename> --force (-f)  # Force overwrite existing files
 
     # Capture pipeline input immediately before any conditional logic
     let piped_input = $in
@@ -137,5 +150,5 @@ export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c)] {
     let dirs = (ensure-directories $git_info.branch_name $git_info.commit_hash)
 
     # Save file and create symlink
-    save-file-and-create-symlink $content $filename $dirs.commit_dir $dirs.latest_dir $git_info.commit_hash
+    save-file-and-create-symlink $content $filename $dirs.commit_dir $dirs.latest_dir $git_info.commit_hash $force
 }
