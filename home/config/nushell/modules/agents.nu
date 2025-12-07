@@ -52,12 +52,12 @@ def save-file-and-create-symlink [
 ] {
     # Save content to commit-specific location
     let commit_file = $"($commit_dir)/($filename)"
-    
+
     # Check if file exists and force is not set
     if ($commit_file | path exists) and (not $force) {
         error make { msg: $"File ($filename) already exists. Use --force (-f) to overwrite." }
     }
-    
+
     # Save with force flag if needed
     if $force {
         $content | save -f $commit_file
@@ -109,13 +109,21 @@ def handle-clipboard-content [] {
     $clipboard_content.stdout
 }
 
-export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c), --force(-f)] {
+export def add [
+    filename: string,
+    --clipboard(-C),
+    --empty(-e),
+    --clone(-c),
+    --force(-f),
+    --open(-o)
+] {
     # Save input content to .agents directory structure
     # Usage: some-command | agents add <filename>
     #        agents add <filename> --clipboard (-C)
     #        agents add <filename> --empty (-e)
     #        agents add <filename> --clone (-c)
     #        agents add <filename> --force (-f)  # Force overwrite existing files
+    #        agents add <filename> --open (-o)   # Create file and open in editor
 
     # Capture pipeline input immediately before any conditional logic
     let piped_input = $in
@@ -124,11 +132,11 @@ export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c), --f
     if ($empty and ($clipboard or not ($piped_input | is-empty))) or ($clone and ($empty or $clipboard or not ($piped_input | is-empty))) {
         error make { msg: "Invalid flag combination" }
     }
-    
+
     # Check if we have content when no flags are provided
-    if (not $empty) and (not $clone) and (not $clipboard) and ($piped_input | is-empty) {
-        error make { 
-            msg: "No input provided. Use: --empty, --clipboard, --clone, or pipe content"
+    if (not $empty) and (not $clone) and (not $clipboard) and (not $open) and ($piped_input | is-empty) {
+        error make {
+            msg: "No input provided. Use: --empty, --clipboard, --clone, --open, or pipe content"
         }
     }
 
@@ -142,6 +150,8 @@ export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c), --f
         handle-clone-content $filename $git_info.branch_name
     } else if $clipboard {
         handle-clipboard-content
+    } else if $open {
+        ""
     } else {
         $piped_input
     }
@@ -150,5 +160,12 @@ export def add [filename: string, --clipboard(-C), --empty(-e), --clone(-c), --f
     let dirs = (ensure-directories $git_info.branch_name $git_info.commit_hash)
 
     # Save file and create symlink
-    save-file-and-create-symlink $content $filename $dirs.commit_dir $dirs.latest_dir $git_info.commit_hash $force
+    let saved_file = (save-file-and-create-symlink $content $filename $dirs.commit_dir $dirs.latest_dir $git_info.commit_hash $force)
+
+    # Open in editor if --open flag is used
+    if $open {
+        # Get the editor from environment, default to nvim
+        let editor = ($env.EDITOR? | default "nvim")
+        ^$editor $saved_file
+    }
 }
