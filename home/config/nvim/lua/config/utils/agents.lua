@@ -8,12 +8,15 @@ local M = {}
 AGENTS_DIR = ".agents/"
 
 -- create the spec.md file
-M.create_spec = function()
+M.open_spec = function()
   local branch = git_helpers.current_git_branch()
-  local commit = git_helpers.current_git_commit(true)
-  local path = AGENTS_DIR .. branch .. "/" .. commit .. "/spec.md"
+  local path = AGENTS_DIR .. branch .. "/latest/SPEC.md"
 
-  vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("Spec file does not exist: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
   vim.cmd.edit(path)
 end
 
