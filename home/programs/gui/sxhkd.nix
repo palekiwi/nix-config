@@ -75,7 +75,7 @@ in
 
       "super + space; t; t" = "${switchToSession} taskwarrior";
 
-      "super + space; e; c" = "${switchToSession} agent-opencode";
+      "super + space; e; c" = "${switchToSession} config-opencode";
       "super + space; e; r" = "${switchToSession} agents";
 
       "super + space; n; c" = "${switchToSession} nix-config";
