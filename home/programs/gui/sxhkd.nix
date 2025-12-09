@@ -73,7 +73,9 @@ in
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
 
-      "super + space; e; c" = "${switchToSession} agent-opencode";
+      "super + space; t; t" = "${switchToSession} taskwarrior";
+
+      "super + space; e; c" = "${switchToSession} config-opencode";
       "super + space; e; r" = "${switchToSession} agents";
 
       "super + space; n; c" = "${switchToSession} nix-config";

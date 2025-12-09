@@ -122,7 +122,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "config-opencode"
-path = "~/.config/agent-opencode/"
+path = "~/.config/opencode/"
 startup_command = "_tmux_git-repo"
 
 #-------------------
@@ -170,6 +170,14 @@ startup_command = "ssh haze -A"
 [[session]]
 name = "kyomu"
 startup_command = "ssh kyomu -A"
+
+#-------------------
+#   --- tools ----
+#-------------------
+
+[[session]]
+name = "taskwarrior"
+startup_command = "taskwarrior-tui"
 
 #-------------------
 #  --- default ---

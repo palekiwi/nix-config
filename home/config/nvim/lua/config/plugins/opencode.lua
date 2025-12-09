@@ -36,12 +36,15 @@ return {
 
       local keymaps = {
         { "n",          "<space>a",  function() oc.ask() end,                                                      "Ask opencode", },
-        { "n",          "<space>e", function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
+        { "n",          "<space>e",  function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
         { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
         { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
+        { "n",          "<space>F",  function() oc.prompt("@buffer ") end,                                         "Add buffer" },
         { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
         { "n",          "<space>n",  function() oc.command("session.new") end,                                     "New session" },
-        { "n",          "<space>+",  function() oc.prompt("@this") end,                                            "Add this" },
+        { "n",          "<space>+t", function() oc.prompt("@this") end,                                            "Add this" },
+        { "n",          "<space>+f", function() oc.prompt("@buffer") end,                                          "Add buffer" },
+        { "n",          "<space>+g", function() oc.prompt("@grapple") end,                                         "Add grapple" },
         { "n",          "<space>pe", function() oc.prompt("/pr:explain", { submit = true }) end,                   "PR: Explain" },
         { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", { submit = true }) end,             "PR: Fusion Review" },
         { "n",          "<space>s",  function() oc.select() end,                                                   "Select prompt" },

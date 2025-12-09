@@ -123,3 +123,157 @@ export def "review comments" [pr_number?: int, --full] {
         | to json
     }
 }
+
+export def "pr comments" [pr_number?: int, --full] {
+    let pr_number = $pr_number | default ""
+    
+    # Get PR data to extract repository info
+    let pr_response = (do { gh pr view ($pr_number) --json number,headRepository,headRepositoryOwner } | complete)
+    if $pr_response.exit_code != 0 {
+        error make { msg: $pr_response.stderr }
+    }
+
+    let pr_data = $pr_response.stdout | from json
+    let owner = $pr_data.headRepositoryOwner.login
+    let repo = $pr_data.headRepository.name
+    let pr_num = $pr_data.number
+    
+    # Fetch PR discussion comments using the issues API endpoint
+    let comments_response = (do {
+        gh api $"repos/($owner)/($repo)/issues/($pr_num)/comments"
+    } | complete)
+    
+    if $comments_response.exit_code != 0 {
+        error make { msg: $comments_response.stderr }
+    }
+
+    if $full {
+        # Return full JSON payload with all metadata
+        $comments_response.stdout
+    } else {
+        # Return filtered JSON optimized for AI agents (default)
+        $comments_response.stdout 
+        | from json 
+        | each {|c| {
+            id: $c.id
+            in_reply_to_id: ($c.in_reply_to_id? | default null)
+            author: $c.user.login
+            body: $c.body
+            created_at: $c.created_at
+            updated_at: $c.updated_at
+        }}
+        | to json
+    }
+}
+
+export def "pr comment" [
+    --id: int
+    --url: string
+    --full
+] {
+    # Determine comment ID from either --id or --url
+    let comment_id = if $id != null {
+        $id
+    } else if $url != null {
+        # Parse GitHub PR comment URL
+        # Example: https://github.com/spabreaks/terraform/pull/95#issuecomment-2587332885
+        let parsed = ($url | parse --regex 'issuecomment-(?P<id>\d+)')
+        if ($parsed | is-empty) {
+            error make { msg: "Could not parse comment ID from URL" }
+        }
+        $parsed | get 0.id | into int
+    } else {
+        error make { msg: "Must provide either --id or --url" }
+    }
+    
+    # Get current repo info
+    let repo_info = (do { gh repo view --json owner,name } | complete)
+    if $repo_info.exit_code != 0 {
+        error make { msg: $repo_info.stderr }
+    }
+
+    let repo_data = $repo_info.stdout | from json
+    let owner = $repo_data.owner.login
+    let repo = $repo_data.name
+    
+    # Fetch single PR comment by ID using the issues API endpoint
+    let comment_response = (do {
+        gh api $"repos/($owner)/($repo)/issues/comments/($comment_id)"
+    } | complete)
+    
+    if $comment_response.exit_code != 0 {
+        error make { msg: $comment_response.stderr }
+    }
+
+    if $full {
+        # Return full JSON payload
+        $comment_response.stdout
+    } else {
+        # Return filtered JSON
+        let c = ($comment_response.stdout | from json)
+        {
+            id: $c.id
+            in_reply_to_id: ($c.in_reply_to_id? | default null)
+            author: $c.user.login
+            body: $c.body
+            created_at: $c.created_at
+            updated_at: $c.updated_at
+        } | to json
+    }
+}
+
+export def "review comment" [
+    --id: int
+    --url: string
+    --full
+] {
+    # Determine comment ID from either --id or --url
+    let comment_id = if $id != null {
+        $id
+    } else if $url != null {
+        # Parse GitHub PR comment URL
+        # Example: https://github.com/spabreaks/terraform/pull/95#discussion_r2587332885
+        let parsed = ($url | parse --regex 'discussion_r(?P<id>\d+)')
+        if ($parsed | is-empty) {
+            error make { msg: "Could not parse comment ID from URL" }
+        }
+        $parsed | get 0.id | into int
+    } else {
+        error make { msg: "Must provide either --id or --url" }
+    }
+    
+    # Get current repo info
+    let repo_info = (do { gh repo view --json owner,name } | complete)
+    if $repo_info.exit_code != 0 {
+        error make { msg: $repo_info.stderr }
+    }
+
+    let repo_data = $repo_info.stdout | from json
+    let owner = $repo_data.owner.login
+    let repo = $repo_data.name
+    
+    # Fetch single review comment by ID
+    let comment_response = (do {
+        gh api $"repos/($owner)/($repo)/pulls/comments/($comment_id)"
+    } | complete)
+    
+    if $comment_response.exit_code != 0 {
+        error make { msg: $comment_response.stderr }
+    }
+
+    if $full {
+        # Return full JSON payload
+        $comment_response.stdout
+    } else {
+        # Return filtered JSON
+        let c = ($comment_response.stdout | from json)
+        {
+            id: $c.id
+            in_reply_to_id: ($c.in_reply_to_id? | default null)
+            author: $c.user.login
+            path: $c.path
+            body: $c.body
+            diff_hunk: $c.diff_hunk
+        } | to json
+    }
+}

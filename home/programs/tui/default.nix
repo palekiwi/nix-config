@@ -17,6 +17,7 @@
     ./spabreaks.nix
     ./ssh.nix
     ./starship.nix
+    ./taskwarrior.nix
     ./tmux.nix
     ./utils.nix
     ./zsh.nix
