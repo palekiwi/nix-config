@@ -22,9 +22,6 @@ in
       config = {
         context.spabreaks.read = "project:sb";
 
-        uda.issue.type = "string";
-        uda.issue.label = "Issue";
-
         uda.pr.type = "string";
         uda.pr.label = "PR";
       };
