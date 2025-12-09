@@ -37,7 +37,9 @@ M.find_files = function(opts)
   local branch_name = git_helpers.current_git_branch()
   local telescope_opts = { cwd = AGENTS_DIR .. branch_name, follow = true }
 
-  if opts.latest then
+  if opts.docs then
+    telescope_opts.cwd = AGENTS_DIR .. "/_docs/internal"
+  elseif opts.latest then
     telescope_opts.cwd = AGENTS_DIR .. branch_name .. "/latest"
   end
 

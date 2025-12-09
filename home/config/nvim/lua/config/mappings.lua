@@ -45,7 +45,7 @@ local base = {
   { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
   { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
   { "<A-t>",             function() agents_utils.find_files({ latest = true }) end,              desc = "[Agents] Find latest files" },
-  { "<A-d>",             telescope_utils.diffview_since,                                         desc = "Search changed files" },
+  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end,                desc = "[Agents] Find docs files" },
   { "<A-f>",             "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",             "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
   { "<A-m>",             "zMzA",                                                                 desc = "Toggle Fold" },
