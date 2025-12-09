@@ -7,6 +7,7 @@
       ./gotify.nix
       ./mosquitto.nix
       ./sops.nix
+      ./taskchampion.nix
       ./zigbee2mqtt.nix
       ../../modules/cachix.nix
       ../../modules/docker.nix
