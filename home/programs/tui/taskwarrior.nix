@@ -22,6 +22,9 @@ in
       config = {
         context.spabreaks.read = "project:sb";
 
+        sync.server.url = "http://haze:10222";
+        sync.server.client_id = "pl";
+
         uda.pr.type = "string";
         uda.pr.label = "PR";
       };
