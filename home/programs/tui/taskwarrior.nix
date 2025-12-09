@@ -20,8 +20,13 @@ in
       enable = true;
       package = taskwarrior-pkg;
       config = {
-        context.spabreaks.read = "project:SB- or +sb";
-        context.spabreaks.write = "project:SB- or +sb";
+        context.spabreaks.read = "project:sb";
+
+        uda.issue.type = "string";
+        uda.issue.label = "Issue";
+
+        uda.pr.type = "string";
+        uda.pr.label = "PR";
       };
     };
   };
