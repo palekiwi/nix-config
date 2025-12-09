@@ -43,11 +43,9 @@
 
     networking.firewall.interfaces."tailscale0" = {
       allowedTCPPorts = [
-        1883 # mosquitto/mqtt
         3002 # firecrawl
         3003 # firecrawl-mcp
         5050 # app-daemon
-        8080 # zigbee
         8088 # nextcloud
         8123 # home-assistant
       ];

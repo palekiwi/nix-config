@@ -23,6 +23,10 @@
     };
   };
 
+  networking.firewall.interfaces."tailscale0" = {
+    allowedTCPPorts = [ 8080 ];
+  };
+
   services.udev.extraRules = ''
     KERNEL=="ttyUSB0", SUBSYSTEM=="tty", OWNER="zigbee2mqtt", GROUP="dialout", MODE="0660"
   '';
