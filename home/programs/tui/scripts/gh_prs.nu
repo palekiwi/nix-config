@@ -68,10 +68,17 @@ def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_
     # Check if current user is requested for review on this specific PR
     let review_requested = ($pr.reviewRequests? | default [] | any { |req| $req.login == "palekiwi" })
 
-    let colored_pr_number = $"((if $review_requested { ansi yellow } else if $pr.isDraft { ansi white } else { ansi green }))($pr_number)(ansi reset)"
+    let colored_pr_number = $"((if $pr.isDraft { ansi white } else { ansi green }))($pr_number)(ansi reset)"
+    
+    # Color title yellow if review is requested
+    let colored_title = if $review_requested {
+        $"(ansi yellow)($row.title)(ansi reset)"
+    } else {
+        $row.title
+    }
 
     # Combine indent + pr number + title into one field
-    let combined_id_title = $"(ansi white)($indent)(ansi reset)($colored_pr_number) ($row.title)"
+    let combined_id_title = $"(ansi white)($indent)(ansi reset)($colored_pr_number) ($colored_title)"
 
     # Create new row with combined id+title field first, then other columns
     {
@@ -224,8 +231,8 @@ def format_table [prs: list] {
         let review_requested = ($pr.reviewRequests? | default [] | any { |req| $req.login == "palekiwi" })
 
         {
-            id: $"((if $review_requested { ansi yellow } else if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
-            title: $"(ansi default)(sanitize_text $pr.title | str substring 0..64)(ansi reset)",
+            id: $"((if $pr.isDraft { ansi white } else { ansi green }))($pr.number)(ansi reset)"
+            title: $"((if $review_requested { ansi yellow } else { ansi default }))(sanitize_text $pr.title | str substring 0..64)(ansi reset)",
             author_name: $"(ansi blue)(($pr.author?.name? | default '') | split row ' ' | first)(ansi reset)",
             labels: $"(ansi purple)($pr.labels | each { |l| sanitize_text $l.name } | str join ', ')(ansi reset)",
             cr: $"(ansi teal)($reviews_str)(ansi reset)",

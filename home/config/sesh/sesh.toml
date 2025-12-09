@@ -122,7 +122,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "config-opencode"
-path = "~/.config/agent-opencode/"
+path = "~/.config/opencode/"
 startup_command = "_tmux_git-repo"
 
 #-------------------
