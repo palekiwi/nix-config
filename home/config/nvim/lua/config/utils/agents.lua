@@ -8,11 +8,15 @@ local M = {}
 AGENTS_DIR = ".agents/"
 
 -- create the spec.md file
-M.create_spec = function()
+M.open_spec = function()
   local branch = git_helpers.current_git_branch()
-  local path = AGENTS_DIR .. branch .. "/spec.md"
+  local path = AGENTS_DIR .. branch .. "/latest/SPEC.md"
 
-  vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("Spec file does not exist: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
   vim.cmd.edit(path)
 end
 
@@ -31,11 +35,12 @@ end
 M.find_files = function(opts)
   opts = opts or {}
   local branch_name = git_helpers.current_git_branch()
-  local telescope_opts = { cwd = AGENTS_DIR .. branch_name }
+  local telescope_opts = { cwd = AGENTS_DIR .. branch_name, follow = true }
 
-  if opts.current_commit then
-    local commit = git_helpers.current_git_commit(true)
-    telescope_opts.default_text = commit
+  if opts.docs then
+    telescope_opts.cwd = AGENTS_DIR .. "/_docs/internal"
+  elseif opts.latest then
+    telescope_opts.cwd = AGENTS_DIR .. branch_name .. "/latest"
   end
 
   telescope.find_files(telescope_opts)
