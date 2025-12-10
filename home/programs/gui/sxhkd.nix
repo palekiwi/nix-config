@@ -58,6 +58,19 @@ let
         $cmd
     fi
   '';
+
+  switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
+    window_name=$USER
+
+    # Check if kitty window with username already exists
+    if wmctrl -l | grep -q "\b$window_name\b"; then
+        # Focus existing window
+        wmctrl -Fa "$window_name"
+    else
+        # Create new terminal with tmux session
+        kitty -T "$window_name" -e tmux new-session -A -s "$window_name"
+    fi
+  '';
 in
 {
   home.packages = with pkgs; [ sxhkd ];
@@ -68,7 +81,7 @@ in
       "super + Return" = "dmenu_tmux --tmux";
       "super + Return + control" = "dmenu_remote_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
-      "super + BackSpace" = "kitty --title $env.USER";
+      "super + BackSpace" = "${switchToDefaultSession}";
 
       "super + l" = "dmenu_activity_log";
       "super + l + control" = "dmenu_activity_log --pr";
