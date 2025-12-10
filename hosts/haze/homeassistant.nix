@@ -2,11 +2,56 @@
   services.home-assistant = {
     enable = true;
 
-    # Imperative mode - uses copy of existing config directory
-    # Original config remains intact at /srv/ha/homeassistant/config
-    # This preserves all UI configurations, .storage/ data, and manual/ files
-    config = null;
-    lovelaceConfig = null;
+    config = {
+      default_config = { };
+      http = {
+        base_url = "ha.paradise-liberty.ts.net";
+        use_x_forwarded_for = true;
+        trusted_proxies = [
+          "100.85.171.76"
+          "100.110.79.91"
+          "10.0.2.100"
+          "10.89.0.0/24"
+        ];
+      };
+
+      tts = [
+        { platform = "google_translate"; }
+      ];
+
+      "automation manual" = [ ];
+      "automation ui" = "!include automations.yaml";
+
+      zone = [
+        {
+          name = "Home";
+          latitude = 25.166340194340584;
+          longitude = 121.48607472560579;
+          radius = 100;
+          icon = "mdi:home";
+        }
+        {
+          name = "Work";
+          latitude = 25.069146451733037;
+          longitude = 121.58090808028379;
+          radius = 100;
+          icon = "mdi:briefcase";
+        }
+      ];
+
+    };
+
+    lovelace = {
+      mode = "yaml";
+      dashboards.lovelace-main = {
+        mode = "yaml";
+        filename = "manual/dashboards/main/main.yaml";
+        title = "Generated";
+        icon = "mdi:tools";
+        show_in_sidebar = true;
+        require_admin = true;
+      };
+    };
     configDir = "/var/lib/hass";
 
     # Components required by configuration and integrations
