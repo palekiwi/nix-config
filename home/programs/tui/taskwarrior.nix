@@ -22,8 +22,10 @@ in
       config = {
         context.spabreaks.read = "project:sb";
 
+        sync.encryption_secret = "phahrei9YeiZ9eim";
+
+        sync.server.client_id = "eea36aea-6c5d-4027-a897-aa859cad04db";
         sync.server.url = "http://haze:10222";
-        sync.server.client_id = "pl";
 
         uda.pr.type = "string";
         uda.pr.label = "PR";
