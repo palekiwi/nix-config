@@ -1,9 +1,21 @@
+{ ... }:
+
 {
+  imports = [
+    ./zones.nix
+    ./lights.nix
+    # ./helpers.nix      # TODO: Add next
+    # ./templates.nix    # TODO: Add after helpers
+    # ./scenes.nix       # TODO: Add after templates
+    # ./automations      # TODO: Add automations last
+  ];
+
   services.home-assistant = {
     enable = true;
 
     config = {
-      default_config = { };
+      default_config = {};
+
       http = {
         base_url = "ha.paradise-liberty.ts.net";
         use_x_forwarded_for = true;
@@ -19,74 +31,8 @@
         { platform = "google_translate"; }
       ];
 
-      "automation manual" = [ ];
+      "automation manual" = [];
       "automation ui" = "!include automations.yaml";
-
-      zone = [
-        {
-          name = "Home";
-          latitude = 25.166340194340584;
-          longitude = 121.48607472560579;
-          radius = 100;
-          icon = "mdi:home";
-        }
-        {
-          name = "Work";
-          latitude = 25.069146451733037;
-          longitude = 121.58090808028379;
-          radius = 100;
-          icon = "mdi:briefcase";
-        }
-      ];
-
-      light = [
-        {
-          platform = "group";
-          name = "Kitchen Lights";
-          entities = [
-            "light.kitchen_ceiling"
-            "light.kitchen"
-          ];
-        }
-        {
-          platform = "group";
-          name = "Salon All";
-          entities = [
-            "light.salon1"
-            "light.salon2"
-          ];
-        }
-        {
-          platform = "group";
-          name = "All";
-          entities = [
-            "light.bathroom"
-            "light.desk"
-            "light.kitchen"
-            "light.kitchen_ceiling"
-            "light.salon1"
-            "light.salon2"
-            "light.workbench"
-          ];
-        }
-        {
-          platform = "group";
-          name = "Arrival";
-          entities = [
-            "light.desk"
-            "light.salon"
-            "light.workbench"
-          ];
-        }
-        {
-          platform = "group";
-          name = "Study";
-          entities = [
-            "light.desk"
-            "light.workbench"
-          ];
-        }
-      ];
     };
 
     lovelace = {
@@ -100,6 +46,7 @@
         require_admin = true;
       };
     };
+
     configDir = "/var/lib/hass";
 
     # Components required by configuration and integrations
@@ -151,9 +98,4 @@
       8123 # home-assistant
     ];
   };
-
-  # TODO: study https://github.com/Mic92/dotfiles/tree/393539385b0abfc3618e886cd0bf545ac24aeb67/machines/eve/modules/home-assistant
-
-  # TODO: AppDaemon migration - add after Home Assistant is verified working
-  # See .agents/homelab/ha/ha.kube.yml for current container config
 }

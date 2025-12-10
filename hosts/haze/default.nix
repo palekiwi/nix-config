@@ -5,7 +5,7 @@
     [
       ./hardware-configuration.nix
       ./gotify.nix
-      ./homeassistant.nix
+      ./homeassistant/default.nix
       ./mosquitto.nix
       ./sops.nix
       ./taskchampion.nix
