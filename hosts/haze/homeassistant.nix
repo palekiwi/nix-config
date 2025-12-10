@@ -46,16 +46,6 @@
     ];
   };
 
-  # Ensure config directory exists with proper permissions
-  # Before first nixos-rebuild:
-  #   sudo cp -r /srv/ha/homeassistant/config /var/lib/hass
-  # The Z directive will automatically fix ownership recursively on boot
-  # Original config remains untouched at /srv/ha/homeassistant/config
-  # systemd.tmpfiles.rules = [
-  #   "d /var/lib/hass 0755 hass hass"
-  #   "Z /var/lib/hass 0755 hass hass -"  # Recursively set ownership and permissions
-  # ];
-
   # Service dependencies and ordering
   systemd.services.home-assistant = {
     after = [ "mosquitto.service" "network-online.target" ];
