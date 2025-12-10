@@ -4,7 +4,7 @@
   services.zigbee2mqtt = {
     enable = true;
     settings = {
-      homeassistant = true;
+      homeassistant.enabled = true;
       permit_join = false;
       frontend.port = 8080;
       mqtt = {
@@ -21,6 +21,10 @@
     serviceConfig = {
       EnvironmentFile = config.sops.secrets."zigbee2mqtt".path;
     };
+  };
+
+  networking.firewall.interfaces."tailscale0" = {
+    allowedTCPPorts = [ 8080 ];
   };
 
   services.udev.extraRules = ''
