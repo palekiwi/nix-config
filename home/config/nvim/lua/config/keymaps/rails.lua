@@ -33,8 +33,8 @@ local function live_grep_specs()
   }
 end
 
-set("n", "<A-r>", rails_utils.find_template_render, { desc = "[Rails] Where is current view renedered?" })
-set("n", "<A-t>", rails_utils.find_template, { desc = "[Rails] Find this template" })
+set("n", "<leader>fr", rails_utils.find_template_render, { desc = "[Rails] Where is current view renedered?" })
+set("n", "<leader>ft>", rails_utils.find_template, { desc = "[Rails] Find this template" })
 
 -- set("n", "<leader>gt", grep_string_tailwind, { desc = "[Grep String] Tailwind" })
 -- set("n", "<leader>gy", grep_string_sass, { desc = "[Grep String] Sass" })

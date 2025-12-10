@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -10,6 +10,7 @@
     fasd
     fd
     fzf
+    (lib.lowPrio go-task)
     home-assistant-cli
     jrnl
     jq
