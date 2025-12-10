@@ -46,9 +46,7 @@
       allowedTCPPorts = [
         3002 # firecrawl
         3003 # firecrawl-mcp
-        5050 # app-daemon
         8088 # nextcloud
-        8123 # home-assistant
       ];
     };
 
