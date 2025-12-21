@@ -15,7 +15,7 @@
       dbhost = "/run/postgresql";
 
       adminuser = "pl";
-      adminpassFile = "/run/secrets/nextcloud/admin-password";
+      adminpassFile = "/run/secrets/nextcloud/admin/password";
 
       overwriteProtocol = "https";
       trustedDomains = [ "nc.paradise-liberty.ts.net" "localhost" ];
