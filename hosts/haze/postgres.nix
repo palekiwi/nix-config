@@ -3,7 +3,7 @@
 {
   services.postgresql = {
     enable = true;
-    enableTCPIP = false;
+    enableTCPIP = true;
     package = pkgs.postgresql_16;
 
     settings = {
@@ -27,5 +27,10 @@
     settings = {
       timezone = "Asia/Taipei";
     };
+
+  };
+
+  networking.firewall.interfaces."tailscale0" = {
+    allowedTCPPorts = [ 5432 ];
   };
 }
