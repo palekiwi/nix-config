@@ -5,6 +5,7 @@
   sops.defaultSopsFormat = "yaml";
   sops.age.keyFile = "/home/pl/.config/sops/age/keys.txt";
 
+  sops.secrets."appdaemon" = { owner = "root"; };
   sops.secrets."airbrake/api_key" = { owner = "pl"; };
   sops.secrets."cachix/personal/token" = { owner = "pl"; };
   sops.secrets."cachix/github_actions/token" = { owner = "pl"; };
