@@ -6,7 +6,9 @@
     enableTCPIP = false;
     package = pkgs.postgresql_16;
 
-    port = 5432;
+    settings = {
+      port = 5432;
+    };
 
     ensureDatabases = [ "nextcloud" ];
     ensureUsers = [
