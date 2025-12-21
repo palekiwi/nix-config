@@ -3,16 +3,17 @@
 {
   imports =
     [
-      ./hardware-configuration.nix
+      ../../modules/cachix.nix
+      ../../modules/docker.nix
+      ../../modules/server.nix
+      ./appdaemon.nix
       ./gotify.nix
+      ./hardware-configuration.nix
       ./homeassistant.nix
       ./mosquitto.nix
       ./sops.nix
       ./taskchampion.nix
       ./zigbee2mqtt.nix
-      ../../modules/cachix.nix
-      ../../modules/docker.nix
-      ../../modules/server.nix
     ];
 
   config = {
