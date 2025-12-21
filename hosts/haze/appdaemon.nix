@@ -15,7 +15,7 @@
       ];
 
       environment = {
-        DASH_URL = "http://localhost:5050";
+        DASH_URL = "http://0.0.0.0:5050";
         HA_URL = "http://localhost:8123";
         TZ = "Asia/Taipei";
       };
