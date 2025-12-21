@@ -1,9 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   services.nextcloud = {
     enable = true;
     package = pkgs.nextcloud32;
+
+    extraApps = {
+      inherit (config.services.nextcloud.package.packages.apps) contacts calendar notes;
+    };
+    extraAppsEnable = true;
 
     hostName = "nc.paradise-liberty.ts.net";
     https = true; # Behind HTTPS proxy (Caddy)
