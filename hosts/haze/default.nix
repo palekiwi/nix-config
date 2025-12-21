@@ -11,6 +11,7 @@
       ./hardware-configuration.nix
       ./homeassistant.nix
       ./mosquitto.nix
+      ./postgres.nix
       ./sops.nix
       ./taskchampion.nix
       ./zigbee2mqtt.nix
