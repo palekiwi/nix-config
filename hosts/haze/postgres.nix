@@ -6,10 +6,6 @@
     enableTCPIP = true;
     package = pkgs.postgresql_16;
 
-    settings = {
-      port = 5432;
-    };
-
     ensureDatabases = [ "nextcloud" ];
     ensureUsers = [
       {
@@ -19,12 +15,13 @@
     ];
 
     authentication = ''
-      local   all             all                                     peer
+      local   all             postgres                               peer
+      host    nextcloud       nextcloud       100.64.0.0/10          scram-sha-256
       host    all             all             127.0.0.1/32           scram-sha-256
-      host    all             all             ::1/128                scram-sha-256
     '';
 
     settings = {
+      port = 5432;
       timezone = "Asia/Taipei";
     };
 
