@@ -22,6 +22,9 @@
       adminuser = "pl";
       adminpassFile = "/run/secrets/nextcloud/admin/password";
 
+    };
+
+    settings = {
       overwriteProtocol = "https";
       trustedProxies = [ "100.73.219.12" ];
       defaultPhoneRegion = "TW";
