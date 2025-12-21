@@ -18,7 +18,6 @@
       adminpassFile = "/run/secrets/nextcloud/admin/password";
 
       overwriteProtocol = "https";
-      trustedDomains = [ "nc.paradise-liberty.ts.net" "localhost" ];
       trustedProxies = [ "100.73.219.12" ];
 
       defaultPhoneRegion = "TW";
