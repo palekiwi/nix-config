@@ -12,6 +12,7 @@
       ./homeassistant.nix
       ./mosquitto.nix
       ./postgres.nix
+      ./redis.nix
       ./sops.nix
       ./taskchampion.nix
       ./zigbee2mqtt.nix
