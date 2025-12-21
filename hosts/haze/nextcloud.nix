@@ -24,8 +24,6 @@
     };
 
     configureRedis = true;
-
-    nginx.recommendedHttpHeaders = true;
   };
 
   # Override default nginx port (80 → 8088)
