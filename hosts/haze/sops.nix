@@ -7,6 +7,6 @@
   sops.secrets."cachix/personal/token" = { owner = "pl"; };
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
-  # sops.secrets."nextcloud/admin/password" = { owner = "nextcloud"; };
+  sops.secrets."nextcloud/admin/password" = { owner = "nextcloud"; };
   sops.secrets."zigbee2mqtt" = { owner = "zigbee2mqtt"; };
 }
