@@ -3,7 +3,7 @@
 {
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud28;
+    package = pkgs.nextcloud32;
 
     hostName = "nc.paradise-liberty.ts.net";
     https = true; # Behind HTTPS proxy (Caddy)
