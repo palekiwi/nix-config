@@ -35,6 +35,13 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    agents-spabreaks = {
+      gitHooks = {
+        pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
     terraform = {
       envrc = ../../config/spabreaks/terraform/.envrc;
       gitHooks = {
