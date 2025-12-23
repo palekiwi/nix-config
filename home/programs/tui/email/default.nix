@@ -12,17 +12,22 @@
     notmuch = {
       enable = true;
 
-      extraConfig = {
-        index = {
-          "header.GitHubReason" = "X-GitHub-Reason";
-        };
-      };
-
       hooks = {
         postNew = ''
-          notmuch tag +review-requested -- tag:new and GitHubReason:review_requested
+          ${pkgs.afew}/bin/afew --tag --new
         '';
       };
+    };
+
+    afew = {
+      enable = true;
+
+      extraConfig = ''
+        [HeaderMatchingFilter.1]
+        header = X-GitHub-Reason
+        pattern = review_requested
+        tags = +github;+review-requested;+urgent
+      '';
     };
   };
 
@@ -70,6 +75,7 @@
           "Airbrake/*"
           "GCP"
           "Spabreaks"
+          "[Gmail]/All Mail"
           "[Gmail]/Drafts"
           "[Gmail]/Important"
           "[Gmail]/Sent Mail"
