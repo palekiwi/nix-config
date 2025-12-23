@@ -27,6 +27,11 @@
         header = X-GitHub-Reason
         pattern = review_requested
         tags = +github;+review-requested;+urgent
+
+        [HeaderMatchingFilter.2]
+        header = X-GitHub-Reason
+        pattern = mention
+        tags = +github;+mentioned
       '';
     };
   };
