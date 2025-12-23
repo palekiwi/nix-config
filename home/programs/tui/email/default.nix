@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = [
@@ -24,11 +24,6 @@
         '';
       };
     };
-
-    # himalaya = {
-    #   enable = true;
-    #   package = pkgs-unstable.himalaya.override { buildFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; };
-    # };
   };
 
   services.mbsync = {
