@@ -45,7 +45,7 @@ local base = {
   { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
   { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
   { "<A-t>",             function() agents_utils.find_files({ latest = true }) end,              desc = "[Agents] Find latest files" },
-  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end,                desc = "[Agents] Find docs files" },
+  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
   { "<A-f>",             "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",             "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
   { "<A-m>",             "zMzA",                                                                 desc = "Toggle Fold" },
@@ -106,6 +106,7 @@ local base = {
   { "ty",                function() git_utils.set_base_branch(vim.fn.getreg("+")) end,           desc = "Change base: master" },
   -- leader
   { "<leader><space>",   helpers.open_on_line,                                                   desc = "Open file on line" },
+  { "<leader>n",         "<cmd>Notmuch<cr>",                                                     desc = "Notmuch" },
   { "<leader>N",         function() git_utils.toggle_git_tree("show") end,                       desc = "Tree: Git status" },
   { "<leader>a",         vim.lsp.buf.code_action,                                                desc = "LSP Code Action" },
   { "<leader>b",         "<cmd>Neotree toggle show buffers left<cr>",                            desc = "tree toggle" },
