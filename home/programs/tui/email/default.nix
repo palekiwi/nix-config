@@ -11,12 +11,9 @@
 
     notmuch = {
       enable = true;
-
-      hooks = {
-        postNew = ''
-          ${pkgs.afew}/bin/afew --tag --new
-        '';
-      };
+      hooks.postNew = ''
+        ${pkgs.afew}/bin/afew --tag --new
+      '';
     };
 
     afew = {
@@ -75,16 +72,9 @@
         create = "maildir";
         expunge = "both";
         patterns = [
-          "INBOX"
-          "Accounts"
-          "Airbrake/*"
-          "GCP"
-          "Spabreaks"
           "[Gmail]/All Mail"
           "[Gmail]/Drafts"
-          "[Gmail]/Important"
           "[Gmail]/Sent Mail"
-          "[Gmail]/Starred"
         ];
       };
 
