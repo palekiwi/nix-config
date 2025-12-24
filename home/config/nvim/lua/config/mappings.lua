@@ -135,7 +135,6 @@ local base = {
   { "<leader>l",         group = "[LSP]" },
   { "<leader>li",        "<cmd>LspInfo<cr>",                                                     desc = "LSP: Info" },
   { "<leader>ll",        "<cmd>LspLog<cr>",                                                      desc = "LSP: Log" },
-  { "<leader>m",         "<cmd>Himalaya<cr>",                                                    desc = "Himalaya" },
   { "<leader>q",         "<cmd>quit<cr>",                                                        desc = "quit" },
   { "<leader>t",         "<cmd>Neotree toggle position=left<cr>",                                desc = "tree toggle" },
   { "<leader>w",         "<cmd>write<cr>",                                                       desc = "write" },

@@ -1,10 +1,6 @@
 { pkgs, ... }:
 
 {
-  home.packages = [
-    (pkgs.himalaya.override { withFeatures = [ "notmuch" "maildir" "imap" "smtp" ]; })
-  ];
-
   programs = {
     mbsync.enable = true;
     msmtp.enable = true;
