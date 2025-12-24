@@ -25,6 +25,36 @@
         header = X-GitHub-Reason
         pattern = mention
         tags = +github;+mentioned
+
+        # Airbrake Alerts
+        [Filter.1]
+        query = from:donotreply@alerts.airbrake.io
+        tags = +airbrake;-new
+        message = Tagging Airbrake alerts
+
+        # Airbrake Alerts Production
+        [Filter.2]
+        query = from:donotreply@alerts.airbrake.io AND subject:Production
+        tags = +airbrake/production;-new
+        message = Tagging Production Airbrake alerts
+
+        # Airbrake Alerts Staging
+        [Filter.3]
+        query = from:donotreply@alerts.airbrake.io AND subject:Staging
+        tags = +airbrake/staging;-new
+        message = Tagging Staging Airbrake alerts
+
+        # Airbrake Weekly reports
+        [Filter.4]
+        query = from:weekly@airbrake.io
+        tags = +airbrake;-new
+        message = Tagging Airbrake weekly reports
+
+        # Spabreaks
+        [Filter.5]
+        query = to:team@spabreaks.com
+        tags = +spabreaks;-new
+        message = Tagging Spabreaks
       '';
     };
   };
