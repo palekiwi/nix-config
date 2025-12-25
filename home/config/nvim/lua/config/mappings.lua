@@ -106,7 +106,8 @@ local base = {
   { "ty",                function() git_utils.set_base_branch(vim.fn.getreg("+")) end,           desc = "Change base: master" },
   -- leader
   { "<leader><space>",   helpers.open_on_line,                                                   desc = "Open file on line" },
-  { "<leader>n",         "<cmd>Notmuch<cr>",                                                     desc = "Notmuch" },
+  { "<leader>m",         "<cmd>Notmuch<cr>",                                                     desc = "Notmuch: Tags" },
+  { "<leader>n",         "<cmd>Inbox<cr>",                                                       desc = "Notmuch: Inbox" },
   { "<leader>N",         function() git_utils.toggle_git_tree("show") end,                       desc = "Tree: Git status" },
   { "<leader>a",         vim.lsp.buf.code_action,                                                desc = "LSP Code Action" },
   { "<leader>b",         "<cmd>Neotree toggle show buffers left<cr>",                            desc = "tree toggle" },
