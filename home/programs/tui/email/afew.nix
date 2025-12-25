@@ -12,47 +12,42 @@ let
     {
       message = "Airbrake";
       query = "from:airbrake.io";
-      tags = "+airbrake;-new";
+      tags = [ "+airbrake" "-new" ];
     }
     {
-      query = "from:alerts.airbrake.io AND subject:Production";
-      tags = "+airbrake/production;-new";
       message = "Airbrake: Production alerts";
+      query = "from:alerts.airbrake.io AND subject:Production";
+      tags = ["+airbrake/production" "-new"];
     }
     {
-      query = "from:alerts.airbrake.io AND subject:Staging";
-      tags = "+airbrake/staging;-new";
       message = "Tagging Staging Airbrake alerts";
+      query = "from:alerts.airbrake.io AND subject:Staging";
+      tags = ["+airbrake/staging" "-new"];
     }
     {
-      query = "from:weekly@airbrake.io";
-      tags = "+airbrake;-new";
-      message = "Tagging Airbrake weekly reports";
-    }
-    {
-      query = "to:team@spabreaks.com";
-      tags = "+spabreaks;-new";
       message = "Tagging Spabreaks";
+      query = "to:team@spabreaks.com";
+      tags = ["+spabreaks" "-new"];
     }
     {
       message = "Developers";
       query = "to:developers@spabreaks.com OR from:developers@spabreaks";
-      tags = "+developers;-new";
+      tags = ["+developers" "-new"];
     }
     {
       message = "Bookings";
       query = "from:bookings@spabreaks.com";
-      tags = "+bookings;-new";
+      tags = ["+bookings" "-new"];
     }
     {
       message = "Tools";
       query = "${lib.concatMapStringsSep " OR" (domain: " from:${domain}") tools}";
-      tags = "+tools;-new";
+      tags = ["+tools" "-new"];
     }
     {
       message = "Google";
       query = "from:google.com";
-      tags = "+google;-new";
+      tags = ["+google" "-new"];
     }
   ];
 
@@ -60,23 +55,27 @@ let
     {
       header = "X-GitHub-Reason";
       pattern = "review_requested";
-      tags = "+github;+review-requested;+urgent";
+      tags = ["+github" "+review-requested" "+urgent"];
     }
     {
       header = "X-GitHub-Reason";
       pattern = "mention";
-      tags = "+github;+mentioned";
+      tags = ["+github" "+mentioned"];
     }
     {
       header = "Message-ID";
       pattern = "calendar-.*@google\.com";
-      tags = "+calendar;+spabreaks;-new";
+      tags = ["+calendar" "+spabreaks" "-new"];
     }
   ];
 
   mkConfigAttrs = attrs:
     lib.concatStringsSep "\n" (
-      lib.mapAttrsToList (key: value: "${key} = ${value}") attrs
+      lib.mapAttrsToList (key: value:
+        if key == "tags"
+        then "tags = ${lib.concatStringsSep ";" value}"
+        else "${key} = ${value}"
+      ) attrs
     );
 
   mkFilterSection = filterType: idx: attrs: ''
