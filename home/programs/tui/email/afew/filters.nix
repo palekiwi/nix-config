@@ -74,7 +74,7 @@ in
     message = "Important";
     query = "${joinFromOr important}";
     tags = [
-      "+!"
+      "+*important"
     ];
   }
 
