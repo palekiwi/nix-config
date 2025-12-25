@@ -1,5 +1,6 @@
 [
   {
+    message = "Github: Review Requested";
     header = "X-GitHub-Reason";
     pattern = "review_requested";
     tags = [
@@ -9,6 +10,7 @@
     ];
   }
   {
+    message = "Github: Review Mention";
     header = "X-GitHub-Reason";
     pattern = "mention";
     tags = [
@@ -17,6 +19,7 @@
     ];
   }
   {
+    message = "Google Calendar";
     header = "Message-ID";
     pattern = "calendar-.*@google\.com";
     tags = [

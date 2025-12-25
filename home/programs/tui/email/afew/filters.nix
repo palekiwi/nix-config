@@ -19,7 +19,7 @@ in
   }
 
   {
-    message = "Airbrake: Production alerts";
+    message = "Airbrake: Production Alerts";
     query = "from:alerts.airbrake.io AND subject:Production";
     tags = [
       "+airbrake/production"
@@ -28,7 +28,7 @@ in
   }
 
   {
-    message = "Tagging Staging Airbrake alerts";
+    message = "Airbrake: Staging Alerts";
     query = "from:alerts.airbrake.io AND subject:Staging";
     tags = [
       "+airbrake/staging"
