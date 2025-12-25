@@ -1,5 +1,13 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
+let
+  tools = [
+    "atlassian.com"
+    "fullstory.com"
+    "lastpass.com"
+    "slack.com"
+  ];
+in
 {
   programs = {
     afew = {
@@ -64,7 +72,7 @@
 
         [Filter.8]
         message = Tools
-        query = from:atlassian.com OR from:fullstory.com OR from:slack.com OR from:lastpass.com
+        query = ${lib.concatMapStringsSep " OR" (domain: " from:${domain}") tools}
         tags = +tools;-new
 
         [Filter.9]
