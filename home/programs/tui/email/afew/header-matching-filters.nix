@@ -1,7 +1,7 @@
 [
   {
     header = "X-GitHub-Reason";
-    pattern = "(?P<reason>.*)";
+    pattern = "(?P<reason>.+)";
     tags = [
       "+gh/{reason}"
     ];
