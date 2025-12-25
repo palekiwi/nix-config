@@ -20,7 +20,7 @@ let
 
   mkFilterSections = filterType: filters:
     lib.concatStringsSep "\n" (
-      lib.imap0 (idx: attrs: (mkFilterSection filterType idx attrs)) filters
+      lib.imap1 (idx: attrs: (mkFilterSection filterType idx attrs)) filters
     );
 in
 {
@@ -29,8 +29,8 @@ in
       enable = true;
 
       extraConfig = ''
-        ${mkFilterSections "Filter" filters}
         ${mkFilterSections "HeaderMatchingFilter" headerMatchingFilters}
+        ${mkFilterSections "Filter" filters}
       '';
     };
 
