@@ -7,6 +7,39 @@ let
     "lastpass.com"
     "slack.com"
   ];
+
+  headerMatchingFilters = [
+    {
+      header = "X-GitHub-Reason";
+      pattern = "review_requested";
+      tags = "+github;+review-requested;+urgent";
+    }
+    {
+      header = "X-GitHub-Reason";
+      pattern = "mention";
+      tags = "+github;+mentioned";
+    }
+    {
+      header = "Message-ID";
+      pattern = "calendar-.*@google\.com";
+      tags = "+calendar;+spabreaks;-new";
+    }
+  ];
+
+  mkConfigAttrs = attrs:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (key: value: "${key} = ${value}") attrs
+    );
+
+  mkFilterSection = filterType: idx: attrs: ''
+    [${filterType}.${toString idx}]
+    ${mkConfigAttrs attrs}
+  '';
+
+  mkFilterSections = filterType: filters:
+    lib.concatStringsSep "\n" (
+      lib.imap0 (idx: attrs: (mkFilterSection filterType idx attrs)) headerMatchingFilters
+    );
 in
 {
   programs = {
@@ -14,21 +47,7 @@ in
       enable = true;
 
       extraConfig = ''
-        [HeaderMatchingFilter.1]
-        header = X-GitHub-Reason
-        pattern = review_requested
-        tags = +github;+review-requested;+urgent
-
-        [HeaderMatchingFilter.2]
-        header = X-GitHub-Reason
-        pattern = mention
-        tags = +github;+mentioned
-
-        [HeaderMatchingFilter.3]
-        message = Google Calendar invitations
-        header = Message-ID
-        pattern = calendar-.*@google\.com
-        tags = +calendar;+spabreaks;-new
+        ${mkFilterSections "headerMatchingFilters" headerMatchingFilters}
 
         # Airbrake Alerts
         [Filter.1]
