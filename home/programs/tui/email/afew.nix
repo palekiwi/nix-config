@@ -8,6 +8,54 @@ let
     "slack.com"
   ];
 
+  filters = [
+    {
+      message = "Airbrake";
+      query = "from:airbrake.io";
+      tags = "+airbrake;-new";
+    }
+    {
+      query = "from:alerts.airbrake.io AND subject:Production";
+      tags = "+airbrake/production;-new";
+      message = "Airbrake: Production alerts";
+    }
+    {
+      query = "from:alerts.airbrake.io AND subject:Staging";
+      tags = "+airbrake/staging;-new";
+      message = "Tagging Staging Airbrake alerts";
+    }
+    {
+      query = "from:weekly@airbrake.io";
+      tags = "+airbrake;-new";
+      message = "Tagging Airbrake weekly reports";
+    }
+    {
+      query = "to:team@spabreaks.com";
+      tags = "+spabreaks;-new";
+      message = "Tagging Spabreaks";
+    }
+    {
+      message = "Developers";
+      query = "to:developers@spabreaks.com OR from:developers@spabreaks";
+      tags = "+developers;-new";
+    }
+    {
+      message = "Bookings";
+      query = "from:bookings@spabreaks.com";
+      tags = "+bookings;-new";
+    }
+    {
+      message = "Tools";
+      query = "${lib.concatMapStringsSep " OR" (domain: " from:${domain}") tools}";
+      tags = "+tools;-new";
+    }
+    {
+      message = "Google";
+      query = "from:google.com";
+      tags = "+google;-new";
+    }
+  ];
+
   headerMatchingFilters = [
     {
       header = "X-GitHub-Reason";
@@ -38,7 +86,7 @@ let
 
   mkFilterSections = filterType: filters:
     lib.concatStringsSep "\n" (
-      lib.imap0 (idx: attrs: (mkFilterSection filterType idx attrs)) headerMatchingFilters
+      lib.imap0 (idx: attrs: (mkFilterSection filterType idx attrs)) filters
     );
 in
 {
@@ -47,57 +95,8 @@ in
       enable = true;
 
       extraConfig = ''
-        ${mkFilterSections "headerMatchingFilters" headerMatchingFilters}
-
-        # Airbrake Alerts
-        [Filter.1]
-        query = from:donotreply@alerts.airbrake.io
-        tags = +airbrake;-new
-        message = Tagging Airbrake alerts
-
-        # Airbrake Alerts Production
-        [Filter.2]
-        query = from:donotreply@alerts.airbrake.io AND subject:Production
-        tags = +airbrake/production;-new
-        message = Tagging Production Airbrake alerts
-
-        # Airbrake Alerts Staging
-        [Filter.3]
-        query = from:donotreply@alerts.airbrake.io AND subject:Staging
-        tags = +airbrake/staging;-new
-        message = Tagging Staging Airbrake alerts
-
-        # Airbrake Weekly reports
-        [Filter.4]
-        query = from:weekly@airbrake.io
-        tags = +airbrake;-new
-        message = Tagging Airbrake weekly reports
-
-        # Spabreaks
-        [Filter.5]
-        query = to:team@spabreaks.com
-        tags = +spabreaks;-new
-        message = Tagging Spabreaks
-
-        [Filter.6]
-        message = Developers
-        query = to:developers@spabreaks.com OR from:developers@spabreaks
-        tags = +developers;-new
-
-        [Filter.7]
-        message = Bookings
-        query = from:bookings@spabreaks.com
-        tags = +developers;-new
-
-        [Filter.8]
-        message = Tools
-        query = ${lib.concatMapStringsSep " OR" (domain: " from:${domain}") tools}
-        tags = +tools;-new
-
-        [Filter.9]
-        message = Google
-        query = from:google.com
-        tags = +google;-new
+        ${mkFilterSections "Filter" filters}
+        ${mkFilterSections "HeaderMatchingFilter" headerMatchingFilters}
       '';
     };
 
