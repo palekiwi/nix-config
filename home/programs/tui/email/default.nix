@@ -3,7 +3,7 @@
 {
   imports = [
     ./accounts/spabreaks.nix
-    ./afew.nix
+    ./afew/default.nix
   ];
 
   programs = {
