@@ -9,6 +9,7 @@ use modules/agents.nu
 use modules/gcp.nu
 use modules/gh-utils.nu
 use modules/sb.nu
+use modules/taskwarrior.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
