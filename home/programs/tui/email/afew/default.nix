@@ -31,8 +31,6 @@ in
       extraConfig = ''
         ${mkFilterSections "HeaderMatchingFilter" headerMatchingFilters}
         ${mkFilterSections "Filter" filters}
-
-        [InboxFilter]
       '';
     };
 
