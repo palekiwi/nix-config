@@ -3,6 +3,7 @@
     header = "X-GitHub-Reason";
     pattern = "(?P<reason>.+)";
     tags = [
+      "+gh"
       "+gh/{reason}"
     ];
   }
