@@ -7,6 +7,7 @@ source integrations/atuin.nu
 use modules/agents.nu
 use modules/gcp.nu
 use modules/gh-utils.nu
+use modules/review.nu
 use modules/sb.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
