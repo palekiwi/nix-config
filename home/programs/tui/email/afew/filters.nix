@@ -3,6 +3,7 @@
 let
   tools = [
     "atlassian.com"
+    "atlassian.net"
     "fullstory.com"
     "lastpass.com"
     "slack.com"
