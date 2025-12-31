@@ -49,7 +49,7 @@ local base = {
   { "<A-f>",             "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",             "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
   { "<A-m>",             "zMzA",                                                                 desc = "Toggle Fold" },
-  { "<A-p>",             telescope_utils.changed_files_since,                                    desc = "Search changed files" },
+  { "<A-p>",             "<cmd>Prctl<cr>",                                                       desc = "Prctl" },
   { "<A-u>",             "<Plug>CapsLockToggle",                                                 desc = "Toggle Capslock",              mode = "i" },
   { "<A-w>",             telescope_utils.search_cword,                                           desc = "Live Grep" },
   { "<A-x>",             "<cmd>BufferClose<cr>",                                                 desc = "Close Buffer All But Current" },
