@@ -1,7 +1,6 @@
 return {
   {
     "palekiwi/prctl.nvim",
-    dev = true,
-    branch = "minimal",
+    dev = true
   }
 }
