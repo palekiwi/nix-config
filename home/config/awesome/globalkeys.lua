@@ -104,6 +104,29 @@ local function focus_by_master_offset(x, opacity)
   end
 end
 
+local function focus_screen_by_role(preferred_role, fallback_role)
+  local layout = screen_roles.get_screen_layout()
+  
+  -- Try to focus preferred role first
+  local target_screen = layout[preferred_role]
+  
+  -- Fall back if preferred role not available
+  if not target_screen and fallback_role then
+    target_screen = layout[fallback_role]
+  end
+  
+  -- Focus the screen if found
+  if target_screen then
+    awful.screen.focus(target_screen)
+    if client.focus then 
+      client.focus:raise() 
+    end
+    return true
+  end
+  
+  return false -- No suitable screen found
+end
+
 local globalkeys = gears.table.join(
 -- Focus screen 1
 -- awful.key({ MODKEY }, "Return",
@@ -164,14 +187,12 @@ local globalkeys = gears.table.join(
     { description = "go back", group = "tag" }),
 
 
-  -- Focus 2nd Client
+  -- Focus left screen
   awful.key({ MODKEY }, "n",
     function()
-      -- focus_by_master_offset(0, nil)
-      awful.screen.focus(2)
-      if client.focus then client.focus:raise() end
+      focus_screen_by_role("ultrawide_left", "secondary")
     end,
-    { description = "Focus 2nd Client", group = "client" }
+    { description = "Focus left screen", group = "screen" }
   ),
 
   awful.key({ MODKEY, "Control" }, "n",
@@ -199,14 +220,12 @@ local globalkeys = gears.table.join(
   --     end,
   --     { description = "focus master", group = "client" }),
 
-  -- Focus 3rd Client
+  -- Focus right screen
   awful.key({ MODKEY }, "i",
     function()
-      -- focus_by_master_offset(-1)
-      awful.screen.focus(1)
-      if client.focus then client.focus:raise() end
+      focus_screen_by_role("ultrawide_right", "primary")
     end,
-    { description = "Focus 3rd client", group = "client" }),
+    { description = "Focus right screen", group = "screen" }),
 
   awful.key({ MODKEY, "Control" }, "i",
     function()
