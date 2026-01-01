@@ -2,7 +2,8 @@
 
 pkgs.writers.writeNuBin "dmenu_xrandr" ''
   let pale_builtin = "eDP-1-1"
-  let pale_external = "DP-1-3"
+  let pale_external = "DP-1-2"
+  let pale_tablet = "DP-1-3"
 
   let options_pale = ["builtin", "external", "dual", "presentation"]
   let options_nuc = ["xasus", "dual", "huion", "tv"]
@@ -82,17 +83,19 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
         "builtin" => {
           run-external "xrandr" "--output" $pale_builtin "--auto" "--primary"
           run-external "xrandr" "--output" $pale_external "--off"
+          run-external "xrandr" "--output" $pale_tablet "--off"
           restart_wm
         }
         "external" => {
           run-external "xrandr" "--output" $pale_external "--auto" "--primary"
           run-external "xrandr" "--output" $pale_builtin "--off"
+          run-external "xrandr" "--output" $pale_tablet "--off"
           restart_wm
         }
         # TODO: Commented out due to bug in WM configuration that needs to be addressed first
         # "dual" => {
         #   run-external "xrandr" "--output" $pale_external "--auto" "--primary"
-        #   run-external "xrandr" "--output" $pale_builtin "--auto" "--below" $pale_external
+        #   run-external "xrandr" "--output" $pale_tablet "--auto" "--below" $pale_external
         #   restart_wm
         # }
         # "presentation" => {
