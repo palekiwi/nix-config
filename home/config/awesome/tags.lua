@@ -87,6 +87,13 @@ return {
         master_width_factor = 0.5,
       },
       {
+        name = zh[12],
+        key = "g",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        selected = true,
+      },
+      {
         name = "丙",
         key = "v",
         layout = LAYOUT_MAX,
