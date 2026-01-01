@@ -11,6 +11,7 @@
       ./hardware-configuration.nix
       ./homeassistant.nix
       ./mosquitto.nix
+      ./nextcloud.nix
       ./postgres.nix
       ./sops.nix
       ./taskchampion.nix
