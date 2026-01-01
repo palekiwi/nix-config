@@ -21,6 +21,8 @@ OPACITY = {}
 
 MARGINS = { left = 0, bottom = 0, right = 0, top = 0 }
 
+FAKE_RESIZE_DELTA = 380
+
 FLOATING_SIZES = {
   [1] = function(c)
     c.width = 640

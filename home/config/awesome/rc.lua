@@ -50,7 +50,7 @@ local globalkeys = require("globalkeys")
 local function setup_fake_screens(s)
   local geo = s[1].geometry
   if geo.width > 3000 then
-    local side_width = math.ceil(geo.width / 2)
+    local side_width = math.ceil((geo.width / 2) - FAKE_RESIZE_DELTA)
     local main_width = geo.width - side_width
 
     -- resize main screen

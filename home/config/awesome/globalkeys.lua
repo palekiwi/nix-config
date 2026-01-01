@@ -106,24 +106,24 @@ end
 
 local function focus_screen_by_role(preferred_role, fallback_role)
   local layout = screen_roles.get_screen_layout()
-  
+
   -- Try to focus preferred role first
   local target_screen = layout[preferred_role]
-  
+
   -- Fall back if preferred role not available
   if not target_screen and fallback_role then
     target_screen = layout[fallback_role]
   end
-  
+
   -- Focus the screen if found
   if target_screen then
     awful.screen.focus(target_screen)
-    if client.focus then 
-      client.focus:raise() 
+    if client.focus then
+      client.focus:raise()
     end
     return true
   end
-  
+
   return false -- No suitable screen found
 end
 
@@ -367,7 +367,7 @@ local globalkeys = gears.table.join(
 
   awful.key({ MODKEY, "Shift" }, "n",
     function()
-      resize_fake_screen(380)
+      resize_fake_screen(FAKE_RESIZE_DELTA)
     end, { description = "Resize main fake screen up", group = "global" }
   ),
 
@@ -379,7 +379,7 @@ local globalkeys = gears.table.join(
 
   awful.key({ MODKEY, "Shift" }, "o",
     function()
-      resize_fake_screen(-380)
+      resize_fake_screen(-FAKE_RESIZE_DELTA)
     end, { description = "Resize main fake screen down", group = "global" }
   ),
 
