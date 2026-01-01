@@ -140,6 +140,13 @@ return {
         layout = LAYOUT_MAX,
         master_width_factor = 0.5,
         gap = 0
+      },
+      {
+        name = zh[12],
+        key = "g",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        selected = true,
       }
     },
     ultrawide_right = {
