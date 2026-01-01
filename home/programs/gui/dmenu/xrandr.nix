@@ -11,17 +11,19 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   let deck_builtin = "eDP-1"
   let deck_external = "DisplayPort-0"
 
-  let dmenu_options = ["-i" "-nb" "#1d1f21" "-nf" "#D3D7CF" "-sb" "#5294e2" "-sf" "#2f343f" "-fn" "11" "-p" "xrandr profile: "]
-
   def restart_wm [] {
     awesome-client "awesome.restart()"
+  }
+
+  def run_dmenu [opts] {
+    $opts | dmenu -i -nb "#1d1f21" -nf "#D3D7CF" -sb "#5294e2" -sf "#2f343f" -fn "11" -p "xrandr profile: "
   }
 
   let host = (hostname | str trim)
 
   match $host {
     "deck" => {
-      let choice = ($options_deck | str join "\n" | run-external "dmenu" ...$dmenu_options)
+      let choice = ($options_deck | str join "\n" | run_dmenu $in)
       match $choice {
         "builtin" => {
           xrandr --output $deck_builtin --rotate right --auto --primary
@@ -44,7 +46,7 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
       }
     }
     "pale" => {
-      let choice = ($options_pale | str join "\n" | run-external "dmenu" ...$dmenu_options)
+      let choice = ($options_pale | str join "\n" | run_dmenu $in)
       match $choice {
         "builtin" => {
           xrandr --output $pale_builtin --auto --primary
