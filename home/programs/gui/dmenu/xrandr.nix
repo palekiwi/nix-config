@@ -95,7 +95,7 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
         "dual" => {
           run-external "xrandr" "--output" $pale_external "--auto" "--primary"
           run-external "xrandr" "--output" $pale_builtin "--off"
-          run-external "xrandr" "--output" $pale_tablet "--auto" "--below" $pale_external
+          run-external "xrandr" "--output" $pale_tablet "--auto" "--below" $pale_external "--rotate" "inverted"
           restart_wm
         }
         "presentation" => {

@@ -40,6 +40,7 @@ local gears = require("gears")
 local awful = require("awful")
 
 require("globals")
+local screen_roles = require("screen_roles")
 
 local beautiful = require("beautiful")
 beautiful.init(THEME_PATH)
@@ -62,7 +63,17 @@ end
 
 setup_fake_screens(screen)
 
-local screencount = screen:count()
+-- Get tag configuration based on screen layout
+local tags_config = require("tags")
+local effective_screen_count = screen_roles.get_effective_screen_count()
+
+-- Determine which configuration set to use
+local config_name = "single"
+if effective_screen_count == 3 then
+  config_name = "triple"
+elseif effective_screen_count == 2 then
+  config_name = "dual"
+end
 
 awful.screen.connect_for_each_screen(function(s)
   local setup_wibar = require("wibar")
@@ -73,7 +84,16 @@ awful.screen.connect_for_each_screen(function(s)
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
 
-  local tags = require("tags")[screencount][s.index]
+  -- Identify this screen's role based on geometry
+  local screen_role = screen_roles.identify_screen(s)
+
+  -- Get tags for this screen based on its role
+  local tags = tags_config[config_name][screen_role]
+
+  -- Fallback: if no tags found for this role, use primary/single screen config
+  if not tags then
+    tags = tags_config.single.primary
+  end
 
   for i, t in ipairs(tags) do
     awful.tag.add(t.name, {

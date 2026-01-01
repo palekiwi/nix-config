@@ -1,11 +1,13 @@
 require("globals")
 
 local zh = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "〇", "甲", "乙", "丙" }
-local en = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 }
 
+-- Tag configurations organized by screen role instead of numeric index
+-- This makes tag assignment predictable regardless of screen detection order
 return {
-  [1] = {
-    [1] = {
+  -- Single screen configuration (fallback)
+  single = {
+    primary = {
       {
         name = "一",
         key = "r",
@@ -84,12 +86,6 @@ return {
         layout = LAYOUT_MAX,
         master_width_factor = 0.5,
       },
-      --- {
-      ---     name = "乙",
-      ---     key = "g",
-      ---     layout = LAYOUT_TILE,
-      ---     master_width_factor = 0.5,
-      --- },
       {
         name = "丙",
         key = "v",
@@ -98,8 +94,9 @@ return {
       },
     }
   },
-  [2] = {
-    [1] = {
+  -- Two screen configuration (ultrawide split)
+  dual = {
+    ultrawide_left = {
       {
         name = zh[1],
         key = "r",
@@ -147,7 +144,7 @@ return {
         master_width_factor = 0.5,
       },
     },
-    [2] = {
+    ultrawide_right = {
       {
         name = zh[6],
         key = "d",
@@ -194,8 +191,9 @@ return {
       }
     }
   },
-  [3] = {
-    [1] = {
+  -- Three screen configuration (split ultrawide + external monitor)
+  triple = {
+    ultrawide_left = {
       {
         name = zh[1],
         key = "r",
@@ -242,7 +240,7 @@ return {
         master_width_factor = 0.5,
       },
     },
-    [2] = {
+    ultrawide_right = {
       {
         name = zh[6],
         key = "d",
@@ -288,7 +286,7 @@ return {
         gap = 0
       }
     },
-    [3] = {
+    external = {
       {
         name = zh[12],
         key = "g",
