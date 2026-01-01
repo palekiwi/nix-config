@@ -101,8 +101,9 @@ return {
       },
     }
   },
-  -- Two screen configuration (ultrawide split)
+  -- Two screen configuration
   dual = {
+    -- Split ultrawide (2 virtual screens from 1 physical ultrawide monitor)
     ultrawide_left = {
       {
         name = zh[6],
@@ -203,6 +204,108 @@ return {
         layout = LAYOUT_MAX,
         master_width_factor = 0.5,
       },
+    },
+    -- Standard dual monitors (builtin laptop + external, or 2 separate monitors)
+    primary = {
+      {
+        name = zh[1],
+        key = "r",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        master_fill_policy = "expand",
+        master_count = 1,
+        gap = 0,
+      },
+      {
+        name = zh[8],
+        key = "f",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[3],
+        key = "t",
+        column_count = 1,
+        gap_single_client = true,
+        layout = LAYOUT_MAX,
+        master_fill_policy = "expand",
+        master_width_factor = 0.5,
+        selected = true,
+        gap = 0
+      },
+      {
+        name = zh[4],
+        key = "x",
+        layout = LAYOUT_MAX,
+        master_fill_policy = "expand",
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[5],
+        key = "c",
+        layout = LAYOUT_MAX,
+        master_fill_policy = "expand",
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[13],
+        key = "v",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+      },
+    },
+    secondary = {
+      {
+        name = zh[6],
+        key = "d",
+        layout = LAYOUT_MAX,
+        master_fill_policy = "expand",
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[11],
+        key = "b",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[10],
+        key = "a",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        gap = 0,
+        selected = true
+      },
+      {
+        name = zh[7],
+        key = "w",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+      },
+      {
+        name = zh[2],
+        key = "s",
+        column_count = 1,
+        gap_single_client = true,
+        layout = LAYOUT_MAX,
+        master_fill_policy = "expand",
+        master_width_factor = 0.5,
+        gap = 0
+      },
+      {
+        name = zh[9],
+        key = "p",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        gap = 0
+      },
+      {
+        name = zh[12],
+        key = "g",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        selected = true,
+      }
     }
   },
   -- Three screen configuration (split ultrawide + external monitor)

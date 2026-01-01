@@ -4,9 +4,8 @@
 local screen_roles = {}
 
 -- Identify screen role based on geometry
--- Returns: "ultrawide_left", "ultrawide_right", or "external"
+-- Returns: "ultrawide_left", "ultrawide_right", "external", "primary", "secondary", or "ultrawide_single"
 function screen_roles.identify_screen(s)
-  local geo = s.geometry
   local all_screens = {}
 
   -- Collect all screen geometries
@@ -26,23 +25,23 @@ function screen_roles.identify_screen(s)
   -- Find pairs of screens that share the same Y coordinate and height
   -- These are likely fake screens from the same physical ultrawide monitor
   local ultrawide_pair = {}
-  
+
   for i = 1, #all_screens do
     for j = i + 1, #all_screens do
       local scr1 = all_screens[i]
       local scr2 = all_screens[j]
-      
+
       -- Check if screens share same Y and height (same physical monitor)
       if scr1.geo.y == scr2.geo.y and scr1.geo.height == scr2.geo.height then
         -- Check if they're adjacent or close in X position (split screens)
         local gap = math.abs((scr1.geo.x + scr1.geo.width) - scr2.geo.x)
-        if gap < 10 then  -- Allow small gap for rounding
+        if gap < 10 then -- Allow small gap for rounding
           -- These are the split ultrawide screens
           -- Assign roles based on actual X position
           if scr1.geo.x < scr2.geo.x then
-            ultrawide_pair = {left = scr1, right = scr2}
+            ultrawide_pair = { left = scr1, right = scr2 }
           else
-            ultrawide_pair = {left = scr2, right = scr1}
+            ultrawide_pair = { left = scr2, right = scr1 }
           end
           break
         end
@@ -67,7 +66,8 @@ function screen_roles.identify_screen(s)
   else
     -- Multiple screens but no split detected
     -- Use position-based identification
-    if s.index == all_screens[1].index then
+    -- Primary is the rightmost screen (last in sorted list)
+    if s.index == all_screens[#all_screens].index then
       return "primary"
     else
       return "secondary"
@@ -101,7 +101,8 @@ function screen_roles.get_effective_screen_count()
   if layout.ultrawide_left and layout.ultrawide_right and layout.external then
     return 3
   elseif (layout.ultrawide_left and layout.ultrawide_right) or
-      (layout.ultrawide_single and layout.external) then
+      (layout.ultrawide_single and layout.external) or
+      (layout.primary and layout.secondary) then
     return 2
   else
     return 1
