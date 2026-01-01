@@ -17,10 +17,10 @@ return function()
     command = "setlocal filetype=yaml",
   })
 
-  create_autocmd({ "BufRead" }, {
-    pattern = { "*" },
-    command = "set foldlevel=99",
-  })
+  -- create_autocmd({ "BufRead" }, {
+  --   pattern = { "*" },
+  --   command = "set foldlevel=99",
+  -- })
 
   create_autocmd("VimEnter", {
     callback = function()
