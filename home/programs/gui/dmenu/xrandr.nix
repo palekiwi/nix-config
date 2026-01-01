@@ -1,77 +1,72 @@
 { pkgs }:
 
 pkgs.writers.writeNuBin "dmenu_xrandr" ''
-    let pale = {
-      builtin: "eDP-1-1"
-      external: "DP-1-2"
-      tablet: "DP-1-3"
-    }
+  const DECK_BUILTIN = "eDP-1"
+  const DECK_EXTERNAL = "DisplayPort-0"
 
-    let pale_actions = {
-       builtin: { ||
-         xrandr --output $pale.builtin --auto --primary
-         xrandr --output $pale.external --off
-         xrandr --output $pale.tablet --off
-       }
-       external: { ||
-         xrandr --output $pale.external --auto --primary
-         xrandr --output $pale.builtin --off
-         xrandr --output $pale.tablet --off
-       }
-       dual: { ||
-         xrandr --output $pale.builtin --auto --primary
-         xrandr --output $pale.external --off
-         xrandr --output $pale.tablet --auto --left-of $pale.builtin --rotate inverted
-       }
-       "dual-external": { ||
-         xrandr --output $pale.external --auto --primary
-         xrandr --output $pale.builtin --off
-         xrandr --output $pale.tablet --auto --pos 760x1440 --rotate inverted
-       }
-    }
+  const PALE_BUILTIN = "eDP-1-1"
+  const PALE_EXTERNAL = "DP-1-2"
+  const PALE_TABLET = "DP-1-3"
 
-    let deck = {
-      builtin: "eDP-1"
-      external: "DisplayPort-0"
-    }
-
-    let deck_actions = {
-       builtin: { ||
-         xrandr --output $deck.builtin --rotate right --auto --primary
-         xrandr --output $deck.external --off
-       }
-       external: { ||
-         xrandr --output $deck.external --auto --primary
-         xrandr --output $deck.builtin --off
-       }
-       dual: { ||
-         xrandr --output $deck.external --auto --primary
-         xrandr --output $deck.builtin --rotate right --auto --below $deck.external
-       }
-    }
-
-    def restart_wm [] {
-      awesome-client "awesome.restart()"
-    }
-
-    def run_dmenu [opts] {
-      $opts | dmenu -i -nb "#1d1f21" -nf "#D3D7CF" -sb "#5294e2" -sf "#2f343f" -fn "11" -p "xrandr profile: "
-    }
-
-    match (hostname | str trim) {
-      "deck" => {
-         let choice = ($deck_actions | columns | str join "\n" | run_dmenu $in)
-         let action = ($deck_actions | get -o $choice)
-         if $action != null { do $action; restart_wm } else { exit 1 }
+  let actions = {
+    deck: {
+      "builtin": { ||
+        xrandr --output $DECK_BUILTIN --rotate right --auto --primary
+        xrandr --output $DECK_EXTERNAL --off
       }
-      "pale" => {
-         let choice = ($pale_actions | columns | str join "\n" | run_dmenu $in)
-         let action = ($pale_actions | get -o $choice)
-         if $action != null { do $action; restart_wm } else { exit 1 }
+      "external": { ||
+        xrandr --output $DECK_EXTERNAL --auto --primary
+        xrandr --output $DECK_BUILTIN --off
       }
-      _ => {
-        notify-send "xrandr unavailable on this host"
-        exit 1
+      "dual": { ||
+        xrandr --output $DECK_EXTERNAL --auto --primary
+        xrandr --output $DECK_BUILTIN --rotate right --auto --below $DECK_EXTERNAL
       }
     }
+
+    pale: {
+      "builtin": { ||
+        xrandr --output $PALE_BUILTIN --auto --primary
+        xrandr --output $PALE_EXTERNAL --off
+        xrandr --output $PALE_TABLET --off
+      }
+      "external": { ||
+        xrandr --output $PALE_EXTERNAL --auto --primary
+        xrandr --output $PALE_BUILTIN --off
+        xrandr --output $PALE_TABLET --off
+      }
+      "dual": { ||
+        xrandr --output $PALE_BUILTIN --auto --primary
+        xrandr --output $PALE_EXTERNAL --off
+        xrandr --output $PALE_TABLET --auto --left-of $PALE_BUILTIN --rotate inverted
+      }
+      "dual-external": { ||
+        xrandr --output $PALE_EXTERNAL --auto --primary
+        xrandr --output $PALE_BUILTIN --off
+        xrandr --output $PALE_TABLET --auto --pos 760x1440 --rotate inverted
+      }
+    }
+  }
+
+  def restart_wm [] {
+    awesome-client "awesome.restart()"
+  }
+
+  def run_dmenu [opts] {
+    $opts | dmenu -i -nb "#1d1f21" -nf "#D3D7CF" -sb "#5294e2" -sf "#2f343f" -fn "11" -p "xrandr profile: "
+  }
+
+  let host = (hostname | str trim)
+  let actions = ($actions | get -o $host)
+
+  if $actions == null {
+    notify-send "xrandr unavailable on this host"
+    exit 1
+  } else {
+    let choice = ($actions | columns | str join "\n" | run_dmenu $in)
+
+    $actions | get $choice | do $in
+
+    restart_wm
+  }
 ''
