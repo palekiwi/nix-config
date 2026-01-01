@@ -19,8 +19,7 @@ local function resize_fake_screen(delta)
     return -- No ultrawide pair found, nothing to resize
   end
 
-  -- Identify screens by ACTUAL position (X coordinate), not by role name
-  -- The role names are swapped for tag assignment, so we need to check geometry
+  -- Get geometries with nil checks
   local left_geo = left_screen.geometry
   local right_geo = right_screen.geometry
 
@@ -28,21 +27,10 @@ local function resize_fake_screen(delta)
     return -- Geometry not available
   end
 
-  -- Determine which is physically on the right (larger X) - this is screen1 (main)
-  -- and which is physically on the left (smaller X) - this is screen2 (secondary)
-  local screen1, screen2
-  if left_geo.x < right_geo.x then
-    -- left role has smaller X (physically on left)
-    -- right role has larger X (physically on right)
-    screen1 = right_screen -- main screen (physically right)
-    screen2 = left_screen  -- secondary screen (physically left)
-  else
-    -- Roles match actual positions
-    screen1 = left_screen  -- main screen (physically right)
-    screen2 = right_screen -- secondary screen (physically left)
-  end
+  -- screen1 (main) = right screen, screen2 (secondary) = left screen
+  local screen1 = right_screen
+  local screen2 = left_screen
 
-  -- Original resize logic unchanged
   local geo1 = screen1.geometry
   local geo2 = screen2.geometry
 

@@ -38,11 +38,11 @@ function screen_roles.identify_screen(s)
         local gap = math.abs((scr1.geo.x + scr1.geo.width) - scr2.geo.x)
         if gap < 10 then  -- Allow small gap for rounding
           -- These are the split ultrawide screens
-          -- Note: swapped because the resized screen is actually on the right
+          -- Assign roles based on actual X position
           if scr1.geo.x < scr2.geo.x then
-            ultrawide_pair = {left = scr2, right = scr1}
-          else
             ultrawide_pair = {left = scr1, right = scr2}
+          else
+            ultrawide_pair = {left = scr2, right = scr1}
           end
           break
         end
