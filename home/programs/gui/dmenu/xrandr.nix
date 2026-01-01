@@ -92,17 +92,18 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
           run-external "xrandr" "--output" $pale_tablet "--off"
           restart_wm
         }
-        # TODO: Commented out due to bug in WM configuration that needs to be addressed first
-        # "dual" => {
-        #   run-external "xrandr" "--output" $pale_external "--auto" "--primary"
-        #   run-external "xrandr" "--output" $pale_tablet "--auto" "--below" $pale_external
-        #   restart_wm
-        # }
-        # "presentation" => {
-        #   run-external "xrandr" "--output" $pale_builtin "--auto" "--primary"
-        #   run-external "xrandr" "--output" $pale_external "--auto" "--above" $pale_builtin
-        #   restart_wm
-        # }
+        "dual" => {
+          run-external "xrandr" "--output" $pale_external "--auto" "--primary"
+          run-external "xrandr" "--output" $pale_builtin "--off"
+          run-external "xrandr" "--output" $pale_tablet "--auto" "--below" $pale_external
+          restart_wm
+        }
+        "presentation" => {
+          run-external "xrandr" "--output" $pale_builtin "--auto" "--primary"
+          run-external "xrandr" "--output" $pale_external "--auto" "--above" $pale_builtin
+          run-external "xrandr" "--output" $pale_tablet "--off"
+          restart_wm
+        }
         _ => {
           exit 1
         }

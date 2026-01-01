@@ -7,7 +7,24 @@ local function on_second_screen(tag_name)
   return function(c)
     local target_screen = screen[2] or screen[1]
 
-    -- Find the tag by name
+    local target_tag = nil
+    for _, tag in ipairs(target_screen.tags) do
+      if tag.name == tag_name then
+        target_tag = tag
+        break
+      end
+    end
+
+    if target_tag then
+      c:move_to_tag(target_tag)
+    end
+  end
+end
+
+local function on_third_screen(tag_name)
+  return function(c)
+    local target_screen = screen[3] or screen[1]
+
     local target_tag = nil
     for _, tag in ipairs(target_screen.tags) do
       if tag.name == tag_name then
@@ -81,8 +98,8 @@ awful.rules.rules = {
   -- Assign clients to tags
   { callback = on_second_screen("〇"), rule = { class = "Signal" } },
   { callback = on_second_screen("〇"), rule = { class = "Slack" } },
-  { callback = on_second_screen("七"), rule = { class = "Claude" } },
-  { callback = on_second_screen("丙"), rule = { class = "Virt-manager" } },
+  { callback = on_third_screen("乙"), rule = { class = "Claude" } },
+  { callback = on_third_screen("乙"), rule = { class = "Virt-manager" } },
   {
     rule = { class = "kitty", name = "spabreaks" },
     properties = { screen = screen[1], tag = screen[1].tags[3] }
