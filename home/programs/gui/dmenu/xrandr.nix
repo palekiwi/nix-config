@@ -64,9 +64,6 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
           xrandr --output $pale_tablet --auto --left-of $pale_builtin --rotate inverted
           restart_wm
         }
-        _ => {
-          exit 1
-        }
         "dual-external" => {
           xrandr --output $pale_external --auto --primary
           xrandr --output $pale_builtin --off
