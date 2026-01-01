@@ -96,10 +96,8 @@ awful.rules.rules = {
   },
 
   -- Assign clients to tags
-  { callback = on_second_screen("〇"), rule = { class = "Signal" } },
-  { callback = on_second_screen("〇"), rule = { class = "Slack" } },
-  { callback = on_third_screen("乙"), rule = { class = "Claude" } },
-  { callback = on_third_screen("乙"), rule = { class = "Virt-manager" } },
+  { callback = on_third_screen("乙"), rule = { class = "Signal" } },
+  { callback = on_third_screen("乙"), rule = { class = "Slack" } },
   {
     rule = { class = "kitty", name = "spabreaks" },
     properties = { screen = screen[1], tag = screen[1].tags[3] }
