@@ -39,7 +39,7 @@ set.timeoutlen = 300
 set.hidden = true
 set.completeopt = 'menuone,noselect'
 
-set.foldlevel = 1
+set.foldlevel = 99
 set.foldmethod = "indent"
 set.foldexpr = "nvim_treesitter#foldexpr()"
 
