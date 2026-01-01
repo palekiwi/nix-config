@@ -5,15 +5,41 @@ local capslock = require('widgets.capslock')
 local mic = require('widgets.mic')
 
 require("globals")
+local screen_roles = require("screen_roles")
 
 local function resize_fake_screen(delta)
-  if (screen.count() ~= 2) then
-    return
+  -- Get the ultrawide screen pair
+  local layout = screen_roles.get_screen_layout()
+  
+  -- Check if we have a split ultrawide pair
+  if not (layout.ultrawide_left and layout.ultrawide_right) then
+    return  -- No ultrawide pair found, nothing to resize
   end
-  local geo1 = screen[1].geometry
-  local geo2 = screen[2].geometry
-  screen[1]:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
-  screen[2]:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
+  
+  -- Identify screens by ACTUAL position (X coordinate), not by role name
+  -- The role names are swapped for tag assignment, so we need to check geometry
+  local left_geo = layout.ultrawide_left.geometry
+  local right_geo = layout.ultrawide_right.geometry
+  
+  -- Determine which is physically on the right (larger X) - this is screen1 (main)
+  -- and which is physically on the left (smaller X) - this is screen2 (secondary)
+  local screen1, screen2
+  if left_geo.x < right_geo.x then
+    -- left role has smaller X (physically on left)
+    -- right role has larger X (physically on right)
+    screen1 = layout.ultrawide_right  -- main screen (physically right)
+    screen2 = layout.ultrawide_left   -- secondary screen (physically left)
+  else
+    -- Roles match actual positions
+    screen1 = layout.ultrawide_left   -- main screen (physically right)
+    screen2 = layout.ultrawide_right  -- secondary screen (physically left)
+  end
+  
+  -- Original resize logic unchanged
+  local geo1 = screen1.geometry
+  local geo2 = screen2.geometry
+  screen1:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
+  screen2:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
 end
 
 local function remove_fake_screen_fullscreen()
@@ -84,11 +110,11 @@ local globalkeys = gears.table.join(
 --     { description = "focus primary screen", group = "screen" }),
 
 -- Focus screen 2
-  -- awful.key({ MODKEY, "Control" }, "Return",
-  --   function() awful.screen.focus(2) end,
-  --   { description = "focus secondary screen", group = "screen" }),
+-- awful.key({ MODKEY, "Control" }, "Return",
+--   function() awful.screen.focus(2) end,
+--   { description = "focus secondary screen", group = "screen" }),
 
-  -- Restore last client within current tag
+-- Restore last client within current tag
   awful.key({ MODKEY }, "u",
     function()
       local list = awful.client.focus.history.list
@@ -361,8 +387,8 @@ local globalkeys = gears.table.join(
 
   -- Spawn programs
   awful.key({ MODKEY, "Control" }, "BackSpace",
-      function() awful.spawn(TERMINAL) end,
-      { description = "open a terminal", group = "launcher" }),
+    function() awful.spawn(TERMINAL) end,
+    { description = "open a terminal", group = "launcher" }),
 
   awful.key({ ALTKEY }, "XF86AudioRaiseVolume",
     function() awful.spawn("cplay", { tag = "med" }) end,
