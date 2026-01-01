@@ -10,36 +10,50 @@ local screen_roles = require("screen_roles")
 local function resize_fake_screen(delta)
   -- Get the ultrawide screen pair
   local layout = screen_roles.get_screen_layout()
-  
+
   -- Check if we have a split ultrawide pair
-  if not (layout.ultrawide_left and layout.ultrawide_right) then
-    return  -- No ultrawide pair found, nothing to resize
+  local left_screen = layout.ultrawide_left
+  local right_screen = layout.ultrawide_right
+
+  if not (left_screen and right_screen) then
+    return -- No ultrawide pair found, nothing to resize
   end
-  
+
   -- Identify screens by ACTUAL position (X coordinate), not by role name
   -- The role names are swapped for tag assignment, so we need to check geometry
-  local left_geo = layout.ultrawide_left.geometry
-  local right_geo = layout.ultrawide_right.geometry
-  
+  local left_geo = left_screen.geometry
+  local right_geo = right_screen.geometry
+
+  if not (left_geo and right_geo) then
+    return -- Geometry not available
+  end
+
   -- Determine which is physically on the right (larger X) - this is screen1 (main)
   -- and which is physically on the left (smaller X) - this is screen2 (secondary)
   local screen1, screen2
   if left_geo.x < right_geo.x then
     -- left role has smaller X (physically on left)
     -- right role has larger X (physically on right)
-    screen1 = layout.ultrawide_right  -- main screen (physically right)
-    screen2 = layout.ultrawide_left   -- secondary screen (physically left)
+    screen1 = right_screen -- main screen (physically right)
+    screen2 = left_screen  -- secondary screen (physically left)
   else
     -- Roles match actual positions
-    screen1 = layout.ultrawide_left   -- main screen (physically right)
-    screen2 = layout.ultrawide_right  -- secondary screen (physically left)
+    screen1 = left_screen  -- main screen (physically right)
+    screen2 = right_screen -- secondary screen (physically left)
   end
-  
+
   -- Original resize logic unchanged
   local geo1 = screen1.geometry
   local geo2 = screen2.geometry
-  screen1:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
-  screen2:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
+
+  if not (geo1 and geo2) then
+    return -- Geometry not available
+  end
+
+  if screen1.fake_resize and screen2.fake_resize then
+    screen1:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
+    screen2:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
+  end
 end
 
 local function remove_fake_screen_fullscreen()
