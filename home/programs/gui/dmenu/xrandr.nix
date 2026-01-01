@@ -8,42 +8,56 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   const PALE_EXTERNAL = "DP-1-2"
   const PALE_TABLET = "DP-1-3"
 
-  let actions = {
+  const CONFIG = {
     deck: {
-      "builtin": { ||
-        xrandr --output $DECK_BUILTIN --rotate right --auto --primary
-        xrandr --output $DECK_EXTERNAL --off
-      }
-      "external": { ||
-        xrandr --output $DECK_EXTERNAL --auto --primary
-        xrandr --output $DECK_BUILTIN --off
-      }
-      "dual": { ||
-        xrandr --output $DECK_EXTERNAL --auto --primary
-        xrandr --output $DECK_BUILTIN --rotate right --auto --below $DECK_EXTERNAL
-      }
+      "builtin": [
+        { output: $DECK_BUILTIN, opts: ["--rotate", "right", "--auto", "--primary"] }
+        { output: $DECK_EXTERNAL, opts: ["--off"] }
+      ]
+      "external": [
+        { output: $DECK_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $DECK_BUILTIN, opts: ["--off"] }
+      ]
+      "dual": [
+        { output: $DECK_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $DECK_BUILTIN, opts: ["--rotate", "right", "--auto", "--below", $DECK_EXTERNAL] }
+      ]
     }
 
     pale: {
-      "builtin": { ||
-        xrandr --output $PALE_BUILTIN --auto --primary
-        xrandr --output $PALE_EXTERNAL --off
-        xrandr --output $PALE_TABLET --off
-      }
-      "external": { ||
-        xrandr --output $PALE_EXTERNAL --auto --primary
-        xrandr --output $PALE_BUILTIN --off
-        xrandr --output $PALE_TABLET --off
-      }
-      "dual": { ||
-        xrandr --output $PALE_BUILTIN --auto --primary
-        xrandr --output $PALE_EXTERNAL --off
-        xrandr --output $PALE_TABLET --auto --left-of $PALE_BUILTIN --rotate inverted
-      }
-      "dual-external": { ||
-        xrandr --output $PALE_EXTERNAL --auto --primary
-        xrandr --output $PALE_BUILTIN --off
-        xrandr --output $PALE_TABLET --auto --pos 760x1440 --rotate inverted
+      "builtin": [
+        { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
+        { output: $PALE_EXTERNAL, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--off"] }
+      ]
+      "external": [
+        { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $PALE_BUILTIN, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--off"] }
+      ]
+      "dual": [
+        { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
+        { output: $PALE_EXTERNAL, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--auto", "--left-of", $PALE_BUILTIN, "--rotate", "inverted"] }
+      ]
+      "dual-external": [
+        { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $PALE_BUILTIN, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--auto", "--pos", "760x1440", "--rotate", "inverted"] }
+      ]
+    }
+  }
+
+  def apply_profile [profile: list] {
+    for display in $profile {
+      let result = (do {
+        run-external "xrandr" "--output" $display.output ...$display.opts
+      } | complete)
+
+      if $result.exit_code != 0 {
+        error make {
+          msg: $"Failed to configure display ($display.output): ($result.stderr)"
+        }
       }
     }
   }
@@ -57,16 +71,31 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   }
 
   let host = (hostname | str trim)
-  let actions = ($actions | get -o $host)
+  let profiles = ($CONFIG | get -o $host)
 
-  if $actions == null {
+  if $profiles == null {
     notify-send "xrandr unavailable on this host"
     exit 1
+  }
+
+  let choice = ($profiles | columns | str join "\n" | run_dmenu $in)
+
+  # Handle user cancellation
+  if ($choice | is-empty) {
+    exit 0
+  }
+
+  # Validate and execute
+  if $choice in ($profiles | columns) {
+    try {
+      apply_profile ($profiles | get $choice)
+      restart_wm
+    } catch { |err|
+      notify-send -u critical "Display configuration failed" $err.msg
+      exit 1
+    }
   } else {
-    let choice = ($actions | columns | str join "\n" | run_dmenu $in)
-
-    $actions | get $choice | do $in
-
-    restart_wm
+    notify-send -u normal "Invalid selection" $"Profile '($choice)' does not exist"
+    exit 1
   }
 ''
