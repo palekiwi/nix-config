@@ -23,6 +23,7 @@ in
     tags = [
       "+airbrake"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -32,6 +33,7 @@ in
     tags = [
       "+airbrake/production"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -41,6 +43,7 @@ in
     tags = [
       "+airbrake/staging"
       "-new"
+      "-inbox"
     ];
   }
 
