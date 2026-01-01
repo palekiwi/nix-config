@@ -5,7 +5,7 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   let pale_external = "DP-1-2"
   let pale_tablet = "DP-1-3"
 
-  let options_pale = ["builtin", "external", "dual-external"]
+  let options_pale = ["builtin", "external", "dual", "dual-external"]
   let options_deck = ["builtin", "external", "dual", "presentation"]
 
   let deck_builtin = "eDP-1"
@@ -57,6 +57,15 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
           xrandr --output $pale_builtin --off
           xrandr --output $pale_tablet --off
           restart_wm
+        }
+        "dual" => {
+          xrandr --output $pale_builtin --auto --primary
+          xrandr --output $pale_external --off
+          xrandr --output $pale_tablet --auto --left-of $pale_builtin --rotate inverted
+          restart_wm
+        }
+        _ => {
+          exit 1
         }
         "dual-external" => {
           xrandr --output $pale_external --auto --primary
