@@ -53,6 +53,7 @@ in
     tags = [
       "+bookings"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -62,6 +63,7 @@ in
     tags = [
       "+developers"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -71,6 +73,7 @@ in
     tags = [
       "+google"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -88,6 +91,7 @@ in
     tags = [
       "+spabreaks"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -97,6 +101,7 @@ in
     tags = [
       "+spabreaks/vouchers"
       "-new"
+      "-inbox"
     ];
   }
 
@@ -106,6 +111,7 @@ in
     tags = [
       "+tools"
       "-new"
+      "-inbox"
     ];
   }
 ]
