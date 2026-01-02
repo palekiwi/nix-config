@@ -68,7 +68,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_remote_tmux --tmux";
+      "super + Return + control" = "dmenu_tmux --tmux --opencode";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "${switchToDefaultSession}";
 
