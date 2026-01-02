@@ -48,17 +48,6 @@ let
     fi
   '';
 
-  switchToAppOrLaunch = pkgs.writeShellScript "switchToAppOrLaunch" ''
-    window_title="$1"
-    cmd="$2"
-
-    if wmctrl -l | grep -q "$window_title"; then
-        wmctrl -Fa "$window_title"
-    else
-        $cmd
-    fi
-  '';
-
   switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
     window_name=$USER
 
