@@ -2,6 +2,7 @@
 
 pkgs.writers.writeNuBin "dmenu_tmux" ''
   def main [
+    --opencode
     --tmux
   ] {
     let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; height: 50%; location: center; }" "-p" "Tmux sessions"]
@@ -13,6 +14,7 @@ pkgs.writers.writeNuBin "dmenu_tmux" ''
     }
 
     let options = ($sessions
+      | if $opencode { where Name =~ "-opencode$" } else { $in }
       | each { |session|
           let attached_marker = if $session.Attached > 0 { "*" } else { " " }
           $"($session.Score),($session.Name),($session.Src),($session.Path),($attached_marker)"
