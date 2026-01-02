@@ -8,7 +8,7 @@ def run_rofi []: list<string> -> string {
 
 def build_options [opencode: bool, tmux: bool] {
     let tmux_flag = if $tmux { "--tmux" } else { "" }
-    let sessions = sesh list -d --json $tmux_flag | from json
+    let sessions = sesh list --json $tmux_flag | from json
 
     $sessions
     | if $opencode { where Name =~ "-opencode$" } else { $in }
