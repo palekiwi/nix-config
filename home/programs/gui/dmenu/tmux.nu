@@ -6,7 +6,7 @@ def run_rofi []: list<string> -> string {
     | rofi -dmenu -i -theme-str "window { width: 40%; height: 50%; location: center; }" -p "Tmux sessions"
 }
 
-def build_options [opencode, tmux] {
+def build_options [opencode: bool, tmux: bool] {
     let tmux_flag = if $tmux { "--tmux" } else { "" }
     let sessions = sesh list -d --json $tmux_flag | from json
 
