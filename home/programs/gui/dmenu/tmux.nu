@@ -30,9 +30,9 @@ def main [
 
     let session_name = ($choice | split row " " | get 0)
 
-    if ($choice | str ends-with "*") {
-        wmctrl -Fa $session_name
-    } else {
+    if (wmctrl -l | find $choice | is-empty) {
         kitty -T $session_name -e sesh connect $session_name
+    } else {
+        wmctrl -Fa $session_name
     }
 }
