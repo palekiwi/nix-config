@@ -49,15 +49,17 @@ pkgs.writers.writeNuBin "dmenu_xrandr" ''
   }
 
   def apply_profile [profile: list] {
-    for display in $profile {
-      let result = (do {
-        run-external "xrandr" "--output" $display.output ...$display.opts
-      } | complete)
+    let args = ($profile | reduce --fold [] { |display, acc|
+      $acc | append ["--output", $display.output] | append $display.opts
+    })
 
-      if $result.exit_code != 0 {
-        error make {
-          msg: $"Failed to configure display ($display.output): ($result.stderr)"
-        }
+    let result = (do {
+      run-external "xrandr" ...$args
+    } | complete)
+
+    if $result.exit_code != 0 {
+      error make {
+        msg: $"Failed to configure display profile: ($result.stderr)"
       }
     }
   }
