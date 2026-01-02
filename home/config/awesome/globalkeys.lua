@@ -365,6 +365,13 @@ local globalkeys = gears.table.join(
   --     end, { description = "Toggle centerwork/tile", group = "client" }
   -- ),
 
+  -- Focus external screen
+  awful.key({ MODKEY }, "o",
+    function()
+      focus_screen_by_role("external", "secondary")
+    end,
+    { description = "Focus external screen", group = "screen" }),
+
   awful.key({ MODKEY, "Shift" }, "n",
     function()
       resize_fake_screen(FAKE_RESIZE_DELTA)
