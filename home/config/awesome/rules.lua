@@ -4,6 +4,8 @@ local clientkeys = require("clientkeys")
 local clientbuttons = require("clientbuttons")
 local placement_rules = require("placement_rules")
 
+require("globals")
+
 awful.rules.rules = {
   -- All clients will match this rule.
   {
@@ -64,36 +66,36 @@ awful.rules.rules = {
   -- Communication apps → external monitor (or ultrawide_left fallback)
   {
     rule = { class = "Signal" },
-    callback = placement_rules.communication("乙")
+    callback = placement_rules.communication(TAGS[12])
   },
   {
     rule = { class = "Slack" },
-    callback = placement_rules.communication("乙")
+    callback = placement_rules.communication(TAGS[12])
   },
 
   -- Development windows → ultrawide_right
   {
     rule = { class = "kitty", name = "spabreaks" },
-    callback = placement_rules.development("三")
+    callback = placement_rules.development(TAGS[3])
   },
   {
     rule = { class = "kitty", name = ".*%-dev$" },
-    callback = placement_rules.development("一")
+    callback = placement_rules.development(TAGS[1])
   },
 
   -- Secondary tasks → ultrawide_left
   {
     rule = { class = "kitty", name = ".*%-opencode$" },
-    callback = placement_rules.secondary("九")
+    callback = placement_rules.secondary(TAGS[7])
   },
 
   -- System/admin → ultrawide_right
   {
     rule = { class = "kitty", name = ".*%-psql$" },
-    callback = placement_rules.system("丙")
+    callback = placement_rules.system(TAGS[13])
   },
   {
     rule = { class = "kitty", name = ".*%-console$" },
-    callback = placement_rules.system("丙")
+    callback = placement_rules.system(TAGS[13])
   },
 }

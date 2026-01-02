@@ -1,6 +1,8 @@
 -- Global Variables
 local awful = require("awful")
 
+TAGS = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "〇", "甲", "乙", "丙" }
+
 THEME_PATH = string.format("%s/.config/awesome/theme.lua", os.getenv("HOME"))
 
 TERMINAL = "kitty"
