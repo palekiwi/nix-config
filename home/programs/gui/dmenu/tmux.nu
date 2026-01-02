@@ -6,27 +6,23 @@ def run_rofi []: list<string> -> string {
     | rofi -dmenu -i -theme-str "window { width: 40%; height: 50%; location: center; }" -p "Tmux sessions"
 }
 
+def build_options [opencode, tmux] {
+    let tmux_flag = if $tmux { "--tmux" } else { "" }
+    let sessions = sesh list -d --json $tmux_flag | from json
+
+    $sessions
+    | if $opencode { where Name =~ "-opencode$" } else { $in }
+    | each { |session|
+        $"($session.Score),($session.Name),($session.Src),($session.Path)"
+    }
+    | each {|item| $item | split row "," | skip 1 | str join ","}
+}
+
 def main [
     --opencode
     --tmux
 ] {
-    let tmux_flag = if $tmux { "--tmux" } else { "" }
-    let sessions = sesh list --json $tmux_flag | from json
-
-    let options = ($sessions
-        | if $opencode { where Name =~ "-opencode$" } else { $in }
-        | each { |session|
-            let attached_marker = if $session.Attached > 0 { "*" } else { " " }
-            $"($session.Score),($session.Name),($session.Src),($session.Path),($attached_marker)"
-        }
-        | sort-by
-            {|item| 0 - ($item | split row "," | get 0 | into float)}
-            {|item| $item | split row "," | get 1}
-            {|item| $item | split row "," | get 3 }
-        | each {|item| $item | split row "," | skip 1 | str join ","}
-    )
-
-    let choice = ($options | run_rofi)
+    let choice = (build_options $opencode $tmux | run_rofi)
 
     if ($choice | is-empty) {
         exit 1
