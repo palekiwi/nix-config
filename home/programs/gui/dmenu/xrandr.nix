@@ -1,113 +1,103 @@
 { pkgs }:
 
 pkgs.writers.writeNuBin "dmenu_xrandr" ''
-  let pale_builtin = "eDP-1-1"
-  let pale_external = "DP-1-3"
+  const DECK_BUILTIN = "eDP-1"
+  const DECK_EXTERNAL = "DisplayPort-0"
 
-  let options_pale = ["builtin", "external", "dual", "presentation"]
-  let options_nuc = ["xasus", "dual", "huion", "tv"]
-  let options_deck = ["builtin", "external", "dual", "presentation"]
+  const PALE_BUILTIN = "eDP-1-1"
+  const PALE_EXTERNAL = "DP-1-2"
+  const PALE_TABLET = "DP-1-3"
 
-  let deck_builtin = "eDP-1"
-  let deck_external = "DisplayPort-0"
+  const CONFIG = {
+    deck: {
+      "builtin": [
+        { output: $DECK_BUILTIN, opts: ["--rotate", "right", "--auto", "--primary"] }
+        { output: $DECK_EXTERNAL, opts: ["--off"] }
+      ]
+      "external": [
+        { output: $DECK_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $DECK_BUILTIN, opts: ["--off"] }
+      ]
+      "dual": [
+        { output: $DECK_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $DECK_BUILTIN, opts: ["--rotate", "right", "--auto", "--below", $DECK_EXTERNAL] }
+      ]
+    }
 
-  let nuc_tv = "HDMI-A-0"
-  let nuc_asus = "HDMI-A-4"
-  let nuc_huion = "DisplayPort-0"
+    pale: {
+      "builtin": [
+        { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
+        { output: $PALE_EXTERNAL, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--off"] }
+      ]
+      "external": [
+        { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $PALE_BUILTIN, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--off"] }
+      ]
+      "dual": [
+        { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
+        { output: $PALE_EXTERNAL, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--auto", "--left-of", $PALE_BUILTIN, "--rotate", "inverted"] }
+      ]
+      "dual-external": [
+        { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
+        { output: $PALE_BUILTIN, opts: ["--off"] }
+        { output: $PALE_TABLET, opts: ["--auto", "--pos", "760x1440", "--rotate", "inverted"] }
+      ]
+    }
+  }
 
-  let dmenu_options = ["-i" "-nb" "#1d1f21" "-nf" "#D3D7CF" "-sb" "#5294e2" "-sf" "#2f343f" "-fn" "11" "-p" "xrandr profile: "]
+  def apply_profile [profile: list] {
+    let args = ($profile | reduce --fold [] { |display, acc|
+      $acc | append ["--output", $display.output] | append $display.opts
+    })
+
+    let result = (do {
+      run-external "xrandr" ...$args
+    } | complete)
+
+    if $result.exit_code != 0 {
+      error make {
+        msg: $"Failed to configure display profile: ($result.stderr)"
+      }
+    }
+  }
 
   def restart_wm [] {
-    run-external "awesome-client" "awesome.restart()"
+    awesome-client "awesome.restart()"
+  }
+
+  def run_dmenu [opts] {
+    $opts | dmenu -i -nb "#1d1f21" -nf "#D3D7CF" -sb "#5294e2" -sf "#2f343f" -fn "11" -p "xrandr profile: "
   }
 
   let host = (hostname | str trim)
+  let profiles = ($CONFIG | get -o $host)
 
-  match $host {
-    "nuc" => {
-      let choice = ($options_nuc | str join "\n" | run-external "dmenu" ...$dmenu_options)
-      match $choice {
-        "asus" => {
-          run-external "xrandr" "--output" $nuc_asus "--auto" "--primary" "--output" $nuc_huion "--off" "--output" $nuc_tv "--off"
-          restart_wm
-        }
-        "huion" => {
-          run-external "xrandr" "--output" $nuc_asus "--off" "--output" $nuc_huion "--auto" "--primary" "--output" $nuc_tv "--off"
-          restart_wm
-        }
-        "dual" => {
-          run-external "xrandr" "--output" $nuc_asus "--auto" "--primary" "--output" $nuc_huion "--auto" "--below" $nuc_asus "--output" $nuc_tv "--off"
-          restart_wm
-        }
-        "tv" => {
-          run-external "xrandr" "--output" $nuc_asus "--off" "--output" $nuc_huion "--off" "--output" $nuc_tv "--mode" "1360x768" "--primary"
-          restart_wm
-        }
-        _ => {
-          exit 1
-        }
-      }
-    }
-    "deck" => {
-      let choice = ($options_deck | str join "\n" | run-external "dmenu" ...$dmenu_options)
-      match $choice {
-        "external" => {
-          run-external "xrandr" "--output" $deck_external "--auto" "--primary"
-          run-external "xrandr" "--output" $deck_builtin "--off"
-          restart_wm
-        }
-        "builtin" => {
-          run-external "xrandr" "--output" $deck_builtin "--rotate right" "--auto" "--primary"
-          run-external "xrandr" "--output" $deck_external "--off"
-          restart_wm
-        }
-        "dual" => {
-          run-external "xrandr" "--output" $deck_external "--auto" "--primary"
-          run-external "xrandr" "--output" $deck_builtin "--rotate right" "--auto" "--below" $deck_external
-          restart_wm
-        }
-        "presentation" => {
-          run-external "xrandr" "--output" $deck_builtin "--auto" "--primary"
-          run-external "xrandr" "--output" $deck_external "--auto" "--above" $deck_builtin "--rotate" "normal"
-          restart_wm
-        }
-        _ => {
-          exit 1
-        }
-      }
-    }
-    "pale" => {
-      let choice = ($options_pale | str join "\n" | run-external "dmenu" ...$dmenu_options)
-      match $choice {
-        "builtin" => {
-          run-external "xrandr" "--output" $pale_builtin "--auto" "--primary"
-          run-external "xrandr" "--output" $pale_external "--off"
-          restart_wm
-        }
-        "external" => {
-          run-external "xrandr" "--output" $pale_external "--auto" "--primary"
-          run-external "xrandr" "--output" $pale_builtin "--off"
-          restart_wm
-        }
-        # TODO: Commented out due to bug in WM configuration that needs to be addressed first
-        # "dual" => {
-        #   run-external "xrandr" "--output" $pale_external "--auto" "--primary"
-        #   run-external "xrandr" "--output" $pale_builtin "--auto" "--below" $pale_external
-        #   restart_wm
-        # }
-        # "presentation" => {
-        #   run-external "xrandr" "--output" $pale_builtin "--auto" "--primary"
-        #   run-external "xrandr" "--output" $pale_external "--auto" "--above" $pale_builtin
-        #   restart_wm
-        # }
-        _ => {
-          exit 1
-        }
-      }
-    }
-    _ => {
-      run-external "notify-send" "xrandr unavailable on this host"
+  if $profiles == null {
+    notify-send "xrandr unavailable on this host"
+    exit 1
+  }
+
+  let choice = ($profiles | columns | str join "\n" | run_dmenu $in)
+
+  # Handle user cancellation
+  if ($choice | is-empty) {
+    exit 0
+  }
+
+  # Validate and execute
+  if $choice in ($profiles | columns) {
+    try {
+      apply_profile ($profiles | get $choice)
+      restart_wm
+    } catch { |err|
+      notify-send -u critical "Display configuration failed" $err.msg
       exit 1
     }
+  } else {
+    notify-send -u normal "Invalid selection" $"Profile '($choice)' does not exist"
+    exit 1
   }
 ''
