@@ -32,6 +32,11 @@ const CONFIG = {
             { output: $PALE_BUILTIN, opts: ["--off"] }
             { output: $PALE_EXTERNAL, opts: ["--off"] }
         ]
+        "external": [
+            { output: $PALE_ULTRAWIDE, opts: ["--off"] }
+            { output: $PALE_BUILTIN, opts: ["--off"] }
+            { output: $PALE_EXTERNAL, opts: ["--auto", "--primary", "--rotate", "inverted"] }
+        ]
         "ultrawide+builtin": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
