@@ -67,7 +67,7 @@ local function setup_right_widgets()
   local function timeAbroad(label, timezone)
     return wibox.layout.margin(
       wibox.widget.textclock(
-        "<span foreground='#aaa' weight='bold'><span foreground='#666'>" ..
+        "<span foreground='#888' weight='bold'><span foreground='#666'>" ..
         label .. "</span> %H:%M</span>",
         nil,
         timezone
