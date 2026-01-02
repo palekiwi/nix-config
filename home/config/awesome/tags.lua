@@ -379,6 +379,7 @@ return {
         layout = LAYOUT_MAX,
         master_fill_policy = "master_width_factor",
         master_width_factor = 0.5,
+        gap = 0
       },
       {
         name = TAGS[4],
