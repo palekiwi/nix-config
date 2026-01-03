@@ -19,6 +19,7 @@
       ./nvidia.nix
       ./ollama.nix
       ./open-webui.nix
+      ./opentabletdriver.nix
       ./packages.nix
       ./picom.nix
       ./sound.nix
