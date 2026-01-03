@@ -35,17 +35,17 @@ const CONFIG = {
         "external": [
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--primary", "--rotate", "inverted"] }
+            { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
         ]
         "ultrawide+builtin": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--left-of", $PALE_BUILTIN, "--rotate", "inverted"] }
+            { output: $PALE_EXTERNAL, opts: ["--auto", "--left-of", $PALE_BUILTIN] }
         ]
         "ultrawide+external": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--pos", "760x1440", "--rotate", "inverted"] }
+            { output: $PALE_EXTERNAL, opts: ["--auto", "--pos", "760x1440"] }
         ]
     }
 }
