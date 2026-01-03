@@ -3,30 +3,28 @@
 {
   imports =
     [
-      ./awesome.nix
-      ./bluetooth.nix
-      ./firewall-docker.nix
-      ./hardware-configuration.nix
-      ./locale.nix
-      ./nvidia.nix
-      ./ollama.nix
-      ./open-webui.nix
-      ./notifications-server.nix
-      ./packages.nix
-      ./picom.nix
-      ./sound.nix
-      ./ssh.nix
-      ./system.nix
-      ./user.nix
-
-      ../../users/pl/default.nix
-
       ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/ibus.nix
       ../../modules/sops.nix
       ../../modules/yubikey.nix
+      ../../users/pl/default.nix
+      ./awesome.nix
+      ./bluetooth.nix
+      ./firewall-docker.nix
+      ./hardware-configuration.nix
+      ./locale.nix
+      ./notifications-server.nix
+      ./nvidia.nix
+      ./ollama.nix
+      ./open-webui.nix
+      ./packages.nix
+      ./picom.nix
+      ./sound.nix
+      ./ssh.nix
+      ./system.nix
+      ./user.nix
     ];
 
   config = {
