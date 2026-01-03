@@ -18,5 +18,6 @@
     wmctrl
     xclip
     xdotool
+    xournalpp
   ];
 }
