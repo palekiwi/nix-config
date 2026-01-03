@@ -3,7 +3,7 @@ const DECK_EXTERNAL = "DisplayPort-0"
 
 const PALE_BUILTIN = "eDP-1-1"
 const PALE_ULTRAWIDE = "DP-1-2"
-const PALE_EXTERNAL = "DP-1-3"
+const PALE_HUION = "DP-1-5"
 
 const CONFIG = {
     deck: {
@@ -25,27 +25,27 @@ const CONFIG = {
         "builtin": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--off"] }
+            { output: $PALE_HUION, opts: ["--off"] }
         ]
         "ultrawide": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--off"] }
+            { output: $PALE_HUION, opts: ["--off"] }
         ]
-        "external": [
+        "huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--primary"] }
+            { output: $PALE_HUION, opts: ["--auto", "--primary"] }
         ]
         "ultrawide+builtin": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--left-of", $PALE_BUILTIN] }
+            { output: $PALE_HUION, opts: ["--auto", "--left-of", $PALE_BUILTIN] }
         ]
-        "ultrawide+external": [
+        "ultrawide+huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--pos", "760x1440"] }
+            { output: $PALE_HUION, opts: ["--auto", "--pos", "760x1440"] }
         ]
     }
 }
