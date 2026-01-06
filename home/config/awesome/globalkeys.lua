@@ -366,7 +366,7 @@ local globalkeys = gears.table.join(
   -- ),
 
   -- Focus external screen
-  awful.key({ MODKEY }, "o",
+  awful.key({ MODKEY }, ",",
     function()
       focus_screen_by_role("external", "secondary")
     end,
