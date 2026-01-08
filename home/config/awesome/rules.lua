@@ -66,11 +66,11 @@ awful.rules.rules = {
   -- Communication apps → external monitor (or ultrawide_left fallback)
   {
     rule = { class = "Signal" },
-    callback = placement_rules.communication(TAGS[12])
+    callback = placement_rules.communication(TAGS[10])
   },
   {
     rule = { class = "Slack" },
-    callback = placement_rules.communication(TAGS[12])
+    callback = placement_rules.communication(TAGS[10])
   },
 
   -- Development windows → ultrawide_right
