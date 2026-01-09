@@ -11,6 +11,7 @@
     nextcloud-client
     playerctl
     pulseaudio
+    rnote
     signal-desktop
     simplescreenrecorder
     unclutter-xfixes
