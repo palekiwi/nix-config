@@ -10,7 +10,8 @@
       userName = "pawel.lisewski@spabreaks.com";
       realName = "Pawel Lisewski";
       address = "pawel.lisewski@spabreaks.com";
-      passwordCommand = "${pkgs.pass}/bin/pass spabreaks/gmail/nixos";
+      passwordCommand = "cat /run/secrets/spabreaks/gmail/nixos";
+
 
       maildir.path = "spabreaks";
 
