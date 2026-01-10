@@ -1,5 +1,3 @@
-{ pkgs, ... }:
-
 {
   accounts.email.accounts = {
     spabreaks = {
