@@ -99,5 +99,13 @@ function placement_rules.system(tag_name)
     tag = tag_name
   })
 end
+--
+function placement_rules.tablet(tag_name)
+  return placement_rules.place_on({
+    preferred_role = "external",
+    fallback_role = "primary",
+    tag = tag_name
+  })
+end
 
 return placement_rules

@@ -72,6 +72,10 @@ awful.rules.rules = {
     rule = { class = "Slack" },
     callback = placement_rules.communication(TAGS[10])
   },
+  {
+    rule = { class = "rnote" },
+    callback = placement_rules.tablet(TAGS[12])
+  },
 
   -- Development windows → ultrawide_right
   {
