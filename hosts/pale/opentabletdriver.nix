@@ -20,6 +20,7 @@
       Identifier "OpenTabletDriver Virtual Tablet"
       MatchProduct "OpenTabletDriver Virtual"
       MatchDevicePath "/dev/input/event*"
+      MatchIsKeyboard "off"
       Driver "wacom"
     EndSection
   '';
