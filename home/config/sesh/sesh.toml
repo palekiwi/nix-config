@@ -93,17 +93,17 @@ startup_command = "_tmux_spabreaks_my_account_dev"
 #-------------------
 [[session]]
 name = "vrs"
-path = "~/code/spabreaks/sb-voucher-redemptions/"
+path = "~/code/spabreaks/voucher-portal/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "vrs-dev"
-path = "~/code/spabreaks/sb-voucher-redemptions/"
+path = "~/code/spabreaks/voucher-portal/"
 startup_command = "_tmux_spabreaks_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
-path = "~/code/spabreaks/sb-voucher-redemptions/"
+path = "~/code/spabreaks/voucher-portal/"
 startup_command = "make psql"
 
 #-------------------

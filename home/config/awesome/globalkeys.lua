@@ -5,15 +5,43 @@ local capslock = require('widgets.capslock')
 local mic = require('widgets.mic')
 
 require("globals")
+local screen_roles = require("screen_roles")
 
 local function resize_fake_screen(delta)
-  if (screen.count() ~= 2) then
-    return
+  -- Get the ultrawide screen pair
+  local layout = screen_roles.get_screen_layout()
+
+  -- Check if we have a split ultrawide pair
+  local left_screen = layout.ultrawide_left
+  local right_screen = layout.ultrawide_right
+
+  if not (left_screen and right_screen) then
+    return -- No ultrawide pair found, nothing to resize
   end
-  local geo1 = screen[1].geometry
-  local geo2 = screen[2].geometry
-  screen[1]:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
-  screen[2]:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
+
+  -- Get geometries with nil checks
+  local left_geo = left_screen.geometry
+  local right_geo = right_screen.geometry
+
+  if not (left_geo and right_geo) then
+    return -- Geometry not available
+  end
+
+  -- screen1 (main) = right screen, screen2 (secondary) = left screen
+  local screen1 = right_screen
+  local screen2 = left_screen
+
+  local geo1 = screen1.geometry
+  local geo2 = screen2.geometry
+
+  if not (geo1 and geo2) then
+    return -- Geometry not available
+  end
+
+  if screen1.fake_resize and screen2.fake_resize then
+    screen1:fake_resize(geo1.x - delta, geo1.y, geo1.width + delta, geo1.height)
+    screen2:fake_resize(geo2.x, geo2.y, geo2.width - delta, geo2.height)
+  end
 end
 
 local function remove_fake_screen_fullscreen()
@@ -76,6 +104,29 @@ local function focus_by_master_offset(x, opacity)
   end
 end
 
+local function focus_screen_by_role(preferred_role, fallback_role)
+  local layout = screen_roles.get_screen_layout()
+
+  -- Try to focus preferred role first
+  local target_screen = layout[preferred_role]
+
+  -- Fall back if preferred role not available
+  if not target_screen and fallback_role then
+    target_screen = layout[fallback_role]
+  end
+
+  -- Focus the screen if found
+  if target_screen then
+    awful.screen.focus(target_screen)
+    if client.focus then
+      client.focus:raise()
+    end
+    return true
+  end
+
+  return false -- No suitable screen found
+end
+
 local globalkeys = gears.table.join(
 -- Focus screen 1
 -- awful.key({ MODKEY }, "Return",
@@ -84,11 +135,11 @@ local globalkeys = gears.table.join(
 --     { description = "focus primary screen", group = "screen" }),
 
 -- Focus screen 2
-  -- awful.key({ MODKEY, "Control" }, "Return",
-  --   function() awful.screen.focus(2) end,
-  --   { description = "focus secondary screen", group = "screen" }),
+-- awful.key({ MODKEY, "Control" }, "Return",
+--   function() awful.screen.focus(2) end,
+--   { description = "focus secondary screen", group = "screen" }),
 
-  -- Restore last client within current tag
+-- Restore last client within current tag
   awful.key({ MODKEY }, "u",
     function()
       local list = awful.client.focus.history.list
@@ -136,14 +187,12 @@ local globalkeys = gears.table.join(
     { description = "go back", group = "tag" }),
 
 
-  -- Focus 2nd Client
+  -- Focus left screen
   awful.key({ MODKEY }, "n",
     function()
-      -- focus_by_master_offset(0, nil)
-      awful.screen.focus(2)
-      if client.focus then client.focus:raise() end
+      focus_screen_by_role("ultrawide_left", "secondary")
     end,
-    { description = "Focus 2nd Client", group = "client" }
+    { description = "Focus left screen", group = "screen" }
   ),
 
   awful.key({ MODKEY, "Control" }, "n",
@@ -171,14 +220,12 @@ local globalkeys = gears.table.join(
   --     end,
   --     { description = "focus master", group = "client" }),
 
-  -- Focus 3rd Client
+  -- Focus right screen
   awful.key({ MODKEY }, "i",
     function()
-      -- focus_by_master_offset(-1)
-      awful.screen.focus(1)
-      if client.focus then client.focus:raise() end
+      focus_screen_by_role("ultrawide_right", "primary")
     end,
-    { description = "Focus 3rd client", group = "client" }),
+    { description = "Focus right screen", group = "screen" }),
 
   awful.key({ MODKEY, "Control" }, "i",
     function()
@@ -318,9 +365,16 @@ local globalkeys = gears.table.join(
   --     end, { description = "Toggle centerwork/tile", group = "client" }
   -- ),
 
+  -- Focus external screen
+  awful.key({ MODKEY }, "o",
+    function()
+      focus_screen_by_role("external", "secondary")
+    end,
+    { description = "Focus external screen", group = "screen" }),
+
   awful.key({ MODKEY, "Shift" }, "n",
     function()
-      resize_fake_screen(380)
+      resize_fake_screen(FAKE_RESIZE_DELTA)
     end, { description = "Resize main fake screen up", group = "global" }
   ),
 
@@ -332,7 +386,7 @@ local globalkeys = gears.table.join(
 
   awful.key({ MODKEY, "Shift" }, "o",
     function()
-      resize_fake_screen(-380)
+      resize_fake_screen(-FAKE_RESIZE_DELTA)
     end, { description = "Resize main fake screen down", group = "global" }
   ),
 
@@ -361,8 +415,8 @@ local globalkeys = gears.table.join(
 
   -- Spawn programs
   awful.key({ MODKEY, "Control" }, "BackSpace",
-      function() awful.spawn(TERMINAL) end,
-      { description = "open a terminal", group = "launcher" }),
+    function() awful.spawn(TERMINAL) end,
+    { description = "open a terminal", group = "launcher" }),
 
   awful.key({ ALTKEY }, "XF86AudioRaiseVolume",
     function() awful.spawn("cplay", { tag = "med" }) end,

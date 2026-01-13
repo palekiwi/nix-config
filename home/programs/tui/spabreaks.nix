@@ -20,8 +20,8 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
-    sb-voucher-redemptions = {
-      envrc = ../../config/spabreaks/sb-voucher-redemptions/.envrc;
+    voucher-portal = {
+      envrc = ../../config/spabreaks/voucher-portal/.envrc;
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;

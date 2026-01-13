@@ -26,6 +26,7 @@ export def "run list" [
     --status(-s): list<string>
     --workflow(-w): string
 ] {
+    # TODO allow listing for all commits
     let $commit = if $commit != null { $commit } else {git rev-parse HEAD }
     let status_flag = if ($status | is-empty) { [] } else { $status | each {|it| ["-s" $it] } | flatten }
     let workflow_flag = if $workflow != null { ["-w" $workflow] } else { [] }
@@ -84,7 +85,7 @@ export def "repo clone" [repo: string] {
 
 export def "review comments" [pr_number?: int, --full] {
     let pr_number = $pr_number | default ""
-    
+
     # Get PR data to extract repository info
     let pr_response = (do { gh pr view ($pr_number) --json number,headRepository,headRepositoryOwner } | complete)
     if $pr_response.exit_code != 0 {
@@ -95,12 +96,12 @@ export def "review comments" [pr_number?: int, --full] {
     let owner = $pr_data.headRepositoryOwner.login
     let repo = $pr_data.headRepository.name
     let pr_num = $pr_data.number
-    
+
     # Fetch review comments directly using the correct API endpoint
     let comments_response = (do {
         gh api $"repos/($owner)/($repo)/pulls/($pr_num)/comments"
     } | complete)
-    
+
     if $comments_response.exit_code != 0 {
         error make { msg: $comments_response.stderr }
     }
@@ -110,8 +111,8 @@ export def "review comments" [pr_number?: int, --full] {
         $comments_response.stdout
     } else {
         # Return filtered JSON optimized for AI agents (default)
-        $comments_response.stdout 
-        | from json 
+        $comments_response.stdout
+        | from json
         | each {|c| {
             id: $c.id
             in_reply_to_id: ($c.in_reply_to_id? | default null)
@@ -126,7 +127,7 @@ export def "review comments" [pr_number?: int, --full] {
 
 export def "pr comments" [pr_number?: int, --full] {
     let pr_number = $pr_number | default ""
-    
+
     # Get PR data to extract repository info
     let pr_response = (do { gh pr view ($pr_number) --json number,headRepository,headRepositoryOwner } | complete)
     if $pr_response.exit_code != 0 {
@@ -137,12 +138,12 @@ export def "pr comments" [pr_number?: int, --full] {
     let owner = $pr_data.headRepositoryOwner.login
     let repo = $pr_data.headRepository.name
     let pr_num = $pr_data.number
-    
+
     # Fetch PR discussion comments using the issues API endpoint
     let comments_response = (do {
         gh api $"repos/($owner)/($repo)/issues/($pr_num)/comments"
     } | complete)
-    
+
     if $comments_response.exit_code != 0 {
         error make { msg: $comments_response.stderr }
     }
@@ -152,8 +153,8 @@ export def "pr comments" [pr_number?: int, --full] {
         $comments_response.stdout
     } else {
         # Return filtered JSON optimized for AI agents (default)
-        $comments_response.stdout 
-        | from json 
+        $comments_response.stdout
+        | from json
         | each {|c| {
             id: $c.id
             in_reply_to_id: ($c.in_reply_to_id? | default null)
@@ -185,7 +186,7 @@ export def "pr comment" [
     } else {
         error make { msg: "Must provide either --id or --url" }
     }
-    
+
     # Get current repo info
     let repo_info = (do { gh repo view --json owner,name } | complete)
     if $repo_info.exit_code != 0 {
@@ -195,12 +196,12 @@ export def "pr comment" [
     let repo_data = $repo_info.stdout | from json
     let owner = $repo_data.owner.login
     let repo = $repo_data.name
-    
+
     # Fetch single PR comment by ID using the issues API endpoint
     let comment_response = (do {
         gh api $"repos/($owner)/($repo)/issues/comments/($comment_id)"
     } | complete)
-    
+
     if $comment_response.exit_code != 0 {
         error make { msg: $comment_response.stderr }
     }
@@ -241,7 +242,7 @@ export def "review comment" [
     } else {
         error make { msg: "Must provide either --id or --url" }
     }
-    
+
     # Get current repo info
     let repo_info = (do { gh repo view --json owner,name } | complete)
     if $repo_info.exit_code != 0 {
@@ -251,12 +252,12 @@ export def "review comment" [
     let repo_data = $repo_info.stdout | from json
     let owner = $repo_data.owner.login
     let repo = $repo_data.name
-    
+
     # Fetch single review comment by ID
     let comment_response = (do {
         gh api $"repos/($owner)/($repo)/pulls/comments/($comment_id)"
     } | complete)
-    
+
     if $comment_response.exit_code != 0 {
         error make { msg: $comment_response.stderr }
     }

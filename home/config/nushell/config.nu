@@ -1,3 +1,4 @@
+source aliases/agents.nu
 source aliases/gh.nu
 source aliases/git.nu
 source aliases/main.nu
@@ -9,6 +10,7 @@ use modules/gcp.nu
 use modules/gh-utils.nu
 use modules/git-utils.nu
 use modules/sb.nu
+use modules/taskwarrior.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
