@@ -1,3 +1,5 @@
+{ pkgs, ... }:
+
 {
   accounts.email.accounts = {
     spabreaks = {
@@ -8,7 +10,8 @@
       userName = "pawel.lisewski@spabreaks.com";
       realName = "Pawel Lisewski";
       address = "pawel.lisewski@spabreaks.com";
-      passwordCommand = "cat /run/secrets/spabreaks/gmail/nixos";
+
+      passwordCommand = "${pkgs.coreutils}/bin/cat /run/secrets/spabreaks/gmail/nixos";
 
 
       maildir.path = "spabreaks";
