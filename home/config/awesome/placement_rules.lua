@@ -64,8 +64,8 @@ end
 -- Prefers: external → ultrawide_left → primary
 function placement_rules.communication(tag_name)
   return placement_rules.place_on({
-    preferred_role = "external",
-    fallback_role = "ultrawide_left",
+    preferred_role = "ultrawide_left",
+    fallback_role = "primary",
     tag = tag_name
   })
 end
@@ -95,6 +95,14 @@ end
 function placement_rules.system(tag_name)
   return placement_rules.place_on({
     preferred_role = "ultrawide_right",
+    fallback_role = "primary",
+    tag = tag_name
+  })
+end
+--
+function placement_rules.tablet(tag_name)
+  return placement_rules.place_on({
+    preferred_role = "external",
     fallback_role = "primary",
     tag = tag_name
   })
