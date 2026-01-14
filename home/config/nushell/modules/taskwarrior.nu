@@ -106,6 +106,16 @@ def build-pr-url [pr_number: string] {
 }
 
 # ============================================================================
+# Taskwarrior Binary Helper
+# ============================================================================
+
+# Helper to invoke the correct taskwarrior binary
+# Uses absolute path to avoid conflicts with go-task in devshells
+def call-task [...args: string] {
+    run-external ~/.nix-profile/bin/task ...$args
+}
+
+# ============================================================================
 # Context Detection (Main)
 # ============================================================================
 
@@ -236,13 +246,13 @@ export def "add" [
 
     if $dry_run {
         print $"(ansi yellow_bold)Would execute:(ansi reset)"
-        print $"  task add (ansi dim)($task_cmd_args | str join ' ')(ansi reset)"
+        print $"  task add ($task_cmd_args | str join ' ')"
     } else {
         if $verbose {
             print $"(ansi blue_bold)Executing:(ansi reset) task add ($task_cmd_args | str join ' ')"
             print ""
         }
-        run-external "task" "add" ...$task_cmd_args
+        call-task "add" ...$task_cmd_args
     }
 }
 
@@ -255,46 +265,46 @@ export def "list" [
 ] {
     if $all {
         # Pass through to task
-        run-external "task" ...$args
+        call-task ...$args
     } else if $project {
         # Show all tasks in namespace (e.g., project:sb)
         let namespace = (get-project-namespace)
-        run-external "task" $"project:($namespace)" ...$args
+        call-task $"project:($namespace)" ...$args
     } else if $repo {
         # Show tasks for current repo
         let repo = (get-repo-name)
-        run-external "task" $"repo:($repo)" ...$args
+        call-task $"repo:($repo)" ...$args
     } else {
         # Default: show tasks for current issue
         let context = (detect-context)
-        run-external "task" $"project:($context.project.project_path)" ...$args
+        call-task $"project:($context.project.project_path)" ...$args
     }
 }
 
 # Pass through to taskwarrior for advanced usage
 export def "raw" [...args: string] {
-    run-external "task" ...$args
+    call-task ...$args
 }
 
 # Convenience exports for common operations (pass through to task)
 export def "done" [...args: string] {
-    run-external "task" "done" ...$args
+    call-task "done" ...$args
 }
 
 export def "start" [...args: string] {
-    run-external "task" "start" ...$args
+    call-task "start" ...$args
 }
 
 export def "stop" [...args: string] {
-    run-external "task" "stop" ...$args
+    call-task "stop" ...$args
 }
 
 export def "delete" [...args: string] {
-    run-external "task" "delete" ...$args
+    call-task "delete" ...$args
 }
 
 export def "modify" [...args: string] {
-    run-external "task" "modify" ...$args
+    call-task "modify" ...$args
 }
 
 # Default command - show help or list tasks
@@ -319,6 +329,6 @@ export def main [...args: string] {
         print $"For more info: (ansi blue)tw add --help(ansi reset)"
     } else {
         # Pass through to task if called with args
-        run-external "task" ...$args
+        call-task ...$args
     }
 }
