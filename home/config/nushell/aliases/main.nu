@@ -1,3 +1,5 @@
+use ../modules/taskwarrior.nu
+
 def cat_to_clipboard [input?: string] {
     if ($input != null) {
         bat -p ($input | path expand) | xclip -selection clipboard
@@ -34,6 +36,7 @@ def ll [] {
 
 alias t = ~/.nix-profile/bin/task
 alias tt = taskwarrior-tui
+alias tw = taskwarrior
 alias cat = bat -p
 alias gemini-cli-tool = ~/code/spabreaks/gemini-cli-tool/run.sh
 alias ctc = cat_to_clipboard
