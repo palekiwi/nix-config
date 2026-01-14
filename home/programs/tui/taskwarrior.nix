@@ -29,6 +29,15 @@ in
 
         uda.pr.type = "string";
         uda.pr.label = "PR";
+
+        uda.jira_url.type = "string";
+        uda.jira_url.label = "JIRA";
+
+        uda.pr_url.type = "string";
+        uda.pr_url.label = "PR URL";
+
+        uda.repo.type = "string";
+        uda.repo.label = "Repo";
       };
     };
   };
