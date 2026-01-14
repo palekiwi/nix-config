@@ -83,6 +83,99 @@ export def "repo clone" [repo: string] {
     gh_clone_repo $repo
 }
 
+export def "pr reviews" [pr_number?: int, --full, --with-comments] {
+    let pr_number = $pr_number | default ""
+
+    # Get PR data to extract repository info
+    let pr_response = (do { gh pr view ($pr_number) --json number,headRepository,headRepositoryOwner } | complete)
+    if $pr_response.exit_code != 0 {
+        error make { msg: $pr_response.stderr }
+    }
+
+    let pr_data = $pr_response.stdout | from json
+    let owner = $pr_data.headRepositoryOwner.login
+    let repo = $pr_data.headRepository.name
+    let pr_num = $pr_data.number
+
+    # Fetch all reviews for the PR
+    let reviews_response = (do {
+        gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews"
+    } | complete)
+
+    if $reviews_response.exit_code != 0 {
+        error make { msg: $reviews_response.stderr }
+    }
+
+    let reviews = $reviews_response.stdout | from json
+
+    if $full {
+        # Return full JSON payload
+        if $with_comments {
+            # Fetch comments for each review
+            let reviews_with_comments = $reviews | each {|review| {
+                let comments_response = (do {
+                    gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
+                } | complete)
+
+                let comments = if $comments_response.exit_code == 0 {
+                    $comments_response.stdout | from json
+                } else {
+                    []
+                }
+
+                $review | merge {comments: $comments}
+            }}
+            $reviews_with_comments | to json
+        } else {
+            $reviews_response.stdout
+        }
+    } else {
+        # Return filtered JSON optimized for AI agents
+        if $with_comments {
+            let reviews_with_comments = $reviews | each {|review| {
+                let comments_response = (do {
+                    gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
+                } | complete)
+
+                let comments = if $comments_response.exit_code == 0 {
+                    $comments_response.stdout 
+                    | from json 
+                    | each {|c| {
+                        id: $c.id
+                        in_reply_to_id: ($c.in_reply_to_id? | default null)
+                        author: $c.user.login
+                        path: $c.path
+                        body: $c.body
+                        diff_hunk: $c.diff_hunk
+                    }}
+                } else {
+                    []
+                }
+
+                {
+                    id: $review.id
+                    author: $review.user.login
+                    state: $review.state
+                    body: $review.body
+                    submitted_at: $review.submitted_at
+                    comments: $comments
+                }
+            }}
+            $reviews_with_comments | to json
+        } else {
+            $reviews 
+            | each {|r| {
+                id: $r.id
+                author: $r.user.login
+                state: $r.state
+                body: $r.body
+                submitted_at: $r.submitted_at
+            }}
+            | to json
+        }
+    }
+}
+
 export def "review comments" [pr_number?: int, --full] {
     let pr_number = $pr_number | default ""
 
