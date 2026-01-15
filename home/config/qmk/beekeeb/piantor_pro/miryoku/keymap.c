@@ -21,7 +21,6 @@ enum layer_names {
 // mode tap keys
 // LEFT
 #define HM_A LALT_T(KC_A)
-#define HM_Q LALT_T(KC_Q)
 #define HM_R LSFT_T(KC_R)
 #define HM_S LCTL_T(KC_S)
 #define HM_T LGUI_T(KC_T)
@@ -29,7 +28,6 @@ enum layer_names {
 #define HM_L LT(APP,KC_L)
 #define HM_U LT(SYM,KC_U)
 #define HM_Z LT(LHN,KC_Z)
-// #define HM_D LT(MED,KC_D)
 #define HM_D LALT_T(KC_D)
 #define HM_F LT(PCT,KC_F)
 #define HM_P LT(MED,KC_P)
