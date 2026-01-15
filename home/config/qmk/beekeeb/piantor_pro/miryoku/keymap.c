@@ -20,8 +20,8 @@ enum layer_names {
 
 // mode tap keys
 // LEFT
-#define HM_A LALT_T(KC_A)
-#define HM_R LSFT_T(KC_R)
+#define HM_A LSFT_T(KC_A)
+#define HM_R LALT_T(KC_R)
 #define HM_S LCTL_T(KC_S)
 #define HM_T LGUI_T(KC_T)
 
@@ -35,8 +35,8 @@ enum layer_names {
 // Right
 #define HM_N RGUI_T(KC_N)
 #define HM_E RCTL_T(KC_E)
-#define HM_I RSFT_T(KC_I)
-#define HM_O RALT_T(KC_O)
+#define HM_I RALT_T(KC_I)
+#define HM_O RSFT_T(KC_O)
 
 // #define HM_H LT(SYM,KC_H)
 #define HM_H RALT_T(KC_H)
@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,---------------------------------------------------.
      KC_NO,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       KC_MENU, KC_GRV, KC_QUOT, KC_DQUO, XXXXXXX,  KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+------|
-     KC_NO,   KC_LALT, KC_LSFT, KC_LCTL, KC_LGUI, XXXXXXX,                       KC_APP, KC_LEFT, KC_DOWN,  KC_UP,  KC_RIGHT, KC_NO,
+     KC_NO,   KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, XXXXXXX,                       KC_APP, KC_LEFT, KC_DOWN,  KC_UP,  KC_RIGHT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+------|
      KC_NO,   XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT, XXXXXXX,                       KC_INS, KC_HOME, KC_PGDN, KC_PGUP, KC_END,   KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+------|
@@ -83,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,  KC_LBRC,  KC_7,   KC_8,    KC_9,    KC_RBRC,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,  KC_COLN,  KC_1,   KC_2,    KC_3,    KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
+     KC_NO,  KC_COLN,  KC_1,   KC_2,    KC_3,    KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RALT, KC_RSFT, KC_NO,
   //|------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,  KC_DOT,   KC_4,   KC_5,    KC_6,    KC_EQL,                       XXXXXXX, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -95,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       KC_AGIN, KC_PSTE, KC_COPY, KC_CUT,  KC_UNDO, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO, KC_LALT, KC_LSFT, KC_LCTL, KC_LGUI, XXXXXXX,                       XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, KC_NO,
+     KC_NO, KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, XXXXXXX,                       XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_U, KC_MS_R, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO, XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT, XXXXXXX,                       XXXXXXX, KC_WH_L, KC_WH_D, KC_WH_U, KC_WH_R, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -107,7 +107,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,   KC_CAPS, KC_AMPR, KC_AT,   KC_PIPE, KC_ASTR,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,   KC_PERC, KC_EXLM, KC_COLN, KC_EQL,  KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
+     KC_NO,   KC_PERC, KC_EXLM, KC_COLN, KC_EQL,  KC_PLUS,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RALT, KC_RSFT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,   KC_TILD, KC_HASH, KC_BSLS, KC_SCLN, KC_EQL,                       XXXXXXX, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,  KC_LALT, KC_LSFT, KC_LCTL, KC_LGUI, XXXXXXX,                       XXXXXXX, KC_LPRN, KC_LCBR, KC_RCBR, KC_RPRN, KC_NO,
+     KC_NO,  KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, XXXXXXX,                       XXXXXXX, KC_LPRN, KC_LCBR, KC_RCBR, KC_RPRN, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,  XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT, XXXXXXX,                       XXXXXXX, KC_HASH, KC_CIRC, KC_DLR,  KC_BSLS, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -131,7 +131,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,   KC_F13,  KC_F7,   KC_F8,   KC_F9,   KC_F16,                       XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,   KC_F14,  KC_F1,   KC_F2,   KC_F3,   KC_F17,                       XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
+     KC_NO,   KC_F14,  KC_F1,   KC_F2,   KC_F3,   KC_F17,                       XXXXXXX, KC_RGUI, KC_RCTL, KC_RALT, KC_RSFT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,   KC_F15,  KC_F4,   KC_F5,   KC_F6,   KC_F18,                       XXXXXXX, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -179,7 +179,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                     XXXXXXX, KC_WBAK, KC_BRID, KC_BRIU, KC_WFWD, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,  KC_LALT, KC_LSFT, KC_LCTL, KC_LGUI, XXXXXXX,                     XXXXXXX, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT, KC_NO,
+     KC_NO,  KC_LSFT, KC_LALT, KC_LCTL, KC_LGUI, XXXXXXX,                     XXXXXXX, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,  XXXXXXX, XXXXXXX, XXXXXXX, KC_LALT, XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -191,7 +191,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
      KC_NO,   KC_WBAK, KC_BRID, KC_BRIU, KC_WFWD, KC_PSCR,                      XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, QK_BOOT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_NO,   KC_WFAV, KC_CALC, KC_WHOM, KC_WSCH, KC_MYCM,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RSFT, KC_RALT, KC_NO,
+     KC_NO,   KC_WFAV, KC_CALC, KC_WHOM, KC_WSCH, KC_MYCM,                      XXXXXXX, KC_RGUI, KC_RCTL, KC_RALT, KC_RSFT, KC_NO,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
      KC_NO,   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, KC_RALT, XXXXXXX, XXXXXXX, XXXXXXX, KC_NO,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -237,11 +237,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case HM_S:
         if (record->event.pressed && record->tap.count > 0) {
-            if (get_mods() & MOD_BIT(KC_LALT)) {
-                unregister_mods(MOD_BIT(KC_LALT));
+            if (get_mods() & MOD_BIT(KC_LSFT)) {
+                unregister_mods(MOD_BIT(KC_LSFT));
                 tap_code(KC_R);
                 tap_code(KC_S);
-                add_mods(MOD_BIT(KC_LALT));
+                add_mods(MOD_BIT(KC_LSFT));
                 return false;
             }
         }
@@ -251,11 +251,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case HM_E:
         //if (record->event.pressed && record->tap.count > 0) {
         if (record->event.pressed && record->tap.count > 0) {
-            if (get_mods() & MOD_BIT(KC_RSFT)) {
-                unregister_mods(MOD_BIT(KC_RSFT));
+            if (get_mods() & MOD_BIT(KC_RALT)) {
+                unregister_mods(MOD_BIT(KC_RALT));
                 tap_code(KC_I);
                 tap_code(KC_E);
-                add_mods(MOD_BIT(KC_RSFT));
+                add_mods(MOD_BIT(KC_RALT));
                 return false;
             }
         }
@@ -276,11 +276,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Prevent activaction of Layer 4 on outward roll
     case HM_O:
         if (record->event.pressed && record->tap.count > 0) {
-            if (get_mods() & MOD_BIT(KC_RSFT)) {
-                unregister_mods(MOD_BIT(KC_RSFT));
+            if (get_mods() & MOD_BIT(KC_RALT)) {
+                unregister_mods(MOD_BIT(KC_RALT));
                 tap_code(KC_I);
                 tap_code(KC_O);
-                add_mods(MOD_BIT(KC_RSFT));
+                add_mods(MOD_BIT(KC_RALT));
                 return false;
             }
         }
@@ -295,11 +295,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 add_mods(MOD_BIT(KC_RGUI));
                 return false;
             }
-            if (get_mods() & MOD_BIT(KC_RALT)) {
-                unregister_mods(MOD_BIT(KC_RALT));
+            if (get_mods() & MOD_BIT(KC_RSFT)) {
+                unregister_mods(MOD_BIT(KC_RSFT));
                 tap_code(KC_O);
                 tap_code(KC_I);
-                add_mods(MOD_BIT(KC_RALT));
+                add_mods(MOD_BIT(KC_RSFT));
                 return false;
             }
         }
