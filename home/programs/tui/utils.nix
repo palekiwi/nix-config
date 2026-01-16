@@ -12,7 +12,7 @@
     fzf
     (lib.lowPrio go-task)
     home-assistant-cli
-    jrnl
+    # jrnl
     jq
     pandoc
     pass
