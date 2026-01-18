@@ -37,10 +37,10 @@ const CONFIG = {
             { output: $PALE_BUILTIN, opts: ["--off"] }
             { output: $PALE_HUION, opts: ["--auto", "--primary"] }
         ]
-        "ultrawide+builtin": [
+        "builtin+huion": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_HUION, opts: ["--auto", "--left-of", $PALE_BUILTIN] }
+            { output: $PALE_HUION, opts: ["--auto", "--mode", "1920x1080", "--below", $PALE_BUILTIN] }
         ]
         "ultrawide+huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
