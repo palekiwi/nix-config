@@ -67,14 +67,14 @@ function screen_roles.identify_screen(s)
     -- Multiple screens but no split detected
     -- Detect if screens are arranged vertically or horizontally
     local is_vertical = false
-    
+
     -- Check if screens have significantly different Y positions vs X positions
     if #all_screens >= 2 then
       local y_diff = math.abs(all_screens[1].geo.y - all_screens[#all_screens].geo.y)
       local x_diff = math.abs(all_screens[1].geo.x - all_screens[#all_screens].geo.x)
       is_vertical = y_diff > x_diff
     end
-    
+
     if is_vertical then
       -- Vertical arrangement: sort by Y position (top to bottom)
       table.sort(all_screens, function(a, b)
