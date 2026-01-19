@@ -185,12 +185,12 @@ local clientkeys = gears.table.join(
     ---]]
 
   -- toggle backdrop on client
-  awful.key({ MODKEY, "Control" }, "h",
-    function(c)
-      c.backdrop = not c.backdrop
-    end,
-    { description = "toggle backdrop", group = "client" }
-  ),
+  -- awful.key({ MODKEY, "Control" }, "h",
+  --   function(c)
+  --     c.backdrop = not c.backdrop
+  --   end,
+  --   { description = "toggle backdrop", group = "client" }
+  -- ),
 
   -- toggle visibility of backdrop client
   awful.key({ MODKEY }, "h",
