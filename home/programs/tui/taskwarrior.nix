@@ -20,7 +20,7 @@ in
       enable = true;
       package = taskwarrior-pkg;
       config = {
-        context.spabreaks.read = "project:sb";
+        context.spabreaks.read = "project:SB";
 
         sync.encryption_secret = "phahrei9YeiZ9eim";
 
