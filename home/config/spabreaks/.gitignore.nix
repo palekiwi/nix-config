@@ -14,6 +14,8 @@ in
   AGENTS.md
   ai_docs
   gemset.nix
+  ocx.json
+  ocx.env
   opencode.json
   cypress/cypress/screenshots
   cypress/cypress/snapshots
