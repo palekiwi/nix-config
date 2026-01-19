@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
-    ocx.url = "github:palekiwi-labs/ocx/6b915ac2f682c8e00783e81d566cbd3bbbdb54a7";
+    ocx.url = "github:palekiwi-labs/ocx";
     test-runner-mcp.url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
     wrappedAgents.url = "github:palekiwi-labs/agents";
   };
