@@ -89,7 +89,7 @@ awful.rules.rules = {
 
   -- Secondary tasks → ultrawide_left
   {
-    rule = { class = "kitty", name = ".*%-opencode$" },
+    rule = { class = "kitty", name = ".*%-ocx$" },
     callback = placement_rules.secondary(TAGS[7])
   },
 
