@@ -4,19 +4,6 @@ local naughty = require("naughty")
 
 require("globals")
 
-local function set_align(position, c)
-  awful.placement.align(c, { position = position, margins = MARGINS })
-  c.align = position
-end
-
-local function dim_clients_except(m)
-  for _, x in ipairs(mouse.screen.selected_tag:clients()) do
-    if x ~= m then
-      x.opacity = BACKDROP_OPACITY
-    end
-  end
-end
-
 local clientkeys = gears.table.join(
   awful.key({ MODKEY, "Control" }, "f",
     function(c)
