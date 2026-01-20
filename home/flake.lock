@@ -349,11 +349,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1768828337,
-        "narHash": "sha256-N9s8XHrlDcCL/XMBizgy0gMbM2yisVW7/x+sie32HpU=",
+        "lastModified": 1768878700,
+        "narHash": "sha256-78Fhn8k5p7h24GqHsrxH9J+TUNeoLlHdy8ZvXpb4QNY=",
         "owner": "palekiwi-labs",
         "repo": "ocx",
-        "rev": "232363322c1f96576a796d5b441e2fb9a5119708",
+        "rev": "2eaf70facefb10cb83c13d2a1bfeca8c881acae0",
         "type": "github"
       },
       "original": {
