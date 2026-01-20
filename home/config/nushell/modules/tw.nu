@@ -61,6 +61,18 @@ def get-repo-name [] {
     git rev-parse --show-toplevel | path basename
 }
 
+# Get current branch name
+def get-branch-name [] {
+    if not (is-git-repo) {
+        error make {
+            msg: "Not in a git repository"
+            help: "Branch name cannot be auto-detected outside git repositories"
+        }
+    }
+
+    git branch --show-current
+}
+
 # Get PR number from .git/GH_PR_NUMBER or gh CLI
 def get-pr-number [] {
     # Try .git/GH_PR_NUMBER first (set by git hooks)
@@ -160,6 +172,9 @@ def detect-context [
     # Repo detection
     let repo = (get-repo-name)
 
+    # Branch detection
+    let branch = (get-branch-name)
+
     # JIRA URL
     let jira_url = (build-jira-url $proj.namespace $proj.issue)
 
@@ -181,6 +196,7 @@ def detect-context [
     {
         project: $proj,
         repo: $repo,
+        branch: $branch,
         jira_url: $jira_url,
         pr: $pr_info
     }
@@ -197,16 +213,18 @@ def build-task-args [context: record, task_args: list] {
     # Add project
     $args = ($args | append $"project:($context.project.project_path)")
 
-    # Add JIRA URL
-    $args = ($args | append $"jira_url:($context.jira_url)")
+    # Add JIRA ticket ID (e.g., SB-9570)
+    $args = ($args | append $"jira:($context.project.namespace)-($context.project.issue)")
 
     # Add repo
     $args = ($args | append $"repo:($context.repo)")
 
-    # Add PR info if available
+    # Add branch
+    $args = ($args | append $"branch:($context.branch)")
+
+    # Add PR number if available
     if ($context.pr != null) {
         $args = ($args | append $"pr:($context.pr.number)")
-        $args = ($args | append $"pr_url:($context.pr.url)")
     }
 
     # Add task description and other args passed through
@@ -235,6 +253,7 @@ export def "add" [
         print $"  Project: (ansi cyan)($context.project.project_path)(ansi reset)"
         print $"  JIRA URL: (ansi blue)($context.jira_url)(ansi reset)"
         print $"  Repository: (ansi yellow)($context.repo)(ansi reset)"
+        print $"  Branch: (ansi yellow)($context.branch)(ansi reset)"
         if ($context.pr != null) {
             print $"  PR: (ansi magenta)#($context.pr.number)(ansi reset) - ($context.pr.url)"
         }
@@ -264,20 +283,20 @@ export def "list" [
     --repo (-r)                 # Show tasks for current repo
 ] {
     if $all {
-        # Pass through to task
-        call-task ...$args
+        # Pass through to task with list report (clean view without URLs)
+        call-task "list" ...$args
     } else if $issue {
         # Show tasks for specific issue (e.g., project:sb.1234)
         let context = (detect-context)
-        call-task $"project:($context.project.project_path)" ...$args
+        call-task "list" $"project:($context.project.project_path)" ...$args
     } else if $repo {
         # Show tasks for current repo
         let repo = (get-repo-name)
-        call-task $"repo:($repo)" ...$args
+        call-task "list" $"repo:($repo)" ...$args
     } else {
         # Default: show all tasks in project namespace (e.g., project:sb)
         let namespace = (get-project-namespace)
-        call-task $"project:($namespace)" ...$args
+        call-task "list" $"project:($namespace)" ...$args
     }
 }
 

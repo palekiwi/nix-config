@@ -30,14 +30,25 @@ in
         uda.pr.type = "string";
         uda.pr.label = "PR";
 
-        uda.jira_url.type = "string";
-        uda.jira_url.label = "JIRA";
-
-        uda.pr_url.type = "string";
-        uda.pr_url.label = "PR URL";
+        uda.jira.type = "string";
+        uda.jira.label = "JIRA";
 
         uda.repo.type = "string";
         uda.repo.label = "Repo";
+
+        uda.branch.type = "string";
+        uda.branch.label = "Branch";
+
+        # Customize list report to show UDAs
+        report.list.columns = "id,start.active,project,priority,due,description.count,branch,pr,repo,jira";
+        report.list.labels = "ID,A,Project,Pri,Due,Description,Branch,PR,Repo,JIRA";
+
+        # Optional: Create a detailed report with full description
+        report.detailed.description = "Detailed task list with full description";
+        report.detailed.columns = "id,start.active,project,priority,due,description,branch,pr,repo,jira";
+        report.detailed.labels = "ID,A,Project,Pri,Due,Description,Branch,PR,Repo,JIRA";
+        report.detailed.filter = "status:pending";
+        report.detailed.sort = "project+,priority-,due+";
       };
     };
   };
