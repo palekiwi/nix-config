@@ -10,7 +10,7 @@ use modules/gcp.nu
 use modules/gh-utils.nu
 use modules/git-utils.nu
 use modules/sb.nu
-use modules/taskwarrior.nu
+use modules/tw.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
