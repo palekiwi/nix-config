@@ -260,24 +260,24 @@ export def "add" [
 export def "list" [
     ...args: string             # Additional taskwarrior filter arguments
     --all (-a)                  # Show all tasks (no filtering)
-    --project (-p)              # Show all tasks in project namespace
+    --issue (-i)                # Show tasks for current specific issue
     --repo (-r)                 # Show tasks for current repo
 ] {
     if $all {
         # Pass through to task
         call-task ...$args
-    } else if $project {
-        # Show all tasks in namespace (e.g., project:sb)
-        let namespace = (get-project-namespace)
-        call-task $"project:($namespace)" ...$args
+    } else if $issue {
+        # Show tasks for specific issue (e.g., project:sb.1234)
+        let context = (detect-context)
+        call-task $"project:($context.project.project_path)" ...$args
     } else if $repo {
         # Show tasks for current repo
         let repo = (get-repo-name)
         call-task $"repo:($repo)" ...$args
     } else {
-        # Default: show tasks for current issue
-        let context = (detect-context)
-        call-task $"project:($context.project.project_path)" ...$args
+        # Default: show all tasks in project namespace (e.g., project:sb)
+        let namespace = (get-project-namespace)
+        call-task $"project:($namespace)" ...$args
     }
 }
 
