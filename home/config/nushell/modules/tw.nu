@@ -127,6 +127,19 @@ def call-task [...args: string] {
     run-external ~/.nix-profile/bin/task ...$args
 }
 
+# Get task data by ID and extract UDAs
+def get-task-data [task_id: string] {
+    let task_json = (call-task $task_id "export" | from json)
+
+    if ($task_json | is-empty) {
+        error make {
+            msg: $"Task ($task_id) not found"
+        }
+    }
+
+    $task_json.0
+}
+
 # ============================================================================
 # Context Detection (Main)
 # ============================================================================
@@ -332,6 +345,67 @@ export def "modify" [...args: string] {
     call-task "modify" ...$args
 }
 
+# Checkout PR associated with a task
+export def "checkout" [
+    task_id: string             # Task ID to checkout PR for
+    --verbose (-v)              # Show validation steps
+] {
+    # Get task data
+    let task = (get-task-data $task_id)
+
+    # Extract repo UDA
+    let task_repo = try {
+        $task.repo
+    } catch {
+        null
+    }
+
+    if ($task_repo == null) {
+        error make {
+            msg: $"Task ($task_id) does not have a repo UDA"
+            help: "This task may not have been created with 'tw add'"
+        }
+    }
+
+    # Extract PR UDA
+    let task_pr = try {
+        $task.pr
+    } catch {
+        null
+    }
+
+    if ($task_pr == null) {
+        error make {
+            msg: $"Task ($task_id) does not have a PR associated with it"
+            help: "Make sure the task has a PR before trying to check it out"
+        }
+    }
+
+    # Verify we're in correct repository
+    let current_repo = (get-repo-name)
+
+    if $verbose {
+        print $"(ansi blue)Validating repository...(ansi reset)"
+        print $"  Current: (ansi yellow)($current_repo)(ansi reset)"
+        print $"  Expected: (ansi yellow)($task_repo)(ansi reset)"
+    }
+
+    if $current_repo != $task_repo {
+        error make {
+            msg: $"Repository mismatch! Current: ($current_repo), Expected: ($task_repo)"
+            help: $"Please switch to the '($task_repo)' repository before checking out this PR"
+        }
+    }
+
+    if $verbose {
+        print $"(ansi green)✓ Repository matches!(ansi reset)"
+        print $"(ansi blue)Checking out PR #($task_pr)...(ansi reset)"
+    }
+
+    # Checkout the PR using gh CLI
+    gh pr checkout $task_pr
+}
+
 # Default command - show help or list tasks
 export def main [...args: string] {
     if ($args | is-empty) {
@@ -339,6 +413,7 @@ export def main [...args: string] {
         print "Available commands:"
         print $"  (ansi green)tw add(ansi reset) <description>       - Add task with auto-detected context"
         print $"  (ansi green)tw list(ansi reset)                   - List tasks for current issue"
+        print $"  (ansi green)tw checkout(ansi reset) <id>          - Checkout PR for task"
         print $"  (ansi green)tw done(ansi reset) <id>              - Mark task as done"
         print $"  (ansi green)tw start(ansi reset) <id>             - Start task"
         print $"  (ansi green)tw stop(ansi reset) <id>              - Stop task"
