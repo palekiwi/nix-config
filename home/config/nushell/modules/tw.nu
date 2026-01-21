@@ -135,6 +135,7 @@ def call-task [...args: string] {
 def detect-context [
     --issue: string         # Manual issue number override
     --project: string       # Manual project override (format: "sb.1234" or "sb:1234")
+    --branch: string        # Manual branch override
 ] {
     # Project detection
     let proj = if ($project != null) {
@@ -173,7 +174,11 @@ def detect-context [
     let repo = (get-repo-name)
 
     # Branch detection
-    let branch = (get-branch-name)
+    let branch = if ($branch != null) {
+        $branch
+    } else {
+        (get-branch-name)
+    }
 
     # JIRA URL
     let jira_url = (build-jira-url $proj.namespace $proj.issue)
@@ -242,11 +247,12 @@ export def "add" [
     ...task_args: string        # Task description and additional taskwarrior arguments
     --issue (-i): string        # Manual issue number override
     --project (-p): string      # Manual project override (format: "sb.1234" or "sb:1234")
+    --branch (-b): string       # Manual branch override
     --dry-run (-d)              # Show command without executing
     --verbose (-v)              # Show detected context
 ] {
     # Detect context
-    let context = (detect-context --issue $issue --project $project)
+    let context = (detect-context --issue $issue --project $project --branch $branch)
 
     if $verbose {
         print $"(ansi green_bold)Detected context:(ansi reset)"
@@ -344,6 +350,7 @@ export def main [...args: string] {
         print "  --dry-run, -d            - Preview without executing"
         print "  --issue, -i <num>        - Manual issue override"
         print "  --project, -p <proj>     - Manual project override (e.g., sb.1234)"
+        print "  --branch, -b <branch>    - Manual branch override"
         print ""
         print $"For more info: (ansi blue)tw add --help(ansi reset)"
     } else {
