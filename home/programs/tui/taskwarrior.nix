@@ -13,6 +13,41 @@ let
         --prefix PATH : ${taskwarrior-pkg}/bin
     '';
   };
+
+  # Function to generate report columns and labels from an array of tuples
+  # Takes: [[ "id" "ID" ] [ "project" "Project" ] ...]
+  # Returns: { columns = "id,project,..."; labels = "ID,Project,..."; }
+  mkReportConfig = fields: {
+    columns = pkgs.lib.concatMapStringsSep "," (f: builtins.elemAt f 0) fields;
+    labels = pkgs.lib.concatMapStringsSep "," (f: builtins.elemAt f 1) fields;
+  };
+
+  listReportFields = [
+    [ "id" "ID" ]
+    [ "start.active" "A" ]
+    [ "project" "Project" ]
+    [ "pr" "PR" ]
+    [ "description" "Description" ]
+    [ "branch" "Branch" ]
+    [ "repo" "Repo" ]
+    [ "priority" "Pri" ]
+    [ "due" "Due" ]
+  ];
+
+  detailedReportFields = [
+    [ "id" "ID" ]
+    [ "start.active" "A" ]
+    [ "priority" "Pri" ]
+    [ "project" "Project" ]
+    [ "pr" "PR" ]
+    [ "branch" "Branch" ]
+    [ "description" "Description" ]
+    [ "repo" "Repo" ]
+    [ "due" "Due" ]
+  ];
+
+  listReport = mkReportConfig listReportFields;
+  detailedReport = mkReportConfig detailedReportFields;
 in
 {
   programs = {
@@ -40,13 +75,13 @@ in
         uda.branch.label = "Branch";
 
         # Customize list report to show UDAs
-        report.list.columns = "id,start.active,project,priority,due,description.count,branch,pr,repo,jira";
-        report.list.labels = "ID,A,Project,Pri,Due,Description,Branch,PR,Repo,JIRA";
+        report.list.columns = listReport.columns;
+        report.list.labels = listReport.labels;
 
         # Optional: Create a detailed report with full description
         report.detailed.description = "Detailed task list with full description";
-        report.detailed.columns = "id,start.active,project,priority,due,description,branch,pr,repo,jira";
-        report.detailed.labels = "ID,A,Project,Pri,Due,Description,Branch,PR,Repo,JIRA";
+        report.detailed.columns = detailedReport.columns;
+        report.detailed.labels = detailedReport.labels;
         report.detailed.filter = "status:pending";
         report.detailed.sort = "project+,priority-,due+";
       };
