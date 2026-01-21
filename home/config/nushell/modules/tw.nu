@@ -256,6 +256,9 @@ def build-task-args [context: record, task_args: list] {
 # ============================================================================
 
 # Add a task with automatic context detection
+#
+# Automatically detects JIRA ticket, repository, branch, and PR info
+# from the current git context and adds them as UDAs to the task.
 export def "add" [
     ...task_args: string        # Task description and additional taskwarrior arguments
     --issue (-i): string        # Manual issue number override
@@ -295,6 +298,10 @@ export def "add" [
 }
 
 # List tasks with smart filtering
+#
+# Shows tasks for the current context by default.
+# Use --all to see all tasks, --issue to filter by the current JIRA ticket,
+# or --repo to filter by the current repository.
 export def "list" [
     ...args: string             # Additional taskwarrior filter arguments
     --all (-a)                  # Show all tasks (no filtering)
@@ -320,32 +327,42 @@ export def "list" [
 }
 
 # Pass through to taskwarrior for advanced usage
+#
+# Directly invoke taskwarrior with any command without context detection.
+# Useful for advanced taskwarrior operations not covered by wrapper commands.
 export def "raw" [...args: string] {
     call-task ...$args
 }
 
-# Convenience exports for common operations (pass through to task)
+# Mark task as done
 export def "done" [...args: string] {
     call-task "done" ...$args
 }
 
+# Start a task (mark as active)
 export def "start" [...args: string] {
     call-task "start" ...$args
 }
 
+# Stop a task (mark as inactive)
 export def "stop" [...args: string] {
     call-task "stop" ...$args
 }
 
+# Delete a task
 export def "delete" [...args: string] {
     call-task "delete" ...$args
 }
 
+# Modify a task's attributes
 export def "modify" [...args: string] {
     call-task "modify" ...$args
 }
 
 # Checkout PR associated with a task
+#
+# Uses the GitHub CLI to checkout the pull request referenced by the task's PR UDA.
+# Validates that you're in the correct repository before checking out.
 export def "checkout" [
     task_id: string             # Task ID to checkout PR for
     --verbose (-v)              # Show validation steps
@@ -407,27 +424,15 @@ export def "checkout" [
 }
 
 # Default command - show help or list tasks
-export def main [...args: string] {
+#
+# Without arguments, lists tasks. Passes through to taskwarrior for
+# any other commands not handled by the wrapper.
+export def main [
+    ...args: string  # Taskwarrior commands or filters
+] {
     if ($args | is-empty) {
-        print $"(ansi cyan_bold)Taskwarrior Context-Aware Wrapper(ansi reset)\n"
-        print "Available commands:"
-        print $"  (ansi green)tw add(ansi reset) <description>       - Add task with auto-detected context"
-        print $"  (ansi green)tw list(ansi reset)                   - List tasks for current issue"
-        print $"  (ansi green)tw checkout(ansi reset) <id>          - Checkout PR for task"
-        print $"  (ansi green)tw done(ansi reset) <id>              - Mark task as done"
-        print $"  (ansi green)tw start(ansi reset) <id>             - Start task"
-        print $"  (ansi green)tw stop(ansi reset) <id>              - Stop task"
-        print $"  (ansi green)tw modify(ansi reset) <id> <mods>     - Modify task"
-        print $"  (ansi green)tw raw(ansi reset) <command>          - Pass through to task"
-        print ""
-        print "Flags:"
-        print "  --verbose, -v            - Show detected context"
-        print "  --dry-run, -d            - Preview without executing"
-        print "  --issue, -i <num>        - Manual issue override"
-        print "  --project, -p <proj>     - Manual project override (e.g., sb.1234)"
-        print "  --branch, -b <branch>    - Manual branch override"
-        print ""
-        print $"For more info: (ansi blue)tw add --help(ansi reset)"
+        # Default to list when called without args
+        do { list }
     } else {
         # Pass through to task if called with args
         call-task ...$args
