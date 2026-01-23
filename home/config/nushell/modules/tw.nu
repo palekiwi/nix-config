@@ -300,29 +300,52 @@ export def "add" [
 # List tasks with smart filtering
 #
 # Shows tasks for the current context by default.
-# Use --all to see all tasks, --issue to filter by the current JIRA ticket,
-# or --repo to filter by the current repository.
+# Use --all to see all tasks, --issue <number> to filter by specific issue,
+# --project to filter by project namespace, or --repo to filter by repository.
+# Flags can be combined.
 export def "list" [
     ...args: string             # Additional taskwarrior filter arguments
     --all (-a)                  # Show all tasks (no filtering)
-    --issue (-i)                # Show tasks for current specific issue
-    --repo (-r)                 # Show tasks for current repo
+    --issue (-i): string        # Show tasks for specific issue number (e.g., "1234")
+    --project (-p)              # Show tasks for current project namespace
+    --repo (-r)                 # Show tasks for current repository
 ] {
     if $all {
         # Pass through to task with list report (clean view without URLs)
         call-task "list" ...$args
-    } else if $issue {
-        # Show tasks for specific issue (e.g., project:sb.1234)
-        let context = (detect-context)
-        call-task "list" $"project:($context.project.project_path)" ...$args
-    } else if $repo {
-        # Show tasks for current repo
-        let repo = (get-repo-name)
-        call-task "list" $"repo:($repo)" ...$args
-    } else {
-        # Default: show all tasks in project namespace (e.g., project:sb)
+    } else if $issue != null {
+        # Show tasks for specific issue number
         let namespace = (get-project-namespace)
-        call-task "list" $"project:($namespace)" ...$args
+        let project_path = $"($namespace).($issue)"
+        call-task "list" $"project:($project_path)" ...$args
+    } else {
+        # Build filter arguments based on flags
+        mut filters = []
+        
+        if $project {
+            # Add project namespace filter
+            let namespace = (get-project-namespace)
+            $filters = ($filters | append $"project:($namespace)")
+        }
+        
+        if $repo {
+            # Add repo filter
+            let repo_name = (get-repo-name)
+            $filters = ($filters | append $"repo:($repo_name)")
+        }
+        
+        if ($filters | is-empty) {
+            # Default: try to detect issue from context
+            try {
+                let context = (detect-context)
+                $filters = ($filters | append $"project:($context.project.project_path)")
+            } catch {
+                print "no issue, use --project flag to see all tasks in current project"
+                return
+            }
+        }
+        
+        call-task "list" ...$filters ...$args
     }
 }
 
