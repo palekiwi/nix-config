@@ -55,7 +55,9 @@ in
       set -g allow-passthrough on
 
       # Add OSC 52 support to terminal capabilities
-      set -ga terminal-overrides ',xterm-256color:Ms=\\E]52;c;%p2%s\\7'
+      # set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;c;%p2%s\7'
+      set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;%p1%s;%p2%s\007'
+      # set -as terminal-overrides ',*:Ms=\E]52;%p1%s;%p2%s\007'
 
       # ============================================
 
