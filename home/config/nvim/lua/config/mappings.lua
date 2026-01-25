@@ -9,6 +9,7 @@ local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local helpers = require('config.utils.helpers')
 local hunk_comments = require('config.utils.hunk-comments')
+local mem_utils = require('config.utils.mem')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
 local telescope_utils = require('config.utils.telescope')
@@ -44,7 +45,8 @@ local base = {
   { "<space>r",          telescope_utils.file_review,                                            desc = "File review" },
   { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
   { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
-  { "<A-t>",             function() agents_utils.find_files({ latest = true }) end,              desc = "[Agents] Find latest files" },
+  { "<A-t>",             mem_utils.pick_artifacts,                                               desc = "[Mem] Pick artifacts" },
+  { "<A-T>",             function() mem_utils.pick_artifacts({ all = true }) end,                desc = "[Mem] Pick all artifacts" },
   { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
   { "<A-f>",             "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",             "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
