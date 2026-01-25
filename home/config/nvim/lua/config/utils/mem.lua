@@ -5,6 +5,7 @@ local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local entry_display = require('telescope.pickers.entry_display')
 local make_entry = require('telescope.make_entry')
+local utils = require('telescope.utils')
 
 local M = {}
 
@@ -104,25 +105,30 @@ local function make_mem_entry_maker(opts)
     separator = " ",
     items = {
       { width = 8 },           -- category badge
+      { width = 50 },          -- filename
       { width = 8 },           -- hash
-      { width = 3 },           -- separator
-      { remaining = true },    -- filename (branch)
+      { width = 20 },          -- branch
     },
   }
 
   local make_display = function(entry)
     -- Handle vim.NIL from JSON null values
-    local hash_display = "        " -- 8 spaces for alignment
+    local hash_display = ""
     if entry.hash and entry.hash ~= vim.NIL then
       hash_display = entry.hash
     end
-    local name_with_branch = string.format("%s (%s)", entry.name, entry.branch)
+
+    -- Truncate filename to 50 characters
+    local display_name = utils.transform_path(opts, entry.name)
+    if #display_name > 50 then
+      display_name = display_name:sub(1, 47) .. "..."
+    end
 
     return displayer {
       { format_category(entry.category), get_category_highlight(entry.category) },
+      { display_name, "TelescopeResultsNormal" },
       { hash_display, "TelescopeResultsComment" },
-      { "│", "TelescopeResultsComment" },
-      { name_with_branch, "TelescopeResultsNormal" },
+      { entry.branch, "TelescopePreviewDate" },
     }
   end
 
@@ -164,8 +170,8 @@ local function sort_artifacts(artifacts)
 
   -- Category priority mapping
   local category_priority = {
-    trace = 1,
-    root = 2,
+    root = 1,
+    trace = 2,
     tmp = 3,
     ref = 4,
   }
