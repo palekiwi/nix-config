@@ -105,9 +105,9 @@ local function make_mem_entry_maker(opts)
     separator = " ",
     items = {
       { width = 8 },           -- category badge
-      { width = 50 },          -- filename
-      { width = 8 },           -- hash
-      { width = 20 },          -- branch
+      { width = 45 },          -- filename
+      { width = 12 },          -- hash (full short hash)
+      { remaining = true },    -- branch (use remaining space)
     },
   }
 
@@ -118,10 +118,10 @@ local function make_mem_entry_maker(opts)
       hash_display = entry.hash
     end
 
-    -- Truncate filename to 50 characters
+    -- Truncate filename to 45 characters
     local display_name = utils.transform_path(opts, entry.name)
-    if #display_name > 50 then
-      display_name = display_name:sub(1, 47) .. "..."
+    if #display_name > 45 then
+      display_name = display_name:sub(1, 42) .. "..."
     end
 
     return displayer {
@@ -232,6 +232,13 @@ function M.pick_artifacts(opts)
     }),
     sorter = conf.generic_sorter({}), ---@type table
     previewer = conf.file_previewer({}), ---@type table
+    layout_strategy = "vertical",
+    layout_config = {
+      vertical = {
+        preview_cutoff = 0,
+        preview_height = 0.4,
+      },
+    },
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
