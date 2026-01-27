@@ -118,13 +118,13 @@ local function make_mem_entry_maker(opts)
     -- Handle vim.NIL from JSON null values
     local hash_display = "" ---@type string
     if entry.hash and entry.hash ~= vim.NIL then
-      hash_display = entry.hash
+      hash_display = entry.hash ---@type string
     end
 
     -- Truncate filename to 45 characters
     local display_name = utils.transform_path(opts, entry.name)
     if #display_name > 45 then
-      display_name = display_name:sub(1, 42) .. "..."
+      display_name = display_name:sub(1, 42) .. "..." ---@type string
     end
 
     return displayer {
@@ -144,7 +144,7 @@ local function make_mem_entry_maker(opts)
     -- Handle vim.NIL from JSON null values
     local hash_for_search = "" ---@type string
     if entry.hash and entry.hash ~= vim.NIL then
-      hash_for_search = entry.hash
+      hash_for_search = entry.hash ---@type string
     end
 
     local ordinal = string.format("%s %s %s %s",
@@ -282,6 +282,58 @@ function M.pick_artifacts(opts)
   }
 
   pickers.new({}, picker_opts):find()
+end
+
+-- Add a new artifact file using mem add command and open it for editing
+function M.add(filename, opts)
+  opts = opts or {}
+
+  -- Validate filename
+  if not filename or filename == "" then
+    vim.notify("Error: filename is required", vim.log.levels.ERROR)
+    return nil
+  end
+
+  -- Build base command
+  local cmd = "mem add " .. vim.fn.shellescape(filename)
+
+  -- Add category flag
+  if opts.category == "trace" then
+    cmd = cmd .. " --trace"
+  elseif opts.category == "tmp" then
+    cmd = cmd .. " --tmp"
+  elseif opts.category == "ref" then
+    cmd = cmd .. " --ref"
+  end
+
+  -- Add commit hash if provided and category allows it
+  if opts.commit and (opts.category == "trace" or opts.category == "tmp") then
+    cmd = cmd .. " --commit " .. vim.fn.shellescape(opts.commit)
+  end
+
+  -- Add force flag
+  if opts.force then
+    cmd = cmd .. " --force"
+  end
+
+  -- Execute command
+  local output, err = execute_command(cmd)
+  if not output then
+    vim.notify("Error adding file: " .. (err or "unknown error"), vim.log.levels.ERROR)
+    return nil
+  end
+
+  -- Parse output to get relative path
+  local filepath = output:gsub("%s+", "") ---@type string
+  if filepath == "" then
+    vim.notify("Error: failed to get file path from mem add output", vim.log.levels.ERROR)
+    return nil
+  end
+
+  -- Open the file in a new buffer
+  vim.cmd.edit(filepath)
+
+  return filepath
 end
 
 return M
