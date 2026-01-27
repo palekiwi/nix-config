@@ -352,4 +352,61 @@ function M.add(filename, opts)
   return filepath
 end
 
+-- Setup user commands automatically when module loads
+-- :MemAdd <filename> - Add root artifact
+vim.api.nvim_create_user_command('MemAdd', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAdd <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, {})
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem artifact (root) and open it for editing'
+})
+
+-- :MemAddTrace <filename> - Add trace artifact
+vim.api.nvim_create_user_command('MemAddTrace', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAddTrace <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, { category = 'trace' })
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem trace artifact and open it for editing'
+})
+
+-- :MemAddTmp <filename> - Add tmp artifact
+vim.api.nvim_create_user_command('MemAddTmp', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAddTmp <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, { category = 'tmp' })
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem tmp artifact and open it for editing'
+})
+
+-- :MemAddRef <filename> - Add ref artifact
+vim.api.nvim_create_user_command('MemAddRef', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAddRef <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, { category = 'ref' })
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem ref artifact and open it for editing'
+})
+
 return M
