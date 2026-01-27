@@ -277,6 +277,27 @@ function M.pick_artifacts(opts)
         end
       end)
 
+      -- Copy hash to clipboard
+      map('i', '<C-h>', function()
+        local entry = action_state.get_selected_entry() ---@type table
+        if entry and entry.hash and entry.hash ~= vim.NIL and entry.hash ~= "" then
+          vim.fn.setreg('+', entry.hash)
+          vim.notify("Copied hash: " .. entry.hash, vim.log.levels.INFO)
+        else
+          vim.notify("No hash available for this artifact", vim.log.levels.WARN)
+        end
+      end)
+
+      map('n', '<C-h>', function()
+        local entry = action_state.get_selected_entry() ---@type table
+        if entry and entry.hash and entry.hash ~= vim.NIL and entry.hash ~= "" then
+          vim.fn.setreg('+', entry.hash)
+          vim.notify("Copied hash: " .. entry.hash, vim.log.levels.INFO)
+        else
+          vim.notify("No hash available for this artifact", vim.log.levels.WARN)
+        end
+      end)
+
       return true
     end,
   }
