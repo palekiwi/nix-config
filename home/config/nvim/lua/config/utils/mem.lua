@@ -113,7 +113,7 @@ local function make_mem_entry_maker(opts)
 
   local make_display = function(entry)
     -- Handle vim.NIL from JSON null values
-    local hash_display = ""
+    local hash_display = "" ---@type string
     if entry.hash and entry.hash ~= vim.NIL then
       hash_display = entry.hash
     end
@@ -139,7 +139,7 @@ local function make_mem_entry_maker(opts)
 
     -- Build ordinal for fuzzy matching
     -- Handle vim.NIL from JSON null values
-    local hash_for_search = ""
+    local hash_for_search = "" ---@type string
     if entry.hash and entry.hash ~= vim.NIL then
       hash_for_search = entry.hash
     end
