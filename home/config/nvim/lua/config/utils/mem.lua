@@ -294,41 +294,56 @@ function M.add(filename, opts)
     return nil
   end
 
-  -- Build base command
-  local cmd = "mem add " .. vim.fn.shellescape(filename)
+  -- 1. Prepare the command and arguments
+  local cmd = { 'mem', 'add', filename }
 
   -- Add category flag
   if opts.category == "trace" then
-    cmd = cmd .. " --trace"
+    table.insert(cmd, '--trace')
   elseif opts.category == "tmp" then
-    cmd = cmd .. " --tmp"
+    table.insert(cmd, '--tmp')
   elseif opts.category == "ref" then
-    cmd = cmd .. " --ref"
+    table.insert(cmd, '--ref')
   end
 
   -- Add commit hash if provided and category allows it
   if opts.commit and (opts.category == "trace" or opts.category == "tmp") then
-    cmd = cmd .. " --commit " .. vim.fn.shellescape(opts.commit)
+    table.insert(cmd, '--commit')
+    table.insert(cmd, opts.commit)
   end
 
   -- Add force flag
   if opts.force then
-    cmd = cmd .. " --force"
+    table.insert(cmd, '--force')
   end
 
-  -- Execute command
-  local output, err = execute_command(cmd)
-  if not output then
-    vim.notify("Error adding file: " .. (err or "unknown error"), vim.log.levels.ERROR)
-    return nil
+  -- 2. Execute the command synchronously with :wait()
+  -- text = true ensures the output is returned as a string, not a raw buffer
+  local obj = vim.system(cmd, { text = true }):wait()
+
+  -- 3. Check the exit code
+  if obj.code ~= 0 then
+    -- Prefer stderr for error messages, fallback to stdout if stderr is empty
+    local error_msg = (obj.stderr and obj.stderr ~= "") and obj.stderr or obj.stdout
+
+    -- Clean up whitespace (optional)
+    error_msg = vim.trim(error_msg or "Unknown error")
+
+    -- Notify the user of the error
+    vim.notify("Mem Error: " .. error_msg, vim.log.levels.ERROR)
+
+    return nil, error_msg
   end
 
   -- Parse output to get relative path
-  local filepath = output:gsub("%s+", "") ---@type string
+  local filepath = vim.trim(obj.stdout or "") ---@type string
   if filepath == "" then
     vim.notify("Error: failed to get file path from mem add output", vim.log.levels.ERROR)
     return nil
   end
+
+  -- Notify success
+  vim.notify("Successfully added: " .. filename, vim.log.levels.INFO)
 
   -- Open the file in a new buffer
   vim.cmd.edit(filepath)
