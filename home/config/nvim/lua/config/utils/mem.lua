@@ -92,10 +92,10 @@ end
 -- Get highlight group for category
 local function get_category_highlight(category)
   local highlights = {
-    trace = "TelescopeResultsIdentifier",
+    trace = "TelescopeResultsConstant",
     root = "TelescopeResultsFunction",
     tmp = "TelescopeResultsVariable",
-    ref = "TelescopeResultsConstant",
+    ref = "TelescopeResultsIdentifier",
   }
   return highlights[category] or "TelescopeResultsNormal"
 end
