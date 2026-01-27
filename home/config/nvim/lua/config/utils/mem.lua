@@ -45,7 +45,7 @@ local function get_current_branch()
 end
 
 -- Get artifact list from mem CLI
-local function get_mem_artifacts(all_branches)
+local function get_mem_artifacts(all_branches, include_ignored)
   -- Check if mem command exists
   vim.fn.system('which mem 2>/dev/null')
   if vim.v.shell_error ~= 0 then
@@ -57,6 +57,9 @@ local function get_mem_artifacts(all_branches)
   local cmd = 'mem list --json'
   if all_branches then
     cmd = cmd .. ' --all'
+  end
+  if include_ignored then
+    cmd = cmd .. ' --include-ignored'
   end
   cmd = cmd .. ' 2>/dev/null'
 
@@ -91,7 +94,7 @@ local function get_category_highlight(category)
   local highlights = {
     trace = "TelescopeResultsIdentifier",
     root = "TelescopeResultsFunction",
-    tmp = "TelescopeResultsComment",
+    tmp = "TelescopeResultsVariable",
     ref = "TelescopeResultsConstant",
   }
   return highlights[category] or "TelescopeResultsNormal"
@@ -160,6 +163,8 @@ local function make_mem_entry_maker(opts)
       hash = entry.hash, ---@type string?
       name = entry.name, ---@type string
       branch = entry.branch, ---@type string
+      commit_timestamp = entry.commit_timestamp, ---@type number?
+      commit_hash = entry.commit_hash, ---@type string?
     }, opts)
   end
 end
@@ -194,7 +199,14 @@ local function sort_artifacts(artifacts)
       return a_priority < b_priority
     end
 
-    -- Third: alphabetically by name
+    -- Third: commit_timestamp (most recent first)
+    local a_timestamp = a.commit_timestamp and a.commit_timestamp ~= vim.NIL and a.commit_timestamp or 0 ---@type number
+    local b_timestamp = b.commit_timestamp and b.commit_timestamp ~= vim.NIL and b.commit_timestamp or 0 ---@type number
+    if a_timestamp ~= b_timestamp then
+      return a_timestamp > b_timestamp
+    end
+
+    -- Fourth: alphabetically by name
     return a.name < b.name
   end)
 
@@ -205,7 +217,7 @@ end
 function M.pick_artifacts(opts)
   opts = opts or {}
 
-  local artifacts = get_mem_artifacts(opts.all)
+  local artifacts = get_mem_artifacts(opts.all, not opts.all)
   if not artifacts or #artifacts == 0 then
     return
   end
