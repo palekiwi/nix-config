@@ -130,6 +130,16 @@ startup_command = "_tmux_git-repo"
 #-------------------
 
 [[session]]
+name = "mem"
+path = "~/code/palekiwi-labs/mem"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "ocx"
+path = "~/code/palekiwi-labs/ocx"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "notes-pl"
 path = "~/Nextcloud-pl/Notes"
 startup_command = "_tmux_git-repo"
