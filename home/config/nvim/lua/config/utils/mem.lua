@@ -92,8 +92,8 @@ end
 -- Get highlight group for category
 local function get_category_highlight(category)
   local highlights = {
-    trace = "TelescopeResultsConstant",
-    root = "TelescopeResultsFunction",
+    spec = "TelescopeResultsConstant",
+    trace = "TelescopeResultsFunction",
     tmp = "TelescopeResultsVariable",
     ref = "TelescopeResultsIdentifier",
   }
@@ -108,7 +108,7 @@ local function make_mem_entry_maker(opts)
     separator = " ",
     items = {
       { width = 8 },           -- category badge
-      { width = 45 },          -- filename
+      { width = 65 },          -- filename
       { width = 12 },          -- hash (full short hash)
       { remaining = true },    -- branch (use remaining space)
     },
@@ -121,11 +121,7 @@ local function make_mem_entry_maker(opts)
       hash_display = entry.hash ---@type string
     end
 
-    -- Truncate filename to 45 characters
     local display_name = utils.transform_path(opts, entry.name)
-    if #display_name > 45 then
-      display_name = display_name:sub(1, 42) .. "..." ---@type string
-    end
 
     return displayer {
       { format_category(entry.category), get_category_highlight(entry.category) },
@@ -175,7 +171,7 @@ local function sort_artifacts(artifacts)
 
   -- Category priority mapping
   local category_priority = {
-    root = 1,
+    spec = 1,
     trace = 2,
     tmp = 3,
     ref = 4,
@@ -374,7 +370,7 @@ function M.add(filename, opts)
 end
 
 -- Setup user commands automatically when module loads
--- :MemAdd <filename> - Add root artifact
+-- :MemAdd <filename> - Add spec artifact
 vim.api.nvim_create_user_command('MemAdd', function(args)
   local filename = args.args
   if not filename or filename == "" then
@@ -385,7 +381,7 @@ vim.api.nvim_create_user_command('MemAdd', function(args)
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem artifact (root) and open it for editing'
+  desc = 'Add a new mem artifact (spec) and open it for editing'
 })
 
 -- :MemAddTrace <filename> - Add trace artifact
