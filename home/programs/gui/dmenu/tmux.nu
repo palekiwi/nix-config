@@ -30,7 +30,11 @@ def main [
 
     let session_name = ($choice | split row " " | get 0)
 
-    if (wmctrl -l | find $session_name | is-empty) {
+    if (wmctrl -l
+        | lines
+        | split column -r '\s+' window_id desktop_id machine_name title --number 4
+        | where title == $session_name
+        | is-empty) {
         kitty -T $session_name -e sesh connect $session_name
     } else {
         wmctrl -Fa $session_name
