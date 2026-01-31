@@ -108,9 +108,9 @@ local function make_mem_entry_maker(opts)
     separator = " ",
     items = {
       { width = 8 },           -- category badge
-      { width = 65 },          -- filename
+      { remaining = true },          -- branch
+      { remaining = true },    -- filename (use remaining space)
       { width = 12 },          -- hash (full short hash)
-      { remaining = true },    -- branch (use remaining space)
     },
   }
 
@@ -125,9 +125,9 @@ local function make_mem_entry_maker(opts)
 
     return displayer {
       { format_category(entry.category), get_category_highlight(entry.category) },
+      { entry.branch, "TelescopeResultsComment" },
       { display_name, "TelescopeResultsNormal" },
       { hash_display, "TelescopeResultsComment" },
-      { entry.branch, "TelescopePreviewDate" },
     }
   end
 
