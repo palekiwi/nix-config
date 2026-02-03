@@ -14,7 +14,7 @@ startup_command = "_tmux_spabreaks_spabreaks_dev"
 [[session]]
 name = "spabreaks-console"
 path = "~/code/spabreaks/spabreaks/"
-startup_command = "make console"
+startup_command = "task console"
 
 [[session]]
 name = "spabreaks-cypress"

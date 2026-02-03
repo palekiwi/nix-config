@@ -7,28 +7,37 @@ let
 
   projectConfigs = {
     booking-transform = {
-      envrc = ../../config/spabreaks/booking-transform/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/booking-transform/.envrc;
+      };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
     my-account = {
-      envrc = ../../config/spabreaks/my-account/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/my-account/.envrc;
+      };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
     voucher-portal = {
-      envrc = ../../config/spabreaks/voucher-portal/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/voucher-portal/.envrc;
+      };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
     spabreaks = {
-      envrc = ../../config/spabreaks/spabreaks/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
+        "ocx.env" = ../../config/spabreaks/spabreaks/ocx.env;
+      };
       gitHooks = {
         pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
@@ -43,14 +52,18 @@ let
       };
     };
     terraform = {
-      envrc = ../../config/spabreaks/terraform/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/terraform/.envrc;
+      };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
     gemini-cli-tool = {
-      envrc = ../../config/spabreaks/gemini-cli-tool/.envrc;
+      files = {
+        ".envrc" = ../../config/spabreaks/gemini-cli-tool/.envrc;
+      };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
@@ -67,9 +80,12 @@ let
   mkProjectFiles = projectName: config: let
     basePath = "code/spabreaks/${projectName}";
   in
-    (lib.optionalAttrs (config ? envrc) {
-      "${basePath}/.envrc".source = config.envrc;
-    }) // (lib.optionalAttrs (config ? gitHooks) (
+    (lib.optionalAttrs (config ? files) (
+      lib.mapAttrs' (fileName: filePath:
+        lib.nameValuePair "${basePath}/${fileName}" { source = filePath; }
+      ) config.files
+    ))
+    // (lib.optionalAttrs (config ? gitHooks) (
       lib.mapAttrs' (hookName: hookPath:
         lib.nameValuePair "${basePath}/.git/hooks/${hookName}" { source = hookPath; }
       ) config.gitHooks
