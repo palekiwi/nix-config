@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     acpi
+    ast-grep
     bat
     cachix
     cmus

@@ -57,5 +57,6 @@ alias pi = pass_insert
 alias rebuild = sudo nixos-rebuild switch --flake $"($nu.home-path)/nix-config#(hostname -s)"
 alias rr = ranger
 alias s. = sesh connect .
+alias sg = ast-grep
 alias v = nvim
 alias xo = xdg-open
