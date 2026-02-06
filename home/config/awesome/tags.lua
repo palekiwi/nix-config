@@ -246,6 +246,19 @@ return {
         master_width_factor = 0.5,
       },
       {
+        name = TAGS[9],
+        key = "p",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+        gap = 0
+      },
+      {
+        name = TAGS[11],
+        key = "b",
+        layout = LAYOUT_MAX,
+        master_width_factor = 0.5,
+      },
+      {
         name = TAGS[13],
         key = "v",
         layout = LAYOUT_MAX,
@@ -258,12 +271,6 @@ return {
         key = "d",
         layout = LAYOUT_MAX,
         master_fill_policy = "expand",
-        master_width_factor = 0.5,
-      },
-      {
-        name = TAGS[11],
-        key = "b",
-        layout = LAYOUT_MAX,
         master_width_factor = 0.5,
       },
       {
@@ -287,13 +294,6 @@ return {
         gap_single_client = true,
         layout = LAYOUT_MAX,
         master_fill_policy = "expand",
-        master_width_factor = 0.5,
-        gap = 0
-      },
-      {
-        name = TAGS[9],
-        key = "p",
-        layout = LAYOUT_MAX,
         master_width_factor = 0.5,
         gap = 0
       },
