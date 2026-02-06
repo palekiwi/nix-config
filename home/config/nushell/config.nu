@@ -2,6 +2,7 @@ source aliases/agents.nu
 source aliases/gh.nu
 source aliases/git.nu
 source aliases/main.nu
+source aliases/ocx.nu
 
 source integrations/atuin.nu
 
@@ -19,6 +20,7 @@ $env.GPG_TTY = ^tty
 
 $env.CONTEXT7_API_KEY = (cat /run/secrets/context7/api_key)
 $env.GEMINI_API_KEY = (cat /run/secrets/spabreaks/gemini_api_key)
+$env.GOOGLE_GENERATIVE_AI_API_KEY = (cat /run/secrets/spabreaks/google_generative_ai_api_key)
 $env.OPENCODE_API_KEY = (cat /run/secrets/opencode/api_key)
 $env.ZAI_CODING_PLAN_API_KEY = (cat /run/secrets/zai_coding_plan/api_key)
 

@@ -15,14 +15,6 @@ def "gemini detach" [] {
     kitty --detach -T $session tmux attach -t $session
 }
 
-def "ocx d" [] {
-    let session = $"(tmux display-message -p '#S')-ocx"
-
-    tmux new-session -d -c $env.PWD -s $session | ignore
-    tmux send-keys -t $session 'ocx opencode' C-m
-    kitty --detach -T $session tmux attach -t $session
-}
-
 def "opencode detach" [] {
     let session = $"(tmux display-message -p '#S')-opencode"
 
