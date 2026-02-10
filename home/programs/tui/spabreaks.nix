@@ -15,6 +15,15 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    customer-portal = {
+      files = {
+        ".envrc" = ../../config/spabreaks/customer-portal/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
     my-account = {
       files = {
         ".envrc" = ../../config/spabreaks/my-account/.envrc;
