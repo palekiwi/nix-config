@@ -9,6 +9,15 @@
   }
 
   {
+    header = "From";
+    query = "hailey-qa";
+    tags = [
+      "+qa"
+      "-new"
+    ];
+  }
+
+  {
     header = "Message-ID";
     pattern = "calendar-.*@google\.com";
     tags = [
