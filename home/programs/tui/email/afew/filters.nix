@@ -80,6 +80,15 @@ in
   }
 
   {
+    message = "QA";
+    query = "from:hailey-qa";
+    tags = [
+      "+qa"
+      "-new"
+    ];
+  }
+
+  {
     message = "Important";
     query = "${joinFromOr important}";
     tags = [
