@@ -37,10 +37,10 @@ const CONFIG = {
             { output: $PALE_BUILTIN, opts: ["--off"] }
             { output: $PALE_HUION, opts: ["--auto", "--primary"] }
         ]
-        "ultrawide+builtin": [
+        "builtin+huion": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_HUION, opts: ["--auto", "--left-of", $PALE_BUILTIN] }
+            { output: $PALE_HUION, opts: ["--auto", "--mode", "1920x1080", "--below", $PALE_BUILTIN] }
         ]
         "ultrawide+huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
@@ -70,6 +70,10 @@ def restart_wm [] {
     awesome-client "awesome.restart()"
 }
 
+def restart_otd [] {
+    systemctl --user restart opentabletdriver
+}
+
 def run_dmenu [opts] {
     $opts
     | dmenu -i -nb "#1d1f21" -nf "#D3D7CF" -sb "#5294e2" -sf "#2f343f" -fn "11" -p "xrandr profile: "
@@ -95,6 +99,7 @@ if $choice in ($profiles | columns) {
     try {
         apply_profile ($profiles | get $choice)
         restart_wm
+        restart_otd
     } catch { |err|
         notify-send -u critical "Display configuration failed" $err.msg
         exit 1
