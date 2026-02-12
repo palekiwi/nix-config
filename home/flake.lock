@@ -219,11 +219,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1769946208,
-        "narHash": "sha256-TKXGHEeeXeOai7se3BFBVzZ7K7awj3h7ASuurIWRDpo=",
+        "lastModified": 1770878269,
+        "narHash": "sha256-rOwvi+w447ekbLJucoUCxX3RWP6855oNk9WqwlCNseY=",
         "owner": "palekiwi-labs",
         "repo": "mem",
-        "rev": "afb09071365b8854550112614ef7e462bf92e1ec",
+        "rev": "84e2dc5c9c1e1d78f8a551dba7cb25d148c038c5",
         "type": "github"
       },
       "original": {
