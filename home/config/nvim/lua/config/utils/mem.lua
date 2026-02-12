@@ -93,6 +93,7 @@ end
 local function get_category_highlight(category)
   local highlights = {
     spec = "TelescopeResultsConstant",
+    bin = "TelescopeResultsConstant",
     trace = "TelescopeResultsFunction",
     tmp = "TelescopeResultsVariable",
     ref = "TelescopeResultsIdentifier",
@@ -172,9 +173,10 @@ local function sort_artifacts(artifacts)
   -- Category priority mapping
   local category_priority = {
     spec = 1,
-    trace = 2,
-    tmp = 3,
-    ref = 4,
+    bin = 2,
+    trace = 3,
+    tmp = 4,
+    ref = 5,
   }
 
   ---@param a table
@@ -317,6 +319,8 @@ function M.add(filename, opts)
   -- Add category flag
   if opts.category == "trace" then
     table.insert(cmd, '--trace')
+  elseif opts.category == "bin" then
+    table.insert(cmd, '--bin')
   elseif opts.category == "tmp" then
     table.insert(cmd, '--tmp')
   elseif opts.category == "ref" then
@@ -382,6 +386,20 @@ end, {
   nargs = 1,
   complete = 'file',
   desc = 'Add a new mem artifact (spec) and open it for editing'
+})
+--
+-- :MemAddBin <filename> - Add trace artifact
+vim.api.nvim_create_user_command('MemAddBin', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAddBin <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, { category = 'bin' })
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem trace artifact and open it for editing'
 })
 
 -- :MemAddTrace <filename> - Add trace artifact
