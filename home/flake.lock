@@ -402,11 +402,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1770905946,
-        "narHash": "sha256-XwHEmA6y6ujcdqrr31hwfqbFnCEyXIuFAXIEa6CoJ/k=",
+        "lastModified": 1771081002,
+        "narHash": "sha256-+aaDIsvXSUX3oi2e8hVuGXQ3vvHrNq0LUzRyO/Th1cI=",
         "owner": "palekiwi-labs",
         "repo": "ocx",
-        "rev": "3105de43eb497a492b0aafc932aecf2681963150",
+        "rev": "67dbe8f073f76aa20071f123c784c884b8e7efa1",
         "type": "github"
       },
       "original": {
