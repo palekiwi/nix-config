@@ -6,6 +6,10 @@ def "ocx d" [] {
     kitty --detach -T $session tmux attach -t $session
 }
 
+def "ocn" [...args] {
+    OCX_NIX=true ocx ...$args
+}
+
 def "ocx planner" [...args] {
     $env.OPENCODE_CONFIG = "/home/pl/.config/opencode/overlays/planner.json"
     $env.OPENCODE_CONFIG_DIR = "/home/pl/.config/opencode/overlays/planner"

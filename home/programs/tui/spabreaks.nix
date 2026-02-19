@@ -45,7 +45,6 @@ let
     spabreaks = {
       files = {
         ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
-        "ocx.env" = ../../config/spabreaks/spabreaks/ocx.env;
       };
       gitHooks = {
         pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
