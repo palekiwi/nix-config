@@ -6,6 +6,7 @@ local action_state = require('telescope.actions.state')
 local entry_display = require('telescope.pickers.entry_display')
 local make_entry = require('telescope.make_entry')
 local utils = require('telescope.utils')
+local Snacks = require('snacks')
 
 local M = {}
 
@@ -82,6 +83,40 @@ local function get_mem_artifacts(all_branches, include_ignored)
   end
 
   return artifacts
+end
+
+-- Show floating UI to select artifact category, then call callback(category)
+local function select_category(callback)
+  local items = {
+    { label = "spec",  desc = "Specification (default)" },
+    { label = "trace", desc = "Trace / debug artifact" },
+    { label = "bin",   desc = "Binary artifact" },
+    { label = "tmp",   desc = "Temporary artifact" },
+    { label = "ref",   desc = "Reference artifact" },
+  }
+
+  vim.ui.select(items, {
+    prompt = "Select artifact type:",
+    format_item = function(item)
+      return string.format("%-8s  %s", item.label, item.desc)
+    end,
+  }, function(choice)
+    if choice then
+      callback(choice.label)
+    end
+  end)
+end
+
+-- Show floating input for filename, then call callback(filename)
+local function prompt_filename(category, callback)
+  Snacks.input({
+    prompt = "Artifact filename (" .. category .. "):",
+    completion = "file",
+  }, function(value)
+    if value and value ~= "" then
+      callback(value)
+    end
+  end)
 end
 
 -- Format category badge for display
@@ -374,18 +409,16 @@ function M.add(filename, opts)
 end
 
 -- Setup user commands automatically when module loads
--- :MemAdd <filename> - Add spec artifact
-vim.api.nvim_create_user_command('MemAdd', function(args)
-  local filename = args.args
-  if not filename or filename == "" then
-    vim.notify("Usage: :MemAdd <filename>", vim.log.levels.ERROR)
-    return
-  end
-  M.add(filename, {})
+-- :MemAdd - Add mem artifact (prompts for type then filename)
+vim.api.nvim_create_user_command('MemAdd', function()
+  select_category(function(category)
+    prompt_filename(category, function(filename)
+      M.add(filename, { category = category == "spec" and nil or category })
+    end)
+  end)
 end, {
-  nargs = 1,
-  complete = 'file',
-  desc = 'Add a new mem artifact (spec) and open it for editing'
+  nargs = 0,
+  desc = 'Add a new mem artifact (prompts for type then filename)'
 })
 --
 -- :MemAddBin <filename> - Add trace artifact
