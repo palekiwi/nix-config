@@ -95,7 +95,7 @@ local function select_category(callback)
     { label = "ref",   desc = "Reference artifact" },
   }
 
-  vim.ui.select(items, {
+  Snacks.picker.select(items, {
     prompt = "Select artifact type:",
     format_item = function(item)
       return string.format("%-8s  %s", item.label, item.desc)
@@ -112,10 +112,12 @@ local function prompt_filename(category, callback)
   Snacks.input({
     prompt = "Artifact filename (" .. category .. "):",
     completion = "file",
+    win = { row = 0.3 },
   }, function(value)
-    if value and value ~= "" then
-      callback(value)
+    if not value or value == "" then
+      value = "index.md"
     end
+    callback(value)
   end)
 end
 
