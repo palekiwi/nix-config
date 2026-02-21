@@ -130,7 +130,7 @@ end
 local function get_category_highlight(category)
   local highlights = {
     spec = "TelescopeResultsConstant",
-    bin = "TelescopeResultsConstant",
+    bin = "DiagnosticError",
     trace = "TelescopeResultsFunction",
     tmp = "TelescopeResultsVariable",
     ref = "TelescopeResultsIdentifier",
