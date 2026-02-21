@@ -17,12 +17,6 @@ return {
       --- Add additional capabilities supported by nvim-cmp
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      vim.lsp.config.clangd = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
-
       vim.lsp.config.cssls = {
         capabilities = require('cmp_nvim_lsp').default_capabilities(
           vim.lsp.protocol.make_client_capabilities()
@@ -35,16 +29,16 @@ return {
         flags = lsp_flags,
       }
 
-      vim.lsp.config.eslint = {
-        on_attach = function(_, bufnr)
-          vim.api.nvim_create_autocmd("BufWritePre", {
-            buffer = bufnr,
-            command = "EslintFixAll",
-          })
-        end,
-        capabilities = capabilities,
-        flags = lsp_flags,
-      }
+      -- vim.lsp.config.eslint = {
+      --   on_attach = function(_, bufnr)
+      --     vim.api.nvim_create_autocmd("BufWritePre", {
+      --       buffer = bufnr,
+      --       command = "LspEslintFixAll",
+      --     })
+      --   end,
+      --   capabilities = capabilities,
+      --   flags = lsp_flags,
+      -- }
 
       vim.lsp.config.gopls = {
         on_attach = on_attach,

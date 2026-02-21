@@ -65,12 +65,35 @@ function screen_roles.identify_screen(s)
     return "primary"
   else
     -- Multiple screens but no split detected
-    -- Use position-based identification
-    -- Primary is the rightmost screen (last in sorted list)
-    if s.index == all_screens[#all_screens].index then
-      return "primary"
+    -- Detect if screens are arranged vertically or horizontally
+    local is_vertical = false
+
+    -- Check if screens have significantly different Y positions vs X positions
+    if #all_screens >= 2 then
+      local y_diff = math.abs(all_screens[1].geo.y - all_screens[#all_screens].geo.y)
+      local x_diff = math.abs(all_screens[1].geo.x - all_screens[#all_screens].geo.x)
+      is_vertical = y_diff > x_diff
+    end
+
+    if is_vertical then
+      -- Vertical arrangement: sort by Y position (top to bottom)
+      table.sort(all_screens, function(a, b)
+        return a.geo.y < b.geo.y
+      end)
+      -- Top screen (smallest Y) is primary
+      if s.index == all_screens[1].index then
+        return "primary"
+      else
+        return "secondary"
+      end
     else
-      return "secondary"
+      -- Horizontal arrangement: use existing X sort (already sorted at line 21-23)
+      -- Rightmost screen is primary (last in sorted list)
+      if s.index == all_screens[#all_screens].index then
+        return "primary"
+      else
+        return "secondary"
+      end
     end
   end
 end

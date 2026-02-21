@@ -87,7 +87,7 @@ end
 -- Set treesitter folding for RSpec files
 vim.opt_local.foldmethod = "expr"
 vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt_local.foldlevel = 1
+vim.opt_local.foldlevel = 99
 
 -- define the keymaps (same as markdown for consistency)
 vim.keymap.set({"n", "v"}, "<A-}>", M.next_block, { buffer = true, desc = "Next RSpec block" })

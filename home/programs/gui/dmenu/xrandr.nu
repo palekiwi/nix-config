@@ -3,7 +3,7 @@ const DECK_EXTERNAL = "DisplayPort-0"
 
 const PALE_BUILTIN = "eDP-1-1"
 const PALE_ULTRAWIDE = "DP-1-2"
-const PALE_EXTERNAL = "DP-1-3"
+const PALE_HUION = "DP-1-5"
 
 const CONFIG = {
     deck: {
@@ -25,27 +25,27 @@ const CONFIG = {
         "builtin": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--off"] }
+            { output: $PALE_HUION, opts: ["--off"] }
         ]
         "ultrawide": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--off"] }
+            { output: $PALE_HUION, opts: ["--off"] }
         ]
-        "external": [
+        "huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--primary", "--rotate", "inverted"] }
+            { output: $PALE_HUION, opts: ["--auto", "--primary"] }
         ]
-        "ultrawide+builtin": [
+        "builtin+huion": [
             { output: $PALE_BUILTIN, opts: ["--auto", "--primary"] }
             { output: $PALE_ULTRAWIDE, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--left-of", $PALE_BUILTIN, "--rotate", "inverted"] }
+            { output: $PALE_HUION, opts: ["--auto", "--mode", "1920x1080", "--below", $PALE_BUILTIN] }
         ]
-        "ultrawide+external": [
+        "ultrawide+huion": [
             { output: $PALE_ULTRAWIDE, opts: ["--auto", "--primary"] }
             { output: $PALE_BUILTIN, opts: ["--off"] }
-            { output: $PALE_EXTERNAL, opts: ["--auto", "--pos", "760x1440", "--rotate", "inverted"] }
+            { output: $PALE_HUION, opts: ["--auto", "--pos", "760x1440"] }
         ]
     }
 }
@@ -68,6 +68,10 @@ def apply_profile [profile: list] {
 
 def restart_wm [] {
     awesome-client "awesome.restart()"
+}
+
+def restart_otd [] {
+    systemctl --user restart opentabletdriver
 }
 
 def run_dmenu [opts] {
@@ -95,6 +99,7 @@ if $choice in ($profiles | columns) {
     try {
         apply_profile ($profiles | get $choice)
         restart_wm
+        restart_otd
     } catch { |err|
         notify-send -u critical "Display configuration failed" $err.msg
         exit 1

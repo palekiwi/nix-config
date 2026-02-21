@@ -366,7 +366,7 @@ local globalkeys = gears.table.join(
   -- ),
 
   -- Focus external screen
-  awful.key({ MODKEY }, "o",
+  awful.key({ MODKEY }, ",",
     function()
       focus_screen_by_role("external", "secondary")
     end,
@@ -462,6 +462,22 @@ local globalkeys = gears.table.join(
       -- end
     end,
     { description = "decrease master width factor", group = "layout" }
+  ),
+
+  awful.key({ MODKEY, "Control" }, "h",
+    function()
+      if awful.layout.getname() == LAYOUT_TILE_NAME then
+        awful.layout.set(LAYOUT_MAX)
+      else
+        awful.layout.set(LAYOUT_TILE)
+      end
+      for _, x in ipairs(mouse.screen.selected_tag:clients()) do
+        if not x.floating then
+          x.opacity = 1
+        end
+      end
+    end,
+    { description = "Toggle vertical tile layout", group = "layout" }
   )
 )
 

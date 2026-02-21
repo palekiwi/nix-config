@@ -4,6 +4,8 @@ let
   tools = [
     "atlassian.com"
     "atlassian.net"
+    "browserstack.com"
+    "figma.com"
     "fullstory.com"
     "lastpass.com"
     "slack.com"
@@ -74,6 +76,15 @@ in
       "+google"
       "-new"
       "-inbox"
+    ];
+  }
+
+  {
+    message = "QA";
+    query = "from:hailey-qa";
+    tags = [
+      "+qa"
+      "-new"
     ];
   }
 

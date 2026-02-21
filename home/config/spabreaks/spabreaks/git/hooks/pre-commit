@@ -1,10 +1,5 @@
 #!/usr/bin/env sh
 
-if [[ $(basename $PWD) != "spabreaks" ]]; then
-    echo "Not a spabreaks project."
-    exit 1
-fi
-
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 if [ "$BRANCH" = "master" ] || [ "$BRANCH" = "main" ]; then
@@ -19,7 +14,7 @@ if git grep --cached -l -E -e "f(it|describe|context) ['\"]" -e "Pry::ColorPrint
     exit 1
 fi
 
-if files=$(git grep --cached -l -E -e "binding.pry"); then
+if files=$(git grep --cached -l -E -e "binding.irb"); then
     echo -e "\n"
     echo "Commit contains debugger statements in:"
     echo "$files"

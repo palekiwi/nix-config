@@ -66,11 +66,15 @@ awful.rules.rules = {
   -- Communication apps → external monitor (or ultrawide_left fallback)
   {
     rule = { class = "Signal" },
-    callback = placement_rules.communication(TAGS[12])
+    callback = placement_rules.communication(TAGS[10])
   },
   {
     rule = { class = "Slack" },
-    callback = placement_rules.communication(TAGS[12])
+    callback = placement_rules.communication(TAGS[10])
+  },
+  {
+    rule = { class = "rnote" },
+    callback = placement_rules.tablet(TAGS[12])
   },
 
   -- Development windows → ultrawide_right
@@ -85,7 +89,7 @@ awful.rules.rules = {
 
   -- Secondary tasks → ultrawide_left
   {
-    rule = { class = "kitty", name = ".*%-opencode$" },
+    rule = { class = "kitty", name = ".*%-ocx$" },
     callback = placement_rules.secondary(TAGS[7])
   },
 

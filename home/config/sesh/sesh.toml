@@ -14,7 +14,7 @@ startup_command = "_tmux_spabreaks_spabreaks_dev"
 [[session]]
 name = "spabreaks-console"
 path = "~/code/spabreaks/spabreaks/"
-startup_command = "make console"
+startup_command = "task console"
 
 [[session]]
 name = "spabreaks-cypress"
@@ -128,6 +128,16 @@ startup_command = "_tmux_git-repo"
 #-------------------
 #   --- Repos ---
 #-------------------
+
+[[session]]
+name = "mem"
+path = "~/code/palekiwi-labs/mem"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "ocx"
+path = "~/code/palekiwi-labs/ocx"
+startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "notes-pl"

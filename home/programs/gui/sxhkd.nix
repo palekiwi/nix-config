@@ -60,6 +60,17 @@ let
         kitty -T "$window_name" -e tmux new-session -A -s "$window_name"
     fi
   '';
+
+  switchToApp = pkgs.writeShellScript "switchToApp" ''
+    app_name=$1
+    window_name=$2
+
+    if wmctrl -l | grep -qi "\b$window_name\b"; then
+        wmctrl -Fa $window_name
+    else
+        $app_name
+    fi
+  '';
 in
 {
   home.packages = with pkgs; [ sxhkd ];
@@ -68,11 +79,11 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux --opencode";
+      "super + Return + control" = "dmenu_tmux --tmux --ocx";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "${switchToDefaultSession}";
 
-      "super + l" = "dmenu_activity_log";
+      "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
       "super + space; t; t" = "${switchToSession} taskwarrior";

@@ -19,6 +19,7 @@ local inbox = {}
 
 local default_colors = {
   bg_important = "#cc6666",
+  bg_todo      = "#6699cc",
   fg_active    = "#1d1d1f",
   bg_active    = "#f0c674",
   fg_inactive  = "#1d1d1f",
@@ -65,7 +66,7 @@ function inbox.create(opts)
     widget = wibox.widget.textbox
   }
 
-  local important_text_widget = wibox.widget {
+  local todo_text_widget = wibox.widget {
     markup = span(),
     widget = wibox.widget.textbox
   }
@@ -111,8 +112,8 @@ function inbox.create(opts)
     widget = wibox.container.margin
   }
 
-  local important_widget = wibox.widget {
-    important_text_widget,
+  local todo_widget = wibox.widget {
+    todo_text_widget,
     left = 4,
     right = 4,
     top = 1,
@@ -139,7 +140,7 @@ function inbox.create(opts)
   }
 
   local inbox_widget_inner_1 = wibox.widget {
-    important_widget,
+    todo_widget,
     bg = colors.bg_inactive,
     shape = gears.shape.rectangle,
     widget = wibox.container.background
@@ -162,20 +163,27 @@ function inbox.create(opts)
   }
 
   local function update()
-    local countImp = count_by('tag:unread AND tag:"!"')
+    local countTodo = count_by('tag:*todo')
+    local countImp = count_by('tag:unread AND tag:"*important"')
     local countInbox = count_by('tag:unread AND tag:"inbox"')
     local countAP = count_by('tag:unread AND tag:"airbrake/production"')
     local countAS = count_by('tag:unread AND tag:"airbrake/staging"')
 
     local activeImportant = countImp > 0
     local activeInbox = countInbox > 0
+    local activeTodo = countTodo > 0
     local activeAP = countAP > 0
     local activeAS = countAS > 0
 
-    local fg_color_imp = activeImportant and colors.fg_active or colors.fg_inactive
-    local bg_color_imp = activeImportant and colors.bg_important or colors.bg_inactive
+    -- Inbox: show important color if important emails exist, otherwise normal active/inactive
     local fg_color = activeInbox and colors.fg_active or colors.fg_inactive
-    local bg_color = activeInbox and colors.bg_active or colors.bg_inactive
+    local bg_color = activeImportant and colors.bg_important or (activeInbox and colors.bg_active or colors.bg_inactive)
+
+    -- Todo section
+    local fg_color_todo = activeTodo and colors.fg_active or colors.fg_inactive
+    local bg_color_todo = activeTodo and colors.bg_todo or colors.bg_inactive
+
+    -- Airbrake sections
     local fg_color_ap = activeAP and colors.fg_active or colors.fg_inactive
     local bg_color_ap = activeAP and colors.bg_active or colors.bg_inactive
     local fg_color_as = activeAS and colors.fg_active or colors.fg_inactive
@@ -187,8 +195,8 @@ function inbox.create(opts)
     inbox_widget_outer_left.bg = bg_color
     icon_widget.image = icon
 
-    inbox_widget_inner_1.bg = bg_color_imp
-    important_text_widget.markup = span(tostring(countImp), fg_color_imp)
+    inbox_widget_inner_1.bg = bg_color_todo
+    todo_text_widget.markup = span(tostring(countTodo), fg_color_todo)
 
     inbox_widget_inner_2.bg = bg_color_ap
     production_text_widget.markup = span(tostring(countAP), fg_color_ap)

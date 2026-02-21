@@ -17,7 +17,7 @@ let
     sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7]:#{session_name}'';
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
     gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
-    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/GH_PR_NUMBER ] && GH_PR_NUMBER=$(cat .git/GH_PR_NUMBER) && GIT_BASE=$(cat .git/GIT_BASE) && GIT_BASE_AHEAD=$(cat .git/GIT_BASE_AHEAD 2>/dev/null || echo "") && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=$([ "$GIT_BASE_AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$GIT_BASE" || echo "")'';
+    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .gh_pr_number ] && GH_PR_NUMBER=$(cat .gh_pr_number) && GH_PR_BASE=$(cat .gh_pr_base) && GH_PR_BASE_AHEAD=$(cat .gh_pr_base_ahead 2>/dev/null || echo "") && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=$([ "$GH_PR_BASE_AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$GH_PR_BASE" || echo "")'';
   };
 
   statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} '';
@@ -43,6 +43,23 @@ in
       set -g default-terminal "tmux"
 
       set -ga terminal-overrides ",xterm-256color:Tc"
+
+      # ============================================
+      # OSC 52 Clipboard Support (NEW)
+      # ============================================
+
+      # Enable clipboard integration
+      set -g set-clipboard on
+
+      # Allow escape sequences to pass through tmux
+      set -g allow-passthrough on
+
+      # Add OSC 52 support to terminal capabilities
+      # set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;c;%p2%s\7'
+      set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;%p1%s;%p2%s\007'
+      # set -as terminal-overrides ',*:Ms=\E]52;%p1%s;%p2%s\007'
+
+      # ============================================
 
       set -g @thumbs-command 'echo -n {} | xclip -selection clipboard'
 

@@ -17,9 +17,11 @@ export def "ticket view" [ticket?: string, --json] {
 }
 
 def ticket-to-md [data: record] {
+    let ticket = $data.ticket
     $data
+    | reject ticket
     | items { |key, value| {key: $key, value: ($value | pandoc -f html -t markdown --shift-heading-level-by=1) }}
-    | $"# ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
+    | $"# [($ticket)] ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
 }
 
 export def "ticket save" [ticket?: string, --json] {
@@ -55,6 +57,7 @@ export def "ticket fetch" [ticket?: string] {
             $"($api_url)?expand=renderedFields"
     )
     | {
+         ticket: $ticket,
          title: $in.fields.summary,
          description: $in.renderedFields.description,
          technical_notes: $in.renderedFields.customfield_10174
