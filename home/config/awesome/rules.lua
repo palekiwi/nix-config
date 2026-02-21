@@ -2,25 +2,9 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local clientkeys = require("clientkeys")
 local clientbuttons = require("clientbuttons")
+local placement_rules = require("placement_rules")
 
-local function on_second_screen(tag_name)
-  return function(c)
-    local target_screen = screen[2] or screen[1]
-
-    -- Find the tag by name
-    local target_tag = nil
-    for _, tag in ipairs(target_screen.tags) do
-      if tag.name == tag_name then
-        target_tag = tag
-        break
-      end
-    end
-
-    if target_tag then
-      c:move_to_tag(target_tag)
-    end
-  end
-end
+require("globals")
 
 awful.rules.rules = {
   -- All clients will match this rule.
@@ -60,8 +44,7 @@ awful.rules.rules = {
 
   -- Add titlebars to normal clients and dialogs
   {
-    rule_any = { type = { "normal", "dialog" }
-    },
+    rule_any = { type = { "normal", "dialog" } },
     properties = { titlebars_enabled = false }
   },
 
@@ -78,29 +61,45 @@ awful.rules.rules = {
     }
   },
 
-  -- Assign clients to tags
-  { callback = on_second_screen("〇"), rule = { class = "Signal" } },
-  { callback = on_second_screen("〇"), rule = { class = "Slack" } },
-  { callback = on_second_screen("七"), rule = { class = "Claude" } },
-  { callback = on_second_screen("丙"), rule = { class = "Virt-manager" } },
+  -- Assign clients to tags using role-based placement system
+
+  -- Communication apps → external monitor (or ultrawide_left fallback)
+  {
+    rule = { class = "Signal" },
+    callback = placement_rules.communication(TAGS[10])
+  },
+  {
+    rule = { class = "Slack" },
+    callback = placement_rules.communication(TAGS[10])
+  },
+  {
+    rule = { class = "rnote" },
+    callback = placement_rules.tablet(TAGS[12])
+  },
+
+  -- Development windows → ultrawide_right
   {
     rule = { class = "kitty", name = "spabreaks" },
-    properties = { screen = screen[1], tag = screen[1].tags[3] }
+    callback = placement_rules.development(TAGS[3])
   },
   {
     rule = { class = "kitty", name = ".*%-dev$" },
-    properties = { screen = screen[1], tag = screen[1].tags[1] }
+    callback = placement_rules.development(TAGS[1])
   },
+
+  -- Secondary tasks → ultrawide_left
   {
-    rule = { class = "kitty", name = "ava%-.*$" },
-    callback = on_second_screen("九"),
+    rule = { class = "kitty", name = ".*%-ocx$" },
+    callback = placement_rules.secondary(TAGS[7])
   },
+
+  -- System/admin → ultrawide_right
   {
     rule = { class = "kitty", name = ".*%-psql$" },
-    properties = { screen = screen[1], tag = "丙" }
+    callback = placement_rules.system(TAGS[13])
   },
   {
     rule = { class = "kitty", name = ".*%-console$" },
-    properties = { screen = screen[1], tag = "丙" }
+    callback = placement_rules.system(TAGS[13])
   },
 }

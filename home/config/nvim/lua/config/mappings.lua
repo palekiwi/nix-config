@@ -9,6 +9,7 @@ local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local helpers = require('config.utils.helpers')
 local hunk_comments = require('config.utils.hunk-comments')
+local mem_utils = require('config.utils.mem')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
 local telescope_utils = require('config.utils.telescope')
@@ -44,12 +45,13 @@ local base = {
   { "<space>r",          telescope_utils.file_review,                                            desc = "File review" },
   { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
   { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
-  { "<A-t>",             function() agents_utils.find_files({ latest = true }) end,              desc = "[Agents] Find latest files" },
-  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end,                desc = "[Agents] Find docs files" },
+  { "<A-t>",             mem_utils.pick_artifacts,                                               desc = "[Mem] Pick artifacts" },
+  { "<A-T>",             function() mem_utils.pick_artifacts({ all = true }) end,                desc = "[Mem] Pick all artifacts" },
+  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
   { "<A-f>",             "<cmd>Telescope live_grep<cr>",                                         desc = "Live Grep" },
   { "<A-l>",             "<cmd>set cursorline!<cr>",                                             desc = "Toggle Cursorline" },
-  { "<A-m>",             "zMzA",                                                                 desc = "Toggle Fold" },
-  { "<A-p>",             telescope_utils.changed_files_since,                                    desc = "Search changed files" },
+  { "<A-m>",             "<cmd>MemAdd<cr>",                                                      desc = "[Mem] Add" },
+  { "<A-p>",             "<cmd>Prctl<cr>",                                                       desc = "Prctl" },
   { "<A-u>",             "<Plug>CapsLockToggle",                                                 desc = "Toggle Capslock",              mode = "i" },
   { "<A-w>",             telescope_utils.search_cword,                                           desc = "Live Grep" },
   { "<A-x>",             "<cmd>BufferClose<cr>",                                                 desc = "Close Buffer All But Current" },
@@ -57,7 +59,7 @@ local base = {
   { "<C-b>",             "<cmd>Telescope buffers ignore_current_buffer=false sort_mru=true<cr>", desc = "Buffers" },
   { "<C-d>",             telescope_utils.diagnostics,                                            desc = "[LSP] diagnostics" },
   { "<C-e>",             "<cmd>Telescope oldfiles cwd_only=true<cr>",                            desc = "Recent Files" },
-  { "<C-f>",             "<cmd>Telescope find_files hidden=true<cr>",                            desc = "Find File" },
+  { "<C-f>",             "<cmd>Telescope find_files hidden=false<cr>",                           desc = "Find File" },
   { "<C-p>",             telescope_utils.changed_files,                                          desc = "Search changed files" },
   { "<C-q>",             "<cmd>Telescope quickfix show_line=false<cr>",                          desc = "Quickfix" },
   { "<C-u>",             telescope_utils.lsp_references,                                         desc = "Ref" },
@@ -86,15 +88,13 @@ local base = {
   { "<BS>2",             function() git_utils.set_base_branch("HEAD~2") end,                     desc = "Change base: HEAD~2" },
   { "t",                 group = "toggle" },
   { "th",                "<cmd>DiffviewOpen HEAD<cr>",                                           desc = "DiffviewOpen" },
-  { "tI",                "<cmd>DiffviewClose<cr>",                                               desc = "DiffviewClose" },
-  { "tN",                "<cmd>DiffviewClose<cr>",                                               desc = "DiffviewClose" },
+  { "ti",                "<cmd>DiffviewClose<cr>",                                               desc = "DiffviewClose" },
   { "tb",                "<cmd>Gitsigns toggle_current_line_blame<cr>",                          desc = "Blame" },
   { "tc",                "<cmd>DiffviewOpen<cr>",                                                desc = "DiffviewOpen" },
   { "te",                function() git_utils.set_base_branch() end,                             desc = "Change base: From Environment" },
   { "tf",                function() git_utils.diffview_file_history(true) end,                   desc = "DiffviewFileHistory" },
   { "tF",                git_utils.diffview_file_history,                                        desc = "DiffviewFileHistory" },
   { "tH",                "<cmd>Gitsigns preview_hunk_inline<cr>",                                desc = "Deleted" },
-  { "ti",                function() git_utils.diffthis(true) end,                                desc = "Diff this: vertical" },
   { "tl",                "<cmd>nohlsearch<cr>",                                                  desc = "Hunks to Loclist" },
   { "<BS>m",             function() git_utils.set_base_branch(vim.g.git_master) end,             desc = "Change base: master" },
   { "tn",                git_utils.diffview_this,                                                desc = "Diff this: horizontal" },
@@ -106,6 +106,8 @@ local base = {
   { "ty",                function() git_utils.set_base_branch(vim.fn.getreg("+")) end,           desc = "Change base: master" },
   -- leader
   { "<leader><space>",   helpers.open_on_line,                                                   desc = "Open file on line" },
+  { "<leader>m",         "<cmd>Notmuch<cr>",                                                     desc = "Notmuch: Tags" },
+  { "<leader>n",         "<cmd>Inbox<cr>",                                                       desc = "Notmuch: Inbox" },
   { "<leader>N",         function() git_utils.toggle_git_tree("show") end,                       desc = "Tree: Git status" },
   { "<leader>a",         vim.lsp.buf.code_action,                                                desc = "LSP Code Action" },
   { "<leader>b",         "<cmd>Neotree toggle show buffers left<cr>",                            desc = "tree toggle" },
@@ -134,7 +136,6 @@ local base = {
   { "<leader>l",         group = "[LSP]" },
   { "<leader>li",        "<cmd>LspInfo<cr>",                                                     desc = "LSP: Info" },
   { "<leader>ll",        "<cmd>LspLog<cr>",                                                      desc = "LSP: Log" },
-  { "<leader>m",         "<cmd>Himalaya<cr>",                                                    desc = "Himalaya" },
   { "<leader>q",         "<cmd>quit<cr>",                                                        desc = "quit" },
   { "<leader>t",         "<cmd>Neotree toggle position=left<cr>",                                desc = "tree toggle" },
   { "<leader>w",         "<cmd>write<cr>",                                                       desc = "write" },

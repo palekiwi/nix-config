@@ -69,7 +69,7 @@ def format_tree_entry [entry: record, pr_table: table, pr_to_index: record, max_
     let review_requested = ($pr.reviewRequests? | default [] | any { |req| $req.login == "palekiwi" })
 
     let colored_pr_number = $"((if $pr.isDraft { ansi white } else { ansi green }))($pr_number)(ansi reset)"
-    
+
     # Color title yellow if review is requested
     let colored_title = if $review_requested {
         $"(ansi yellow)($row.title)(ansi reset)"
@@ -101,6 +101,109 @@ def flatten_tree [tree: list] {
     }
 
     $tree | each { |entry| flatten_entry $entry } | flatten
+}
+
+def get_repo_name [] {
+    let remote_url = (do { git config --get remote.origin.url } | complete)
+
+    if $remote_url.exit_code != 0 {
+        return null
+    }
+
+    let url = ($remote_url.stdout | str trim)
+
+    # Extract repo name from URL (handle both SSH and HTTPS)
+    # SSH: git@github.com:user/repo.git -> repo
+    # HTTPS: https://github.com/user/repo.git -> repo
+    let repo_name = if ($url | str contains "git@") {
+        $url | parse "{protocol}:{path}.git" | get path.0 | split row "/" | last
+    } else if ($url | str contains "https://") {
+        $url | parse "{protocol}://{host}/{path}.git" | get path.0 | split row "/" | last
+    } else if ($url | str ends-with ".git") {
+        $url | str replace ".git" "" | split row "/" | last
+    } else {
+        $url | split row "/" | last
+    }
+
+    $repo_name
+}
+
+def sanitize_branch_name [name: string] {
+    $name
+    | str replace --all "/" "-"
+    | str replace --all " " "-"
+    | str replace --all ":" "-"
+    | str replace --all "*" "-"
+    | str replace --all "?" "-"
+    | str replace --all "\\" "-"
+    | str replace --all "<" "-"
+    | str replace --all ">" "-"
+    | str replace --all "|" "-"
+    | str replace --all "\"" "-"
+}
+
+def create_pr_worktree [pr_number: int] {
+    # Get PR details
+    let pr_info_result = (do {
+        gh pr view $pr_number --json number,headRefName,baseRefName
+    } | complete)
+
+    if $pr_info_result.exit_code != 0 {
+        print $"Error: Could not find PR #($pr_number)"
+        return 1
+    }
+
+    let pr_data = ($pr_info_result.stdout | from json)
+    let branch_name = $pr_data.headRefName
+    let sanitized_branch = (sanitize_branch_name $branch_name)
+
+    # Get repository name
+    let repo_name = (get_repo_name)
+    if ($repo_name | is-empty) {
+        print "Error: Could not determine repository name"
+        return 1
+    }
+
+    # Construct worktree path: ../{repo-name}-{branch-name}
+    let worktree_name = $"($repo_name)-($sanitized_branch)"
+    let worktree_path = ([".." $worktree_name] | path join | path expand)
+
+    # Check if worktree already exists
+    if ($worktree_path | path exists) {
+        # Check if it's actually a git worktree
+        let is_worktree = (do {
+            git -C $worktree_path rev-parse --is-inside-work-tree
+        } | complete)
+
+        if $is_worktree.exit_code == 0 {
+            print $"Worktree already exists at: ($worktree_path)"
+            return 0
+        } else {
+            print $"Error: Path exists but is not a git worktree: ($worktree_path)"
+            return 1
+        }
+    }
+
+    # Fetch the PR branch from remote without checking it out
+    # First, try to get the remote ref for the PR
+    let fetch_result = (do {
+        git fetch origin $"pull/($pr_number)/head:($branch_name)"
+    } | complete)
+    
+    # If fetch fails, the branch might already exist locally
+    # Try to create the worktree anyway
+    let worktree_result = (do {
+        git worktree add $worktree_path $branch_name
+    } | complete)
+
+    if $worktree_result.exit_code == 0 {
+        print $"Created worktree at: ($worktree_path)"
+        return 0
+    } else {
+        print $"Error: Failed to create worktree"
+        print $worktree_result.stderr
+        return 1
+    }
 }
 
 def filter_prs [
@@ -244,6 +347,18 @@ def format_table [prs: list] {
     }
 }
 
+def "main worktree" [
+    pr_number: int  # PR number to create worktree for
+] {
+    # Check if we're in a git repository
+    if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
+        print "Error: Not in a git repository"
+        exit 1
+    }
+
+    create_pr_worktree $pr_number
+}
+
 def main [
     pr_string?: string
     --authors(-a): string
@@ -260,6 +375,7 @@ def main [
     --review-requested(-q)
     --reviewed(-r)
     --no-tree(-T)
+    --worktree(-w)
 ] {
     # Check if we're in a git repository
     if (do { git rev-parse --git-dir } | complete).exit_code != 0 {
@@ -331,8 +447,14 @@ def main [
         return
     }
 
+    let prompt = if $worktree {
+        "Select PR to create worktree: "
+    } else {
+        "Select PR to checkout: "
+    }
+    
     let selected = ($formatted_output
-        | fzf --ansi --border --prompt="Select PR to checkout: "
+        | fzf --ansi --border $"--prompt=($prompt)"
             --preview-window=top:50%
             --preview="echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view"
             --bind="ctrl-y:execute-silent(echo {} | grep -oE '[0-9]+' | head -1 | xargs gh pr view --web)"
@@ -347,11 +469,15 @@ def main [
 
     let pr_number = ($selected | parse --regex '(\d+)' | get capture0.0 | into int)
 
-    let checkout_result = (do { gh pr checkout $pr_number } | complete)
-    if $checkout_result.exit_code == 0 {
-        print $"Successfully checked out PR #($pr_number)"
+    if $worktree {
+        create_pr_worktree $pr_number | ignore
     } else {
-        print $"Failed to checkout PR #($pr_number)"
-        exit 1
+        let checkout_result = (do { gh pr checkout $pr_number } | complete)
+        if $checkout_result.exit_code == 0 {
+            print $"Successfully checked out PR #($pr_number)"
+        } else {
+            print $"Failed to checkout PR #($pr_number)"
+            exit 1
+        }
     }
 }

@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     acpi
+    ast-grep
     bat
     cachix
     cmus
@@ -12,9 +13,8 @@
     fzf
     (lib.lowPrio go-task)
     home-assistant-cli
-    jrnl
+    # jrnl
     jq
-    neovim
     pandoc
     pass
     ranger

@@ -42,6 +42,7 @@ return {
         { "n",          "<space>F",  function() oc.prompt("@buffer ") end,                                         "Add buffer" },
         { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
         { "n",          "<space>n",  function() oc.command("session.new") end,                                     "New session" },
+        { "n",          "<space>t",  function() oc.ask("@this: ", { submit = false }) end,                         "Add this" },
         { "n",          "<space>+t", function() oc.prompt("@this") end,                                            "Add this" },
         { "n",          "<space>+f", function() oc.prompt("@buffer") end,                                          "Add buffer" },
         { "n",          "<space>+g", function() oc.prompt("@grapple") end,                                         "Add grapple" },

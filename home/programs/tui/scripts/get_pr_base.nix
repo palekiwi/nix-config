@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "get_pr_base" ''
-  if [[ -f .git/GIT_BASE ]]; then
-    cat .git/GIT_BASE
+  if [[ -f .gh_pr_base ]]; then
+    cat .gh_pr_base
   else
     exit 1
   fi

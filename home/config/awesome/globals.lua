@@ -1,6 +1,8 @@
 -- Global Variables
 local awful = require("awful")
 
+TAGS = { "一", "二", "三", "四", "五", "六", "七", "八", "九", "〇", "甲", "乙", "丙" }
+
 THEME_PATH = string.format("%s/.config/awesome/theme.lua", os.getenv("HOME"))
 
 TERMINAL = "kitty"
@@ -20,6 +22,8 @@ Inactive_opacity = DEFAULT_INACTIVE_OPACITY
 OPACITY = {}
 
 MARGINS = { left = 0, bottom = 0, right = 0, top = 0 }
+
+FAKE_RESIZE_DELTA = 380
 
 FLOATING_SIZES = {
   [1] = function(c)

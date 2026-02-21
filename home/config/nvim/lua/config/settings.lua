@@ -4,6 +4,7 @@ local setup_autocmd = require("config.setup.autocmd")
 local setup_filetypes = require("config.setup.filetypes")
 local setup_highlights = require("config.setup.highlights")
 
+set.shell = "/usr/bin/env bash"
 set.termguicolors = true
 
 set.title = true
@@ -38,7 +39,7 @@ set.timeoutlen = 300
 set.hidden = true
 set.completeopt = 'menuone,noselect'
 
-set.foldlevel = 1
+set.foldlevel = 99
 set.foldmethod = "indent"
 set.foldexpr = "nvim_treesitter#foldexpr()"
 

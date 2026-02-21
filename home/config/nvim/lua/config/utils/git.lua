@@ -33,7 +33,7 @@ local function set_base_branch(branch)
   vim.g.git_base = base_branch
 
   gs.change_base(base_branch, true)
-  toggle_git_tree("show", false)
+  -- toggle_git_tree("show", false)
 
   vim.notify("Base branch: " .. base_branch)
 end

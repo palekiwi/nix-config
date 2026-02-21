@@ -18,10 +18,12 @@ require("widgets.config")
 local inbox = {}
 
 local default_colors = {
-  fg_active   = "#1d1d1f",
-  bg_active   = "#f0c674",
-  fg_inactive = "#1d1d1f",
-  bg_inactive = "#666666"
+  bg_important = "#cc6666",
+  bg_todo      = "#6699cc",
+  fg_active    = "#1d1d1f",
+  bg_active    = "#f0c674",
+  fg_inactive  = "#1d1d1f",
+  bg_inactive  = "#666666"
 }
 
 ---@param term string
@@ -64,6 +66,11 @@ function inbox.create(opts)
     widget = wibox.widget.textbox
   }
 
+  local todo_text_widget = wibox.widget {
+    markup = span(),
+    widget = wibox.widget.textbox
+  }
+
   local staging_text_widget = wibox.widget {
     markup = span(),
     widget = wibox.widget.textbox
@@ -87,7 +94,7 @@ function inbox.create(opts)
     inbox_text_widget
   }
 
-  local padded_widget = wibox.widget {
+  local inbox_widget = wibox.widget {
     inbox_content,
     left = 4,
     right = 4,
@@ -96,7 +103,7 @@ function inbox.create(opts)
     widget = wibox.container.margin
   }
 
-  local padded_widget_middle = wibox.widget {
+  local airbrake_production = wibox.widget {
     production_text_widget,
     left = 4,
     right = 4,
@@ -105,7 +112,16 @@ function inbox.create(opts)
     widget = wibox.container.margin
   }
 
-  local padded_widget_right = wibox.widget {
+  local todo_widget = wibox.widget {
+    todo_text_widget,
+    left = 4,
+    right = 4,
+    top = 1,
+    bottom = 1,
+    widget = wibox.container.margin
+  }
+
+  local airbrake_staging = wibox.widget {
     staging_text_widget,
     left = 4,
     right = 4,
@@ -114,8 +130,8 @@ function inbox.create(opts)
     widget = wibox.container.margin
   }
 
-  local inbox_widget_left = wibox.widget {
-    padded_widget,
+  local inbox_widget_outer_left = wibox.widget {
+    inbox_widget,
     bg = colors.bg_inactive,
     shape = function(cr, width, height)
       gears.shape.partially_rounded_rect(cr, width, height, true, false, false, true, radius)
@@ -123,15 +139,22 @@ function inbox.create(opts)
     widget = wibox.container.background
   }
 
-  local inbox_widget_middle = wibox.widget {
-    padded_widget_middle,
+  local inbox_widget_inner_1 = wibox.widget {
+    todo_widget,
     bg = colors.bg_inactive,
     shape = gears.shape.rectangle,
     widget = wibox.container.background
   }
 
-  local inbox_widget_right = wibox.widget {
-    padded_widget_right,
+  local inbox_widget_inner_2 = wibox.widget {
+    airbrake_production,
+    bg = colors.bg_inactive,
+    shape = gears.shape.rectangle,
+    widget = wibox.container.background
+  }
+
+  local inbox_widget_outer_right = wibox.widget {
+    airbrake_staging,
     bg = colors.bg_inactive,
     shape = function(cr, width, height)
       gears.shape.partially_rounded_rect(cr, width, height, false, true, true, false, radius)
@@ -140,16 +163,27 @@ function inbox.create(opts)
   }
 
   local function update()
-    local countInbox = count_by('tag:unread AND path:"spabreaks/Inbox/**"')
-    local countAP = count_by('tag:unread AND path:"spabreaks/Airbrake/Production/**"')
-    local countAS = count_by('tag:unread AND path:"spabreaks/Airbrake/Staging/**"')
+    local countTodo = count_by('tag:*todo')
+    local countImp = count_by('tag:unread AND tag:"*important"')
+    local countInbox = count_by('tag:unread AND tag:"inbox"')
+    local countAP = count_by('tag:unread AND tag:"airbrake/production"')
+    local countAS = count_by('tag:unread AND tag:"airbrake/staging"')
 
+    local activeImportant = countImp > 0
     local activeInbox = countInbox > 0
+    local activeTodo = countTodo > 0
     local activeAP = countAP > 0
     local activeAS = countAS > 0
 
+    -- Inbox: show important color if important emails exist, otherwise normal active/inactive
     local fg_color = activeInbox and colors.fg_active or colors.fg_inactive
-    local bg_color = activeInbox and colors.bg_active or colors.bg_inactive
+    local bg_color = activeImportant and colors.bg_important or (activeInbox and colors.bg_active or colors.bg_inactive)
+
+    -- Todo section
+    local fg_color_todo = activeTodo and colors.fg_active or colors.fg_inactive
+    local bg_color_todo = activeTodo and colors.bg_todo or colors.bg_inactive
+
+    -- Airbrake sections
     local fg_color_ap = activeAP and colors.fg_active or colors.fg_inactive
     local bg_color_ap = activeAP and colors.bg_active or colors.bg_inactive
     local fg_color_as = activeAS and colors.fg_active or colors.fg_inactive
@@ -157,16 +191,17 @@ function inbox.create(opts)
 
     local icon = gears.color.recolor_image(icon_path, fg_color)
 
-    local text = tostring(countInbox)
-
-    inbox_text_widget.markup = span(text, fg_color)
-    inbox_widget_left.bg = bg_color
+    inbox_text_widget.markup = span(tostring(countInbox), fg_color)
+    inbox_widget_outer_left.bg = bg_color
     icon_widget.image = icon
 
-    inbox_widget_middle.bg = bg_color_ap
+    inbox_widget_inner_1.bg = bg_color_todo
+    todo_text_widget.markup = span(tostring(countTodo), fg_color_todo)
+
+    inbox_widget_inner_2.bg = bg_color_ap
     production_text_widget.markup = span(tostring(countAP), fg_color_ap)
 
-    inbox_widget_right.bg = bg_color_as
+    inbox_widget_outer_right.bg = bg_color_as
     staging_text_widget.markup = span(tostring(countAS), fg_color_as)
   end
 
@@ -182,9 +217,10 @@ function inbox.create(opts)
     wibox.widget {
       layout = wibox.layout.fixed.horizontal,
       spacing = 1,
-      inbox_widget_left,
-      inbox_widget_middle,
-      inbox_widget_right
+      inbox_widget_outer_left,
+      inbox_widget_inner_1,
+      inbox_widget_inner_2,
+      inbox_widget_outer_right
     },
     margins = MARGINS,
     widget = wibox.container.margin
