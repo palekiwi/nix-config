@@ -18,6 +18,7 @@
 
     modules = {
       chrome.enable = true;
+      handy.enable = true;
       kitty.enable = true;
       oss.enable = true;
       spabreaks.enable = true;

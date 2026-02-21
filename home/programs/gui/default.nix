@@ -6,6 +6,7 @@
     ./dmenu.nix
     ./firefox.nix
     ./gtk.nix
+    ./handy.nix
     ./kitty.nix
     ./rofi.nix
     ./sxhkd.nix
