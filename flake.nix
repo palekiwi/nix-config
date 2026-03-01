@@ -99,6 +99,15 @@
             inputs.sops-nix.nixosModules.sops
           ];
         };
+
+        nagomi = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/nagomi
+            notifications-server.nixosModules.default
+            inputs.sops-nix.nixosModules.sops
+          ];
+        };
       };
 
       packages.x86_64-linux = {
