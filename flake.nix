@@ -104,7 +104,6 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/nagomi
-            inputs.sops-nix.nixosModules.sops
           ];
         };
       };

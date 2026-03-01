@@ -16,7 +16,6 @@
 
       ../../modules/cachix.nix
       ../../modules/fonts.nix
-      ../../modules/sops.nix
     ];
 
   networking.hostName = "nagomi";
