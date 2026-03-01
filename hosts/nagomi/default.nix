@@ -19,15 +19,11 @@
       ../../modules/sops.nix
     ];
 
-  config = {
-    modules.sops.enable = true;
+  networking.hostName = "nagomi";
+  networking.networkmanager.enable = true;
 
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
-    networking.hostName = "nagomi";
-    networking.networkmanager.enable = true;
-
-    system.stateVersion = "25.11";
-  };
+  system.stateVersion = "25.11";
 }
