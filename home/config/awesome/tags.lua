@@ -166,7 +166,7 @@ return {
       {
         name = TAGS[4],
         key = "x",
-        layout = LAYOUT_MAX,
+        layout = LAYOUT_FULL,
         master_fill_policy = "expand",
         master_width_factor = 0.5,
       },
