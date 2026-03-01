@@ -5,7 +5,7 @@
     isNormalUser = true;
     description = "pl";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
-    shell = pkgs.nushell;
+    shell = pkgs.bash;
   };
 
   users.users.jennifer = {
