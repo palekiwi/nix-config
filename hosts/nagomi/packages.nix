@@ -5,6 +5,7 @@
     alsa-utils
     curl
     git
+    gitui
     gnupg
     lm_sensors
     neovim

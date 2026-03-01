@@ -13,4 +13,10 @@
   programs.dconf.enable = true;
 
   services.printing.enable = false;
+
+  environment.shellAliases = {
+    gu = "gitui";
+    v = "nvim";
+    rebuild = "sudo nixos-rebuild switch --flake ~/nix-config#$(hostname -s)";
+  };
 }
