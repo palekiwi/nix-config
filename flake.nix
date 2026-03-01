@@ -104,7 +104,6 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/nagomi
-            notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
