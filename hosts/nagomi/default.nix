@@ -3,7 +3,6 @@
 {
   imports =
     [
-      ./firewall-docker.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./packages.nix
@@ -16,13 +15,11 @@
       ../../users/pl/default.nix
 
       ../../modules/cachix.nix
-      ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/sops.nix
     ];
 
   config = {
-    modules.docker.enable = false;
     modules.sops.enable = true;
 
     boot.loader.systemd-boot.enable = true;
