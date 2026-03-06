@@ -60,5 +60,21 @@ export def "ticket fetch" [ticket?: string] {
     }
 }
 
+export def "test" [...args] {
+    let result = do { task --silent test -- --format json ...$args } | complete
+    let stdout = $result.stdout
+
+    if ($stdout | is-empty) {
+        if ($result.stderr | is-not-empty) {
+            print -e $result.stderr
+        }
+        return
+    }
+
+    let failed = $stdout | from json | get examples | where $it.status == "failed"
+
+    mem add --tmp -f rspec-failures.json ($failed | to json)
+}
+
 # TODO: rewrite this in nushell
 export alias "pr create" = sb-create-pr
