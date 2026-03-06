@@ -61,7 +61,7 @@ export def "ticket fetch" [ticket?: string] {
 }
 
 export def "test" [...args] {
-    let result = do { task --silent test -- --format json ...$args } | complete
+    let result = do { go-task test -- --format json ...$args } | complete
     let stdout = $result.stdout
 
     if ($stdout | is-empty) {
