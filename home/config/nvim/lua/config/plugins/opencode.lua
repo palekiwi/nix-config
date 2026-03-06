@@ -23,6 +23,7 @@ return {
           ["diff"] = { prompt = "Review the following git diff for correctness and readability: @diff", submit = true },
           ["document"] = { prompt = "Add comments documenting @this", submit = true },
           ["explain"] = { prompt = "Explain @this and its context", submit = true },
+          ["implement"] = { prompt = "Implement only the following: @this", submit = true },
           ["fix"] = { prompt = "Fix @diagnostics", submit = true },
           ["optimize"] = { prompt = "Optimize @this for performance and readability", submit = true },
           ["pr:explain"] = { prompt = "/pr:explain", submit = true },
