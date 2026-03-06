@@ -1,7 +1,7 @@
 return {
   {
     'NickvanDyke/opencode.nvim',
-    -- commit = "c7594f8",
+    commit = "963fad75f794deb85d1c310d2e2cb033da44f670",
     dependencies = {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
@@ -23,6 +23,7 @@ return {
           ["diff"] = { prompt = "Review the following git diff for correctness and readability: @diff", submit = true },
           ["document"] = { prompt = "Add comments documenting @this", submit = true },
           ["explain"] = { prompt = "Explain @this and its context", submit = true },
+          ["implement"] = { prompt = "Implement only the following: @this", submit = true },
           ["fix"] = { prompt = "Fix @diagnostics", submit = true },
           ["optimize"] = { prompt = "Optimize @this for performance and readability", submit = true },
           ["pr:explain"] = { prompt = "/pr:explain", submit = true },

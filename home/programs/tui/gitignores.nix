@@ -1,9 +1,6 @@
 [
   "*.swp"
   ".agents"
-  ".gh_pr_base"
-  ".gh_pr_base_ahead"
-  ".gh_pr_number"
   ".direnv"
   "build"
   "log/test.log.0"
