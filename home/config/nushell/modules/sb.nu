@@ -25,20 +25,16 @@ def ticket-to-md [data: record] {
 }
 
 export def "ticket save" [ticket?: string, --json] {
+    let ticket = if $ticket != null {
+        $ticket
+    } else {
+        spabreaks_jira_ticket_from_branch
+    }
+
     let data = ticket fetch $ticket
     let content = if $json { $data } else { ticket-to-md $data }
 
-    let branch = git branch --show-current
-    let output_dir = $".agents/($branch)"
-    let ext = if $json { "json" } else { "md" }
-    let filename = $"ticket.($ext)"
-    let target = $"($output_dir)/($filename)"
-
-    mkdir $output_dir
-
-    $content | save -f $target
-
-    $target
+    mem add $"tickets/($ticket).md" $content
 }
 
 export def "ticket fetch" [ticket?: string] {
@@ -62,6 +58,22 @@ export def "ticket fetch" [ticket?: string] {
          description: $in.renderedFields.description,
          technical_notes: $in.renderedFields.customfield_10174
     }
+}
+
+export def "test" [...args] {
+    let result = do { go-task test -- --format json ...$args } | complete
+    let stdout = $result.stdout
+
+    if ($stdout | is-empty) {
+        if ($result.stderr | is-not-empty) {
+            print -e $result.stderr
+        }
+        return
+    }
+
+    let failed = $stdout | from json | get examples | where $it.status == "failed"
+
+    mem add --tmp -f rspec-failures.json ($failed | to json)
 }
 
 # TODO: rewrite this in nushell

@@ -1,8 +1,8 @@
 return {
   {
     "palekiwi/rspec-runner.nvim",
-    dev = false,
-    branch = "dev",
+    dev = true,
+    -- branch = "dev",
     config = function()
       require 'rspec-runner'.setup({
         defaults =  {
