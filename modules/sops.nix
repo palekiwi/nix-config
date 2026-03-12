@@ -20,6 +20,7 @@
 
   sops.secrets."spabreaks/gemini_api_key" = { owner = "pl"; };
   sops.secrets."spabreaks/github_readonly" = { owner = "pl"; };
+  sops.secrets."spabreaks/anthropic_api_key" = { owner = "pl"; };
   sops.secrets."spabreaks/google_generative_ai_api_key" = { owner = "pl"; };
   sops.secrets."spabreaks/gmail/nixos" = { owner = "pl"; };
 
