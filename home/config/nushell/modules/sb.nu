@@ -60,8 +60,13 @@ export def "ticket fetch" [ticket?: string] {
     }
 }
 
-export def "test" [...args] {
-    let result = do { go-task test -- --format json ...$args } | complete
+export def "test" [--only-failures, ...args] {
+    let result = if $only_failures {
+        do { go-task test -- --format json --only-failures ...$args } | complete
+    } else {
+        do { go-task test -- --format json ...$args } | complete
+    }
+
     let stdout = $result.stdout
 
     if ($stdout | is-empty) {
