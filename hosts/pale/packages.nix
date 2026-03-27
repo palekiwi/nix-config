@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   programs.steam = {
-    enable = true;
+    enable = false;
   };
 
   environment.systemPackages = with pkgs; [

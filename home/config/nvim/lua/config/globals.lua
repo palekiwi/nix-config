@@ -1,5 +1,5 @@
 local function set_opencode_port()
-  local handle = io.popen("generate_port_from_path")
+  local handle = io.popen("ocx port")
   if handle then
     vim.g.opencode_port = handle:read("*a"):gsub("%s+", "")
     handle:close()

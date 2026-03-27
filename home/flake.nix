@@ -9,8 +9,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
+    mem.url = "github:palekiwi-labs/mem";
+    ocx.url = "github:palekiwi-labs/ocx";
     test-runner-mcp.url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
     wrappedAgents.url = "github:palekiwi-labs/agents";
+    handy.url = "github:cjpais/Handy";
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -22,10 +25,13 @@
             (final: prev: {
               gemini = inputs.wrappedAgents.packages.x86_64-linux.gemini;
               mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
+              mem = inputs.mem.packages.x86_64-linux.default;
+              ocx = inputs.ocx.packages.x86_64-linux.default;
               opencode = inputs.wrappedAgents.packages.x86_64-linux.opencode;
               opencode-ruby = inputs.wrappedAgents.packages.x86_64-linux.opencode-ruby;
               opencode-rust = inputs.wrappedAgents.packages.x86_64-linux.opencode-rust;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
+              handy = inputs.handy.packages.x86_64-linux.default;
             })
           ];
       };

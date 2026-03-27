@@ -22,5 +22,9 @@
       oss.enable = true;
       spabreaks.enable = true;
     };
+
+    services.handy = {
+      enable = true;
+    };
   };
 }

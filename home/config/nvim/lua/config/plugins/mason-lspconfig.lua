@@ -6,7 +6,6 @@ return {
         ensure_installed = {
           -- "ansiblels",
           -- "astro",
-          "clangd",
           "elmls",
           "eslint",
           -- "gopls",

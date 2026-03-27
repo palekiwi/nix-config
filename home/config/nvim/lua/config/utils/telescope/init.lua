@@ -92,7 +92,7 @@ M.changed_files = function(search_dir)
 
   local title = "Changed files"
 
-  local git_cmd = "git diff --name-only " .. result
+  local git_cmd = "git diff --name-only " .. result .. "...HEAD"
 
   if search_dir then
     git_cmd = git_cmd .. " -- " .. search_dir

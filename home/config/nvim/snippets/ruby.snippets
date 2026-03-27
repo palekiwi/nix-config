@@ -51,10 +51,10 @@ snippet it
 #     puts "#{'${1:val}'.center(${2:50}, '-')}\n"; Pry::ColorPrinter.pp($1); puts "#{'-' * $2}\n\n"; # rubocop:disable Style/Semicolon
 
 snippet debug
-	binding.pry
+	binding.irb
 
-snippet binding.pry
-	binding.pry
+snippet binding.irb
+	binding.irb
 
 snippet rubocop:disable
     # rubocop:disable ${0:Metrics/AbcSize}

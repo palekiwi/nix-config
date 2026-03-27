@@ -34,7 +34,7 @@ local function live_grep_specs()
 end
 
 set("n", "<leader>fr", rails_utils.find_template_render, { desc = "[Rails] Where is current view renedered?" })
-set("n", "<leader>ft>", rails_utils.find_template, { desc = "[Rails] Find this template" })
+set("n", "<leader>ft", rails_utils.find_template, { desc = "[Rails] Find this template" })
 
 -- set("n", "<leader>gt", grep_string_tailwind, { desc = "[Grep String] Tailwind" })
 -- set("n", "<leader>gy", grep_string_sass, { desc = "[Grep String] Sass" })
@@ -49,11 +49,13 @@ set("n", "<leader>rf", "<cmd>RspecRunnerFailures<cr>", { desc = "[RSpec] Test Fa
 set("n", "<leader>rl", "<cmd>RspecRunnerLast<cr>", { desc = "[RSpec] Repeat Last" })
 set("n", "<leader>rn", "<cmd>RspecRunnerNearest<cr>", { desc = "[RSpec] Test Nearest" })
 set("n", "<leader>rt", "<cmd>RspecRunnerFile<cr>", { desc = "[RSpec] Test File" })
+set("n", "<leader>rs", "<cmd>RspecRunnerStaged<cr>", { desc = "[RSpec] Test Staged Files" })
 set("n", "<leader>rr", "<cmd>RspecRunnerShowResults<cr>", { desc = "[RSpec] Results" })
 set("n", "<leader>rc", "<cmd>RspecRunnerCancel<cr>", { desc = "[RSpec] Cancel Run" })
 set("n", "<leader>rda", "<cmd>RspecRunnerTermAll<cr>", { desc = "[RSpec] Terminal All" })
 set("n", "<leader>rdp", "<cmd>RspecRunnerTermBase<cr>", { desc = "[RSpec] Terminal Base" })
 set("n", "<leader>rdt", "<cmd>RspecRunnerTermFile<cr>", { desc = "[RSpec] Terminal File" })
+set("n", "<leader>rds", "<cmd>RspecRunnerTermStaged<cr>", { desc = "[RSpec] Terminal Staged" })
 set("n", "<leader>rdn", "<cmd>RspecRunnerTermNearest<cr>", { desc = "[RSpec] Terminal Nearest" })
 set("n", "<leader>rdf", "<cmd>RspecRunnerTermFailures<cr>", { desc = "[RSpec] Terminal Failures" })
 set("n", "<leader>rdl", "<cmd>RspecRunnerTermLast<cr>", { desc = "[RSpec] Terminal Last" })

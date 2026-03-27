@@ -8,7 +8,7 @@ pkgs.writeShellScriptBin "_tmux_spabreaks_my_account_dev" ''
   tmux new-window -t $session -n debug
 
   tmux send-keys -t $session:1 'make dev' C-m
-  tmux send-keys -t $session:2 'sleep 1; make debug-web' C-m
+  tmux send-keys -t $session:2 'sleep 3sec; make debug-web' C-m
 
   tmux select-window -t $session:1
 ''

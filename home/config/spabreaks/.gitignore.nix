@@ -9,12 +9,9 @@ in
   # Spabreaks-specific ignores
   .envrc
   .gutctags
-  .opencode
   .agents
-  AGENTS.md
   ai_docs
   gemset.nix
-  opencode.json
   cypress/cypress/screenshots
   cypress/cypress/snapshots
 ''

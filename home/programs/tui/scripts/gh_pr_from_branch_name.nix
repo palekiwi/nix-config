@@ -1,5 +1,8 @@
 { pkgs, ... }:
 
+let
+  set_pr_info = import ./set_pr_info.nix { inherit pkgs; };
+in
 pkgs.writers.writeNuBin "gh_pr_from_branch_name" ''
   def main [--body: string = "", --draft, --base: string] {
     let branch_name = (git branch --show-current | str trim)
@@ -19,5 +22,7 @@ pkgs.writers.writeNuBin "gh_pr_from_branch_name" ''
 
     print $"Creating PR with title: ($title)"
     gh pr create ...$args
+
+    ${set_pr_info}/bin/set_pr_info
   }
 ''

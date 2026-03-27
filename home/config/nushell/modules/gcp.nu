@@ -1,3 +1,6 @@
+const DEFAULT_REGION = "europe-west2"
+const DEFAULT_PROJECT = "spabreaks-production"
+
 export def main [] {
     "TODO"
 }
@@ -8,16 +11,30 @@ export def "buckets ls" [] {
     | into datetime creation_time
 }
 
-export def builds [
+export def "builds list" [
     --limit(-l):int = 50
-    --project(-p)="production-servers"
+    --project(-p)=$DEFAULT_PROJECT
+    --region=$DEFAULT_REGION
 ] {
-    gcloud builds list --format=json --limit=$"($limit)" --project=$"($project)"
+    (gcloud builds list
+        --format=json
+        --limit=$"($limit)"
+        --project=$"($project)"
+        --region=$"($region)"
+    )
     | from json
-    | select substitutions.REPO_NAME? substitutions.COMMIT_SHA? status finishTime?
+    | select id substitutions.REPO_NAME? substitutions.COMMIT_SHA? status finishTime?
     | update finishTime { |row| try { $row.finishTime | into datetime } catch { null } }
-    | rename repo commit status finished
+    | rename id repo commit status finished
     | update commit { |row| $row.commit | str substring 0..7 }
+}
+
+export def "builds cancel" [
+    id: string
+    --project(-p)=$DEFAULT_PROJECT
+    --region=$DEFAULT_REGION
+] {
+    gcloud builds cancel $id --project $project --region $region
 }
 
 export def "config get-value" [value: string] {

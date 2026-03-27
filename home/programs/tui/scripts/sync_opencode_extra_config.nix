@@ -4,6 +4,13 @@ pkgs.writers.writeNuBin "sync_opencode_extra_config" ''
   def main [config_dir: string, --sync-agents] {
     let subdir = ".opencode"
 
+    # Check if opencode.json is already tracked by git
+    let is_tracked = (do { git ls-files --error-unmatch opencode.json } | complete).exit_code == 0
+    if $is_tracked {
+      print "opencode.json is already tracked by git. Skipping sync."
+      return
+    }
+
     # Sync .opencode directory
     if ($config_dir | path join $subdir | path exists) {
       print $"Syncing opencode extra config from ($config_dir)/($subdir)..."

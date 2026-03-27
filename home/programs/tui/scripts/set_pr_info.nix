@@ -7,7 +7,10 @@ let
 in
 pkgs.writeShellScriptBin "set_pr_info" ''
   # TODO: rewrite in nushell
-  DEST_DIR=.git
+  DEST_DIR=".git"
+  FILE_PR_NUMBER="$DEST_DIR/GH_PR_NUMBER"
+  FILE_GIT_BASE="$DEST_DIR/GIT_BASE"
+  FILE_GIT_BASE_AHEAD="$DEST_DIR/GIT_BASE_AHEAD"
 
   pr_info=$(${pkgs.gh}/bin/gh pr view --json number,baseRefName 2>/dev/null)
 
@@ -15,8 +18,8 @@ pkgs.writeShellScriptBin "set_pr_info" ''
     GH_PR_NUMBER=$(echo "$pr_info" | ${pkgs.jq}/bin/jq -r '.number')
     GIT_BASE=$(echo "$pr_info" | ${pkgs.jq}/bin/jq -r '.baseRefName')
 
-    echo "$GH_PR_NUMBER" > "$DEST_DIR/GH_PR_NUMBER"
-    echo "$GIT_BASE" > "$DEST_DIR/GIT_BASE"
+    echo "$GH_PR_NUMBER" > "$FILE_PR_NUMBER"
+    echo "$GIT_BASE" > "$FILE_GIT_BASE"
 
     # Check if base branch has new commits
     ${pkgs.git}/bin/git fetch origin "$GIT_BASE" --quiet
@@ -26,14 +29,14 @@ pkgs.writeShellScriptBin "set_pr_info" ''
 
     # Check if origin/base is ahead of the merge base
     if [ "$(${pkgs.git}/bin/git rev-parse origin/"$GIT_BASE")" != "$merge_base" ]; then
-      echo "true" > "$DEST_DIR/GIT_BASE_AHEAD"
+      echo "true" > "$FILE_GIT_BASE_AHEAD"
         echo -e "${orange}Base branch '$GIT_BASE' has new commits${reset}"
     else
-      rm -f "$DEST_DIR/GIT_BASE_AHEAD"
+      rm -f "$FILE_GIT_BASE_AHEAD"
     fi
       echo -e "${green}Updated PR info: #$GH_PR_NUMBER (base: $GIT_BASE)${reset}"
   else
-    rm -f .git/GH_PR_NUMBER .git/GIT_BASE .git/GIT_BASE_AHEAD
+    rm -f "$FILE_PR_NUMBER" "$FILE_GIT_BASE" "$FILE_GIT_BASE_AHEAD"
       echo -e "${green}Cleared PR info (not on a PR branch)${reset}"
   fi
 ''

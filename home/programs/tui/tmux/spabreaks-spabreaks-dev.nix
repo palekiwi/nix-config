@@ -9,7 +9,7 @@ pkgs.writeShellScriptBin "_tmux_spabreaks_spabreaks_dev" ''
   tmux new-window -t $session -n mcp-rspec
 
   tmux send-keys -t $session:1 'make dev' C-m
-  tmux send-keys -t $session:2 'sleep 1; task debug-web' C-m
-  tmux send-keys -t $session:3 'mcp-rspec' C-m
+  tmux send-keys -t $session:2 'sleep 3sec; task debug-web' C-m
+  tmux send-keys -t $session:3 'task mcp:rspec' C-m
   tmux select-window -t $session:1
 ''

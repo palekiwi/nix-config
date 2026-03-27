@@ -3,6 +3,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 
 require("globals")
+local screen_roles = require("screen_roles")
 
 local mysystray = wibox.layout.margin(wibox.widget.systray(), 3, 3, 3, 3)
 
@@ -66,7 +67,7 @@ local function setup_right_widgets()
   local function timeAbroad(label, timezone)
     return wibox.layout.margin(
       wibox.widget.textclock(
-        "<span foreground='#aaa' weight='bold'><span foreground='#666'>" ..
+        "<span foreground='#888' weight='bold'><span foreground='#666'>" ..
         label .. "</span> %H:%M</span>",
         nil,
         timezone
@@ -126,13 +127,13 @@ local function setup_wibox(s)
   s.mywibox:setup {
     layout = wibox.layout.align.horizontal,
     -- expand = "none",
-    {     -- Left widgets
+    { -- Left widgets
       layout = wibox.layout.fixed.horizontal,
       s.mytaglist,
       s.mypromptbox,
     },
-    s.mytasklist,             -- Middle widget
-    setup_right_widgets()     -- Right widgets
+    s.mytasklist,         -- Middle widget
+    setup_right_widgets() -- Right widgets
   }
 end
 
@@ -144,12 +145,12 @@ local function setup_wibox_secondary(s)
   s.mywibox:setup {
     layout = wibox.layout.align.horizontal,
     -- expand = "none",
-    {     -- Left widgets
+    { -- Left widgets
       layout = wibox.layout.fixed.horizontal,
       s.mytaglist,
       s.mypromptbox,
     },
-    s.mytasklist     -- Middle widget
+    s.mytasklist -- Middle widget
   }
 end
 
@@ -175,9 +176,19 @@ local function setup_wibar(s)
     buttons = tasklist_buttons
   }
 
-  if s.index == 1 then
-    setup_wibox(s)
+  -- Identify screen role
+  local screen_role = screen_roles.identify_screen(s)
+
+  -- Configure wibar based on role
+  if screen_role == "ultrawide_right" or screen_role == "primary" or screen_role == "ultrawide_single" then
+    setup_wibox(s)           -- Full wibar with all widgets
+  elseif screen_role == "ultrawide_left" or screen_role == "secondary" then
+    setup_wibox_secondary(s) -- Minimal wibar (no right widgets)
+  elseif screen_role == "external" then
+    -- No wibar on external monitor
+    s.mywibox = nil
   else
+    -- Fallback for unknown roles
     setup_wibox_secondary(s)
   end
 end

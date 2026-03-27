@@ -1,9 +1,12 @@
 { pkgs, ... }:
 {
-  fonts.packages = [
-    pkgs.nerd-fonts.fira-code
-    pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.iosevka
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.iosevka
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
   ];
 }
 
