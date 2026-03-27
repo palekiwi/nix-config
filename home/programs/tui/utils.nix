@@ -11,7 +11,7 @@
     fasd
     fd
     fzf
-    (lib.lowPrio go-task)
+    go-task
     home-assistant-cli
     # jrnl
     jq

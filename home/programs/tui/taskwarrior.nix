@@ -1,7 +1,7 @@
-{ pkgs, ...}:
+{ pkgs, lib, ...}:
 
 let
-  taskwarrior-pkg = pkgs.taskwarrior3;
+  taskwarrior-pkg = lib.lowPrio pkgs.taskwarrior3;
   # Wrap taskwarrior-tui to ensure it always finds taskwarrior3's task binary,
   # even when devshells bring in their own go-task that overrides PATH
   taskwarrior-tui-wrapped = pkgs.symlinkJoin {

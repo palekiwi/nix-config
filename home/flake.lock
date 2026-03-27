@@ -237,11 +237,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1772171492,
-        "narHash": "sha256-coasi7STOHwJnkEfJJCWV50cKcyFwRZ72oq23jbhXgI=",
+        "lastModified": 1773725195,
+        "narHash": "sha256-45z91H6zx6Nyz7vDOYLPsqTvnfzJKKEFGTYtYaSYXfM=",
         "owner": "palekiwi-labs",
         "repo": "mem",
-        "rev": "cf5a1c10409b2e8b475575da738a4a04f71cb75b",
+        "rev": "18adc7e0a4a88ffad3791819c62cad480c603176",
         "type": "github"
       },
       "original": {
@@ -436,11 +436,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1772163890,
-        "narHash": "sha256-WejvrAtCOCj1KMALDVg6wPmy/4rcpWNov909aKiKLlg=",
+        "lastModified": 1773206638,
+        "narHash": "sha256-Nl997I5WXtu5JO0W+ts9JEApfz4fD3MOlsGcP21oIw0=",
         "owner": "palekiwi-labs",
         "repo": "ocx",
-        "rev": "343b7c8418a3f39e96975c2c6301d97ae8530e9a",
+        "rev": "2e07a91b877422074665207b641366add08d414e",
         "type": "github"
       },
       "original": {

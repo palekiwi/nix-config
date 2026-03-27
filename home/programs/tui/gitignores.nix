@@ -1,10 +1,8 @@
 [
   "*.swp"
   ".agents"
-  ".gh_pr_base"
-  ".gh_pr_base_ahead"
-  ".gh_pr_number"
   ".direnv"
+  ".mem"
   "build"
   "log/test.log.0"
   "tags"
