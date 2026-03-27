@@ -1,8 +1,9 @@
-{ config, ...}:
+{ config, z2m, ...}:
 
 {
   services.zigbee2mqtt = {
     enable = true;
+    package = z2m;
     settings = {
       homeassistant.enabled = true;
       permit_join = false;

@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -89,6 +90,10 @@
             ./users/git
             inputs.sops-nix.nixosModules.sops
           ];
+
+          specialArgs = {
+            z2m = inputs.nixpkgs-unstable.legacyPackages.x86_64-linux.zigbee2mqtt;
+          };
         };
 
         kyomu = nixpkgs.lib.nixosSystem {
