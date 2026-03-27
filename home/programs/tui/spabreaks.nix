@@ -52,7 +52,10 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
-    agents-spabreaks = {
+    spabreaks-static = {
+      files = {
+        ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
+      };
       gitHooks = {
         pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;

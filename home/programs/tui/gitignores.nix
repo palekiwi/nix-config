@@ -2,6 +2,7 @@
   "*.swp"
   ".agents"
   ".direnv"
+  ".mem"
   "build"
   "log/test.log.0"
   "tags"

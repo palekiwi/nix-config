@@ -1,8 +1,8 @@
 { ... }:
 {
   services.ollama = {
-    enable = false;
+    enable = true;
     acceleration = "cuda";
-    loadModels = [ "deepseek-r1:7b" ];
+    loadModels = [];
   };
 }
