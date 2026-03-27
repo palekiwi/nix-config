@@ -28,6 +28,9 @@
       overwriteProtocol = "https";
       trustedProxies = [ "100.73.219.12" ];
       defaultPhoneRegion = "TW";
+      auth.bruteforce.whitelist = [
+        "100.64.0.0/10"
+      ];
     };
 
     configureRedis = true;
