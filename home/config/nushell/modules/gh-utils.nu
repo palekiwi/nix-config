@@ -138,8 +138,8 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
                 } | complete)
 
                 let comments = if $comments_response.exit_code == 0 {
-                    $comments_response.stdout 
-                    | from json 
+                    $comments_response.stdout
+                    | from json
                     | each {|c| {
                         id: $c.id
                         in_reply_to_id: ($c.in_reply_to_id? | default null)
@@ -163,7 +163,7 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
             }}
             $reviews_with_comments | to json
         } else {
-            $reviews 
+            $reviews
             | each {|r| {
                 id: $r.id
                 author: $r.user.login
@@ -204,7 +204,7 @@ export def "review comments" [pr_number?: int, --full] {
         $comments_response.stdout
     } else {
         # Return filtered JSON optimized for AI agents (default)
-        $comments_response.stdout
+        let comments = $comments_response.stdout
         | from json
         | each {|c| {
             id: $c.id
@@ -214,7 +214,8 @@ export def "review comments" [pr_number?: int, --full] {
             body: $c.body
             diff_hunk: $c.diff_hunk
         }}
-        | to json
+
+        review-comments-to-md $comments
     }
 }
 
@@ -477,4 +478,28 @@ export def "pr review" [
             $filtered_review | to json
         }
     }
+}
+
+# TODO:
+# - [] display as threads with grouped replies
+# - [] fix the diff size, show only the relevant few lines sam as what the github UI shows
+def review-comments-to-md [comments: list<record>] {
+    $comments
+        | each { |it|
+            # Extract line number from diff hunk (e.g., @@ -26,11 +26,30 @@)
+            let line_info = ($it.diff_hunk | parse -r '@@ -\d+(?:,\d+)? \+(?P<line>\d+)(?:,\d+)? @@')
+            let line_suffix = if ($line_info | is-empty) { "" } else { $":($line_info.0.line)" }
+
+            [
+                $"## `($it.path)($line_suffix)` by @($it.author)",
+                "",
+                $it.body,
+                "",
+                "```diff",
+                $it.diff_hunk,
+                "```",
+                ""
+            ] | str join "\n"
+        }
+        | str join "\n---\n\n"
 }
