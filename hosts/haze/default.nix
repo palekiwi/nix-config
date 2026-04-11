@@ -6,15 +6,15 @@
       ../../modules/cachix.nix
       ../../modules/docker.nix
       ../../modules/server.nix
-      ./appdaemon.nix
+      # ./appdaemon.nix
       ./gotify.nix
       ./hardware-configuration.nix
-      ./homeassistant.nix
-      ./mosquitto.nix
+      # ./homeassistant.nix
+      # ./mosquitto.nix
       ./postgres.nix
       ./sops.nix
       ./taskchampion.nix
-      ./zigbee2mqtt.nix
+      # ./zigbee2mqtt.nix
     ];
 
   config = {
