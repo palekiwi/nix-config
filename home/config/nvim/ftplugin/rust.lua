@@ -19,6 +19,8 @@ vim.keymap.set(
   { silent = true, buffer = bufnr }
 )
 
+vim.keymap.set({ "n", "i" }, "<C-k>", vim.lsp.buf.signature_help, { silent = true, buffer = bufnr, desc = "[LSP] signature help" })
+
 vim.keymap.set("n", "<leader>ff", function() vim.lsp.buf.format { async = true } end,
   { buffer = bufnr, desc = "[LSP] format" })
 vim.keymap.set("n", "<leader>dr", vim.lsp.buf.rename, { buffer = bufnr, desc = "[LSP] rename" })
