@@ -29,6 +29,6 @@ vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { buffer = bufnr, d
 -- Enable inlay hints
 vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 
-vim.keymap.set("n", "<leader>ih", function()
+vim.keymap.set("n", "<leader>i", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 end, { buffer = bufnr, desc = "[LSP] Toggle Inlay Hints" })
