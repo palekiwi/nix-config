@@ -25,3 +25,10 @@ vim.keymap.set("n", "<leader>dr", vim.lsp.buf.rename, { buffer = bufnr, desc = "
 vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({count=1, float=true}) end, { buffer = bufnr, desc = "[Diagnostic] next" })
 vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({count=-1, float=true}) end, { buffer = bufnr, desc = "[Diagnostic] prev" })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { buffer = bufnr, desc = "[Diagnostic] float" })
+
+-- Enable inlay hints
+vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+
+vim.keymap.set("n", "<leader>ih", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+end, { buffer = bufnr, desc = "[LSP] Toggle Inlay Hints" })
