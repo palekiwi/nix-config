@@ -7,5 +7,5 @@
   sops.secrets."cachix/personal/token" = { owner = "pl"; };
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
-  sops.secrets."zigbee2mqtt" = { owner = "zigbee2mqtt"; };
+  # sops.secrets."zigbee2mqtt" = { owner = "zigbee2mqtt"; };
 }
