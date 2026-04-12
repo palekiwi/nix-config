@@ -11,7 +11,6 @@ in
   .gutctags
   .agents
   ai_docs
-  gemset.nix
   cypress/cypress/screenshots
   cypress/cypress/snapshots
 ''

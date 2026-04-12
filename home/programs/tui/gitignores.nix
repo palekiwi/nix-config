@@ -2,6 +2,8 @@
   "*.swp"
   ".agents"
   ".direnv"
+  ".envrc"
+  ".gutctags"
   ".mem"
   "build"
   "log/test.log.0"
