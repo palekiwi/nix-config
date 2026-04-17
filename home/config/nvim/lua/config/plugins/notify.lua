@@ -1,6 +1,7 @@
 return {
   {
     "rcarriga/nvim-notify",
+    enable = false,
     config = function()
       ---@diagnostic disable: missing-fields
       require 'notify'.setup({

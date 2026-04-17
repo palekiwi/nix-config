@@ -2,9 +2,6 @@ return {
   {
     "nickjvandyke/opencode.nvim",
     version = "*", -- Latest stable release
-    dependencies = {
-      { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
-    },
     config = function()
       local oc = require("opencode")
 
