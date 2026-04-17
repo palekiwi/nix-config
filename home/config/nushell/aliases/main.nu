@@ -32,6 +32,10 @@ def ll [] {
     ls -la | select name type size mode user group created accessed modified | sort-by type
 }
 
+def direnv_rust [] {
+    'use flake "github:palekiwi/flake-templates?dir=templates/rust/devshell"' | save .envrc
+}
+
 alias t = ~/.nix-profile/bin/task
 alias tt = taskwarrior-tui
 alias cat = bat -p

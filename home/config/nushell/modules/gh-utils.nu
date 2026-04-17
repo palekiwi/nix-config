@@ -176,7 +176,7 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
     }
 }
 
-export def "review comments" [pr_number?: int, --full] {
+export def "review comments" [pr_number?: int, --full, --json] {
     let pr_number = $pr_number | default ""
 
     # Get PR data to extract repository info
@@ -215,7 +215,11 @@ export def "review comments" [pr_number?: int, --full] {
             diff_hunk: $c.diff_hunk
         }}
 
-        review-comments-to-md $comments
+        if $json {
+            $comments | to json
+        } else {
+            review-comments-to-md $comments
+        }
     }
 }
 
