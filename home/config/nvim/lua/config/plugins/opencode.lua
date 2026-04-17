@@ -1,7 +1,7 @@
 return {
   {
     'NickvanDyke/opencode.nvim',
-    commit = "963fad75f794deb85d1c310d2e2cb033da44f670",
+    -- commit = "963fad75f794deb85d1c310d2e2cb033da44f670",
     dependencies = {
       { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
     },
@@ -9,11 +9,14 @@ return {
       local oc = require("opencode")
 
       vim.g.opencode_opts = {
+        server = {
+          -- Use the port reachable from your terminal (you mentioned 52693 earlier)
+          port = tonumber(vim.g.opencode_port) or 49000,
 
-        -- on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
-
-        -- load port from an var set on a project basis or use a custom default
-        port = tonumber(vim.g.opencode_port) or 49000,
+          -- Disable auto-start to prevent Neovim from trying to
+          -- launch a local 'opencode' binary
+          start = false,
+        },
 
         prompts = {
           ["add_buffer"] = { prompt = "@buffer" },
