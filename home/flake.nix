@@ -24,7 +24,7 @@
           overlays = [
             (final: prev: {
               mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
-              cast = inputs.mem.packages.x86_64-linux.default;
+              cast = inputs.cast.packages.x86_64-linux.default;
               mem = inputs.mem.packages.x86_64-linux.default;
               ocx = inputs.ocx.packages.x86_64-linux.default;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
