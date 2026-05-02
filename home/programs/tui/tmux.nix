@@ -107,10 +107,10 @@ in
       set -g status-left-length 140
 
       setw -g window-status-current-style "fg=color15"
-      setw -g window-status-current-format '::#W'
+      setw -g window-status-current-format ' #I '
 
       setw -g window-status-style 'fg=colour7 dim'
-      setw -g window-status-format '::#W'
+      setw -g window-status-format ' #I '
 
       setw -g window-status-bell-style 'fg=colour2 bg=colour1 bold'
 
