@@ -46,7 +46,7 @@ local function get_current_branch()
 end
 
 -- Get artifact list from mem CLI
-local function get_mem_artifacts(all_branches, include_ignored)
+local function get_mem_artifacts(all_branches, include_gitignored)
   -- Check if mem command exists
   vim.fn.system('which mem 2>/dev/null')
   if vim.v.shell_error ~= 0 then
@@ -59,8 +59,8 @@ local function get_mem_artifacts(all_branches, include_ignored)
   if all_branches then
     cmd = cmd .. ' --all'
   end
-  if include_ignored then
-    cmd = cmd .. ' --include-ignored'
+  if include_gitignored then
+    cmd = cmd .. ' --include-gitignored'
   end
   cmd = cmd .. ' 2>/dev/null'
 
@@ -353,15 +353,10 @@ function M.add(filename, opts)
   -- 1. Prepare the command and arguments
   local cmd = { 'mem', 'add', filename }
 
-  -- Add category flag
-  if opts.category == "trace" then
-    table.insert(cmd, '--trace')
-  elseif opts.category == "bin" then
-    table.insert(cmd, '--bin')
-  elseif opts.category == "tmp" then
-    table.insert(cmd, '--tmp')
-  elseif opts.category == "ref" then
-    table.insert(cmd, '--ref')
+  -- Add type flag
+  if opts.category then
+    table.insert(cmd, '--type')
+    table.insert(cmd, opts.category)
   end
 
   -- Add commit hash if provided and category allows it
