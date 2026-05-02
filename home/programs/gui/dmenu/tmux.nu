@@ -6,12 +6,12 @@ def run_rofi []: list<string> -> string {
     | rofi -dmenu -i -theme-str "window { width: 40%; height: 50%; location: center; }" -p "Tmux sessions"
 }
 
-def build_options [ocx: bool, tmux: bool] {
+def build_options [cast: bool, tmux: bool] {
     let tmux_flag = if $tmux { "--tmux" } else { "" }
     let sessions = sesh list --json $tmux_flag | from json
 
     $sessions
-    | if $ocx { where Name =~ "-ocx$" } else { $in }
+    | if $cast { where Name =~ "-cast$" } else { $in }
     | each { |session|
         $"($session.Score),($session.Name),($session.Src),($session.Path)"
     }
@@ -19,10 +19,10 @@ def build_options [ocx: bool, tmux: bool] {
 }
 
 def main [
-    --ocx
+    --cast
     --tmux
 ] {
-    let choice = (build_options $ocx $tmux | run_rofi)
+    let choice = (build_options $cast $tmux | run_rofi)
 
     if ($choice | is-empty) {
         exit 1
