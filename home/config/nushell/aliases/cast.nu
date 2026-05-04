@@ -5,3 +5,11 @@ def "cdo" [] {
     tmux send-keys -t $session 'cast run opencode' C-m
     kitty --detach -T $session tmux attach -t $session
 }
+
+def "cro" [] {
+    cast run opencode
+}
+
+def "cso" [] {
+    cast shell opencode
+}
