@@ -54,17 +54,17 @@ path = "~/code/spabreaks/blog/"
 startup_command = "_tmux_spabreaks_blog_dev"
 
 #-------------------
-#   --- sales ---
+#   --- wss ---
 #-------------------
 [[session]]
-name = "sales"
-path = "~/code/spabreaks/sales/"
+name = "wss"
+path = "~/code/spabreaks/wss/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "sales-dev"
-path = "~/code/spabreaks/sales/"
-startup_command = "_tmux_spabreaks_sales_dev"
+name = "wss-dev"
+path = "~/code/spabreaks/wss/"
+startup_command = "_tmux_spabreaks_wss_dev"
 
 #-------------------
 #  --- wss-data ---
