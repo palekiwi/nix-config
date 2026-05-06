@@ -71,6 +71,15 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    wss = {
+      files = {
+        ".envrc" = ../../config/spabreaks/wss/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
     gemini-cli-tool = {
       files = {
         ".envrc" = ../../config/spabreaks/gemini-cli-tool/.envrc;
