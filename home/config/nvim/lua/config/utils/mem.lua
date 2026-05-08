@@ -298,42 +298,47 @@ function M.pick_artifacts(opts)
         end
       end)
 
-      -- Copy path to clipboard
-      map('i', '<C-y>', function()
-        local entry = action_state.get_selected_entry() ---@type table
-        if entry then
-          vim.fn.setreg('+', entry.path)
-          vim.notify("Copied path: " .. entry.path, vim.log.levels.INFO)
-        end
-      end)
+      local function copy_to_clipboard(get_value, label)
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        local selection = picker:get_multi_selection()
+        local results = {}
 
-      map('n', '<C-y>', function()
-        local entry = action_state.get_selected_entry() ---@type table
-        if entry then
-          vim.fn.setreg('+', entry.path)
-          vim.notify("Copied path: " .. entry.path, vim.log.levels.INFO)
+        if selection == nil or vim.tbl_isempty(selection) then
+          local entry = action_state.get_selected_entry()
+          if entry then
+            local val = get_value(entry)
+            if val and val ~= vim.NIL and val ~= "" then
+              table.insert(results, val)
+            end
+          end
+        else
+          for _, entry in ipairs(selection) do
+            local val = get_value(entry)
+            if val and val ~= vim.NIL and val ~= "" then
+              table.insert(results, val)
+            end
+          end
         end
+
+        if #results > 0 then
+          local final_val = table.concat(results, "\n")
+          vim.fn.setreg('+', final_val)
+          local msg = "Copied " .. label .. ": " .. (#results > 1 and (#results .. " items") or final_val)
+          vim.notify(msg, vim.log.levels.INFO)
+          actions.close(prompt_bufnr)
+        else
+          vim.notify("No " .. label .. " available to copy", vim.log.levels.WARN)
+        end
+      end
+
+      -- Copy path to clipboard
+      map({ 'i', 'n' }, '<C-y>', function()
+        copy_to_clipboard(function(e) return e.path end, "path")
       end)
 
       -- Copy hash to clipboard
-      map('i', '<C-h>', function()
-        local entry = action_state.get_selected_entry() ---@type table
-        if entry and entry.hash and entry.hash ~= vim.NIL and entry.hash ~= "" then
-          vim.fn.setreg('+', entry.hash)
-          vim.notify("Copied hash: " .. entry.hash, vim.log.levels.INFO)
-        else
-          vim.notify("No hash available for this artifact", vim.log.levels.WARN)
-        end
-      end)
-
-      map('n', '<C-h>', function()
-        local entry = action_state.get_selected_entry() ---@type table
-        if entry and entry.hash and entry.hash ~= vim.NIL and entry.hash ~= "" then
-          vim.fn.setreg('+', entry.hash)
-          vim.notify("Copied hash: " .. entry.hash, vim.log.levels.INFO)
-        else
-          vim.notify("No hash available for this artifact", vim.log.levels.WARN)
-        end
+      map({ 'i', 'n' }, '<C-h>', function()
+        copy_to_clipboard(function(e) return e.hash end, "hash")
       end)
 
       return true
