@@ -33,6 +33,15 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    esign-frontend = {
+      files = {
+        ".envrc" = ../../config/spabreaks/esign-frontend/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
     my-account = {
       files = {
         ".envrc" = ../../config/spabreaks/my-account/.envrc;
