@@ -89,6 +89,7 @@ end
 local function select_category(callback)
   local items = {
     { label = "spec",  desc = "Specification (default)" },
+    { label = "doc",   desc = "Documentation artifact" },
     { label = "trace", desc = "Trace / debug artifact" },
     { label = "bin",   desc = "Binary artifact" },
     { label = "tmp",   desc = "Temporary artifact" },
@@ -130,6 +131,7 @@ end
 local function get_category_highlight(category)
   local highlights = {
     spec = "TelescopeResultsConstant",
+    doc = "TelescopeResultsSpecial",
     bin = "DiagnosticError",
     trace = "TelescopeResultsFunction",
     tmp = "TelescopeResultsVariable",
@@ -210,10 +212,11 @@ local function sort_artifacts(artifacts)
   -- Category priority mapping
   local category_priority = {
     spec = 1,
-    bin = 2,
-    trace = 3,
-    tmp = 4,
-    ref = 5,
+    doc = 2,
+    bin = 3,
+    trace = 4,
+    tmp = 5,
+    ref = 6,
   }
 
   ---@param a table
@@ -472,6 +475,20 @@ end, {
   nargs = 1,
   complete = 'file',
   desc = 'Add a new mem ref artifact and open it for editing'
+})
+
+-- :MemAddDoc <filename> - Add doc artifact
+vim.api.nvim_create_user_command('MemAddDoc', function(args)
+  local filename = args.args
+  if not filename or filename == "" then
+    vim.notify("Usage: :MemAddDoc <filename>", vim.log.levels.ERROR)
+    return
+  end
+  M.add(filename, { category = 'doc' })
+end, {
+  nargs = 1,
+  complete = 'file',
+  desc = 'Add a new mem doc artifact and open it for editing'
 })
 
 return M
