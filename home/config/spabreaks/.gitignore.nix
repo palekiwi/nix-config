@@ -13,4 +13,6 @@ in
   ai_docs
   cypress/cypress/screenshots
   cypress/cypress/snapshots
+  cast.env
+  cast.json
 ''
