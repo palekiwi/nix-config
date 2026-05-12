@@ -4,6 +4,7 @@ local conf = require('telescope.config').values
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local previewers = require('telescope.previewers')
+local telescope_actions = require('config.utils.telescope.actions')
 
 local M = {}
 
@@ -182,6 +183,14 @@ function M.pick_pr()
           local cmd = string.format('gh pr view %d --web', entry.value.number)
           vim.fn.jobstart(cmd, { detach = true })
         end
+      end)
+
+      map({ 'i', 'n' }, '<C-h>', function()
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return "#" .. e.value.number end, "PR number")
+      end)
+
+      map({ 'i', 'n' }, '<C-u>', function()
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return e.value.url end, "PR URL")
       end)
 
       return true
