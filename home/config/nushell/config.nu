@@ -1,10 +1,3 @@
-source aliases/agents.nu
-source aliases/gh.nu
-source aliases/git.nu
-source aliases/main.nu
-source aliases/ocx.nu
-source aliases/cast.nu
-
 source integrations/atuin.nu
 
 use modules/agents.nu
@@ -13,6 +6,13 @@ use modules/gh-utils.nu
 use modules/git-utils.nu
 use modules/sb.nu
 use modules/tw.nu
+
+source aliases/agents.nu
+source aliases/gh.nu
+source aliases/git.nu
+source aliases/main.nu
+source aliases/ocx.nu
+source aliases/cast.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
