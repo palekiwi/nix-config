@@ -28,12 +28,19 @@ def pass_insert [len: int, name: string] {
     pass edit $name
 }
 
+use ../modules/gh-utils.nu
+use ../modules/git-utils.nu
+
 def ll [] {
     ls -la | select name type size mode user group created accessed modified | sort-by type
 }
 
 def direnv_rust [] {
     'use flake "github:palekiwi/flake-templates?dir=templates/rust/devshell"' | save .envrc
+}
+
+def revcom [] {
+    gh-utils "review comments" --json | mem add --force -t tmp review-comments.json
 }
 
 alias t = ~/.nix-profile/bin/task
