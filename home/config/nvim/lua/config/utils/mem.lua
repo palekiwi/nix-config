@@ -382,7 +382,160 @@ function M.add(filename, opts)
   return filepath
 end
 
+-- ─── mem log ─────────────────────────────────────────────────────────────────
+
+-- Parse the structured scratch buffer into a table suitable for mem log add
+local function parse_log_buffer(lines)
+  local entry = { title = nil, body = {}, found = {}, decided = {}, open = {} }
+  local valid_sections = { title = true, body = true, found = true, decided = true, open = true }
+  local section = "title"
+
+  for _, line in ipairs(lines) do
+    -- Section headers
+    local header = line:match("^##%s+(%w+)")
+    if header and valid_sections[header:lower()] then
+      section = header:lower()
+    else
+      -- Content lines
+      if section == "title" then
+        if line ~= "" and not entry.title then
+          entry.title = vim.trim(line)
+        end
+      elseif section == "body" then
+        table.insert(entry.body, line)
+      else
+        -- List sections: found, decided, open
+        local item = line:match("^%s*[%-%*]%s+(.+)") or (line ~= "" and vim.trim(line) or nil)
+        if item and item ~= "" then
+          table.insert(entry[section], item)
+        end
+      end
+    end
+  end
+
+  -- Post-process body and title
+  entry.body = #entry.body > 0 and vim.trim(table.concat(entry.body, "\n")) or nil
+  if entry.body == "" then entry.body = nil end
+
+  return entry
+end
+
+-- Build and run mem log add from a structured entry table
+function M.log_add(entry)
+  if not entry.title or entry.title == "" then
+    vim.notify("Mem Log Error: Title is required", vim.log.levels.ERROR)
+    return false
+  end
+
+  -- Write entry to a temp JSON file and use --file to avoid shell escaping
+  local tmpfile = vim.fn.tempname() .. ".json"
+  local data = {
+    title = entry.title,
+    body = entry.body or vim.NIL,
+    found = #entry.found > 0 and entry.found or vim.NIL,
+    decided = #entry.decided > 0 and entry.decided or vim.NIL,
+    open = #entry.open > 0 and entry.open or vim.NIL,
+  }
+
+  local ok, err = pcall(function()
+    local json = vim.fn.json_encode(data)
+    local f = assert(io.open(tmpfile, "w"))
+    f:write(json)
+    f:close()
+  end)
+
+  if not ok then
+    vim.notify("Mem Log Error: Failed to write temp file: " .. tostring(err), vim.log.levels.ERROR)
+    return false
+  end
+
+  local obj = vim.system({ "mem", "log", "add", "--file", tmpfile }, { text = true }):wait()
+  vim.fn.delete(tmpfile)
+
+  if obj.code ~= 0 then
+    local msg = vim.trim((obj.stderr and obj.stderr ~= "") and obj.stderr or obj.stdout or "Unknown error")
+    vim.notify("Mem Log Error: " .. msg, vim.log.levels.ERROR)
+    return false
+  end
+
+  vim.notify("Mem Log: Entry added: " .. entry.title, vim.log.levels.INFO)
+  return true
+end
+
+local LOG_TEMPLATE = {
+  "## Title",
+  "Write your title here",
+  "",
+  "## Body",
+  "Optional multi-line body.",
+  "",
+  "## Found",
+  "- ",
+  "",
+  "## Decided",
+  "- ",
+  "",
+  "## Open",
+  "- ",
+}
+
+-- Open the floating log form
+function M.log_form()
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[buf].filetype = "markdown"
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].modifiable = true
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, LOG_TEMPLATE)
+  vim.bo[buf].modified = false
+
+  local win = Snacks.win({
+    buf = buf,
+    width = 0.6,
+    height = 0.7,
+    border = "rounded",
+    title = "  Mem Log Add  │  <C-s> Submit  │  q Cancel  ",
+    title_pos = "center",
+    wo = { wrap = true, linebreak = true, conceallevel = 2 },
+  })
+
+  -- Parse and submit
+  local function submit()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    local entry = parse_log_buffer(lines)
+    if M.log_add(entry) then
+      win:close()
+    end
+  end
+
+  -- Keymaps
+  vim.keymap.set({ "n", "i" }, "<C-s>", submit, { buffer = buf, desc = "Submit mem log entry" })
+  vim.keymap.set("n", "q", function() win:close() end, { buffer = buf, desc = "Cancel mem log entry" })
+
+  -- Use BufWriteCmd to allow :w to submit
+  vim.api.nvim_create_autocmd("BufWriteCmd", {
+    buffer = buf,
+    callback = submit,
+  })
+
+  -- Initial cursor position (on the title line)
+  vim.api.nvim_win_set_cursor(win.win, { 2, 0 })
+  vim.cmd("startinsert!")
+end
+
 -- Setup user commands automatically when module loads
+-- :MemLog [title] - Add mem log entry
+vim.api.nvim_create_user_command('MemLog', function(args)
+  local title = vim.trim(args.args)
+  if title ~= "" then
+    M.log_add({ title = title, found = {}, decided = {}, open = {} })
+  else
+    M.log_form()
+  end
+end, {
+  nargs = "*",
+  desc = "Add a mem log entry (no args = open form, with args = title-only fast path)"
+})
+
 -- :MemAdd - Add mem artifact (prompts for type then filename)
 vim.api.nvim_create_user_command('MemAdd', function()
   select_category(function(category)
