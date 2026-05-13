@@ -36,6 +36,10 @@ def direnv_rust [] {
     'use flake "github:palekiwi/flake-templates?dir=templates/rust/devshell"' | save .envrc
 }
 
+def revcom [] {
+    gh-utils review comments --json | mem add --force -t tmp review-comments.json
+}
+
 alias t = ~/.nix-profile/bin/task
 alias tt = taskwarrior-tui
 alias cat = bat -p
