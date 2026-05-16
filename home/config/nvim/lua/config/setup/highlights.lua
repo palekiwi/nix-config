@@ -9,7 +9,13 @@ local function lsp_highlights()
   vim.api.nvim_set_hl(0, "LspInlayHint", { fg = color.fg, bg = "none", italic = true })
 end
 
+local function markdown_highlights()
+  vim.api.nvim_set_hl(0, "MyCustomMarkdownBg", { bg = "#101010" })
+  vim.api.nvim_set_hl(0, "MyCustomMarkdownBg2", { bg = "#161B22" })
+end
+
 return function()
-  stimulus_hightlights()
+  -- stimulus_hightlights()
   lsp_highlights()
+  markdown_highlights()
 end
