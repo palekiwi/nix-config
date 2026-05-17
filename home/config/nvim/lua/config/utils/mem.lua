@@ -87,6 +87,69 @@ local function get_mem_artifacts(all_branches, include_gitignored)
   return artifacts
 end
 
+-- Open current context file
+function M.open_context()
+  local cmd = "mem context path 2>/dev/null"
+  local output, err = execute_command(cmd)
+
+  if not output or output == "" then
+    vim.notify("Error: " .. (err or "No current context found"), vim.log.levels.ERROR)
+    return
+  end
+
+  local path = vim.trim(output)
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("Error: Context file does not exist: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
+  vim.cmd.edit(path)
+end
+
+-- Open telescope picker for all context files
+function M.pick_context()
+  local cmd = "mem context path --all 2>/dev/null"
+  local output, err = execute_command(cmd)
+
+  if not output or output == "" then
+    vim.notify("Error: " .. (err or "No context files found"), vim.log.levels.ERROR)
+    return
+  end
+
+  local paths = {}
+  for line in output:gmatch("[^\r\n]+") do
+    local path = vim.trim(line)
+    if path ~= "" then
+      table.insert(paths, path)
+    end
+  end
+
+  if #paths == 0 then
+    vim.notify("No context files found", vim.log.levels.INFO)
+    return
+  end
+
+  pickers.new({}, {
+    prompt_title = "Mem Context Files",
+    finder = finders.new_table({
+      results = paths,
+      entry_maker = make_entry.gen_from_file({}),
+    }),
+    previewer = conf.file_previewer({}),
+    sorter = conf.file_sorter({}),
+    attach_mappings = function(prompt_bufnr, _map)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        if selection then
+          vim.cmd.edit(selection.value)
+        end
+      end)
+      return true
+    end,
+  }):find()
+end
+
 -- Show floating UI to select artifact category, then call callback(category)
 local function select_category(callback)
   local items = {

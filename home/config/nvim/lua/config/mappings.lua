@@ -45,6 +45,8 @@ local base = {
   { "<space>r",          telescope_utils.file_review,                                            desc = "File review" },
   { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
   { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
+  { "<A-c>",             mem_utils.open_context,                                                 desc = "[Mem] Open current context" },
+  { "<A-C>",             mem_utils.pick_context,                                                 desc = "[Mem] Pick context file" },
   { "<A-t>",             mem_utils.pick_artifacts,                                               desc = "[Mem] Pick artifacts" },
   { "<A-T>",             function() mem_utils.pick_artifacts({ all = true }) end,                desc = "[Mem] Pick all artifacts" },
   { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
