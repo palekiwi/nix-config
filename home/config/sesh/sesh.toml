@@ -134,6 +134,10 @@ startup_command = "_tmux_git-repo"
 #-------------------
 
 [[session]]
+name = "config-cast"
+path = "~/.config/cast"
+
+[[session]]
 name = "mem"
 path = "~/code/palekiwi-labs/mem"
 startup_command = "_tmux_git-repo"
