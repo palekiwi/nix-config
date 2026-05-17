@@ -10,7 +10,7 @@
     };
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
     cast.url = "github:palekiwi-labs/cast/454795c6a1c8feccd34838489d7c465152fa39b6";
-    mem.url = "github:palekiwi-labs/mem";
+    mem.url = "github:palekiwi-labs/mem/6f8faf60c87c257c0531d802d1c7bc71f60d5461";
     ocx.url = "github:palekiwi-labs/ocx";
     test-runner-mcp.url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
     handy.url = "github:cjpais/Handy";
