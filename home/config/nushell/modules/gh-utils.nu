@@ -99,14 +99,14 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
 
     # Fetch all reviews for the PR
     let reviews_response = (do {
-        gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews"
+        gh api --paginate --slurp $"repos/($owner)/($repo)/pulls/($pr_num)/reviews"
     } | complete)
 
     if $reviews_response.exit_code != 0 {
         error make { msg: $reviews_response.stderr }
     }
 
-    let reviews = $reviews_response.stdout | from json
+    let reviews = $reviews_response.stdout | from json | flatten
 
     if $full {
         # Return full JSON payload
@@ -114,11 +114,11 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
             # Fetch comments for each review
             let reviews_with_comments = $reviews | each {|review| {
                 let comments_response = (do {
-                    gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
+                    gh api --paginate --slurp $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
                 } | complete)
 
                 let comments = if $comments_response.exit_code == 0 {
-                    $comments_response.stdout | from json
+                    $comments_response.stdout | from json | flatten
                 } else {
                     []
                 }
@@ -127,19 +127,20 @@ export def "pr reviews" [pr_number?: int, --full, --with-comments] {
             }}
             $reviews_with_comments | to json
         } else {
-            $reviews_response.stdout
+            $reviews | to json
         }
     } else {
         # Return filtered JSON optimized for AI agents
         if $with_comments {
             let reviews_with_comments = $reviews | each {|review| {
                 let comments_response = (do {
-                    gh api $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
+                    gh api --paginate --slurp $"repos/($owner)/($repo)/pulls/($pr_num)/reviews/($review.id)/comments"
                 } | complete)
 
                 let comments = if $comments_response.exit_code == 0 {
                     $comments_response.stdout
                     | from json
+                    | flatten
                     | each {|c| {
                         id: $c.id
                         in_reply_to_id: ($c.in_reply_to_id? | default null)
