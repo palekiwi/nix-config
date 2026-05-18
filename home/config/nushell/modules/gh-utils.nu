@@ -435,13 +435,13 @@ export def "pr review" [
     # Optionally fetch associated comments
     let comments = if $with_comments {
         let comments_response = (do {
-            gh api $"repos/($owner)/($repo)/pulls/($pr_number)/reviews/($review_id)/comments"
+            gh api --paginate --slurp $"repos/($owner)/($repo)/pulls/($pr_number)/reviews/($review_id)/comments"
         } | complete)
 
         if $comments_response.exit_code != 0 {
             []
         } else {
-            $comments_response.stdout | from json
+            $comments_response.stdout | from json | flatten
         }
     } else {
         []
@@ -455,7 +455,7 @@ export def "pr review" [
                 comments: $comments
             } | to json
         } else {
-            $review_response.stdout
+            $review | to json
         }
     } else {
         # Return filtered JSON
