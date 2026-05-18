@@ -13,6 +13,7 @@ source aliases/git.nu
 source aliases/main.nu
 source aliases/ocx.nu
 source aliases/cast.nu
+source aliases/mem.nu
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
