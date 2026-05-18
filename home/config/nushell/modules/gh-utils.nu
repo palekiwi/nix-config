@@ -192,7 +192,7 @@ export def "review comments" [pr_number?: int, --full, --json] {
 
     # Fetch review comments directly using the correct API endpoint
     let comments_response = (do {
-        gh api $"repos/($owner)/($repo)/pulls/($pr_num)/comments"
+        gh api --paginate --slurp $"repos/($owner)/($repo)/pulls/($pr_num)/comments"
     } | complete)
 
     if $comments_response.exit_code != 0 {
@@ -201,11 +201,12 @@ export def "review comments" [pr_number?: int, --full, --json] {
 
     if $full {
         # Return full JSON payload with all metadata
-        $comments_response.stdout
+        $comments_response.stdout | from json | flatten | to json
     } else {
         # Return filtered JSON optimized for AI agents (default)
         let comments = $comments_response.stdout
         | from json
+        | flatten
         | each {|c| {
             id: $c.id
             in_reply_to_id: ($c.in_reply_to_id? | default null)
