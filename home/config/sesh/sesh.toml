@@ -40,6 +40,19 @@ name = "spabreaks-env"
 path = "~/code/spabreaks-env"
 startup_command = "_tmux_git-repo"
 
+#----------------------------
+#   --- booking-transform ---
+#----------------------------
+[[session]]
+name = "blog"
+path = "~/code/spabreaks/booking-transform/"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "booking-transform-dev"
+path = "~/code/spabreaks/blog/"
+startup_command = "_tmux_spabreaks_booking_transform_dev"
+
 #-------------------
 #   --- blog ---
 #-------------------
