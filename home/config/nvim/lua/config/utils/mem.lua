@@ -105,6 +105,23 @@ function M.open_context()
 
   vim.cmd.edit(path)
 end
+--
+-- Open current branch log
+function M.open_log()
+  local branch = get_current_branch()
+  if not branch then
+    vim.notify("Error: Could not determine current git branch", vim.log.levels.ERROR)
+    return
+  end
+
+  local path = ".mem/" .. branch .. "/spec/log.md"
+  if vim.fn.filereadable(path) == 0 then
+    vim.notify("Error: Log file does not exist: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
+  vim.cmd.edit(path)
+end
 
 -- Open telescope picker for all context files
 function M.pick_context()

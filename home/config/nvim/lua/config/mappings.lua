@@ -51,7 +51,7 @@ local base = {
   { "<A-T>",             function() mem_utils.pick_artifacts({ all = true }) end,                desc = "[Mem] Pick all artifacts" },
   { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
   { "<A-f>",             "<cmd>Telescope live_grep hidden=false<cr>",                            desc = "Live Grep" },
-  { "<A-l>",             "<cmd>MemLog<cr>",                                                      desc = "[Mem] Log" },
+  { "<A-l>",             mem_utils.open_log,                                                     desc = "[Mem] Open Log" },
   { "<A-m>",             "<cmd>MemAdd<cr>",                                                      desc = "[Mem] Add" },
   { "<A-p>",             "<cmd>Prctl<cr>",                                                       desc = "Prctl" },
   { "<A-u>",             "<Plug>CapsLockToggle",                                                 desc = "Toggle Capslock",              mode = "i" },
