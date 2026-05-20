@@ -50,7 +50,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "booking-transform-dev"
-path = "~/code/spabreaks/blog/"
+path = "~/code/spabreaks/booking-transform/"
 startup_command = "_tmux_spabreaks_booking_transform_dev"
 
 #-------------------
