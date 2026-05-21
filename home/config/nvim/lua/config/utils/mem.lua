@@ -42,7 +42,8 @@ end
 local function get_current_branch()
   local result = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>/dev/null')
   if vim.v.shell_error == 0 then
-    return result:gsub("%s+", "")
+    local branch = result:gsub("%s+", "")
+    return branch:gsub("/", "-")
   end
   return nil
 end
