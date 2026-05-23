@@ -9,8 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
-    cast.url = "github:palekiwi-labs/cast/454795c6a1c8feccd34838489d7c465152fa39b6";
-    mem.url = "github:palekiwi-labs/mem/6f8faf60c87c257c0531d802d1c7bc71f60d5461";
+    cast.url = "github:palekiwi-labs/cast/dev";
+    mem.url = "github:palekiwi-labs/mem/7b15c10214e4340a00eecb53cd4c10665eb31c21";
     ocx.url = "github:palekiwi-labs/ocx";
     test-runner-mcp.url = "github:palekiwi-labs/test-runner-mcp/13d05835c8d8a3829a6f07776b6e646571944ab3";
     handy.url = "github:cjpais/Handy";
@@ -24,7 +24,8 @@
           overlays = [
             (final: prev: {
               mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
-              cast = inputs.cast.packages.x86_64-linux.default;
+              cast = inputs.cast.packages.x86_64-linux.cast;
+              cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               mem = inputs.mem.packages.x86_64-linux.default;
               ocx = inputs.ocx.packages.x86_64-linux.default;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
