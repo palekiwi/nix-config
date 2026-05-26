@@ -6,6 +6,7 @@
   ".gutctags"
   ".mem"
   "build"
+  "cast.json"
   "log/test.log.0"
   "tags"
   "tags.lock"
