@@ -27,7 +27,10 @@ in
   };
 
   home.file = {
-    "${config.xdg.configHome}/git/templates/hooks/post-checkout".source = config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-checkout";
-    "${config.xdg.configHome}/git/templates/hooks/post-merge".source = config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-merge";
+    "${config.xdg.configHome}/git/templates/hooks/post-checkout".source =
+      config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-checkout";
+
+    "${config.xdg.configHome}/git/templates/hooks/post-merge".source =
+      config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-merge";
   };
 }
