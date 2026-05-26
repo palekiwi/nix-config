@@ -14,6 +14,9 @@ def "cdp" [] {
     kitty --detach -T $session tmux attach -t $session
 }
 
+alias cca = cast config allow
+alias ccd = cast config diff
+
 alias cro = cast run opencode --hostname 0.0.0.0 --port 80
 alias crp = cast run pi
 
