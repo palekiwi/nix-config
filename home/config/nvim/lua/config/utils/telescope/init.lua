@@ -424,16 +424,16 @@ M.git_pr_commits = function(opts)
 end
 
 M.git_pr_merge_commits = function(opts)
-  local command = "git log --pretty=format:'%h %ai %<(20)%an %s %b' --merges --grep='Merge pull request' -n 1000"
+  local command = "git log --pretty=format:'%h %ai %<(20)%an %s %b' --merges --grep='Merge pull request' -z -n 1000"
 
   local handle = assert(io.popen(command))
   local result = handle:read("*a")
   handle:close()
 
   local commits = {}
-  for token in string.gmatch(result, "[^\n]+") do
-    -- local line = token:gsub("Merge pull request ", ""):gsub(" from [^%s]*", "")
-    table.insert(commits, token)
+  for token in string.gmatch(result, "[^%z]+") do
+    local entry = token:gsub("\n", " ")
+    table.insert(commits, entry)
   end
 
   opts = {

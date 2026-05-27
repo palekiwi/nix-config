@@ -31,6 +31,9 @@ M.gen_from_git_commits = function(opts)
     end
 
     local sha, date_, time, _, rest = string.match(entry, "([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+) (.*)")
+    if not rest then
+      return nil
+    end
     local author = string.sub(rest, 1, 21)
     local msg = string.gsub(string.sub(rest, 22), "^%s+", "")
 
@@ -83,6 +86,9 @@ M.gen_from_pr_commits = function(opts)
     end
 
     local sha, date_, time, _, rest = string.match(entry, "([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+) (.*)")
+    if not rest then
+      return nil
+    end
     local author = string.sub(rest, 1, 21)
     local number, msg = string.sub(rest, 22):match("Merge pull request (#%d+) from [^%s]+ (.+)")
 
