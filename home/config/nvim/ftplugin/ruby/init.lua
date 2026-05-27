@@ -90,5 +90,5 @@ vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt_local.foldlevel = 99
 
 -- define the keymaps (same as markdown for consistency)
-vim.keymap.set({"n", "v"}, "<A-}>", M.next_block, { buffer = true, desc = "Next RSpec block" })
-vim.keymap.set({"n", "v"}, "<A-{>", M.previous_block, { buffer = true, desc = "Previous RSpec block" })
+vim.keymap.set({"n", "v"}, "<A-Down>", M.next_block, { buffer = true, desc = "Next RSpec block" })
+vim.keymap.set({"n", "v"}, "<A-Up>", M.previous_block, { buffer = true, desc = "Previous RSpec block" })
