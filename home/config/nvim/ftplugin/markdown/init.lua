@@ -46,7 +46,11 @@ M.next_heading = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[M.count])
+    local node = M.captures[M.count]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 M.previous_heading = function()
@@ -67,7 +71,11 @@ M.previous_heading = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[#M.captures - M.count + 1])
+    local node = M.captures[#M.captures - M.count + 1]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 -- Set treesitter folding for markdown
