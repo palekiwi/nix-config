@@ -84,6 +84,6 @@ vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt_local.foldlevel = 99
 
 -- define the keymaps
-vim.keymap.set({"n", "v"}, "<A-Down>", M.next_heading)
+vim.keymap.set({"n", "v"}, "<C-Down>", M.next_heading)
 
-vim.keymap.set({"n", "v"}, "<A-Up>", M.previous_heading)
+vim.keymap.set({"n", "v"}, "<C-Up>", M.previous_heading)
