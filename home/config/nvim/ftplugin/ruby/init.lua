@@ -60,7 +60,11 @@ M.next_block = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[M.count])
+    local node = M.captures[M.count]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 M.previous_block = function()
@@ -81,7 +85,11 @@ M.previous_block = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[#M.captures - M.count + 1])
+    local node = M.captures[#M.captures - M.count + 1]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 -- Set treesitter folding for RSpec files
