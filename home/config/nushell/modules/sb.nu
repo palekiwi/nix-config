@@ -78,7 +78,7 @@ export def "test" [--only-failures, ...args] {
 
     let failed = $stdout | from json | get examples | where $it.status == "failed"
 
-    ($failed | to json) | mem add --type tmp --force rspec-failures.json
+    ($failed | to json) | mem add --type tmp --force --pin rspec-failures.json
 }
 
 # TODO: rewrite this in nushell
