@@ -111,7 +111,8 @@ in
       "super + space; v; d" = "${switchToSession} vrs-dev";
       "super + space; v; e" = "${switchToSession} vrs";
 
-      "super + 0" = "google-chrome-stable";
+      "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
+      "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
       "super + 3" = "rofi-pass --root ~/.password-store e>| /tmp/rofi-pass.log";
