@@ -7,9 +7,9 @@ return {
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
-      anti_conceal = {
-        enabled = false,
-      },
+      -- anti_conceal = {
+      --   enabled = false,
+      -- },
       heading = {
         -- Use your custom group for all heading levels (H1 through H6)
         -- backgrounds = {},
