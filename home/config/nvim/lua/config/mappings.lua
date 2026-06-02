@@ -37,8 +37,8 @@ local base = {
   { "<A-X>",             "<cmd>BufferCloseAllButCurrent<cr>",                                    desc = "Close Buffer All But Current" },
   -- quickfix list
   { "<A-Left>",          "<cmd>cfirst<cr>",                                                      desc = "[Qflist] First" },
-  { "<A-{>",            "<cmd>cprev<cr>",                                                       desc = "[Qflist] Prev" },
-  { "<A-}>",          "<cmd>cnext<cr>",                                                       desc = "[Qflist] Next" },
+  { "<A-Up>",            "<cmd>cprev<cr>",                                                       desc = "[Qflist] Prev" },
+  { "<A-Down>",          "<cmd>cnext<cr>",                                                       desc = "[Qflist] Next" },
   { "<A-PageUp>",        "<cmd>lprev<cr>",                                                       desc = "[Loclist] Prev" },
   { "<A-PageDown>",      "<cmd>lnext<cr>",                                                       desc = "[Loclist] Next" },
   -- mod
