@@ -191,6 +191,8 @@ end
 local function select_category(callback)
   local items = {
     { label = "spec",  desc = "Specification (default)" },
+    { label = "plan",  desc = "Plan" },
+    { label = "todo",  desc = "Todo" },
     { label = "doc",   desc = "Documentation artifact" },
     { label = "trace", desc = "Trace / debug artifact" },
     { label = "bin",   desc = "Binary artifact" },
@@ -241,11 +243,11 @@ end
 local function get_category_highlight(category)
   local highlights = {
     spec = "TelescopeResultsConstant",
+    plan = "TelescopeResultsVariable",
+    todo = "TelescopeResultsIdentifier",
     doc = "TelescopeResultsSpecial",
     bin = "DiagnosticError",
     trace = "TelescopeResultsFunction",
-    tmp = "TelescopeResultsVariable",
-    ref = "TelescopeResultsIdentifier",
   }
   return highlights[category] or "TelescopeResultsNormal"
 end
