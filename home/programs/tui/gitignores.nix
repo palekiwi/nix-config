@@ -7,6 +7,7 @@
   ".mem"
   "build"
   "cast.json"
+  "cast-mcp.json"
   "log/test.log.0"
   "tags"
   "tags.lock"
