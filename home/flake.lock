@@ -33,11 +33,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1780370439,
-        "narHash": "sha256-Gl/tHY5tYX0A+VAGMYEczP+OKOzYElE0FZhEHAAMkZs=",
+        "lastModified": 1780397083,
+        "narHash": "sha256-QKWwNmnGCoYqcZ+/50Pn5Nz8lRrNUDlpUmiZ0C7WHaU=",
         "owner": "palekiwi-labs",
         "repo": "cast",
-        "rev": "99cc22f746c2b7ea10f69cfc0a69dc8ab548365a",
+        "rev": "abe4ba07064cae26c45f10984a898eb9ac9b7f94",
         "type": "github"
       },
       "original": {
@@ -307,17 +307,17 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1780372647,
-        "narHash": "sha256-J0fWq+WBYUhng0wZfpTGsHMUTJROwTl92MCJrgGmlJ8=",
+        "lastModified": 1780456092,
+        "narHash": "sha256-DXuVXdnNdjNpdxWEJTizACl1HPDFmD1mvS3xcqrcoQ4=",
         "owner": "palekiwi-labs",
         "repo": "mem",
-        "rev": "8f190c989743ead53009b3e610cfd791a04555b0",
+        "rev": "d16ec5b9d8718c2a25d620ef7cbed983bf611907",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "mem",
-        "rev": "8f190c989743ead53009b3e610cfd791a04555b0",
+        "rev": "d16ec5b9d8718c2a25d620ef7cbed983bf611907",
         "type": "github"
       }
     },
