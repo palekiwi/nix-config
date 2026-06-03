@@ -168,21 +168,21 @@ function M.pick_context()
   }):find()
 end
 
--- Show floating UI to select pin status, then call callback(pin)
-local function select_pin(callback)
+-- Show floating UI to select root status, then call callback(root)
+local function select_root(callback)
   local items = {
-    { label = "No",  pin = false, desc = "Save in branch-specific directory (default)" },
-    { label = "Yes", pin = true,  desc = "Save as pinned artifact (timestamped)" },
+    { label = "No",  root = false, desc = "Save as pinned artifact (timestamped, default)" },
+    { label = "Yes", root = true,  desc = "Save in branch-specific directory" },
   }
 
   Snacks.picker.select(items, {
-    prompt = "Pin artifact?",
+    prompt = "Save in branch root?",
     format_item = function(item)
       return string.format("%-3s  %s", item.label, item.desc)
     end,
   }, function(choice)
     if choice then
-      callback(choice.pin)
+      callback(choice.root)
     end
   end)
 end
@@ -226,10 +226,10 @@ local function prompt_filename(category, callback)
   end)
 end
 
--- Helper to prompt for pin and then add
-local function prompt_pin_and_add(filename, opts)
-  select_pin(function(pin)
-    opts.pin = pin
+-- Helper to prompt for root and then add
+local function prompt_root_and_add(filename, opts)
+  select_root(function(root)
+    opts.root = root
     M.add(filename, opts)
   end)
 end
@@ -446,9 +446,9 @@ function M.add(filename, opts)
     table.insert(cmd, opts.category)
   end
 
-  -- Add pin flag
-  if opts.pin then
-    table.insert(cmd, '--pin')
+  -- Add root flag
+  if opts.root then
+    table.insert(cmd, '--root')
   end
 
   -- Add commit hash if provided and category allows it
@@ -655,12 +655,12 @@ end, {
 vim.api.nvim_create_user_command('MemAdd', function()
   select_category(function(category)
     prompt_filename(category, function(filename)
-      prompt_pin_and_add(filename, { category = category == "spec" and nil or category })
+      prompt_root_and_add(filename, { category = category == "spec" and nil or category })
     end)
   end)
 end, {
   nargs = 0,
-  desc = 'Add a new mem artifact (prompts for type, filename, then pin status)'
+  desc = 'Add a new mem artifact (prompts for type, filename, then root status)'
 })
 --
 -- :MemAddBin <filename> - Add trace artifact
@@ -670,7 +670,7 @@ vim.api.nvim_create_user_command('MemAddBin', function(args)
     vim.notify("Usage: :MemAddBin <filename>", vim.log.levels.ERROR)
     return
   end
-  prompt_pin_and_add(filename, { category = 'bin' })
+  prompt_root_and_add(filename, { category = 'bin' })
 end, {
   nargs = 1,
   complete = 'file',
@@ -684,7 +684,7 @@ vim.api.nvim_create_user_command('MemAddTrace', function(args)
     vim.notify("Usage: :MemAddTrace <filename>", vim.log.levels.ERROR)
     return
   end
-  prompt_pin_and_add(filename, { category = 'trace' })
+  prompt_root_and_add(filename, { category = 'trace' })
 end, {
   nargs = 1,
   complete = 'file',
@@ -698,7 +698,7 @@ vim.api.nvim_create_user_command('MemAddTmp', function(args)
     vim.notify("Usage: :MemAddTmp <filename>", vim.log.levels.ERROR)
     return
   end
-  prompt_pin_and_add(filename, { category = 'tmp' })
+  prompt_root_and_add(filename, { category = 'tmp' })
 end, {
   nargs = 1,
   complete = 'file',
@@ -712,7 +712,7 @@ vim.api.nvim_create_user_command('MemAddRef', function(args)
     vim.notify("Usage: :MemAddRef <filename>", vim.log.levels.ERROR)
     return
   end
-  prompt_pin_and_add(filename, { category = 'ref' })
+  prompt_root_and_add(filename, { category = 'ref' })
 end, {
   nargs = 1,
   complete = 'file',
@@ -726,7 +726,7 @@ vim.api.nvim_create_user_command('MemAddDoc', function(args)
     vim.notify("Usage: :MemAddDoc <filename>", vim.log.levels.ERROR)
     return
   end
-  prompt_pin_and_add(filename, { category = 'doc' })
+  prompt_root_and_add(filename, { category = 'doc' })
 end, {
   nargs = 1,
   complete = 'file',
