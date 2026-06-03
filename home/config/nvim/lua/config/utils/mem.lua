@@ -239,18 +239,20 @@ local function format_category(category)
   return string.format("[%s]", string.upper(category))
 end
 
+M.category_highlights = {
+  spec = "MemCategorySpec",
+  plan = "MemCategoryPlan",
+  todo = "MemCategoryTodo",
+  doc = "MemCategoryDoc",
+  bin = "MemCategoryBin",
+  trace = "MemCategoryTrace",
+  tmp = "MemCategoryTmp",
+  ref = "MemCategoryRef",
+}
+
 -- Get highlight group for category
 local function get_category_highlight(category)
-  local highlights = {
-    spec = "TelescopeResultsConstant",
-    plan = "TelescopeResultsVariable",
-    doc = "TelescopeResultsSpecial",
-    bin = "DiagnosticError",
-    trace = "TelescopeResultsFunction",
-    tmp = "TelescopeResultsVariable",
-    ref = "TelescopeResultsIdentifier",
-  }
-  return highlights[category] or "TelescopeResultsNormal"
+  return M.category_highlights[category] or "TelescopeResultsNormal"
 end
 
 
