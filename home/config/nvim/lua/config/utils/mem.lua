@@ -236,7 +236,7 @@ end
 
 -- Format category badge for display
 local function format_category(category)
-  return string.format("[%s]", string.upper(category))
+  return string.upper(category)
 end
 
 M.category_highlights = {
