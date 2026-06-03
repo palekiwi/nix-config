@@ -191,14 +191,14 @@ end
 local function select_category(callback)
   local items = {
     { label = "spec",  desc = "Specification (default)" },
-    { label = "plan",  desc = "Plan" },
-    { label = "todo",  desc = "Todo" },
+    { label = "plan",  desc = "Plan artifact" },
     { label = "doc",   desc = "Documentation artifact" },
     { label = "trace", desc = "Trace / debug artifact" },
     { label = "bin",   desc = "Binary artifact" },
     { label = "tmp",   desc = "Temporary artifact" },
     { label = "ref",   desc = "Reference artifact" },
   }
+
 
   Snacks.picker.select(items, {
     prompt = "Select artifact type:",
@@ -244,13 +244,15 @@ local function get_category_highlight(category)
   local highlights = {
     spec = "TelescopeResultsConstant",
     plan = "TelescopeResultsVariable",
-    todo = "TelescopeResultsIdentifier",
     doc = "TelescopeResultsSpecial",
     bin = "DiagnosticError",
     trace = "TelescopeResultsFunction",
+    tmp = "TelescopeResultsVariable",
+    ref = "TelescopeResultsIdentifier",
   }
   return highlights[category] or "TelescopeResultsNormal"
 end
+
 
 -- Custom entry maker for mem artifacts
 local function make_mem_entry_maker(opts)
@@ -324,11 +326,12 @@ local function sort_artifacts(artifacts)
   -- Category priority mapping
   local category_priority = {
     spec = 1,
-    doc = 2,
-    bin = 3,
-    trace = 4,
-    tmp = 5,
-    ref = 6,
+    plan = 2,
+    doc = 3,
+    bin = 4,
+    trace = 5,
+    tmp = 6,
+    ref = 7,
   }
 
   ---@param a table
