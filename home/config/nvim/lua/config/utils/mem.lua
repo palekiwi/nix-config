@@ -327,13 +327,14 @@ local function sort_artifacts(artifacts)
 
   -- Category priority mapping
   local category_priority = {
-    spec = 1,
-    plan = 2,
-    doc = 3,
-    bin = 4,
-    trace = 5,
-    tmp = 6,
-    ref = 7,
+    plan = 1,
+    todo = 2,
+    spec = 3,
+    trace = 4,
+    doc = 5,
+    bin = 6,
+    tmp = 7,
+    ref = 8,
   }
 
   ---@param a table
