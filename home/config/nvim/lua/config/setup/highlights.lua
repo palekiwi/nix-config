@@ -15,6 +15,9 @@ local function markdown_highlights()
 end
 
 local function mem_highlights()
+  local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
+  vim.api.nvim_set_hl(0, "MemStatusDone", { fg = comment.fg, strikethrough = true })
+
   vim.api.nvim_set_hl(0, "MemCategorySpec", { fg = "#ff7b72", bold = false })  -- pink
   vim.api.nvim_set_hl(0, "MemCategoryPlan", { fg = "#bc8cff", bold = false })  -- purple
   vim.api.nvim_set_hl(0, "MemCategoryTodo", { fg = "#58a6ff", bold = false })  -- blue

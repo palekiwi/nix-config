@@ -58,7 +58,7 @@ local function get_mem_artifacts(all_branches, include_gitignored)
   end
 
   -- Build command
-  local cmd = 'mem list --json'
+  local cmd = 'mem list --json --frontmatter'
   if all_branches then
     cmd = cmd .. ' --all'
   end
@@ -278,11 +278,23 @@ local function make_mem_entry_maker(opts)
     end
 
     local display_name = utils.transform_path(opts, entry.name)
+    local highlight = "TelescopeResultsNormal"
+
+    -- Handle frontmatter
+    if entry.frontmatter and entry.frontmatter ~= vim.NIL then
+      local fm = entry.frontmatter
+      if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
+        display_name = fm.title .. " (" .. display_name .. ")"
+      end
+      if fm.status == "done" then
+        highlight = "MemStatusDone"
+      end
+    end
 
     return displayer {
       { format_category(entry.category), get_category_highlight(entry.category) },
       { entry.branch, "TelescopeResultsComment" },
-      { display_name, "TelescopeResultsNormal" },
+      { display_name, highlight },
       { hash_display, "TelescopeResultsComment" },
     }
   end
@@ -299,11 +311,23 @@ local function make_mem_entry_maker(opts)
       hash_for_search = entry.hash ---@type string
     end
 
-    local ordinal = string.format("%s %s %s %s",
+    local fm_search = ""
+    if entry.frontmatter and entry.frontmatter ~= vim.NIL then
+      local fm = entry.frontmatter
+      if fm.title and fm.title ~= vim.NIL then
+        fm_search = fm_search .. " " .. fm.title
+      end
+      if fm.status and fm.status ~= vim.NIL then
+        fm_search = fm_search .. " " .. fm.status
+      end
+    end
+
+    local ordinal = string.format("%s %s %s %s%s",
       entry.name,
       hash_for_search,
       entry.branch,
-      entry.category
+      entry.category,
+      fm_search
     )
 
     return make_entry.set_default_entry_mt({
@@ -317,6 +341,7 @@ local function make_mem_entry_maker(opts)
       branch = entry.branch, ---@type string
       commit_timestamp = entry.commit_timestamp, ---@type number?
       commit_hash = entry.commit_hash, ---@type string?
+      frontmatter = entry.frontmatter, ---@type table?
     }, opts)
   end
 end
