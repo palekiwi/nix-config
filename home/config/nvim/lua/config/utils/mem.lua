@@ -260,44 +260,44 @@ end
 local function make_mem_entry_maker(opts)
   opts = opts or {}
 
-    local displayer = entry_display.create {
-      separator = " ",
-      items = {
-        { width = 8 },           -- category badge
-        { remaining = true },    -- filename/title (use remaining space)
-        { remaining = true },    -- branch
-        { width = 12 },          -- hash (full short hash)
-      },
-    }
+  local displayer = entry_display.create {
+    separator = " ",
+    items = {
+      { width = 6 },           -- category badge
+      { width = 64 },          -- filename/title
+      { width = 10 },           -- hash
+      { remaining = true },    -- branch
+    },
+  }
 
-    local make_display = function(entry)
-      -- Handle vim.NIL from JSON null values
-      local hash_display = "" ---@type string
-      if entry.hash and entry.hash ~= vim.NIL then
-        hash_display = entry.hash ---@type string
-      end
-
-      local display_name = utils.transform_path(opts, entry.name)
-      local highlight = "TelescopeResultsNormal"
-
-      -- Handle frontmatter
-      if entry.frontmatter and entry.frontmatter ~= vim.NIL then
-        local fm = entry.frontmatter
-        if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
-          display_name = fm.title .. " (" .. display_name .. ")"
-        end
-        if fm.status == "done" then
-          highlight = "MemStatusDone"
-        end
-      end
-
-      return displayer {
-        { format_category(entry.category), get_category_highlight(entry.category) },
-        { display_name, highlight },
-        { entry.branch, "TelescopeResultsComment" },
-        { hash_display, "TelescopeResultsComment" },
-      }
+  local make_display = function(entry)
+    -- Handle vim.NIL from JSON null values
+    local hash_display = "" ---@type string
+    if entry.hash and entry.hash ~= vim.NIL then
+      hash_display = entry.hash ---@type string
     end
+
+    local display_name = utils.transform_path(opts, entry.name)
+    local highlight = "TelescopeResultsNormal"
+
+    -- Handle frontmatter
+    if entry.frontmatter and entry.frontmatter ~= vim.NIL then
+      local fm = entry.frontmatter
+      if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
+        display_name = fm.title .. " (" .. display_name .. ")"
+      end
+      if fm.status == "done" then
+        highlight = "MemStatusDone"
+      end
+    end
+
+    return displayer {
+      { format_category(entry.category), get_category_highlight(entry.category) },
+      { display_name, highlight },
+      { hash_display, "TelescopeResultsComment" },
+      { entry.branch, "TelescopeResultsComment" },
+    }
+  end
 
   return function(entry)
     if not entry or not entry.path then
@@ -425,11 +425,10 @@ function M.pick_artifacts(opts)
     }),
     sorter = conf.generic_sorter({}), ---@type table
     previewer = conf.file_previewer({}), ---@type table
-    layout_strategy = "vertical",
+    layout_strategy = "horizontal",
     layout_config = {
-      vertical = {
-        preview_cutoff = 0,
-        preview_height = 0.4,
+      horizontal = {
+        preview_width = 0.55,
       },
     },
     attach_mappings = function(prompt_bufnr, map)
