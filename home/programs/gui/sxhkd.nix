@@ -88,10 +88,11 @@ in
 
       "super + space; t; t" = "${switchToSession} taskwarrior";
 
-      "super + space; e; c" = "${switchToSession} config-opencode";
-      "super + space; e; r" = "${switchToSession} agents";
+      "super + space; c; c" = "${switchToSession} config-cast";
+      "super + space; c; n" = "${switchToSession} nix-config";
+      "super + space; c; o" = "${switchToSession} config-opencode";
+      "super + space; c; p" = "${switchToSession} config-pi";
 
-      "super + space; n; c" = "${switchToSession} nix-config";
       "super + space; n; p" = "${switchToSession} notes-pl";
       "super + space; n; t" = "${switchToSession} notes-sb";
 

@@ -142,6 +142,11 @@ name = "config-opencode"
 path = "~/.config/opencode/"
 startup_command = "_tmux_git-repo"
 
+[[session]]
+name = "config-pi"
+path = "~/.pi"
+startup_command = "_tmux_git-repo"
+
 #-------------------
 #   --- Repos ---
 #-------------------
