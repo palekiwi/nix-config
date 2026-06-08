@@ -13,6 +13,9 @@ def "cdp" [] {
     tmux send-keys -t $session 'cast run pi' C-m
     kitty --detach -T $session tmux attach -t $session
 }
+def ccs [] {
+    cast config show | from json | transpose | explore
+}
 
 alias cca = cast config allow
 alias ccd = cast config diff
