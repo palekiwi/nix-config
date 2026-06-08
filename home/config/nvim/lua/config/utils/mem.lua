@@ -94,8 +94,22 @@ function M.open_context()
   local output, err = execute_command(cmd)
 
   if not output or output == "" then
-    vim.notify("Error: " .. (err or "No current context found"), vim.log.levels.ERROR)
-    return
+    -- Try to initialize context if not found
+    vim.notify("Context not found, initializing...", vim.log.levels.INFO)
+    local init_cmd = "mem context init 2>/dev/null"
+    local init_output, init_err = execute_command(init_cmd)
+
+    if not init_output then
+      vim.notify("Error initializing context: " .. (init_err or "unknown"), vim.log.levels.ERROR)
+      return
+    end
+
+    -- Try to get path again
+    output, err = execute_command(cmd)
+    if not output or output == "" then
+      vim.notify("Error: " .. (err or "No current context found after init"), vim.log.levels.ERROR)
+      return
+    end
   end
 
   local path = vim.trim(output)
@@ -192,6 +206,7 @@ local function select_category(callback)
   local items = {
     { label = "spec",  desc = "Specification (default)" },
     { label = "plan",  desc = "Plan artifact" },
+    { label = "todo",  desc = "TODO artifact" },
     { label = "doc",   desc = "Documentation artifact" },
     { label = "trace", desc = "Trace / debug artifact" },
     { label = "bin",   desc = "Binary artifact" },
@@ -263,9 +278,9 @@ local function make_mem_entry_maker(opts)
   local displayer = entry_display.create {
     separator = " ",
     items = {
-      { width = 6 },           -- category badge
-      { width = 64 },          -- filename/title
-      { width = 10 },           -- hash
+      { width = 5 },           -- category badge
+      { width = 50 },          -- filename/title
+      { width = 10 },          -- hash
       { remaining = true },    -- branch
     },
   }
