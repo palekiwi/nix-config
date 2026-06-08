@@ -1,7 +1,7 @@
 local M = {}
 
 M.copy_file_path = function(include_cursor)
-  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
+  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
   local result = filepath
 
   if include_cursor then
@@ -16,7 +16,7 @@ M.copy_file_path = function(include_cursor)
 end
 
 M.copy_diagnostic_on_line = function()
-  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
+  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
   local cursor = vim.api.nvim_win_get_cursor(0)
   local cursor_line = cursor[1] - 1
   local col = cursor[2] + 1
@@ -46,7 +46,7 @@ M.copy_diagnostics_for_file = function()
     return
   end
 
-  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
+  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
   local result = { string.format("Diagnostics for %s:\n", filepath) }
 
   for _, diag in ipairs(diagnostics) do
@@ -69,7 +69,7 @@ M.copy_file_with_visual_range = function()
     start_line, end_line = end_line, start_line
   end
 
-  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':~:.')
+  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
   local result ---@type string
   if start_line == end_line then
     result = string.format("%s L%d", filepath, start_line)
