@@ -478,7 +478,9 @@ function M.pick_artifacts(opts)
 
       -- Copy path to clipboard
       map({ 'i', 'n' }, '<C-y>', function()
-        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return e.path end, "path")
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e)
+          return vim.fn.fnamemodify(e.path, ":p")
+        end, "path")
       end)
 
       -- Copy hash to clipboard
