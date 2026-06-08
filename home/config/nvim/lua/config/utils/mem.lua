@@ -12,6 +12,12 @@ local telescope_actions = require('config.utils.telescope.actions')
 
 local M = {}
 
+local DONE_STATUSES = {
+  done = true,
+  complete = true,
+  closed = true,
+}
+
 -- Execute shell command and return result
 local function execute_command(cmd)
   local handle = io.popen(cmd)
@@ -301,7 +307,7 @@ local function make_mem_entry_maker(opts)
       if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
         display_name = fm.title .. " (" .. display_name .. ")"
       end
-      if fm.status == "done" then
+      if fm.status and fm.status ~= vim.NIL and type(fm.status) == "string" and DONE_STATUSES[fm.status:lower()] then
         highlight = "MemStatusDone"
       end
     end
