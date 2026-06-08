@@ -18,6 +18,14 @@ local DONE_STATUSES = {
   closed = true,
 }
 
+local function is_done(artifact)
+  if not artifact.frontmatter or artifact.frontmatter == vim.NIL then
+    return false
+  end
+  local status = artifact.frontmatter.status
+  return status and type(status) == "string" and DONE_STATUSES[status:lower()] or false
+end
+
 -- Execute shell command and return result
 local function execute_command(cmd)
   local handle = io.popen(cmd)
@@ -307,7 +315,7 @@ local function make_mem_entry_maker(opts)
       if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
         display_name = fm.title .. " (" .. display_name .. ")"
       end
-      if fm.status and fm.status ~= vim.NIL and type(fm.status) == "string" and DONE_STATUSES[fm.status:lower()] then
+      if is_done(entry) then
         highlight = "MemStatusDone"
       end
     end
@@ -387,7 +395,14 @@ local function sort_artifacts(artifacts)
   ---@param b table
   ---@return boolean
   table.sort(artifacts, function(a, b)
-    -- First: current branch comes first
+    -- First: done items at the bottom
+    local a_done = is_done(a)
+    local b_done = is_done(b)
+    if a_done ~= b_done then
+      return not a_done
+    end
+
+    -- Second: current branch comes first
     local a_is_current = a.branch == current_branch ---@type boolean
     local b_is_current = b.branch == current_branch ---@type boolean
     if a_is_current ~= b_is_current then
