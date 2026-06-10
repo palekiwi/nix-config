@@ -218,9 +218,9 @@ end
 -- Show floating UI to select artifact category, then call callback(category)
 local function select_category(callback)
   local items = {
-    { label = "spec",  desc = "Specification (default)" },
-    { label = "plan",  desc = "Plan artifact" },
     { label = "todo",  desc = "TODO artifact" },
+    { label = "spec",  desc = "Specification" },
+    { label = "plan",  desc = "Plan artifact" },
     { label = "doc",   desc = "Documentation artifact" },
     { label = "trace", desc = "Trace / debug artifact" },
     { label = "bin",   desc = "Binary artifact" },
