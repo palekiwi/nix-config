@@ -1,3 +1,15 @@
+COLORS = {
+  grey = "#4c566a",
+  dark = "#161B22",
+  darker = "#101010",
+  blue = "#58a6ff",
+  cyan = "#39c5cf",
+  orange = "#d29922",
+  pink = "#ff7b72",
+  purle = "#bc8cff",
+  red = "#f85149",
+}
+
 local function stimulus_hightlights()
   local color = vim.api.nvim_get_hl(0, { name = 'Constant' })
   vim.api.nvim_set_hl(0, "@stimulus-controller.html", { fg = color.fg, bold = true })
@@ -10,22 +22,27 @@ local function lsp_highlights()
 end
 
 local function markdown_highlights()
-  vim.api.nvim_set_hl(0, "MyCustomMarkdownBg", { bg = "#101010" })
-  vim.api.nvim_set_hl(0, "MyCustomMarkdownBg2", { bg = "#161B22" })
+  vim.api.nvim_set_hl(0, "MarkdownBg0", { bg = COLORS.darker })
+  vim.api.nvim_set_hl(0, "MarkdownBg1", { bg = COLORS.dark, fg = COLORS.blue, bold = false })   -- blue
+  vim.api.nvim_set_hl(0, "MarkdownBg2", { bg = COLORS.dark, fg = COLORS.cyan, bold = false })   -- cyan
+  vim.api.nvim_set_hl(0, "MarkdownBg3", { bg = COLORS.dark, fg = COLORS.orange, bold = false }) -- orange
+  vim.api.nvim_set_hl(0, "MarkdownBg4", { bg = COLORS.dark, fg = COLORS.pink, bold = false, })  -- pink
+  vim.api.nvim_set_hl(0, "MarkdownBg5", { bg = COLORS.dark, fg = COLORS.purple, bold = false }) -- purple
+  vim.api.nvim_set_hl(0, "MarkdownBg6", { bg = COLORS.dark, fg = COLORS.red, bold = false })    -- red
 end
 
 local function mem_highlights()
   local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
   vim.api.nvim_set_hl(0, "MemStatusDone", { fg = comment.fg, strikethrough = true })
 
-  vim.api.nvim_set_hl(0, "MemCategorySpec", { fg = "#ff7b72", bold = false })  -- pink
-  vim.api.nvim_set_hl(0, "MemCategoryPlan", { fg = "#bc8cff", bold = false })  -- purple
-  vim.api.nvim_set_hl(0, "MemCategoryTodo", { fg = "#58a6ff", bold = false })  -- blue
-  vim.api.nvim_set_hl(0, "MemCategoryDoc", { fg = "#d29922", bold = false })   -- orange
-  vim.api.nvim_set_hl(0, "MemCategoryTrace", { fg = "#39c5cf", bold = false }) -- cyan
-  vim.api.nvim_set_hl(0, "MemCategoryBin", { fg = "#f85149", bold = false })   -- red
-  vim.api.nvim_set_hl(0, "MemCategoryTmp", { fg = "#4C566A", bold = false })   -- grey
-  vim.api.nvim_set_hl(0, "MemCategoryRef", { fg = "#4C566A", bold = false })   -- grey
+  vim.api.nvim_set_hl(0, "MemCategorySpec", { fg = COLORS.pink, bold = false, }) -- pink
+  vim.api.nvim_set_hl(0, "MemCategoryPlan", { fg = COLORS.purple, bold = false })  -- purple
+  vim.api.nvim_set_hl(0, "MemCategoryTodo", { fg = COLORS.blue, bold = false })  -- blue
+  vim.api.nvim_set_hl(0, "MemCategoryDoc", { fg = COLORS.orange, bold = false })   -- orange
+  vim.api.nvim_set_hl(0, "MemCategoryTrace", { fg = COLORS.cyan, bold = false }) -- cyan
+  vim.api.nvim_set_hl(0, "MemCategoryBin", { fg = COLORS.red, bold = false })   -- red
+  vim.api.nvim_set_hl(0, "MemCategoryTmp", { fg = COLORS.grey, bold = false })   -- grey
+  vim.api.nvim_set_hl(0, "MemCategoryRef", { fg = COLORS.grey, bold = false })   -- grey
 end
 
 return function()

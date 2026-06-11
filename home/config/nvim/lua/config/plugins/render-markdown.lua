@@ -14,16 +14,16 @@ return {
         -- Use your custom group for all heading levels (H1 through H6)
         -- backgrounds = {},
         backgrounds = {
-          'MyCustomMarkdownBg2', 'MyCustomMarkdownBg2', 'MyCustomMarkdownBg2',
-          'MyCustomMarkdownBg2', 'MyCustomMarkdownBg2', 'MyCustomMarkdownBg2'
+          'MarkdownBg1', 'MarkdownBg2', 'MarkdownBg3',
+          'MarkdownBg4', 'MarkdownBg5', 'MarkdownBg6'
         },
       },
       code = {
         -- Apply it to the body of code blocks
-        highlight = 'MyCustomMarkdownBg',
+        highlight = 'MarkdownBg0',
 
         -- Apply it to the language header line (triple backticks line)
-        highlight_border = 'MyCustomMarkdownBg',
+        highlight_border = 'MarkdownBg0',
 
         -- Apply it to inline code (backticks)
         highlight_inline = 'NONE',
