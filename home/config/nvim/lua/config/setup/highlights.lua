@@ -29,6 +29,20 @@ local function markdown_highlights()
   vim.api.nvim_set_hl(0, "MarkdownBg4", { bg = COLORS.dark, fg = COLORS.pink, bold = false, })  -- pink
   vim.api.nvim_set_hl(0, "MarkdownBg5", { bg = COLORS.dark, fg = COLORS.purple, bold = false }) -- purple
   vim.api.nvim_set_hl(0, "MarkdownBg6", { bg = COLORS.dark, fg = COLORS.red, bold = false })    -- red
+
+  -- Link standard Treesitter and markdown groups to match render-markdown colors
+  for i = 1, 6 do
+    local target = "MarkdownBg" .. i
+    -- Modern Treesitter groups
+    vim.api.nvim_set_hl(0, "@markup.heading." .. i .. ".markdown", { link = target })
+    -- Legacy/standard markdown syntax groups
+    vim.api.nvim_set_hl(0, "markdownH" .. i, { link = target })
+    -- Older Treesitter naming fallback
+    vim.api.nvim_set_hl(0, "@text.title." .. i .. ".markdown", { link = target })
+  end
+
+  -- Match code block background
+  vim.api.nvim_set_hl(0, "@markup.raw.block.markdown", { link = "MarkdownBg0" })
 end
 
 local function mem_highlights()
