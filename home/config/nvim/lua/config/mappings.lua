@@ -3,8 +3,6 @@ local kiwi = require('kiwi')
 require("config.keymaps.rails")
 local keymaps_telescope = require("config.keymaps.telescope")
 
-local agents_utils = require('config.utils.agents')
-local ctx_clipboard = require('config.utils.context_clipboard')
 local gh_utils = require('config.utils.gh')
 local git_utils = require('config.utils.git')
 local helpers = require('config.utils.helpers')
@@ -13,6 +11,8 @@ local mem_utils = require('config.utils.mem')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
 local telescope_utils = require('config.utils.telescope')
+
+local oc = require("opencode")
 
 local set = vim.keymap.set
 
@@ -41,18 +41,49 @@ local base = {
   { "<A-Down>",          "<cmd>cnext<cr>",                                                       desc = "[Qflist] Next" },
   { "<A-PageUp>",        "<cmd>lprev<cr>",                                                       desc = "[Loclist] Prev" },
   { "<A-PageDown>",      "<cmd>lnext<cr>",                                                       desc = "[Loclist] Next" },
+  -- AI / Mem
+  { "<C-t>",             mem_utils.pick_artifacts,                                               desc = "[Mem] Pick artifacts" },
+  { "<space>e",          group = "entries" },
+  { "<space>et",         function() mem_utils.pick_artifacts({ type = "todo" }) end,             desc = "Todos (current)" },
+  { "<space>eT",         function() mem_utils.pick_artifacts({ type = "todo", all = true }) end, desc = "Todos (all)" },
+  { "<space>es",         function() mem_utils.pick_artifacts({ type = "spec" }) end,             desc = "Specs (current)" },
+  { "<space>ed",         function() mem_utils.pick_artifacts({ type = "doc" }) end,              desc = "Docs (current)" },
+  { "<space>eb",         function() mem_utils.pick_artifacts({ branch = vim.g.git_base }) end,   desc = "Base branch" },
+  { "<space>eB",         mem_utils.pick_branch_artifacts,                                        desc = "Select branch" },
+  { "<space>eu",         "<cmd>MemAdd<cr>",                                                      desc = "UI (Add)" },
+  { "<space>n",          group = "new" },
+  { "<space>nt",         function() mem_utils.add_todo_or_plan("todo") end,                      desc = "Todo (current)" },
+  { "<space>nT",         function() mem_utils.add_todo_or_plan("todo", vim.g.git_master) end,    desc = "Todo (master)" },
+  { "<space>np",         function() mem_utils.add_todo_or_plan("plan") end,                      desc = "Plan (current)" },
+  { "<space>ns",         function() mem_utils.add_spec() end,                                    desc = "Spec (current)" },
+  { "<space>nS",         function() mem_utils.add_spec(vim.g.git_master) end,                    desc = "Spec (master)" },
+  { "<space>nu",         "<cmd>MemAdd<cr>",                                                      desc = "UI (Add)" },
+  { "<space>o",          group = "opencode" },
+  { "<space>oa",         function() oc.ask() end,                                                desc = "Ask" },
+  { "<space>oi",         function() oc.ask("@this: ", { submit = true }) end,                    desc = "Ask about this" },
+  { "<space>of",         function() oc.ask("@buffer: ", { submit = true }) end,                  desc = "Ask about buffer" },
+  { "<space>oF",         function() oc.prompt("@buffer ") end,                                   desc = "Add buffer" },
+  { "<space>od",         function() oc.ask("@diff: ", { submit = true }) end,                    desc = "Ask about diff" },
+  { "<space>on",         function() oc.command("session.new") end,                               desc = "New session" },
+  { "<space>oe",         function() oc.command("agent.cycle") end,                               desc = "Cycle agent" },
+  { "<space>os",         function() oc.select() end,                                             desc = "Select prompt" },
+  { "<space>oy",         function() oc.command("messages_copy") end,                             desc = "Copy last message" },
+  { "<space>or",         telescope_utils.file_review,                                            desc = "File review" },
+  { "<space>op",         group = "pr" },
+  { "<space>ope",        function() oc.prompt("/pr:explain", { submit = true }) end,             desc = "PR: Explain" },
+  { "<space>opr",        function() oc.prompt("/pr:fusion-review", { submit = true }) end,       desc = "PR: Fusion Review" },
+  { "<space>o+",         group = "context" },
+  { "<space>o+t",        function() oc.prompt("@this") end,                                      desc = "Add this" },
+  { "<space>o+f",        function() oc.prompt("@buffer") end,                                    desc = "Add buffer" },
+  { "<space>o+g",        function() oc.prompt("@grapple") end,                                   desc = "Add grapple" },
+  { "<space>m",          group = "mem" },
+  { "<space>mc",         mem_utils.open_context,                                                 desc = "Open context" },
+  { "<space>mC",         mem_utils.pick_context,                                                 desc = "Pick context" },
+  { "<space>ml",         mem_utils.open_log,                                                     desc = "Open log" },
+  { "<space>mg",         "<cmd>MemLog<cr>",                                                      desc = "Add log" },
   -- mod
-  { "<space>r",          telescope_utils.file_review,                                            desc = "File review" },
-  { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "[Agents] Find files" },
-  { "<A-s>",             agents_utils.find_files,                                                desc = "[Agents] Find files" },
-  { "<A-c>",             mem_utils.open_context,                                                 desc = "[Mem] Open current context" },
-  { "<A-C>",             mem_utils.pick_context,                                                 desc = "[Mem] Pick context file" },
-  { "<A-t>",             mem_utils.pick_artifacts,                                               desc = "[Mem] Pick artifacts" },
-  { "<A-T>",             function() mem_utils.pick_artifacts({ all = true }) end,                desc = "[Mem] Pick all artifacts" },
-  { "<A-d>",             function() agents_utils.find_files({ docs = true, latest = true }) end, desc = "[Agents] Find docs files" },
+  { "<A-a>",             "<cmd>Trouble<cr>",                                                     desc = "Trouble" },
   { "<A-f>",             "<cmd>Telescope live_grep hidden=false<cr>",                            desc = "Live Grep" },
-  { "<A-l>",             mem_utils.open_log,                                                     desc = "[Mem] Open Log" },
-  { "<A-m>",             "<cmd>MemAdd<cr>",                                                      desc = "[Mem] Add" },
   { "<A-p>",             "<cmd>Prctl<cr>",                                                       desc = "Prctl" },
   { "<A-u>",             "<Plug>CapsLockToggle",                                                 desc = "Toggle Capslock",              mode = "i" },
   { "<A-w>",             telescope_utils.search_cword,                                           desc = "Live Grep" },
@@ -121,7 +152,6 @@ local base = {
   { "<leader>eh",        "<cmd>Telescope help_tags<cr>",                                         desc = "Help tags" },
   { "<leader>es",        "<cmd>Telescope current_buffer_tags show_line=true<cr>",                desc = "Tags" },
   { "<leader>et",        telescope_utils.search_tags,                                            desc = "Search tags" },
-  { "<leader><leader>s", agents_utils.open_spec,                                                 desc = "[Agents] Opend SPEC.md" },
   { "<leader>fq",        qf_utils.add_cursor_to_qf,                                              desc = "Add to quickfix" },
   { "<leader>fQ",        "<cmd>cexpr []<cr>",                                                    desc = "Clear quickfix" },
   { "<leader>g",         group = "[Git]" },
@@ -167,6 +197,7 @@ local noop = {
 
 wk.add(base)
 wk.add(noop)
+vim.notify("test")
 
 wk.add(keymaps_telescope)
 
