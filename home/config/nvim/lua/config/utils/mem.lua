@@ -298,6 +298,13 @@ M.category_highlights = {
   ref = "MemCategoryRef",
 }
 
+-- Default frontmatter for artifact types
+M.TYPE_DEFAULTS = {
+  todo = { status = "open", priority = "0" },
+  plan = { status = "open", priority = "0" },
+  doc = { status = "open" },
+}
+
 -- Get highlight group for category
 local function get_category_highlight(category)
   return M.category_highlights[category] or "TelescopeResultsNormal"
@@ -600,7 +607,7 @@ function M.add(filename, opts)
 end
 
 -- Interactive artifact creation flows
-function M.add_todo_or_plan(type, branch)
+function M.add_with_title(type, branch)
   Snacks.input({
     prompt = "Title (" .. type .. "):",
     win = { row = 0.3 },
@@ -608,14 +615,13 @@ function M.add_todo_or_plan(type, branch)
     if not title or title == "" then return end
 
     local filename = slugify(title) .. ".md"
+    local defaults = M.TYPE_DEFAULTS[type] or {}
+    local frontmatter = vim.tbl_extend("force", { title = title }, defaults)
+
     local opts = {
       category = type,
       branch = branch,
-      frontmatter = {
-        title = title,
-        status = "open",
-        priority = "0",
-      }
+      frontmatter = frontmatter
     }
 
     M.add(filename, opts)
