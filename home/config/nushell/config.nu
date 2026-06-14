@@ -19,6 +19,7 @@ if $env.TMUX? == null { tmux new-session -A -s $env.USER }
 
 $env.EDITOR = "nvim"
 $env.GPG_TTY = ^tty
+$env.BROWSER = "firefox"
 
 $env.CONTEXT7_API_KEY = (cat /run/secrets/context7/api_key)
 $env.GEMINI_API_KEY = (cat /run/secrets/spabreaks/gemini_api_key)
