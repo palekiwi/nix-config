@@ -487,12 +487,6 @@ function M.pick_artifacts(opts)
     }),
     sorter = conf.generic_sorter({}), ---@type table
     previewer = conf.file_previewer({}), ---@type table
-    layout_strategy = "horizontal",
-    layout_config = {
-      horizontal = {
-        preview_width = 0.55,
-      },
-    },
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
