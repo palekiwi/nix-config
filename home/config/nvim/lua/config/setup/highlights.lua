@@ -6,7 +6,7 @@ COLORS = {
   cyan = "#39c5cf",
   orange = "#d29922",
   pink = "#ff7b72",
-  purle = "#bc8cff",
+  purple = "#bc8cff",
   red = "#f85149",
 }
 
@@ -23,12 +23,12 @@ end
 
 local function markdown_highlights()
   vim.api.nvim_set_hl(0, "MarkdownBg0", { bg = COLORS.darker })
-  vim.api.nvim_set_hl(0, "MarkdownBg1", { bg = COLORS.dark, fg = COLORS.blue, bold = false })   -- blue
-  vim.api.nvim_set_hl(0, "MarkdownBg2", { bg = COLORS.dark, fg = COLORS.cyan, bold = false })   -- cyan
-  vim.api.nvim_set_hl(0, "MarkdownBg3", { bg = COLORS.dark, fg = COLORS.orange, bold = false }) -- orange
-  vim.api.nvim_set_hl(0, "MarkdownBg4", { bg = COLORS.dark, fg = COLORS.pink, bold = false, })  -- pink
-  vim.api.nvim_set_hl(0, "MarkdownBg5", { bg = COLORS.dark, fg = COLORS.purple, bold = false }) -- purple
-  vim.api.nvim_set_hl(0, "MarkdownBg6", { bg = COLORS.dark, fg = COLORS.red, bold = false })    -- red
+  vim.api.nvim_set_hl(0, "MarkdownBg1", { bg = COLORS.dark, fg = COLORS.blue, bold = false })
+  vim.api.nvim_set_hl(0, "MarkdownBg2", { bg = COLORS.dark, fg = COLORS.orange, bold = false })
+  vim.api.nvim_set_hl(0, "MarkdownBg3", { bg = COLORS.dark, fg = COLORS.cyan, bold = false })
+  vim.api.nvim_set_hl(0, "MarkdownBg4", { bg = COLORS.dark, fg = COLORS.pink, bold = false, })
+  vim.api.nvim_set_hl(0, "MarkdownBg5", { bg = COLORS.dark, fg = COLORS.purple, bold = false })
+  vim.api.nvim_set_hl(0, "MarkdownBg6", { bg = COLORS.dark, fg = COLORS.red, bold = false })
 
   -- Link standard Treesitter and markdown groups to match render-markdown colors
   for i = 1, 6 do
