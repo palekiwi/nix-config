@@ -593,7 +593,8 @@ function M.add(filename, opts)
 
   -- Open the file in a new buffer
   vim.cmd.edit(filepath)
-  vim.cmd("startinsert")
+  vim.cmd("normal! G")
+  vim.cmd("startinsert!")
 
   return filepath
 end
