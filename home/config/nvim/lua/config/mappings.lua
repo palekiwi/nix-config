@@ -11,6 +11,7 @@ local mem_utils = require('config.utils.mem')
 local nvim_utils = require('config.utils.nvim')
 local qf_utils = require('config.utils.quickfix')
 local telescope_utils = require('config.utils.telescope')
+local ctx_clipboard = require('config.utils.context_clipboard')
 
 local oc = require("opencode")
 
@@ -197,7 +198,6 @@ local noop = {
 
 wk.add(base)
 wk.add(noop)
-vim.notify("test")
 
 wk.add(keymaps_telescope)
 
