@@ -598,6 +598,74 @@ function M.add(filename, opts)
   return filepath
 end
 
+-- Interactive artifact creation flows
+function M.add_todo_or_plan(type, branch)
+  Snacks.input({
+    prompt = "Title (" .. type .. "):",
+    win = { row = 0.3 },
+  }, function(title)
+    if not title or title == "" then return end
+
+    local filename = slugify(title) .. ".md"
+    local opts = {
+      category = type,
+      branch = branch,
+      frontmatter = {
+        title = title,
+        status = "open",
+        priority = "0",
+      }
+    }
+
+    M.add(filename, opts)
+  end)
+end
+
+function M.add_spec(branch)
+  Snacks.input({
+    prompt = "Spec path:",
+    completion = "file",
+    win = { row = 0.3 },
+  }, function(path)
+    if not path or path == "" then return end
+    M.add(path, { category = "spec", branch = branch, root = true })
+  end)
+end
+
+-- Picker for artifacts on a specific branch
+function M.pick_branch_artifacts()
+  local mem_dir = ".mem"
+  if vim.fn.isdirectory(mem_dir) == 0 then
+    vim.notify("Error: .mem directory not found", vim.log.levels.ERROR)
+    return
+  end
+
+  local branches = {}
+  local p = io.popen('ls -d ' .. mem_dir .. '/*/ 2>/dev/null')
+  if p then
+    for line in p:lines() do
+      local branch = line:match(".mem/(.+)/")
+      if branch then
+        table.insert(branches, branch)
+      end
+    end
+    p:close()
+  end
+
+  if #branches == 0 then
+    vim.notify("No branches with artifacts found", vim.log.levels.INFO)
+    return
+  end
+
+  Snacks.picker.select(branches, {
+    prompt = "Select Branch:",
+  }, function(branch)
+    if branch then
+      M.pick_artifacts({ branch = branch })
+    end
+  end)
+end
+
 -- ─── mem log ─────────────────────────────────────────────────────────────────
 
 -- Parse the structured scratch buffer into a table suitable for mem log add
