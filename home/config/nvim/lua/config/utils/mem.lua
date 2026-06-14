@@ -16,6 +16,7 @@ local DONE_STATUSES = {
   done = true,
   complete = true,
   closed = true,
+  archived = true,
 }
 
 local function is_done(artifact)
@@ -24,6 +25,17 @@ local function is_done(artifact)
   end
   local status = artifact.frontmatter.status
   return status and type(status) == "string" and DONE_STATUSES[status:lower()] or false
+end
+
+-- Slugify text for filenames
+local function slugify(text)
+  if not text then return nil end
+  return text:lower()
+    :gsub("[%s_]+", "-")
+    :gsub("[^%w%-]+", "")
+    :gsub("%-+", "-")
+    :gsub("^%-+", "")
+    :gsub("%-+$", "")
 end
 
 -- Execute shell command and return result
@@ -63,7 +75,8 @@ local function get_current_branch()
 end
 
 -- Get artifact list from mem CLI
-local function get_mem_artifacts(all_branches, include_gitignored)
+local function get_mem_artifacts(opts)
+  opts = opts or {}
   -- Check if mem command exists
   vim.fn.system('which mem 2>/dev/null')
   if vim.v.shell_error ~= 0 then
@@ -73,10 +86,16 @@ local function get_mem_artifacts(all_branches, include_gitignored)
 
   -- Build command
   local cmd = 'mem list --json --frontmatter'
-  if all_branches then
+  if opts.all then
     cmd = cmd .. ' --all'
   end
-  if include_gitignored then
+  if opts.branch then
+    cmd = cmd .. ' --branch ' .. vim.fn.shellescape(opts.branch)
+  end
+  if opts.type then
+    cmd = cmd .. ' --type ' .. vim.fn.shellescape(opts.type)
+  end
+  if not opts.all then
     cmd = cmd .. ' --include-gitignored'
   end
   cmd = cmd .. ' 2>/dev/null'
@@ -434,7 +453,7 @@ end
 function M.pick_artifacts(opts)
   opts = opts or {}
 
-  local artifacts = get_mem_artifacts(opts.all, not opts.all)
+  local artifacts = get_mem_artifacts(opts)
   if not artifacts or #artifacts == 0 then
     return
   end
@@ -517,6 +536,20 @@ function M.add(filename, opts)
   -- Add root flag
   if opts.root then
     table.insert(cmd, '--root')
+  end
+
+  -- Add branch flag
+  if opts.branch then
+    table.insert(cmd, '--branch')
+    table.insert(cmd, opts.branch)
+  end
+
+  -- Add frontmatter flags
+  if opts.frontmatter then
+    for k, v in pairs(opts.frontmatter) do
+      table.insert(cmd, '--frontmatter')
+      table.insert(cmd, string.format("%s=%s", k, v))
+    end
   end
 
   -- Add commit hash if provided and category allows it
