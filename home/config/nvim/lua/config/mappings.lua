@@ -61,7 +61,7 @@ local base = {
   { "<space>eaa",        function() mem_utils.pick_artifacts({ all = true }) end,                desc = "All artifacts" },
   { "<space>eb",         function() mem_utils.pick_artifacts({ branch = vim.g.git_base }) end,   desc = "Base branch" },
   { "<space>eB",         mem_utils.pick_branch_artifacts,                                        desc = "Select branch" },
-  { "<space>eu",         "<cmd>MemAdd<cr>",                                                      desc = "UI (Add)" },
+  { "<space>eu",         mem_utils.ui_pick,                                                      desc = "UI (Pick)" },
   { "<space>n",          group = "new" },
   { "<space>nt",         function() mem_utils.add_with_title("todo") end,                      desc = "Todo (current)" },
   { "<space>nT",         function() mem_utils.add_with_title("todo", vim.g.git_master) end,    desc = "Todo (master)" },

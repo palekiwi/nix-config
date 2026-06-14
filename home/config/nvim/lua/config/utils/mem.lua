@@ -600,6 +600,68 @@ function M.add(filename, opts)
   return filepath
 end
 
+-- Helper to select a branch from predefined options or picker
+local function select_branch_helper(callback)
+  local items = {
+    { label = "Current Branch", value = "current" },
+    { label = "Master Branch",  value = vim.g.git_master or "master" },
+    { label = "Base Branch",    value = vim.g.git_base or "master" },
+    { label = "All Branches",   value = "all" },
+    { label = "Select Branch...", value = "pick" },
+  }
+
+  Snacks.picker.select(items, {
+    prompt = "Select Branch Scope:",
+    format_item = function(item) return item.label end,
+  }, function(choice)
+    if not choice then return end
+    if choice.value == "pick" then
+      -- Call existing branch picker
+      local mem_dir = ".mem"
+      local branches = {}
+      local p = io.popen('ls -d ' .. mem_dir .. '/*/ 2>/dev/null')
+      if p then
+        for line in p:lines() do
+          local branch = line:match(".mem/(.+)/")
+          if branch then table.insert(branches, branch) end
+        end
+        p:close()
+      end
+      if #branches == 0 then
+        vim.notify("No branches with artifacts found", vim.log.levels.INFO)
+        return
+      end
+      Snacks.picker.select(branches, {
+        prompt = "Select Branch:",
+      }, function(branch)
+        if branch then callback(branch) end
+      end)
+    elseif choice.value == "current" then
+      callback(nil) -- nil means current branch in pick_artifacts
+    elseif choice.value == "all" then
+      callback("all")
+    else
+      callback(choice.value)
+    end
+  end)
+end
+
+-- Guided UI for listing artifacts
+function M.ui_pick()
+  select_branch_helper(function(branch)
+    select_category(function(category)
+      local opts = {}
+      if branch == "all" then
+        opts.all = true
+      else
+        opts.branch = branch
+      end
+      opts.type = category
+      M.pick_artifacts(opts)
+    end)
+  end)
+end
+
 -- Interactive artifact creation flows
 function M.add_with_title(type, branch)
   Snacks.input({
