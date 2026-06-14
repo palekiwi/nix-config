@@ -3,8 +3,6 @@ return {
     "nickjvandyke/opencode.nvim",
     version = "*", -- Latest stable release
     config = function()
-      local oc = require("opencode")
-
       vim.g.opencode_opts = {
         server = {
           -- Use the port reachable from your terminal (you mentioned 52693 earlier)
