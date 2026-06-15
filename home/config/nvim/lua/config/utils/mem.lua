@@ -16,7 +16,6 @@ local DONE_STATUSES = {
   done = true,
   complete = true,
   closed = true,
-  archived = true,
 }
 
 local function is_done(artifact)
@@ -25,6 +24,18 @@ local function is_done(artifact)
   end
   local status = artifact.frontmatter.status
   return status and type(status) == "string" and DONE_STATUSES[status:lower()] or false
+end
+
+local function is_archived(artifact)
+  if not artifact.frontmatter or artifact.frontmatter == vim.NIL then
+    return false
+  end
+  local status = artifact.frontmatter.status
+  return status and type(status) == "string" and status:lower() == "archived" or false
+end
+
+local function is_finished(artifact)
+  return is_done(artifact) or is_archived(artifact)
 end
 
 -- Slugify text for filenames
@@ -341,7 +352,9 @@ local function make_mem_entry_maker(opts)
       if fm.title and fm.title ~= vim.NIL and fm.title ~= "" then
         display_name = fm.title .. " (" .. display_name .. ")"
       end
-      if is_done(entry) then
+      if is_archived(entry) then
+        highlight = "MemStatusArchived"
+      elseif is_done(entry) then
         highlight = "MemStatusDone"
       end
     end
@@ -422,10 +435,10 @@ local function sort_artifacts(artifacts)
   ---@return boolean
   table.sort(artifacts, function(a, b)
     -- First: done items at the bottom
-    local a_done = is_done(a)
-    local b_done = is_done(b)
-    if a_done ~= b_done then
-      return not a_done
+    local a_finished = is_finished(a)
+    local b_finished = is_finished(b)
+    if a_finished ~= b_finished then
+      return not a_finished
     end
 
     -- Second: current branch comes first

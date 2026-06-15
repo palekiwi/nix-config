@@ -48,6 +48,7 @@ end
 local function mem_highlights()
   local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
   vim.api.nvim_set_hl(0, "MemStatusDone", { fg = comment.fg, strikethrough = true })
+  vim.api.nvim_set_hl(0, "MemStatusArchived", { fg = comment.fg, strikethrough = false })
 
   vim.api.nvim_set_hl(0, "MemCategorySpec", { fg = COLORS.pink, bold = false, }) -- pink
   vim.api.nvim_set_hl(0, "MemCategoryPlan", { fg = COLORS.purple, bold = false })  -- purple
