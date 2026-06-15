@@ -5,6 +5,7 @@
   ".envrc"
   ".gutctags"
   ".mem"
+  ".ref"
   "build"
   "cast.json"
   "cast-mcp.json"

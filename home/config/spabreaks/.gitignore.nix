@@ -10,6 +10,7 @@ in
   .envrc
   .gutctags
   .agents
+  .ref
   ai_docs
   cypress/cypress/screenshots
   cypress/cypress/snapshots
