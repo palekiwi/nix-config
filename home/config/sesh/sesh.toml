@@ -156,8 +156,8 @@ name = "config-cast"
 path = "~/.config/cast"
 
 [[session]]
-name = "mem"
-path = "~/code/palekiwi-labs/mem"
+name = "cue"
+path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"
 
 [[session]]

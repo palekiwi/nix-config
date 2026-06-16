@@ -4,7 +4,7 @@
   ".direnv"
   ".envrc"
   ".gutctags"
-  ".mem"
+  ".cue"
   ".ref"
   "build"
   "cast.json"

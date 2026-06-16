@@ -34,7 +34,7 @@ export def "ticket save" [ticket?: string, --json] {
     let data = ticket fetch $ticket
     let content = if $json { $data } else { ticket-to-md $data }
 
-    $content | mem add -t spec --root $"tickets/($ticket).md"
+    $content | cue add -t spec --root $"tickets/($ticket).md"
 }
 
 export def "ticket fetch" [ticket?: string] {
@@ -78,7 +78,7 @@ export def "test" [--only-failures, ...args] {
 
     let failed = $stdout | from json | get examples | where $it.status == "failed"
 
-    ($failed | to json) | mem add --type tmp --force rspec-failures.json
+    ($failed | to json) | cue add --type tmp --force rspec-failures.json
 }
 
 # TODO: rewrite this in nushell

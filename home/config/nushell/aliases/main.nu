@@ -37,7 +37,7 @@ def direnv_rust [] {
 }
 
 def revcom [] {
-    gh-utils review comments --json | mem add --force -t tmp review-comments.json
+    gh-utils review comments --json | cue add --force -t tmp review-comments.json
 }
 
 alias cat = bat -p
