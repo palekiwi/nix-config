@@ -85,18 +85,18 @@ local function get_current_branch()
   return nil
 end
 
--- Get artifact list from mem CLI
-local function get_mem_artifacts(opts)
+-- Get artifact list from cue CLI
+local function get_cue_artifacts(opts)
   opts = opts or {}
-  -- Check if mem command exists
-  vim.fn.system('which mem 2>/dev/null')
+  -- Check if cue command exists
+  vim.fn.system('which cue 2>/dev/null')
   if vim.v.shell_error ~= 0 then
-    vim.notify("Error: 'mem' command not found. Please ensure it's installed and in your PATH.", vim.log.levels.ERROR)
+    vim.notify("Error: 'cue' command not found. Please ensure it's installed and in your PATH.", vim.log.levels.ERROR)
     return nil
   end
 
   -- Build command
-  local cmd = 'mem list --json --frontmatter'
+  local cmd = 'cue list --json --frontmatter'
   if opts.all then
     cmd = cmd .. ' --all'
   end
@@ -115,9 +115,9 @@ local function get_mem_artifacts(opts)
   local output, err = execute_command(cmd)
   if not output or output == "" then
     if err then
-      vim.notify("Error fetching mem artifacts: " .. err, vim.log.levels.ERROR)
+      vim.notify("Error fetching cue artifacts: " .. err, vim.log.levels.ERROR)
     else
-      vim.notify("No mem artifacts found", vim.log.levels.INFO)
+      vim.notify("No cue artifacts found", vim.log.levels.INFO)
     end
     return nil
   end
@@ -125,7 +125,7 @@ local function get_mem_artifacts(opts)
   -- Parse JSON
   local artifacts, parse_err = parse_json(output)
   if not artifacts then
-    vim.notify("Error parsing mem data: " .. (parse_err or "unknown"), vim.log.levels.ERROR)
+    vim.notify("Error parsing cue data: " .. (parse_err or "unknown"), vim.log.levels.ERROR)
     return nil
   end
 
@@ -134,13 +134,13 @@ end
 
 -- Open current context file
 function M.open_context()
-  local cmd = "mem context path 2>/dev/null"
+  local cmd = "cue context path 2>/dev/null"
   local output, err = execute_command(cmd)
 
   if not output or output == "" then
     -- Try to initialize context if not found
     vim.notify("Context not found, initializing...", vim.log.levels.INFO)
-    local init_cmd = "mem context init 2>/dev/null"
+    local init_cmd = "cue context init 2>/dev/null"
     local init_output, init_err = execute_command(init_cmd)
 
     if not init_output then
@@ -173,7 +173,7 @@ function M.open_log()
     return
   end
 
-  local path = ".mem/" .. branch .. "/spec/log.md"
+  local path = ".cue/" .. branch .. "/spec/log.md"
   if vim.fn.filereadable(path) == 0 then
     vim.notify("Error: Log file does not exist: " .. path, vim.log.levels.ERROR)
     return
@@ -184,7 +184,7 @@ end
 
 -- Open telescope picker for all context files
 function M.pick_context()
-  local cmd = "mem context path --all 2>/dev/null"
+  local cmd = "cue context path --all 2>/dev/null"
   local output, err = execute_command(cmd)
 
   if not output or output == "" then
@@ -206,7 +206,7 @@ function M.pick_context()
   end
 
   pickers.new({}, {
-    prompt_title = "Mem Context Files",
+    prompt_title = "Cue Context Files",
     finder = finders.new_table({
       results = paths,
       entry_maker = make_entry.gen_from_file({}),
@@ -299,14 +299,14 @@ local function format_category(category)
 end
 
 M.category_highlights = {
-  spec = "MemCategorySpec",
-  plan = "MemCategoryPlan",
-  todo = "MemCategoryTodo",
-  doc = "MemCategoryDoc",
-  bin = "MemCategoryBin",
-  trace = "MemCategoryTrace",
-  tmp = "MemCategoryTmp",
-  ref = "MemCategoryRef",
+  spec = "CueCategorySpec",
+  plan = "CueCategoryPlan",
+  todo = "CueCategoryTodo",
+  doc = "CueCategoryDoc",
+  bin = "CueCategoryBin",
+  trace = "CueCategoryTrace",
+  tmp = "CueCategoryTmp",
+  ref = "CueCategoryRef",
 }
 
 -- Default frontmatter for artifact types
@@ -353,9 +353,9 @@ local function make_mem_entry_maker(opts)
         display_name = fm.title .. " (" .. display_name .. ")"
       end
       if is_archived(entry) then
-        highlight = "MemStatusArchived"
+        highlight = "CueStatusArchived"
       elseif is_done(entry) then
-        highlight = "MemStatusDone"
+        highlight = "CueStatusDone"
       end
     end
 
@@ -473,7 +473,7 @@ end
 function M.pick_artifacts(opts)
   opts = opts or {}
 
-  local artifacts = get_mem_artifacts(opts)
+  local artifacts = get_cue_artifacts(opts)
   if not artifacts or #artifacts == 0 then
     return
   end
@@ -482,7 +482,7 @@ function M.pick_artifacts(opts)
   artifacts = sort_artifacts(artifacts) ---@type table
 
   -- Build prompt title
-  local prompt_title = "Mem Artifacts"
+  local prompt_title = "Cue Artifacts"
   if opts.all then
     prompt_title = prompt_title .. " (All Branches)"
   else
@@ -532,7 +532,7 @@ function M.pick_artifacts(opts)
   pickers.new({}, picker_opts):find()
 end
 
--- Add a new artifact file using mem add command and open it for editing
+-- Add a new artifact file using cue add command and open it for editing
 function M.add(filename, opts)
   opts = opts or {}
 
@@ -543,7 +543,7 @@ function M.add(filename, opts)
   end
 
   -- 1. Prepare the command and arguments
-  local cmd = { 'mem', 'add', filename }
+  local cmd = { 'cue', 'add', filename }
 
   -- Add type flag
   if opts.category then
@@ -594,7 +594,7 @@ function M.add(filename, opts)
     error_msg = vim.trim(error_msg or "Unknown error")
 
     -- Notify the user of the error
-    vim.notify("Mem Error: " .. error_msg, vim.log.levels.ERROR)
+    vim.notify("Cue Error: " .. error_msg, vim.log.levels.ERROR)
 
     return nil, error_msg
   end
@@ -602,7 +602,7 @@ function M.add(filename, opts)
   -- Parse output to get relative path
   local filepath = vim.trim(obj.stdout or "") ---@type string
   if filepath == "" then
-    vim.notify("Error: failed to get file path from mem add output", vim.log.levels.ERROR)
+    vim.notify("Error: failed to get file path from cue add output", vim.log.levels.ERROR)
     return nil
   end
 
@@ -634,12 +634,12 @@ local function select_branch_helper(callback)
     if not choice then return end
     if choice.value == "pick" then
       -- Call existing branch picker
-      local mem_dir = ".mem"
+      local cue_dir = ".cue"
       local branches = {}
-      local p = io.popen('ls -d ' .. mem_dir .. '/*/ 2>/dev/null')
+      local p = io.popen('ls -d ' .. cue_dir .. '/*/ 2>/dev/null')
       if p then
         for line in p:lines() do
-          local branch = line:match(".mem/(.+)/")
+          local branch = line:match(".cue/(.+)/")
           if branch then table.insert(branches, branch) end
         end
         p:close()
@@ -714,17 +714,17 @@ end
 
 -- Picker for artifacts on a specific branch
 function M.pick_branch_artifacts()
-  local mem_dir = ".mem"
-  if vim.fn.isdirectory(mem_dir) == 0 then
-    vim.notify("Error: .mem directory not found", vim.log.levels.ERROR)
+  local cue_dir = ".cue"
+  if vim.fn.isdirectory(cue_dir) == 0 then
+    vim.notify("Error: .cue directory not found", vim.log.levels.ERROR)
     return
   end
 
   local branches = {}
-  local p = io.popen('ls -d ' .. mem_dir .. '/*/ 2>/dev/null')
+  local p = io.popen('ls -d ' .. cue_dir .. '/*/ 2>/dev/null')
   if p then
     for line in p:lines() do
-      local branch = line:match(".mem/(.+)/")
+      local branch = line:match(".cue/(.+)/")
       if branch then
         table.insert(branches, branch)
       end
@@ -746,9 +746,9 @@ function M.pick_branch_artifacts()
   end)
 end
 
--- ─── mem log ─────────────────────────────────────────────────────────────────
+-- ─── cue log ─────────────────────────────────────────────────────────────────
 
--- Parse the structured scratch buffer into a table suitable for mem log add
+-- Parse the structured scratch buffer into a table suitable for cue log add
 local function parse_log_buffer(lines)
   local entry = { title = nil, body = {}, found = {}, decided = {}, open = {} }
   local valid_sections = { title = true, body = true, found = true, decided = true, open = true }
@@ -784,10 +784,10 @@ local function parse_log_buffer(lines)
   return entry
 end
 
--- Build and run mem log add from a structured entry table
+-- Build and run cue log add from a structured entry table
 function M.log_add(entry)
   if not entry.title or entry.title == "" then
-    vim.notify("Mem Log Error: Title is required", vim.log.levels.ERROR)
+    vim.notify("Cue Log Error: Title is required", vim.log.levels.ERROR)
     return false
   end
 
@@ -809,20 +809,20 @@ function M.log_add(entry)
   end)
 
   if not ok then
-    vim.notify("Mem Log Error: Failed to write temp file: " .. tostring(err), vim.log.levels.ERROR)
+    vim.notify("Cue Log Error: Failed to write temp file: " .. tostring(err), vim.log.levels.ERROR)
     return false
   end
 
-  local obj = vim.system({ "mem", "log", "add", "--file", tmpfile }, { text = true }):wait()
+  local obj = vim.system({ "cue", "log", "add", "--file", tmpfile }, { text = true }):wait()
   vim.fn.delete(tmpfile)
 
   if obj.code ~= 0 then
     local msg = vim.trim((obj.stderr and obj.stderr ~= "") and obj.stderr or obj.stdout or "Unknown error")
-    vim.notify("Mem Log Error: " .. msg, vim.log.levels.ERROR)
+    vim.notify("Cue Log Error: " .. msg, vim.log.levels.ERROR)
     return false
   end
 
-  vim.notify("Mem Log: Entry added: " .. entry.title, vim.log.levels.INFO)
+  vim.notify("Cue Log: Entry added: " .. entry.title, vim.log.levels.INFO)
   return true
 end
 
@@ -857,7 +857,7 @@ function M.log_form()
     width = 0.6,
     height = 0.7,
     border = "rounded",
-    title = "  Mem Log Add  │  <C-s> Submit  │  q Cancel  ",
+    title = "  Cue Log Add  │  <C-s> Submit  │  q Cancel  ",
     title_pos = "center",
     wo = { wrap = true, linebreak = true, conceallevel = 2 },
   })
@@ -872,7 +872,7 @@ function M.log_form()
   end
 
   -- Keymaps
-  vim.keymap.set({ "n", "i" }, "<C-s>", submit, { buffer = buf, desc = "Submit mem log entry" })
+  vim.keymap.set({ "n", "i" }, "<C-s>", submit, { buffer = buf, desc = "Submit cue log entry" })
   vim.keymap.set("n", "q", function() win:close() end, { buffer = buf, desc = "Cancel mem log entry" })
 
   -- Use BufWriteCmd to allow :w to submit
@@ -887,8 +887,8 @@ function M.log_form()
 end
 
 -- Setup user commands automatically when module loads
--- :MemLog [title] - Add mem log entry
-vim.api.nvim_create_user_command('MemLog', function(args)
+-- :CueLog [title] - Add cue log entry
+vim.api.nvim_create_user_command('CueLog', function(args)
   local title = vim.trim(args.args)
   if title ~= "" then
     M.log_add({ title = title, found = {}, decided = {}, open = {} })
@@ -897,11 +897,11 @@ vim.api.nvim_create_user_command('MemLog', function(args)
   end
 end, {
   nargs = "*",
-  desc = "Add a mem log entry (no args = open form, with args = title-only fast path)"
+  desc = "Add a cue log entry (no args = open form, with args = title-only fast path)"
 })
 
--- :MemAdd - Add mem artifact (prompts for type then filename)
-vim.api.nvim_create_user_command('MemAdd', function()
+-- :CueAdd - Add cue artifact (prompts for type then filename)
+vim.api.nvim_create_user_command('CueAdd', function()
   select_category(function(category)
     prompt_filename(category, function(filename)
       prompt_root_and_add(filename, { category = category == "spec" and nil or category })
@@ -909,77 +909,77 @@ vim.api.nvim_create_user_command('MemAdd', function()
   end)
 end, {
   nargs = 0,
-  desc = 'Add a new mem artifact (prompts for type, filename, then root status)'
+  desc = 'Add a new cue artifact (prompts for type, filename, then root status)'
 })
 --
--- :MemAddBin <filename> - Add trace artifact
-vim.api.nvim_create_user_command('MemAddBin', function(args)
+-- :CueAddBin <filename> - Add trace artifact
+vim.api.nvim_create_user_command('CueAddBin', function(args)
   local filename = args.args
   if not filename or filename == "" then
-    vim.notify("Usage: :MemAddBin <filename>", vim.log.levels.ERROR)
+    vim.notify("Usage: :CueAddBin <filename>", vim.log.levels.ERROR)
     return
   end
   prompt_root_and_add(filename, { category = 'bin' })
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem trace artifact and open it for editing'
+  desc = 'Add a new cue trace artifact and open it for editing'
 })
 
--- :MemAddTrace <filename> - Add trace artifact
-vim.api.nvim_create_user_command('MemAddTrace', function(args)
+-- :CueAddTrace <filename> - Add trace artifact
+vim.api.nvim_create_user_command('CueAddTrace', function(args)
   local filename = args.args
   if not filename or filename == "" then
-    vim.notify("Usage: :MemAddTrace <filename>", vim.log.levels.ERROR)
+    vim.notify("Usage: :CueAddTrace <filename>", vim.log.levels.ERROR)
     return
   end
   prompt_root_and_add(filename, { category = 'trace' })
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem trace artifact and open it for editing'
+  desc = 'Add a new cue trace artifact and open it for editing'
 })
 
--- :MemAddTmp <filename> - Add tmp artifact
-vim.api.nvim_create_user_command('MemAddTmp', function(args)
+-- :CueAddTmp <filename> - Add tmp artifact
+vim.api.nvim_create_user_command('CueAddTmp', function(args)
   local filename = args.args
   if not filename or filename == "" then
-    vim.notify("Usage: :MemAddTmp <filename>", vim.log.levels.ERROR)
+    vim.notify("Usage: :CueAddTmp <filename>", vim.log.levels.ERROR)
     return
   end
   prompt_root_and_add(filename, { category = 'tmp' })
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem tmp artifact and open it for editing'
+  desc = 'Add a new cue tmp artifact and open it for editing'
 })
 
--- :MemAddRef <filename> - Add ref artifact
-vim.api.nvim_create_user_command('MemAddRef', function(args)
+-- :CueAddRef <filename> - Add ref artifact
+vim.api.nvim_create_user_command('CueAddRef', function(args)
   local filename = args.args
   if not filename or filename == "" then
-    vim.notify("Usage: :MemAddRef <filename>", vim.log.levels.ERROR)
+    vim.notify("Usage: :CueAddRef <filename>", vim.log.levels.ERROR)
     return
   end
   prompt_root_and_add(filename, { category = 'ref' })
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem ref artifact and open it for editing'
+  desc = 'Add a new cue ref artifact and open it for editing'
 })
 
--- :MemAddDoc <filename> - Add doc artifact
-vim.api.nvim_create_user_command('MemAddDoc', function(args)
+-- :CueAddDoc <filename> - Add doc artifact
+vim.api.nvim_create_user_command('CueAddDoc', function(args)
   local filename = args.args
   if not filename or filename == "" then
-    vim.notify("Usage: :MemAddDoc <filename>", vim.log.levels.ERROR)
+    vim.notify("Usage: :CueAddDoc <filename>", vim.log.levels.ERROR)
     return
   end
   prompt_root_and_add(filename, { category = 'doc' })
 end, {
   nargs = 1,
   complete = 'file',
-  desc = 'Add a new mem doc artifact and open it for editing'
+  desc = 'Add a new cue doc artifact and open it for editing'
 })
 
 return M
