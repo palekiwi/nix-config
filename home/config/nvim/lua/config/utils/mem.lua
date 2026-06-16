@@ -486,10 +486,14 @@ function M.pick_artifacts(opts)
   if opts.all then
     prompt_title = prompt_title .. " (All Branches)"
   else
-    local branch = get_current_branch()
+    local branch = opts.branch or get_current_branch()
     if branch then
       prompt_title = prompt_title .. " (" .. branch .. ")"
     end
+  end
+
+  if opts.type then
+    prompt_title = prompt_title .. " [" .. opts.type:upper() .. "]"
   end
 
   local picker_opts = {
