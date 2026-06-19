@@ -6,7 +6,8 @@
 --- We resolve the path at runtime relative to stdpath("config") so it works
 --- regardless of where nix-config is checked out.
 
-local plugin_path = vim.fn.stdpath("config") .. "/plugins/cue.nvim"
+local source = debug.getinfo(1).source:sub(2)
+local plugin_path = vim.fn.fnamemodify(source, ":p:h:h:h:h") .. "/plugins/cue.nvim"
 
 return {
   {
