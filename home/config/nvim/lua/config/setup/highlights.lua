@@ -45,23 +45,24 @@ local function markdown_highlights()
   vim.api.nvim_set_hl(0, "@markup.raw.block.markdown", { link = "MarkdownBg0" })
 end
 
-local function mem_highlights()
+local function cue_highlights()
   local comment = vim.api.nvim_get_hl(0, { name = "Comment" })
-  vim.api.nvim_set_hl(0, "MemStatusDone", { fg = comment.fg, strikethrough = true })
+  vim.api.nvim_set_hl(0, "CueStatusDone", { fg = comment.fg, strikethrough = true })
+  vim.api.nvim_set_hl(0, "CueStatusArchived", { fg = comment.fg, strikethrough = false })
 
-  vim.api.nvim_set_hl(0, "MemCategorySpec", { fg = COLORS.pink, bold = false, }) -- pink
-  vim.api.nvim_set_hl(0, "MemCategoryPlan", { fg = COLORS.purple, bold = false })  -- purple
-  vim.api.nvim_set_hl(0, "MemCategoryTodo", { fg = COLORS.blue, bold = false })  -- blue
-  vim.api.nvim_set_hl(0, "MemCategoryDoc", { fg = COLORS.orange, bold = false })   -- orange
-  vim.api.nvim_set_hl(0, "MemCategoryTrace", { fg = COLORS.cyan, bold = false }) -- cyan
-  vim.api.nvim_set_hl(0, "MemCategoryBin", { fg = COLORS.red, bold = false })   -- red
-  vim.api.nvim_set_hl(0, "MemCategoryTmp", { fg = COLORS.grey, bold = false })   -- grey
-  vim.api.nvim_set_hl(0, "MemCategoryRef", { fg = COLORS.grey, bold = false })   -- grey
+  vim.api.nvim_set_hl(0, "CueCategorySpec", { fg = COLORS.pink, bold = false, }) -- pink
+  vim.api.nvim_set_hl(0, "CueCategoryPlan", { fg = COLORS.purple, bold = false })  -- purple
+  vim.api.nvim_set_hl(0, "CueCategoryTodo", { fg = COLORS.blue, bold = false })  -- blue
+  vim.api.nvim_set_hl(0, "CueCategoryDoc", { fg = COLORS.orange, bold = false })   -- orange
+  vim.api.nvim_set_hl(0, "CueCategoryTrace", { fg = COLORS.cyan, bold = false }) -- cyan
+  vim.api.nvim_set_hl(0, "CueCategoryBin", { fg = COLORS.red, bold = false })   -- red
+  vim.api.nvim_set_hl(0, "CueCategoryTmp", { fg = COLORS.grey, bold = false })   -- grey
+  vim.api.nvim_set_hl(0, "CueCategoryRef", { fg = COLORS.grey, bold = false })   -- grey
 end
 
 return function()
   stimulus_hightlights()
   lsp_highlights()
   markdown_highlights()
-  mem_highlights()
+  cue_highlights()
 end

@@ -3,8 +3,6 @@ return {
     "nickjvandyke/opencode.nvim",
     version = "*", -- Latest stable release
     config = function()
-      local oc = require("opencode")
-
       vim.g.opencode_opts = {
         server = {
           -- Use the port reachable from your terminal (you mentioned 52693 earlier)
@@ -34,29 +32,6 @@ return {
       }
 
       vim.opt.autoread = true
-
-      local keymaps = {
-        { "n",          "<space>a",  function() oc.ask() end,                                                      "Ask opencode", },
-        { "n",          "<space>E",  function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
-        { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
-        { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
-        { "n",          "<space>F",  function() oc.prompt("@buffer ") end,                                         "Add buffer" },
-        { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
-        { "n",          "<space>n",  function() oc.command("session.new") end,                                     "New session" },
-        { "n",          "<space>e",  function() oc.command("agent.cycle") end,                                     "Cycle agent" },
-        { "n",          "<space>t",  function() oc.ask("@this: ", { submit = false }) end,                         "Add this" },
-        { "n",          "<space>+t", function() oc.prompt("@this") end,                                            "Add this and submit" },
-        { "n",          "<space>+f", function() oc.prompt("@buffer") end,                                          "Add buffer" },
-        { "n",          "<space>+g", function() oc.prompt("@grapple") end,                                         "Add grapple" },
-        { "n",          "<space>pe", function() oc.prompt("/pr:explain", { submit = true }) end,                   "PR: Explain" },
-        { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", { submit = true }) end,             "PR: Fusion Review" },
-        { "n",          "<space>s",  function() oc.select() end,                                                   "Select prompt" },
-        { "n",          "<space>y",  function() oc.command("messages_copy") end,                                   "Copy last message" },
-      }
-
-      for _, m in ipairs(keymaps) do
-        vim.keymap.set(m[1], m[2], m[3], { desc = m[4] })
-      end
     end
   }
 }
