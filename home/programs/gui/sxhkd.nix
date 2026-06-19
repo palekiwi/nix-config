@@ -112,6 +112,9 @@ in
       "super + space; v; d" = "${switchToSession} vrs-dev";
       "super + space; v; e" = "${switchToSession} vrs";
 
+      "super + space; w; d" = "${switchToSession} wss-dev";
+      "super + space; w; e" = "${switchToSession} wss";
+
       "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
       "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
