@@ -180,6 +180,7 @@ function M.open_log()
   end
 
   vim.cmd.edit(path)
+  vim.cmd("normal! G")
 end
 
 -- Open telescope picker for all context files

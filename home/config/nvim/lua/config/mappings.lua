@@ -94,7 +94,6 @@ local base = {
   { "<space>mc",       cue_utils.open_context,                                                                desc = "Open context" },
   { "<space>mC",       cue_utils.pick_context,                                                                desc = "Pick context" },
   { "<space>ml",       cue_utils.open_log,                                                                    desc = "Open log" },
-  { "<space>ml",       cue_utils.open_log,                                                                    desc = "Open log" },
   { "<space>mg",       "<cmd>CueLog<cr>",                                                                     desc = "Add log" },
   -- mod
   { "<A-a>",           "<cmd>Trouble<cr>",                                                                    desc = "Trouble" },
