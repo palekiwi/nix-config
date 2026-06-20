@@ -7,14 +7,16 @@ M.DONE_STATUSES = {
 }
 
 M.TYPE_DEFAULTS = {
-  todo = { status = "open", priority = "0" },
-  plan = { status = "open", priority = "0" },
+  task = { status = "open", priority = "normal" },
+  todo = { status = "open", priority = "normal" },
+  plan = { status = "open", priority = "normal" },
   doc  = { status = "open" },
 }
 
 M.category_highlights = {
   spec  = "CueCategorySpec",
   plan  = "CueCategoryPlan",
+  task  = "CueCategoryTask",
   todo  = "CueCategoryTodo",
   doc   = "CueCategoryDoc",
   bin   = "CueCategoryBin",

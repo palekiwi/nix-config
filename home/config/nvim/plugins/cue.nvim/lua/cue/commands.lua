@@ -28,6 +28,7 @@ function M.setup()
   local function select_category(callback)
     local Snacks = require('snacks')
     local items = {
+      { label = "task",  desc = "Task artifact" },
       { label = "todo",  desc = "TODO artifact" },
       { label = "spec",  desc = "Specification" },
       { label = "plan",  desc = "Plan artifact" },

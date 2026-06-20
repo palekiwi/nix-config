@@ -201,7 +201,7 @@ function M.add(filename, opts)
 end
 
 --- Prompt for a title, then add an artifact of the given type
----@param type string  artifact type (e.g. "todo", "plan", "doc")
+---@param type string  artifact type (e.g. "task", "todo", "plan", "doc")
 ---@param branch string|nil  override branch
 function M.add_with_title(type, branch)
   local Snacks = require('snacks')
@@ -211,13 +211,19 @@ function M.add_with_title(type, branch)
   }, function(title)
     if not title or title == "" then return end
 
+    -- Tasks are special: they ALWAYS live on the master branch
+    local target_branch = branch
+    if type == "task" then
+      target_branch = "master"
+    end
+
     local filename = M.slugify(title) .. ".md"
     local defaults = config.TYPE_DEFAULTS[type] or {}
     local frontmatter = vim.tbl_extend("force", { title = title }, defaults)
 
     M.add(filename, {
       category    = type,
-      branch      = branch,
+      branch      = target_branch,
       frontmatter = frontmatter,
     })
   end)

@@ -167,6 +167,7 @@ local function sort_artifacts(artifacts)
   local current_branch = core.get_current_branch()
 
   local category_priority = {
+    task  = 0,
     plan  = 1,
     todo  = 2,
     spec  = 3,
@@ -339,7 +340,8 @@ function M.ui_pick()
   }
 
   local category_items = {
-    { label = "todo",  desc = "TODO artifact" },
+    { label = "task",  desc = "Task (on master)" },
+    { label = "todo",  desc = "TODO (informal note)" },
     { label = "spec",  desc = "Specification" },
     { label = "plan",  desc = "Plan artifact" },
     { label = "doc",   desc = "Documentation artifact" },
