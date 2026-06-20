@@ -1,0 +1,10 @@
+{
+  "use_flake": false,
+  "extra_data_volumes": {
+    "cargo": {
+      "source": "/home/pl/code/palekiwi-labs/cue.nvim",
+      "target": "/home/pl/code/palekiwi-labs/cue.nvim",
+      "type": "bind"
+    }
+  }
+}
