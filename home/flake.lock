@@ -54,11 +54,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1781967815,
-        "narHash": "sha256-LplwkB8Eisby5WM1tpHOG0rI/izB2q1QWxh0cCUP3Tc=",
+        "lastModified": 1782111277,
+        "narHash": "sha256-ADMflB3ZP+oNRna9N9ySaNKBiAK6KYDizWlLsU7LmTA=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "bc9bd00a0f1c8770d026e1deff7c6994a7f357d0",
+        "rev": "65dd2bce803ad916a0b2bab2444ce82583d6e091",
         "type": "github"
       },
       "original": {
