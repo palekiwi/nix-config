@@ -86,6 +86,9 @@ in
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
+      "super + space; t; e" = "${switchToSession} cue";
+      "super + space; t; i" = "${switchToSession} cast";
+      "super + space; t; n" = "${switchToSession} cue-plugins";
       "super + space; t; t" = "${switchToSession} taskwarrior";
 
       "super + space; c; c" = "${switchToSession} config-cast";
