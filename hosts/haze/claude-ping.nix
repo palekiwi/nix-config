@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   namespaces = [ "cast" "cast-sb" ];
@@ -25,7 +25,12 @@ let
         ];
       };
 
-      path = [ pkgs.nix ];
+      # `cast` shells out to `docker`, which isn't on a service's default PATH.
+      # Reference the configured daemon package so the CLI matches its version.
+      path = [
+        pkgs.nix
+        config.virtualisation.docker.package
+      ];
 
       script = ''
         nix run github:palekiwi-labs/cast/6a8ecd686eef6612d995b680e0a185e0efb101d0#cast -- \
