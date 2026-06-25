@@ -23,7 +23,7 @@
     path = [ pkgs.nix ];
 
     script = ''
-      ${pkgs.nix}/bin/nix run github:palekiwi-labs/cast/6a8ecd686eef6612d995b680e0a185e0efb101d0#cast -- \
+      nix run github:palekiwi-labs/cast/6a8ecd686eef6612d995b680e0a185e0efb101d0#cast -- \
         run opencode run "hi" --model "anthropic/claude-haiku-4-5"
     '';
   };
