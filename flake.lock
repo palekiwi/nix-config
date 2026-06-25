@@ -30,17 +30,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1782046378,
-        "narHash": "sha256-LNhjkDu9i9XVDbUbkVusQSyDXv/M8x+Q/A0Hd5IoRAw=",
+        "lastModified": 1782286766,
+        "narHash": "sha256-XcLVz8YDt45fCpjo8CTC3ZZASMTgRjiCmB1LHa9BcuY=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "e9126c77936c418a118b5586d306fb47090996a5",
+        "rev": "be00e7e97dccd9a946fd33f7126e078f19cf0de9",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "e9126c77936c418a118b5586d306fb47090996a5",
         "type": "github"
       }
     },
