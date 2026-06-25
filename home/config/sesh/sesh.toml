@@ -148,22 +148,8 @@ path = "~/.pi"
 startup_command = "_tmux_git-repo"
 
 #-------------------
-#   --- Repos ---
+#   --- notes ---
 #-------------------
-
-[[session]]
-name = "config-cast"
-path = "~/.config/cast"
-
-[[session]]
-name = "cue"
-path = "~/code/palekiwi-labs/cue"
-startup_command = "_tmux_git-repo"
-
-[[session]]
-name = "ocx"
-path = "~/code/palekiwi-labs/ocx"
-startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "notes-pl"
@@ -175,24 +161,31 @@ name = "notes-sb"
 path = "~/Nextcloud-sb/Notes"
 startup_command = "_tmux_git-repo"
 
+#-------------------
+#   --- configs ---
+#-------------------
+
 [[session]]
-name = "ff_monads"
-path = "~/code/spabreaks/ff_monads/"
+name = "config-cast"
+path = "~/.config/cast"
+
+#-------------------
+#  --- palekiwi ---
+#-------------------
+
+[[session]]
+name = "cue"
+path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "rails-utils.nvim"
-path = "~/code/neovim/plugins/rails-utils.nvim"
+name = "cue-plugins"
+path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "rspec-runner"
-path = "~/code/neovim/plugins/rspec-runner.nvim"
-startup_command = "_tmux_git-repo"
-
-[[session]]
-name = "homelab"
-path = "~/code/homelab"
+name = "cast"
+path = "~/code/palekiwi-labs/cast"
 startup_command = "_tmux_git-repo"
 
 #-------------------
