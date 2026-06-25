@@ -18,12 +18,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     notifications-server = {
-      url = "github:palekiwi-labs/notifications-server/103a196af5207df2006ee3bd5f575daa6d9b8cf8";
+      url = "github:palekiwi-labs/notifications-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cue = {
+      url = "github:palekiwi-labs/cue";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, claude-desktop, home-manager, notifications-server, ... }@inputs:
+  outputs = { self, nixpkgs, claude-desktop, home-manager, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
@@ -50,7 +54,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/deck
-            notifications-server.nixosModules.default
+            inputs.notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
@@ -59,7 +63,8 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/pale
-            notifications-server.nixosModules.default
+            inputs.notifications-server.nixosModules.default
+            inputs.cue.nixosModules.acuity
             inputs.sops-nix.nixosModules.sops
           ];
         };
@@ -100,7 +105,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/kyomu
-            notifications-server.nixosModules.default
+            inputs.notifications-server.nixosModules.default
             inputs.sops-nix.nixosModules.sops
           ];
         };
@@ -119,6 +124,15 @@
         claude-spice = pkgs.writeShellScriptBin "claude-spice" ''
           ${pkgs.spice-gtk}/bin/spicy -h localhost -p 5930
         '';
+      };
+
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        packages = with pkgs; [
+          luajit
+          lua-language-server
+          nixd
+          nixfmt-rfc-style
+        ];
       };
     };
 }

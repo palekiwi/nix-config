@@ -93,6 +93,11 @@ awful.rules.rules = {
     callback = placement_rules.secondary(TAGS[7])
   },
 
+  {
+    rule = { class = "kitty", name = ".*%-cast$" },
+    callback = placement_rules.secondary(TAGS[7])
+  },
+
   -- System/admin → ultrawide_right
   {
     rule = { class = "kitty", name = ".*%-psql$" },

@@ -2,13 +2,12 @@
 
 {
   home.packages = with pkgs; [
-    gemini
+    cast
+    cast-mcp-client
+    cue
+    curator
     mcp-rspec
-    mem
     ocx
-    opencode
-    opencode-ruby
-    opencode-rust
     test-runner-mcp
   ];
 }

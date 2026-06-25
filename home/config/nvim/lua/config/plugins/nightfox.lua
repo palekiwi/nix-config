@@ -10,6 +10,14 @@ return {
             comments = "italic",
           },
         },
+        groups = {
+          all = {
+            NormalFloat = { bg = "NONE" },
+            FloatBorder = { bg = "NONE" },
+            SnacksNormal = { bg = "NONE" },
+            SnacksWinBar = { bg = "NONE" },
+          }
+        },
       })
       vim.cmd("colorscheme nordfox")
     end

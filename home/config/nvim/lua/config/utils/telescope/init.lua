@@ -12,6 +12,7 @@ local gh_utils = require('config.utils.gh')
 local custom_entry_makers = require('config.utils.telescope.entry_makers')
 local git_helpers = require('config.utils.helpers.git')
 local custom_previewers = require('config.utils.telescope.previewers')
+local telescope_actions = require('config.utils.telescope.actions')
 
 local M = {}
 
@@ -248,10 +249,7 @@ M.git_commits = function(opts)
       end)
 
       map('i', '<C-h>', function()
-        local hash = action_state.get_selected_entry().value ---@type string
-        vim.fn.setreg('+', hash)
-
-        actions.close(prompt_bufnr)
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return e.value end, "hash")
       end)
 
       map('i', '<C-y>', function()
@@ -339,10 +337,7 @@ M.git_pr_commits = function(opts)
       end)
 
       map('i', '<C-h>', function()
-        local hash = action_state.get_selected_entry().value ---@type string
-        vim.fn.setreg('+', hash)
-
-        actions.close(prompt_bufnr)
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return e.value end, "hash")
       end)
 
       map('i', '<C-y>', function()
@@ -429,16 +424,16 @@ M.git_pr_commits = function(opts)
 end
 
 M.git_pr_merge_commits = function(opts)
-  local command = "git log --pretty=format:'%h %ai %<(20)%an %s %b' --merges --grep='Merge pull request' -n 1000"
+  local command = "git log --pretty=format:'%h %ai %<(20)%an %s %b' --merges --grep='Merge pull request' -z -n 1000"
 
   local handle = assert(io.popen(command))
   local result = handle:read("*a")
   handle:close()
 
   local commits = {}
-  for token in string.gmatch(result, "[^\n]+") do
-    -- local line = token:gsub("Merge pull request ", ""):gsub(" from [^%s]*", "")
-    table.insert(commits, token)
+  for token in string.gmatch(result, "[^%z]+") do
+    local entry = token:gsub("\n", " ")
+    table.insert(commits, entry)
   end
 
   opts = {
@@ -457,10 +452,7 @@ M.git_pr_merge_commits = function(opts)
       end)
 
       map('i', '<C-h>', function()
-        local hash = action_state.get_selected_entry().value ---@type string
-        vim.fn.setreg('+', hash)
-
-        actions.close(prompt_bufnr)
+        telescope_actions.copy_to_clipboard(prompt_bufnr, function(e) return e.value end, "hash")
       end)
 
       return true

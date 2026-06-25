@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 {
   options.modules.docker = {
     enable = lib.mkEnableOption "enable docker";
@@ -9,6 +9,9 @@
       extraGroups = [ "docker" ];
     };
 
-    virtualisation.docker.enable = true;
+    virtualisation.docker = {
+      enable = true;
+      package = pkgs.docker_29;
+    };
   };
 }

@@ -1,3 +1,7 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
+dir_length = 2
+
 #-------------------
 # --- Spabreaks ---
 #-------------------
@@ -36,6 +40,19 @@ name = "spabreaks-env"
 path = "~/code/spabreaks-env"
 startup_command = "_tmux_git-repo"
 
+#----------------------------
+#   --- booking-transform ---
+#----------------------------
+[[session]]
+name = "blog"
+path = "~/code/spabreaks/booking-transform/"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "booking-transform-dev"
+path = "~/code/spabreaks/booking-transform/"
+startup_command = "_tmux_spabreaks_booking_transform_dev"
+
 #-------------------
 #   --- blog ---
 #-------------------
@@ -50,17 +67,17 @@ path = "~/code/spabreaks/blog/"
 startup_command = "_tmux_spabreaks_blog_dev"
 
 #-------------------
-#   --- sales ---
+#   --- wss ---
 #-------------------
 [[session]]
-name = "sales"
-path = "~/code/spabreaks/sales/"
+name = "wss"
+path = "~/code/spabreaks/wss/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "sales-dev"
-path = "~/code/spabreaks/sales/"
-startup_command = "_tmux_spabreaks_sales_dev"
+name = "wss-dev"
+path = "~/code/spabreaks/wss/"
+startup_command = "_tmux_spabreaks_wss_dev"
 
 #-------------------
 #  --- wss-data ---
@@ -125,19 +142,14 @@ name = "config-opencode"
 path = "~/.config/opencode/"
 startup_command = "_tmux_git-repo"
 
-#-------------------
-#   --- Repos ---
-#-------------------
-
 [[session]]
-name = "mem"
-path = "~/code/palekiwi-labs/mem"
+name = "config-pi"
+path = "~/.pi"
 startup_command = "_tmux_git-repo"
 
-[[session]]
-name = "ocx"
-path = "~/code/palekiwi-labs/ocx"
-startup_command = "_tmux_git-repo"
+#-------------------
+#   --- notes ---
+#-------------------
 
 [[session]]
 name = "notes-pl"
@@ -149,24 +161,36 @@ name = "notes-sb"
 path = "~/Nextcloud-sb/Notes"
 startup_command = "_tmux_git-repo"
 
+#-------------------
+#   --- configs ---
+#-------------------
+
 [[session]]
-name = "ff_monads"
-path = "~/code/spabreaks/ff_monads/"
+name = "config-cast"
+path = "~/.config/cast"
+
+#-------------------
+#  --- palekiwi ---
+#-------------------
+
+[[session]]
+name = "cue"
+path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "rails-utils.nvim"
-path = "~/code/neovim/plugins/rails-utils.nvim"
+name = "cue-plugins"
+path = "~/.config/opencode/plugin/palekiwi-labs/cue-plugins"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "rspec-runner"
-path = "~/code/neovim/plugins/rspec-runner.nvim"
+name = "cue-nvim"
+path = "~/code/palekiwi-labs/cue.nvim"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "homelab"
-path = "~/code/homelab"
+name = "cast"
+path = "~/code/palekiwi-labs/cast"
 startup_command = "_tmux_git-repo"
 
 #-------------------

@@ -33,11 +33,11 @@ return {
             }
           },
           sorting_strategy = "ascending",
-          layout_strategy = "flex",
+          layout_strategy = "horizontal",
           layout_config = {
             horizontal = {
               height = 0.95,
-              preview_cutoff = 120,
+              preview_cutoff = 0,
               preview_width = 0.60,
               prompt_position = "top",
               width = 0.95

@@ -32,15 +32,21 @@ def ll [] {
     ls -la | select name type size mode user group created accessed modified | sort-by type
 }
 
-alias t = ~/.nix-profile/bin/task
-alias tt = taskwarrior-tui
+def direnv_rust [] {
+    'use flake "github:palekiwi/flake-templates?dir=templates/rust/devshell"' | save .envrc
+}
+
+def revcom [] {
+    gh-utils review comments --json | cue add --force -t tmp review-comments.json
+}
+
 alias cat = bat -p
-alias gemini-cli-tool = ~/code/spabreaks/gemini-cli-tool/run.sh
 alias ctc = cat_to_clipboard
+alias ghrc = gh-utils repo clone
 alias gu = gitui
 alias hms = home-manager switch --flake $"($nu.home-path)/nix-config/home#(whoami)@(hostname -s)"
-alias orun = opencode-run
 alias o = opencode
+alias orun = opencode-run
 alias orunx = with-env { OPENCODE_WORKSPACE: "." } { opencode-run }
 alias pc = pass -c
 alias pgpom = pass git push origin master
@@ -50,5 +56,7 @@ alias rebuild = sudo nixos-rebuild switch --flake $"($nu.home-path)/nix-config#(
 alias rr = ranger
 alias s. = sesh connect .
 alias sg = ast-grep
+alias t = ~/.nix-profile/bin/task
+alias tt = taskwarrior-tui
 alias v = nvim
 alias xo = xdg-open

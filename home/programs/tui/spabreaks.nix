@@ -24,6 +24,24 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+    esign-api = {
+      files = {
+        ".envrc" = ../../config/spabreaks/esign-api/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
+    esign-frontend = {
+      files = {
+        ".envrc" = ../../config/spabreaks/esign-frontend/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
     my-account = {
       files = {
         ".envrc" = ../../config/spabreaks/my-account/.envrc;
@@ -65,6 +83,15 @@ let
     terraform = {
       files = {
         ".envrc" = ../../config/spabreaks/terraform/.envrc;
+      };
+      gitHooks = {
+        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+        post-merge = ../../config/spabreaks/git/hooks/post-merge;
+      };
+    };
+    wss = {
+      files = {
+        ".envrc" = ../../config/spabreaks/wss/.envrc;
       };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;

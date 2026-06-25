@@ -1,19 +1,17 @@
 return {
   {
-    'NickvanDyke/opencode.nvim',
-    commit = "963fad75f794deb85d1c310d2e2cb033da44f670",
-    dependencies = {
-      { 'folke/snacks.nvim', opts = { input = { enabled = true } } },
-    },
+    "nickjvandyke/opencode.nvim",
+    version = "*", -- Latest stable release
     config = function()
-      local oc = require("opencode")
-
       vim.g.opencode_opts = {
+        server = {
+          -- Use the port reachable from your terminal (you mentioned 52693 earlier)
+          port = tonumber(vim.g.opencode_port) or 49000,
 
-        -- on_opencode_not_found = function() vim.print("[Opencode]: Server not found") end,
-
-        -- load port from an var set on a project basis or use a custom default
-        port = tonumber(vim.g.opencode_port) or 49000,
+          -- Disable auto-start to prevent Neovim from trying to
+          -- launch a local 'opencode' binary
+          start = false,
+        },
 
         prompts = {
           ["add_buffer"] = { prompt = "@buffer" },
@@ -34,28 +32,6 @@ return {
       }
 
       vim.opt.autoread = true
-
-      local keymaps = {
-        { "n",          "<space>a",  function() oc.ask() end,                                                      "Ask opencode", },
-        { "n",          "<space>e",  function() oc.prompt("Explain @this and its context", { submit = true }) end, "Explain this" },
-        { { "n", "v" }, "<space>i",  function() oc.ask("@this: ", { submit = true }) end,                          "Ask about this" },
-        { "n",          "<space>f",  function() oc.ask("@buffer: ", { submit = true }) end,                        "Ask about buffer" },
-        { "n",          "<space>F",  function() oc.prompt("@buffer ") end,                                         "Add buffer" },
-        { "n",          "<space>d",  function() oc.ask("@diff: ", { submit = true }) end,                          "Ask about diff" },
-        { "n",          "<space>n",  function() oc.command("session.new") end,                                     "New session" },
-        { "n",          "<space>t",  function() oc.ask("@this: ", { submit = false }) end,                         "Add this" },
-        { "n",          "<space>+t", function() oc.prompt("@this") end,                                            "Add this" },
-        { "n",          "<space>+f", function() oc.prompt("@buffer") end,                                          "Add buffer" },
-        { "n",          "<space>+g", function() oc.prompt("@grapple") end,                                         "Add grapple" },
-        { "n",          "<space>pe", function() oc.prompt("/pr:explain", { submit = true }) end,                   "PR: Explain" },
-        { "n",          "<space>pr", function() oc.prompt("/pr:fusion-review", { submit = true }) end,             "PR: Fusion Review" },
-        { "n",          "<space>s",  function() oc.select() end,                                                   "Select prompt" },
-        { "n",          "<space>y",  function() oc.command("messages_copy") end,                                   "Copy last message" },
-      }
-
-      for _, m in ipairs(keymaps) do
-        vim.keymap.set(m[1], m[2], m[3], { desc = m[4] })
-      end
     end
   }
 }

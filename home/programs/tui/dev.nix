@@ -13,6 +13,7 @@
     nodejs_24
     python3
     rustup
+    taplo
     tree-sitter
     universal-ctags
     vscode-langservers-extracted

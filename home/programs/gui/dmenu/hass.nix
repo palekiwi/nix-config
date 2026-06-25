@@ -14,8 +14,7 @@ let
 
   options = [
     "kitchen_off"
-    "fan_toggle"
-  ] ++ lights;
+  ] ++ lights ++ [ "fan_toggle" ];
 
   plug_sonoff = "switch.0x00124b0026b87179";
 

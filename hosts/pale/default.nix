@@ -10,6 +10,7 @@
       ../../modules/sops.nix
       ../../modules/yubikey.nix
       ../../users/pl/default.nix
+      ./acuity.nix
       ./awesome.nix
       ./bluetooth.nix
       ./firewall-docker.nix

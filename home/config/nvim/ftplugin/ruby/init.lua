@@ -60,7 +60,11 @@ M.next_block = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[M.count])
+    local node = M.captures[M.count]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 M.previous_block = function()
@@ -81,7 +85,11 @@ M.previous_block = function()
     end
 
     -- get the node at the specified index
-    ts_utils.goto_node(M.captures[#M.captures - M.count + 1])
+    local node = M.captures[#M.captures - M.count + 1]
+    if node then
+        ts_utils.goto_node(node)
+        vim.cmd("normal! zt")
+    end
 end
 
 -- Set treesitter folding for RSpec files
@@ -90,5 +98,5 @@ vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt_local.foldlevel = 99
 
 -- define the keymaps (same as markdown for consistency)
-vim.keymap.set({"n", "v"}, "<A-}>", M.next_block, { buffer = true, desc = "Next RSpec block" })
-vim.keymap.set({"n", "v"}, "<A-{>", M.previous_block, { buffer = true, desc = "Previous RSpec block" })
+vim.keymap.set({"n", "v"}, "<C-Down>", M.next_block, { buffer = true, desc = "Next RSpec block" })
+vim.keymap.set({"n", "v"}, "<C-Up>", M.previous_block, { buffer = true, desc = "Previous RSpec block" })

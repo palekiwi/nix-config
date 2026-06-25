@@ -10,8 +10,10 @@ in
   .envrc
   .gutctags
   .agents
+  .ref
   ai_docs
-  gemset.nix
   cypress/cypress/screenshots
   cypress/cypress/snapshots
+  cast.env
+  cast.json
 ''

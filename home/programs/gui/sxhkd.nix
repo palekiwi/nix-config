@@ -79,19 +79,24 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux --ocx";
+      "super + Return + control" = "dmenu_tmux --tmux --cast";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "${switchToDefaultSession}";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
+      "super + space; t; e" = "${switchToSession} cue";
+      "super + space; t; c" = "${switchToSession} cast";
+      "super + space; t; n" = "${switchToSession} cue-nvim";
       "super + space; t; t" = "${switchToSession} taskwarrior";
+      "super + space; t; u" = "${switchToSession} cue-plugins";
 
-      "super + space; e; c" = "${switchToSession} config-opencode";
-      "super + space; e; r" = "${switchToSession} agents";
+      "super + space; c; c" = "${switchToSession} config-cast";
+      "super + space; c; n" = "${switchToSession} nix-config";
+      "super + space; c; o" = "${switchToSession} config-opencode";
+      "super + space; c; p" = "${switchToSession} config-pi";
 
-      "super + space; n; c" = "${switchToSession} nix-config";
       "super + space; n; p" = "${switchToSession} notes-pl";
       "super + space; n; t" = "${switchToSession} notes-sb";
 
@@ -111,7 +116,11 @@ in
       "super + space; v; d" = "${switchToSession} vrs-dev";
       "super + space; v; e" = "${switchToSession} vrs";
 
-      "super + 0" = "google-chrome-stable";
+      "super + space; w; d" = "${switchToSession} wss-dev";
+      "super + space; w; e" = "${switchToSession} wss";
+
+      "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
+      "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";
       "super + 1" = "rofi -show calc -modi calc -no-show-match -no-sort";
       "super + 2" = "~/.nix-profile/bin/firefox";
       "super + 3" = "rofi-pass --root ~/.password-store e>| /tmp/rofi-pass.log";
