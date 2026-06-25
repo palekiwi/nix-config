@@ -5,6 +5,7 @@
     cast
     cast-mcp-client
     cue
+    curator
     mcp-rspec
     ocx
     test-runner-mcp

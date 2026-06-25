@@ -21,7 +21,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
-      url = "github:palekiwi-labs/cue/e9126c77936c418a118b5586d306fb47090996a5";
+      url = "github:palekiwi-labs/cue";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

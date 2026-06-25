@@ -26,7 +26,8 @@
               mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
               cast = inputs.cast.packages.x86_64-linux.cast;
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
-              cue = inputs.cue.packages.x86_64-linux.default;
+              cue = inputs.cue.packages.x86_64-linux.cue;
+              curator = inputs.cue.packages.x86_64-linux.curator;
               ocx = inputs.ocx.packages.x86_64-linux.default;
               test-runner-mcp = inputs.test-runner-mcp.packages.x86_64-linux.default;
               handy = inputs.handy.packages.x86_64-linux.default;
