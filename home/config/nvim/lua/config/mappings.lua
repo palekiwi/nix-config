@@ -62,7 +62,7 @@ local base = {
   { "<space>ead",      function() cue_utils.pick_artifacts({ type = "doc", all = true }) end,                 desc = "Docs" },
   { "<space>eap",      function() cue_utils.pick_artifacts({ type = "plan", all = true }) end,                desc = "Plans" },
   { "<space>eaa",      function() cue_utils.pick_artifacts({ all = true }) end,                               desc = "All artifacts" },
-  { "<space>eB",       cue_utils.pick_branch_artifacts,                                                       desc = "Select branch" },
+  { "<space>eb",       cue_utils.pick_branch_artifacts,                                                       desc = "Select branch" },
   { "<space>eu",       cue_utils.ui_pick,                                                                     desc = "UI (Pick)" },
   { "<space>n",        group = "new" },
   { "<space>nt",       function() cue_utils.add_with_title("task") end,                                       desc = "Task (master)" },
@@ -97,7 +97,7 @@ local base = {
   { "<space>mc",       cue_utils.open_context,                                                                desc = "Open context" },
   { "<space>mC",       cue_utils.pick_context,                                                                desc = "Pick context" },
   { "<space>ml",       cue_utils.open_log,                                                                    desc = "Open log (current)" },
-  { "<space>mL",       function() cue_utils.open_log(vim.g.git_master) end,                                   desc = "Open log (master)" },
+  { "<A-m>",           function() cue_utils.open_log(vim.g.git_master) end,                                   desc = "Open log (master)" },
   { "<space>mg",       cue_utils.pick_logs,                                                                   desc = "Pick log (branch)" },
   -- mod
   { "<A-a>",           "<cmd>Trouble<cr>",                                                                    desc = "Trouble" },
