@@ -1,10 +1,11 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   home.packages = with pkgs; [
     acpi
     ast-grep
     bat
+    btop-cuda
     cachix
     cmus
     eza
