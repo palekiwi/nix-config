@@ -19,7 +19,7 @@
   sops.secrets."taskwarrior/sync/encryption_secret" = { owner = "pl"; };
 
   sops.secrets."spabreaks/airbrake_auth_token" = { owner = "pl"; };
-  sops.secrets."spabreaks/anthropic/dev-02-00" = { owner = "pl"; };
+  sops.secrets."spabreaks/anthropic/dev-02-01" = { owner = "pl"; };
   sops.secrets."spabreaks/anthropic_api_key" = { owner = "pl"; };
   sops.secrets."spabreaks/gemini_api_key" = { owner = "pl"; };
   sops.secrets."spabreaks/github_readonly" = { owner = "pl"; };
