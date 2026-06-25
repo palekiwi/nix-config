@@ -180,7 +180,12 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "cue-plugins"
-path = "~/code/palekiwi-labs/cue"
+path = "~/.config/opencode/plugin/palekiwi-labs/cue-plugins"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "cue-nvim"
+path = "~/code/palekiwi-labs/cue.nvim"
 startup_command = "_tmux_git-repo"
 
 [[session]]
