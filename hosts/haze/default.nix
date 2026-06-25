@@ -7,6 +7,7 @@
       ../../modules/docker.nix
       ../../modules/server.nix
       ./appdaemon.nix
+      ./claude-ping.nix
       ./gotify.nix
       ./hardware-configuration.nix
       ./homeassistant.nix
