@@ -34,7 +34,7 @@ let
 
       script = ''
         nix run github:palekiwi-labs/cast#cast -- \
-          run opencode run "hi" --model "anthropic/claude-haiku-4-5"
+          run --headless opencode run "hi" --model "anthropic/claude-haiku-4-5"
       '';
     };
 
