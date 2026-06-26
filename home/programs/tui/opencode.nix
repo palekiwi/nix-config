@@ -8,6 +8,5 @@
     curator
     mcp-rspec
     ocx
-    test-runner-mcp
   ];
 }
