@@ -29,7 +29,6 @@
       # Pinned to a specific rev so the claude-ping service and the haze
       # systemwide cast use one reproducible version. Bump deliberately.
       url = "github:palekiwi-labs/cast/20201aa8c6a919a53d5798c2c36e8f2ab9ede7f9";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
