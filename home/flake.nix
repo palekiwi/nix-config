@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
-    cast.url = "github:palekiwi-labs/cast/dev";
+    cast.url = "github:palekiwi-labs/cast";
     cue.url = "github:palekiwi-labs/cue";
     ocx.url = "github:palekiwi-labs/ocx";
     handy.url = "github:cjpais/Handy";
