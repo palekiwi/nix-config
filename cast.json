@@ -5,6 +5,11 @@
       "source": "/home/pl/code/palekiwi-labs/cue.nvim",
       "target": "/home/pl/code/palekiwi-labs/cue.nvim",
       "type": "bind"
+    },
+    "cue-nvim": {
+      "source": "/home/pl/code/palekiwi-labs/cue.nvim",
+      "target": "/home/pl/code/palekiwi-labs/cue.nvim",
+      "type": "bind"
     }
   }
 }
