@@ -203,6 +203,7 @@ local base = {
   { "<leader>ygm",     function() gh_utils.copy_file_url({ branch = "master" }) end,                          desc = "GH file: master" },
   { "<leader>ygp",     function() gh_utils.copy_file_url({ branch = vim.fn.getreg("+") }) end,                desc = "GH file: clipboard" },
   { "<leader>yf",      function() ctx_clipboard.copy_file_path(false) end,                                    desc = "File path" },
+  { "<leader>yr",      function() ctx_clipboard.copy_file_path(false, true) end,                             desc = "File path (relative)" },
   { "<leader>c",       function() ctx_clipboard.copy_file_path(false) end,                                    desc = "File path" },
   { "<leader>C",       function() ctx_clipboard.copy_file_path(true) end,                                     desc = "File path with cursor" },
   { "<leader>c",       ctx_clipboard.copy_file_with_visual_range,                                             desc = "File with visual range",                                        mode = "v" },

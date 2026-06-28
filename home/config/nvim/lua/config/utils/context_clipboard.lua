@@ -1,7 +1,11 @@
 local M = {}
 
-M.copy_file_path = function(include_cursor)
-  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
+---Copy the current buffer's path to the clipboard.
+---@param include_cursor boolean append " L{line}:C{col}"
+---@param relative? boolean when true, path is relative to cwd (`:.`)
+M.copy_file_path = function(include_cursor, relative)
+  local modifier = relative and ':.' or ':p'
+  local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), modifier)
   local result = filepath
 
   if include_cursor then
