@@ -43,8 +43,8 @@ local base = {
   { "<A-PageUp>",      "<cmd>lprev<cr>",                                                                      desc = "[Loclist] Prev" },
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                                      desc = "[Loclist] Next" },
   -- AI / Cue
-  { "<C-t>",           cue_utils.pick_artifacts,                                                              desc = "[Cue] Current artifacts" },
-  { "<A-t>",           function() cue_utils.pick_artifacts({ branch = vim.g.git_base }) end,                  desc = "Base branch (" .. (vim.g.git_base or "???") .. ")" },
+  { "<A-t>",           cue_utils.pick_artifacts,                                                              desc = "[Cue] Current artifacts" },
+  { "<C-t>",           function() cue_utils.pick_artifacts({ branch = vim.g.git_base }) end,                  desc = "Base branch (" .. (vim.g.git_base or "???") .. ")" },
   { "<space>e",        group = "entries" },
   { "<space>et",       function() cue_utils.pick_artifacts({ type = "task", branch = vim.g.git_master }) end, desc = "Tasks (master)" },
   { "<space>eo",       function() cue_utils.pick_artifacts({ type = "todo", branch = vim.g.git_master }) end, desc = "Todos (" .. (vim.g.git_master or "master") .. ")" },
