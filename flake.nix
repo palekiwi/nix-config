@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,6 +23,12 @@
     };
     cue = {
       url = "github:palekiwi-labs/cue";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cast-haze = {
+      # Pinned to a specific rev so the claude-ping service and the haze
+      # systemwide cast use one reproducible version. Bump deliberately.
+      url = "github:palekiwi-labs/cast/20201aa8c6a919a53d5798c2c36e8f2ab9ede7f9";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -94,6 +101,11 @@
             ./users/git
             inputs.sops-nix.nixosModules.sops
           ];
+
+          specialArgs = {
+            z2m = inputs.nixpkgs-unstable.legacyPackages.x86_64-linux.zigbee2mqtt;
+            cast-haze = inputs.cast-haze.packages.x86_64-linux.cast;
+          };
         };
 
         kyomu = nixpkgs.lib.nixosSystem {
