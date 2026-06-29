@@ -112,7 +112,7 @@ let
   commonSpabreaksFiles = {
     "code/spabreaks/.envrc".source = ../../config/spabreaks/.envrc;
     "code/spabreaks/.gitconfig".source = ../../config/spabreaks/.gitconfig;
-    "code/spabreaks/.gitignore".text = import ../../config/spabreaks/.gitignore.nix;
+    # "code/spabreaks/.gitignore".text = import ../../config/spabreaks/.gitignore.nix;
   };
 
   mkProjectFiles = projectName: config: let

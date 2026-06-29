@@ -8,5 +8,3 @@
     defaultBranch = master
 [pull]
     rebase = true
-[core]
-    excludesfile = ~/code/spabreaks/.gitignore
