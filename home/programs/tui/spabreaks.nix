@@ -5,6 +5,12 @@ with lib;
 let
   cfg = config.modules.spabreaks;
 
+  commonSpabreaksFiles = {
+    "code/spabreaks/.envrc".source = ../../config/spabreaks/.envrc;
+    # "code/spabreaks/.gitconfig".source = ../../config/spabreaks/.gitconfig;
+    # "code/spabreaks/.gitignore".text = import ../../config/spabreaks/.gitignore.nix;
+  };
+
   projectConfigs = {
     booking-transform = {
       files = {
@@ -107,12 +113,6 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
-  };
-
-  commonSpabreaksFiles = {
-    "code/spabreaks/.envrc".source = ../../config/spabreaks/.envrc;
-    # "code/spabreaks/.gitconfig".source = ../../config/spabreaks/.gitconfig;
-    # "code/spabreaks/.gitignore".text = import ../../config/spabreaks/.gitignore.nix;
   };
 
   mkProjectFiles = projectName: config: let

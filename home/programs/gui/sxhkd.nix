@@ -110,7 +110,7 @@ in
       "super + space; s; c" = "${switchToSession} spabreaks-console";
       "super + space; s; d" = "${switchToSession} spabreaks-dev";
       "super + space; s; e" = "${switchToSession} spabreaks";
-      "super + space; s; g" = "${switchToSession} spabreaks-guard";
+      "super + space; s; s" = "${switchToSession} spabreaks-org";
       "super + space; s; t" = "${switchToSession} terraform";
 
       "super + space; v; d" = "${switchToSession} vrs-dev";

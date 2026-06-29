@@ -5,6 +5,11 @@ dir_length = 2
 #-------------------
 # --- Spabreaks ---
 #-------------------
+
+[[session]]
+name = "spabreaks-org"
+path = "~/code/spabreaks/"
+
 [[session]]
 name = "spabreaks"
 path = "~/code/spabreaks/spabreaks/"
