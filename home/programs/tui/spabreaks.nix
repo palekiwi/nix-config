@@ -15,6 +15,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     customer-portal = {
       files = {
         ".envrc" = ../../config/spabreaks/customer-portal/.envrc;
@@ -24,6 +25,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     esign-api = {
       files = {
         ".envrc" = ../../config/spabreaks/esign-api/.envrc;
@@ -33,6 +35,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     esign-frontend = {
       files = {
         ".envrc" = ../../config/spabreaks/esign-frontend/.envrc;
@@ -42,6 +45,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     my-account = {
       files = {
         ".envrc" = ../../config/spabreaks/my-account/.envrc;
@@ -51,6 +55,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     voucher-portal = {
       files = {
         ".envrc" = ../../config/spabreaks/voucher-portal/.envrc;
@@ -60,6 +65,7 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     spabreaks = {
       files = {
         ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
@@ -70,16 +76,18 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
-    spabreaks-static = {
-      files = {
-        ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
-      };
-      gitHooks = {
-        pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
-        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
-        post-merge = ../../config/spabreaks/git/hooks/post-merge;
-      };
-    };
+
+    # spabreaks-static = {
+    #   files = {
+    #     ".envrc" = ../../config/spabreaks/spabreaks/.envrc;
+    #   };
+    #   gitHooks = {
+    #     pre-commit = ../../config/spabreaks/spabreaks/git/hooks/pre-commit;
+    #     post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
+    #     post-merge = ../../config/spabreaks/git/hooks/post-merge;
+    #   };
+    # };
+
     terraform = {
       files = {
         ".envrc" = ../../config/spabreaks/terraform/.envrc;
@@ -89,18 +97,10 @@ let
         post-merge = ../../config/spabreaks/git/hooks/post-merge;
       };
     };
+
     wss = {
       files = {
         ".envrc" = ../../config/spabreaks/wss/.envrc;
-      };
-      gitHooks = {
-        post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
-        post-merge = ../../config/spabreaks/git/hooks/post-merge;
-      };
-    };
-    gemini-cli-tool = {
-      files = {
-        ".envrc" = ../../config/spabreaks/gemini-cli-tool/.envrc;
       };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
