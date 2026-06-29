@@ -20,7 +20,7 @@ def ccs [] {
 alias cca = cast config allow
 alias ccd = cast config diff
 
-alias cro = cast run opencode --hostname 0.0.0.0 --port 80
+alias cro = cast run --publish opencode --hostname 0.0.0.0 --port 80
 alias crp = cast run pi
 
 alias cso = cast shell opencode
