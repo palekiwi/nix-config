@@ -34,7 +34,7 @@ export def "ticket save" [ticket?: string, --json] {
     let data = ticket fetch $ticket
     let content = if $json { $data } else { ticket-to-md $data }
 
-    $content | cue add -t spec --root $"tickets/($ticket).md"
+    $content | cue add -t spec --root $"tickets/($ticket).md" --branch master
 }
 
 export def "ticket fetch" [ticket?: string] {
