@@ -48,6 +48,7 @@ startup_command = "_tmux_git-repo"
 #----------------------------
 #   --- booking-transform ---
 #----------------------------
+
 [[session]]
 name = "blog"
 path = "~/code/spabreaks/booking-transform/"
@@ -59,8 +60,23 @@ path = "~/code/spabreaks/booking-transform/"
 startup_command = "_tmux_spabreaks_booking_transform_dev"
 
 #-------------------
+#  --- contacts ---
+#-------------------
+
+[[session]]
+name = "spabreaks/contacts"
+path = "~/code/spabreaks/contacts/"
+startup_command = "_tmux_git-repo"
+
+[[session]]
+name = "spabreaks/contacts-dev"
+path = "~/code/spabreaks/contacts/"
+startup_command = "_tmux_spabreaks_contacts_dev"
+
+#-------------------
 #   --- blog ---
 #-------------------
+
 [[session]]
 name = "blog"
 path = "~/code/spabreaks/blog/"
