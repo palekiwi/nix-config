@@ -83,7 +83,7 @@ awful.rules.rules = {
     callback = placement_rules.development(TAGS[3])
   },
   {
-    rule = { class = "kitty", name = ".*%-dev$" },
+    rule = { class = "kitty", name = "/dev$" },
     callback = placement_rules.development(TAGS[1])
   },
 
@@ -100,11 +100,11 @@ awful.rules.rules = {
 
   -- System/admin → ultrawide_right
   {
-    rule = { class = "kitty", name = ".*%-psql$" },
+    rule = { class = "kitty", name = "/psql$" },
     callback = placement_rules.system(TAGS[13])
   },
   {
-    rule = { class = "kitty", name = ".*%-console$" },
+    rule = { class = "kitty", name = "/console$" },
     callback = placement_rules.system(TAGS[13])
   },
 }
