@@ -100,16 +100,16 @@ in
       "super + space; n; p" = "${switchToSession} notes-pl";
       "super + space; n; t" = "${switchToSession} notes-sb";
 
-      "super + space; k; s; c" = "${switchToKyomuSession} spabreaks-console";
-      "super + space; k; s; d" = "${switchToKyomuSession} spabreaks-dev";
-      "super + space; k; s; e" = "${switchToKyomuSession} spabreaks";
+      "super + space; k; s; c" = "${switchToKyomuSession} spabreaks/spabreaks/console";
+      "super + space; k; s; d" = "${switchToKyomuSession} spabreaks/spabreaks/dev";
+      "super + space; k; s; e" = "${switchToKyomuSession} spabreaks/spabreaks";
       "super + space; k; s; t" = "${switchToKyomuSession} terraform";
 
       "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
 
-      "super + space; s; c" = "${switchToSession} spabreaks-console";
-      "super + space; s; d" = "${switchToSession} spabreaks-dev";
-      "super + space; s; e" = "${switchToSession} spabreaks";
+      "super + space; s; c" = "${switchToSession} spabreaks/spabreaks/console";
+      "super + space; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
+      "super + space; s; e" = "${switchToSession} spabreaks/spabreaks";
       "super + space; s; s" = "${switchToSession} spabreaks-org";
       "super + space; s; t" = "${switchToSession} terraform";
 

@@ -11,39 +11,29 @@ name = "spabreaks-org"
 path = "~/code/spabreaks/"
 
 [[session]]
-name = "spabreaks"
+name = "spabreaks/spabreaks"
 path = "~/code/spabreaks/spabreaks/"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "spabreaks-dev"
+name = "spabreaks/spabreaks/dev"
 path = "~/code/spabreaks/spabreaks/"
 startup_command = "_tmux_spabreaks_spabreaks_dev"
 
 [[session]]
-name = "spabreaks-console"
+name = "spabreaks/spabreaks/console"
 path = "~/code/spabreaks/spabreaks/"
 startup_command = "task console"
 
 [[session]]
-name = "spabreaks-cypress"
+name = "spabreaks/spabreaks/cypress"
 path = "~/code/spabreaks/spabreaks/"
 startup_command = "task cypress:build-and-up"
 
 [[session]]
-name = "spabreaks-guard"
-path = "~/code/spabreaks/spabreaks/"
-startup_command = "make guard"
-
-[[session]]
-name = "spabreaks-psql"
+name = "spabreaks/spabreaks/psql"
 path = "~/code/spabreaks/spabreaks/"
 startup_command = "make psql"
-
-[[session]]
-name = "spabreaks-env"
-path = "~/code/spabreaks-env"
-startup_command = "_tmux_git-repo"
 
 #----------------------------
 #   --- booking-transform ---

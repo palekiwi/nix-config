@@ -14,7 +14,7 @@ let
   projectConfigs = {
     booking-transform = {
       files = {
-        ".envrc" = ../../config/spabreaks/booking-transform/.envrc;
+        # ".envrc" = ../../config/spabreaks/booking-transform/.envrc;
       };
       gitHooks = {
         post-checkout = ../../config/spabreaks/git/hooks/post-checkout;
