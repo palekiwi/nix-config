@@ -78,6 +78,9 @@ M.previous_heading = function()
     end
 end
 
+-- Hard-wrap markdown prose at 80 columns.
+vim.opt_local.textwidth = 80
+
 -- Set treesitter folding for markdown
 vim.opt_local.foldmethod = "expr"
 vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
