@@ -151,6 +151,6 @@ in
       slack
     ] ++ (import ./scripts/spabreaks/default.nix { inherit pkgs; });
 
-    home.file = commonSpabreaksFiles // allProjectFiles;
+    # home.file = commonSpabreaksFiles // allProjectFiles;
   };
 }
