@@ -3,7 +3,7 @@ const DECK_EXTERNAL = "DisplayPort-0"
 
 const PALE_BUILTIN = "eDP-1-1"
 const PALE_ULTRAWIDE = "DP-1-2"
-const PALE_HUION = "DP-1-5"
+const PALE_HUION = "DP-1-3"
 
 const CONFIG = {
     deck: {
