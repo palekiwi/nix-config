@@ -4,6 +4,8 @@
   # home.packages = with pkgs; [ neovim ];
   programs.neovim = {
     enable = true;
+    withRuby = false;
+    withPython3 = false;
     extraPackages = with pkgs; [
       notmuch
     ];
