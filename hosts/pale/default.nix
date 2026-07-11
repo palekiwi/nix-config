@@ -18,8 +18,6 @@
       ./locale.nix
       ./notifications-server.nix
       ./nvidia.nix
-      ./ollama.nix
-      ./open-webui.nix
       ./opentabletdriver.nix
       ./packages.nix
       ./picom.nix
