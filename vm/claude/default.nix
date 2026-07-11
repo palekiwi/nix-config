@@ -35,9 +35,9 @@
     desktopManager.xfce.enable = true;
 
     displayManager.sessionCommands = ''
-      ${pkgs.xorg.xrandr}/bin/xrandr --newmode "1336x1418_60.00"  159.84  1336 1432 1576 1816  1418 1419 1422 1467  -HSync +Vsync || true
-      ${pkgs.xorg.xrandr}/bin/xrandr --addmode Virtual-1 1336x1418_60.00 || true
-      ${pkgs.xorg.xrandr}/bin/xrandr --output Virtual-1 --mode 1336x1418_60.00 || true
+      ${pkgs.xrandr}/bin/xrandr --newmode "1336x1418_60.00"  159.84  1336 1432 1576 1816  1418 1419 1422 1467  -HSync +Vsync || true
+      ${pkgs.xrandr}/bin/xrandr --addmode Virtual-1 1336x1418_60.00 || true
+      ${pkgs.xrandr}/bin/xrandr --output Virtual-1 --mode 1336x1418_60.00 || true
     '';
   };
 

@@ -29,7 +29,7 @@
 
   environment.systemPackages = with pkgs; [
     picom
-    xorg.xrandr
+    xrandr
     xscreensaver
   ];
 }

@@ -2,10 +2,10 @@
 
 {
   home.packages = with pkgs; [
-    xorg.xhost
-    xorg.xev
-    xorg.xmodmap
-    xorg.xset
+    xhost
+    xev
+    xmodmap
+    xset
   ];
 
   home.file.".Xmodmap".text = ''
