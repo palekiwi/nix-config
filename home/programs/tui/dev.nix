@@ -8,8 +8,8 @@
     lua-language-server
     nixd
     nixpkgs-fmt
-    nodePackages.prettier
-    nodePackages.typescript-language-server
+    prettier
+    typescript-language-server
     nodejs_24
     python3
     rustup
