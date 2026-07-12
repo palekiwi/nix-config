@@ -41,7 +41,7 @@ set.completeopt = 'menuone,noselect'
 
 set.foldlevel = 99
 set.foldmethod = "indent"
-set.foldexpr = "nvim_treesitter#foldexpr()"
+set.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
 vim.api.nvim_set_option_value("clipboard", "unnamed", {})
 

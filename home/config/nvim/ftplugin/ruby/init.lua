@@ -1,102 +1,73 @@
+-- RSpec block navigation (describe/context/it), ported from the legacy
+-- nvim-treesitter Lua API to native Neovim 0.12 treesitter APIs. The old
+-- version depended on `require("nvim-treesitter.ts_utils").goto_node` and
+-- the `nvim_treesitter#foldexpr()` autoload function, both removed in the
+-- rewritten nvim-treesitter main branch. Everything below uses only the
+-- built-in `vim.treesitter` runtime, so there is no plugin dependency.
+
 -- Only apply to _spec.rb files
 if not vim.fn.expand("%"):match("_spec%.rb$") then
   return
 end
 
-local ts_utils = require("nvim-treesitter.ts_utils")
+--- Parsed once at load. Matches RSpec block calls: describe, context, it.
+local query = vim.treesitter.query.parse("ruby", [[
+  (call
+    method: (identifier) @method
+    (#match? @method "^(describe|context|it)$")
+  ) @rspec_block
+]])
 
-local M = {
-    -- define the query to match RSpec blocks: describe, context, it
-    query = vim.treesitter.query.parse("ruby", [[
-      (call
-        method: (identifier) @method
-        (#match? @method "^(describe|context|it)$")
-      ) @rspec_block
-    ]]),
-}
-
-M.init = function()
-    -- search the current buffer
-    M.buffer = 0
-
-    -- references to lines within the buffer
-    M.first_line = 0
-    M.current_line = vim.fn.line(".")
-    M.previous_line = M.current_line - 1
-    M.next_line = M.current_line + 1
-    M.last_line = -1
-
-    -- default count
-    M.count = 1
-
-    if vim.v.count > 1 then
-        M.count = vim.v.count
+--- Return the 0-based start row of every RSpec block in the buffer, ascending.
+--- Only `call` nodes are collected (the `@method` identifier captures are
+--- skipped) so each block appears exactly once.
+---@param bufnr integer
+---@return integer[]
+local function block_rows(bufnr)
+  local parser = assert(vim.treesitter.get_parser(bufnr, "ruby"))
+  local root = parser:parse()[1]:root()
+  local rows = {}
+  for _, node in query:iter_captures(root, bufnr, 0, -1) do
+    if node:type() == "call" then
+      rows[#rows + 1] = (node:start())
     end
-
-    -- list of captures
-    M.captures = {}
-
-    -- get the parser
-    M.parser = vim.treesitter.get_parser()
-    -- parse the tree
-    M.tree = M.parser:parse()[1]
-    -- get the root of the resulting tree
-    M.root = M.tree:root()
+  end
+  return rows
 end
 
-M.next_block = function()
-    M.init()
+--- Jump to the count-th RSpec block in the given direction, then scroll it to
+--- the top of the window (`zt`). No-op if there is no such block.
+---@param direction "next" | "prev"
+local function jump(direction)
+  local count = vim.v.count == 0 and 1 or vim.v.count
+  local cur = vim.fn.line(".") - 1 -- current row, 0-based
+  local rows = block_rows(0)
 
-    -- populate captures with all matching nodes from the next line to
-    -- the last line of the buffer, but only keep nodes that start after current line
-    for _, node, _, _ in
-        M.query:iter_captures(M.root, M.buffer, M.next_line, M.last_line)
-    do
-        local start_row, _, _, _ = node:range()
-        -- Only include nodes that start at or after the next line (0-indexed row vs 1-indexed line)
-        if start_row >= M.current_line then
-            table.insert(M.captures, node)
-        end
-    end
+  -- `vim.iter` chains make the directional lookup declarative:
+  --   next -> first block strictly after cursor
+  --   prev -> reverse, then first block strictly before cursor
+  local target
+  if direction == "next" then
+    target = vim.iter(rows):filter(function(r) return r > cur end):nth(count)
+  else
+    target = vim.iter(rows):rev():filter(function(r) return r < cur end):nth(count)
+  end
 
-    -- get the node at the specified index
-    local node = M.captures[M.count]
-    if node then
-        ts_utils.goto_node(node)
-        vim.cmd("normal! zt")
-    end
+  if target then
+    vim.api.nvim_win_set_cursor(0, { target + 1, 0 })
+    vim.cmd("normal! zt")
+  end
 end
 
-M.previous_block = function()
-    M.init()
-
-    -- if we are already at the top of the buffer
-    -- there are no previous blocks
-    if M.current_line == M.first_line + 1 then
-        return
-    end
-
-    -- populate captures with all matching nodes from the first line
-    -- of the buffer to the previous line
-    for _, node, _, _ in
-        M.query:iter_captures(M.root, M.buffer, M.first_line, M.previous_line)
-    do
-        table.insert(M.captures, node)
-    end
-
-    -- get the node at the specified index
-    local node = M.captures[#M.captures - M.count + 1]
-    if node then
-        ts_utils.goto_node(node)
-        vim.cmd("normal! zt")
-    end
-end
-
--- Set treesitter folding for RSpec files
+-- Per-RSpec treesitter folding using the native foldexpr (the replacement
+-- for the removed `nvim_treesitter#foldexpr()`). foldlevel 99 keeps the file
+-- open by default.
 vim.opt_local.foldmethod = "expr"
-vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt_local.foldlevel = 99
 
--- define the keymaps (same as markdown for consistency)
-vim.keymap.set({"n", "v"}, "<C-Down>", M.next_block, { buffer = true, desc = "Next RSpec block" })
-vim.keymap.set({"n", "v"}, "<C-Up>", M.previous_block, { buffer = true, desc = "Previous RSpec block" })
+-- `desc` is picked up by which-key-style plugins; `silent` keeps the jump quiet.
+vim.keymap.set({ "n", "v" }, "<C-Down>", function() jump("next") end,
+  { silent = true, buffer = true, desc = "RSpec: next block" })
+vim.keymap.set({ "n", "v" }, "<C-Up>", function() jump("prev") end,
+  { silent = true, buffer = true, desc = "RSpec: previous block" })

@@ -15,19 +15,11 @@ in
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    
-    matchBlocks = {
-      "*" = {
-        # Add any default options you want to keep here
-        # For example: 
-        # SendEnv = [ "LANG" "LC_*" ];
-        # HashKnownHosts = true;
-      };
-    } // (lib.genAttrs hosts (host: {
-      host = host;
-      hostname = "${host}.paradise-liberty.ts.net";
-      user = user;
-      port = port;
-    }));
+
+    settings = lib.genAttrs hosts (host: {
+      HostName = "${host}.paradise-liberty.ts.net";
+      User = user;
+      Port = port;
+    });
   };
 }

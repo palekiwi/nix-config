@@ -6,6 +6,7 @@
   gtk = {
     enable = true;
     theme.name = "Breeze-Dark";
+    gtk4.theme.name = "Breeze-Dark";
     cursorTheme.name = "Breeze-Dark";
     cursorTheme.size = 16;
     gtk3.extraConfig = {

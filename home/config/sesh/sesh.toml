@@ -8,31 +8,31 @@ dir_length = 2
 
 [[session]]
 name = "spabreaks-org"
-path = "~/code/spabreaks/"
+path = "~/code/spabreaks"
 
 [[session]]
 name = "spabreaks/spabreaks"
-path = "~/code/spabreaks/spabreaks/"
+path = "~/code/spabreaks/spabreaks"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "spabreaks/spabreaks/dev"
-path = "~/code/spabreaks/spabreaks/"
+path = "~/code/spabreaks/spabreaks"
 startup_command = "_tmux_spabreaks_spabreaks_dev"
 
 [[session]]
 name = "spabreaks/spabreaks/console"
-path = "~/code/spabreaks/spabreaks/"
+path = "~/code/spabreaks/spabreaks"
 startup_command = "task console"
 
 [[session]]
 name = "spabreaks/spabreaks/cypress"
-path = "~/code/spabreaks/spabreaks/"
+path = "~/code/spabreaks/spabreaks"
 startup_command = "task cypress:build-and-up"
 
 [[session]]
 name = "spabreaks/spabreaks/psql"
-path = "~/code/spabreaks/spabreaks/"
+path = "~/code/spabreaks/spabreaks"
 startup_command = "make psql"
 
 #----------------------------
@@ -41,12 +41,12 @@ startup_command = "make psql"
 
 [[session]]
 name = "blog"
-path = "~/code/spabreaks/booking-transform/"
+path = "~/code/spabreaks/booking-transform"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "booking-transform-dev"
-path = "~/code/spabreaks/booking-transform/"
+path = "~/code/spabreaks/booking-transform"
 startup_command = "_tmux_spabreaks_booking_transform_dev"
 
 #-------------------
@@ -55,12 +55,12 @@ startup_command = "_tmux_spabreaks_booking_transform_dev"
 
 [[session]]
 name = "spabreaks/contacts"
-path = "~/code/spabreaks/contacts/"
+path = "~/code/spabreaks/contacts"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "spabreaks/contacts-dev"
-path = "~/code/spabreaks/contacts/"
+path = "~/code/spabreaks/contacts"
 startup_command = "_tmux_spabreaks_contacts_dev"
 
 #-------------------
@@ -69,12 +69,12 @@ startup_command = "_tmux_spabreaks_contacts_dev"
 
 [[session]]
 name = "blog"
-path = "~/code/spabreaks/blog/"
+path = "~/code/spabreaks/blog"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "blog-dev"
-path = "~/code/spabreaks/blog/"
+path = "~/code/spabreaks/blog"
 startup_command = "_tmux_spabreaks_blog_dev"
 
 #-------------------
@@ -82,12 +82,12 @@ startup_command = "_tmux_spabreaks_blog_dev"
 #-------------------
 [[session]]
 name = "wss"
-path = "~/code/spabreaks/wss/"
+path = "~/code/spabreaks/wss"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "wss-dev"
-path = "~/code/spabreaks/wss/"
+path = "~/code/spabreaks/wss"
 startup_command = "_tmux_spabreaks_wss_dev"
 
 #-------------------
@@ -95,12 +95,12 @@ startup_command = "_tmux_spabreaks_wss_dev"
 #-------------------
 [[session]]
 name = "wss-data"
-path = "~/code/spabreaks/wss-data/"
+path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "wss-data-dev"
-path = "~/code/spabreaks/wss-data/"
+path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_spabreaks_wss_data_dev"
 
 #-------------------
@@ -108,12 +108,12 @@ startup_command = "_tmux_spabreaks_wss_data_dev"
 #-------------------
 [[session]]
 name = "my-account"
-path = "~/code/spabreaks/my-account/"
+path = "~/code/spabreaks/my-account"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "my-account-dev"
-path = "~/code/spabreaks/my-account/"
+path = "~/code/spabreaks/my-account"
 startup_command = "_tmux_spabreaks_my_account_dev"
 
 #-------------------
@@ -121,17 +121,17 @@ startup_command = "_tmux_spabreaks_my_account_dev"
 #-------------------
 [[session]]
 name = "vrs"
-path = "~/code/spabreaks/voucher-portal/"
+path = "~/code/spabreaks/voucher-portal"
 startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "vrs-dev"
-path = "~/code/spabreaks/voucher-portal/"
+path = "~/code/spabreaks/voucher-portal"
 startup_command = "_tmux_spabreaks_vrs_dev"
 
 [[session]]
 name = "vrs-psql"
-path = "~/code/spabreaks/voucher-portal/"
+path = "~/code/spabreaks/voucher-portal"
 startup_command = "make psql"
 
 #-------------------
@@ -150,7 +150,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "config-opencode"
-path = "~/.config/opencode/"
+path = "~/.config/opencode"
 startup_command = "_tmux_git-repo"
 
 [[session]]
