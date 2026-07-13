@@ -6,15 +6,36 @@ return {
     init = function()
       -- install parsers not already present
       local wanted = {
-        "vimdoc", "bash", "ini", "json", "yaml", "git_config", "gitignore",
-        "sxhkdrc", "c", "cmake", "rust", "toml", "lua", "python",
-        "javascript", "typescript", "html", "css", "astro", "dockerfile",
-        "go", "ruby", "vue", "nu", "nix",
+        "astro",
+        "bash",
+        "c",
+        "cmake",
+        "css",
+        "dockerfile",
+        "git_config",
+        "gitignore",
+        "go",
+        "html",
+        "ini",
+        "javascript",
+        "json",
+        "lua",
+        "nix",
+        "nu",
+        "python",
+        "ruby",
+        "rust",
+        "sxhkdrc",
+        "toml",
+        "typescript",
+        "vimdoc",
+        "vue",
+        "yaml",
       }
       local installed = require("nvim-treesitter.config").get_installed()
       local missing = vim.iter(wanted)
-        :filter(function(p) return not vim.tbl_contains(installed, p) end)
-        :totable()
+          :filter(function(p) return not vim.tbl_contains(installed, p) end)
+          :totable()
       if #missing > 0 then
         require("nvim-treesitter").install(missing)
       end
