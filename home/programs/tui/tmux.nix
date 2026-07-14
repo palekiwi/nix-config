@@ -18,9 +18,12 @@ let
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
     gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
     prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; [ -f .git/GH_PR_NUMBER ] && GH_PR_NUMBER=$(cat .git/GH_PR_NUMBER) && GIT_BASE=$(cat .git/GIT_BASE) && GIT_BASE_AHEAD=$(cat .git/GIT_BASE_AHEAD 2>/dev/null || echo "") && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=$([ "$GIT_BASE_AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$GIT_BASE" || echo "")'';
+    # Active cue scope (".cue/HEAD"). Hides itself outside a cue-enabled dir;
+    # falls back to "master" when HEAD is missing or empty.
+    cueScope = ''#[fg=magenta,dim]cue #[fg=magenta]#(cd #{pane_current_path} && [ -d .cue ] && { s=$(cat .cue/HEAD 2>/dev/null); [ -n "$s" ] && echo "$s" || echo master; })'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} '';
+  statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} ${cueScope} '';
 in
 {
   home.packages = with pkgs; [
