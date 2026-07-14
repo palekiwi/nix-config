@@ -39,7 +39,7 @@ set("n", "<leader>ft", rails_utils.find_template, { desc = "[Rails] Find this te
 -- set("n", "<leader>gt", grep_string_tailwind, { desc = "[Grep String] Tailwind" })
 -- set("n", "<leader>gy", grep_string_sass, { desc = "[Grep String] Sass" })
 -- set("n", "<space>gs", live_grep_specs, { desc = "[Live Grep] Specs" })
-set("n", "<C-s>", rails_utils.alternate, { desc = "[Rails] Find Spec" })
+set("n", "<A-s>", rails_utils.alternate, { desc = "[Rails] Find Spec" })
 set("n", "<leader>dd", rails_utils.show_diagnostics, { desc = "[Diagnostic] RSpec" })
 set("n", "<leader>lr", "<cmd>LspRestart ruby_lsp stimulus_ls<cr>", { desc = "[LSP] Rails Restart" })
 
