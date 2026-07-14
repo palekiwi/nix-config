@@ -23,7 +23,7 @@ let
     cueScope = ''#[fg=colour15,bold]#(cd #{pane_current_path} && [ -d .cue ] && { s=$(cat .cue/HEAD 2>/dev/null); [ -n "$s" ] && echo "$s" || echo master; })'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${gitIcon} ${gitBranch} ${prInfo} ${cueScope} '';
+  statusLeft = with widgets; '' ${sessionName} ${cueScope} ${gitIcon} ${gitBranch} ${prInfo} '';
 in
 {
   home.packages = with pkgs; [
