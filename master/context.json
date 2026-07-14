@@ -1,9 +1,7 @@
 {
   "default": {
     "artifacts": [
-      "./spec/log.md",
-      "./spec/test-no-content.md",
-      "./spec/test-spec.md"
+      "./log.md"
     ],
     "diff": null,
     "include": []

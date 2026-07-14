@@ -1,6 +1,6 @@
 ---
 title: Add devShell to home/flake.nix
-status: in-progress
+status: open
 priority: normal
 ---
 # Task: Add devShell to home/flake.nix
