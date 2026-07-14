@@ -45,7 +45,7 @@ local base = {
   -- AI / Cue
   { "<C-t>",           cue_utils.pick_artifacts,                                                              desc = "[Cue] Artifacts (current scope)" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master" }) end,                         desc = "[Cue] Artifacts (master scope)" },
-  { "<A-s>",           function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end,          desc = "[Cue] Task picker" },
+  { "<C-s>",           function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end,          desc = "[Cue] Task picker" },
   { "<space>e",        group = "entries" },
   { "<space>et",       function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end,          desc = "Tasks (master)" },
   { "<space>eo",       function() cue_utils.pick_artifacts({ type = "todo", task = "master" }) end,           desc = "Todos (master)" },
@@ -97,6 +97,7 @@ local base = {
   { "<space>mc",       cue_utils.open_context,                                                                desc = "Open context" },
   { "<space>mC",       cue_utils.pick_context,                                                                desc = "Pick context" },
   { "<space>ml",       cue_utils.open_log,                                                                    desc = "Open log (current)" },
+  { "<space>ms",       function() cue_utils.switch_context("master") end,                                    desc = "Switch to master scope" },
   { "<A-m>",           function() cue_utils.open_log("master") end,                                          desc = "Open log (master)" },
   { "<space>mg",       cue_utils.pick_logs,                                                                   desc = "Pick log (task context)" },
   -- mod
