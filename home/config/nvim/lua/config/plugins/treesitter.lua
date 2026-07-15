@@ -13,6 +13,7 @@ return {
         "css",
         "diff",
         "dockerfile",
+        "embedded_template", -- eruby
         "git_config",
         "gitignore",
         "go",
