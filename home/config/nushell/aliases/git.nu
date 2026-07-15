@@ -86,6 +86,8 @@ export alias gsd = git switch dev
 export def gsm [] {
     git switch (get_master_branch_name)
     git pull
+
+    cue switch master
 }
 export def git_switch_integration_branch [] {
     let branch_name = $env | get -o SPABREAKS_INTEGRATION_BRANCH
