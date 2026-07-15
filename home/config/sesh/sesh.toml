@@ -8,7 +8,7 @@ dir_length = 2
 
 [[session]]
 name = "spabreaks-org"
-path = "~/code/spabreaks"
+path = "~/code/spabreaks/spabreaks-org"
 
 [[session]]
 name = "spabreaks/spabreaks"
