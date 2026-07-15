@@ -107,12 +107,12 @@ startup_command = "_tmux_spabreaks_wss_data_dev"
 # --- my-account ---
 #-------------------
 [[session]]
-name = "my-account"
+name = "spabreaks/my-account"
 path = "~/code/spabreaks/my-account"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "my-account-dev"
+name = "spabreaks/my-account/dev"
 path = "~/code/spabreaks/my-account"
 startup_command = "_tmux_spabreaks_my_account_dev"
 
