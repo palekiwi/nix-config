@@ -14,5 +14,6 @@
   "tags.lock"
   "tags.temp"
   "tmux-client-*"
+  "worktrees"
   "vendor"
 ]
