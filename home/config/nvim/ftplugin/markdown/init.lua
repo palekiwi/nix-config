@@ -49,6 +49,13 @@ end
 -- Hard-wrap markdown prose at 80 columns.
 vim.opt_local.textwidth = 80
 
+-- NOTE: `commentstring = "> %s"` (blockquote toggle for `gc`) lives in
+-- `after/ftplugin/markdown.lua`, not here. This file runs BEFORE the stock
+-- `VIMRUNTIME/ftplugin/markdown.vim` (which resets it to `<!-- %s -->`), so the
+-- setting must be applied from `after/` to run last. The built-in `vim._comment`
+-- also resolves the filetype default via `vim.filetype.get_option`, which only
+-- sees the override when it is registered from `after/`.
+
 -- Per-markdown treesitter folding using the native foldexpr (the replacement
 -- for the removed `nvim_treesitter#foldexpr()`). foldlevel 99 keeps the file
 -- open by default, matching the host.
