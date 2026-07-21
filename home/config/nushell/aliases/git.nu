@@ -84,8 +84,6 @@ export alias gsv = git_switch_variant
 export alias gbdv = git_branch_delete_variant
 export alias gsd = git switch dev
 export def gsm [] {
-    cue switch master
-
     git switch (get_master_branch_name)
     git pull
 }
