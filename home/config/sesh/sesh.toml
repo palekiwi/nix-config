@@ -185,6 +185,11 @@ path = "~/.config/cast"
 #-------------------
 
 [[session]]
+name = "palekiwi"
+path = "~/code/palekiwi/palekiwi"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "cue"
 path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"

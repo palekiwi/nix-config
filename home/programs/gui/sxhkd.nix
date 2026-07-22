@@ -87,9 +87,9 @@ in
       "super + l + control" = "dmenu_activity_log --pr";
 
       "super + space; t; e" = "${switchToSession} cue";
-      "super + space; t; n" = "${switchToSession} cast";
+      "super + space; t; n" = "${switchToSession} palekiwi";
       "super + space; t; v" = "${switchToSession} cue-nvim";
-      "super + space; t; t" = "${switchToSession} taskwarrior";
+      "super + space; t; t" = "${switchToSession} cast";
       "super + space; t; u" = "${switchToSession} cue-plugins";
 
       "super + space; c; c" = "${switchToSession} config-cast";
