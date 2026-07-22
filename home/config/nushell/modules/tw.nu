@@ -73,11 +73,13 @@ def get-branch-name [] {
     git branch --show-current
 }
 
-# Get PR number from .git/GH_PR_NUMBER or gh CLI
+# Get PR number from GH_PR_NUMBER or gh CLI
 def get-pr-number [] {
-    # Try .git/GH_PR_NUMBER first (set by git hooks)
-    if (".git/GH_PR_NUMBER" | path exists) {
-        open .git/GH_PR_NUMBER | str trim
+    # Try GH_PR_NUMBER (in git dir, worktree-safe) first
+    let git_dir = (^git rev-parse --git-dir 2>/dev/null | str trim)
+    let pr_file = ($git_dir | path join GH_PR_NUMBER)
+    if ($pr_file | path exists) {
+        open $pr_file | str trim
     } else {
         # Fallback to gh CLI
         try {

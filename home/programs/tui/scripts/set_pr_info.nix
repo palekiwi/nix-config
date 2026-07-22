@@ -7,7 +7,7 @@ let
 in
 pkgs.writeShellScriptBin "set_pr_info" ''
   # TODO: rewrite in nushell
-  DEST_DIR=".git"
+  DEST_DIR=$(${pkgs.git}/bin/git rev-parse --git-dir)
   FILE_PR_NUMBER="$DEST_DIR/GH_PR_NUMBER"
   FILE_GIT_BASE="$DEST_DIR/GIT_BASE"
   FILE_GIT_BASE_AHEAD="$DEST_DIR/GIT_BASE_AHEAD"
