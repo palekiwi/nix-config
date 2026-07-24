@@ -7,6 +7,5 @@
     cue
     curator
     mcp-rspec
-    ocx
   ];
 }

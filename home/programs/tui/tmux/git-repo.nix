@@ -11,7 +11,7 @@ pkgs.writeShellScriptBin "_tmux_git-repo" ''
   tmux rename-window -t $session:1 edit
 
   tmux new-window -t $session -n gitui
-  tmux new-window -t $session -n ocx
+  tmux new-window -t $session -n cast
   tmux new-window -t $session -n agents
   tmux new-window -t $session -n run
 

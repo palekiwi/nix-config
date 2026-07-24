@@ -11,7 +11,6 @@
     mcp-rspec.url = "github:palekiwi/mcp-rspec";
     cast.url = "github:palekiwi-labs/cast";
     cue.url = "github:palekiwi-labs/cue";
-    ocx.url = "github:palekiwi-labs/ocx";
     handy.url = "github:cjpais/Handy";
   };
 
@@ -27,7 +26,6 @@
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;
               curator = inputs.cue.packages.x86_64-linux.curator;
-              ocx = inputs.ocx.packages.x86_64-linux.default;
               handy = inputs.handy.packages.x86_64-linux.default;
             })
           ];

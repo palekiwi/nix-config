@@ -11,7 +11,6 @@ source aliases/agents.nu
 source aliases/gh.nu
 source aliases/git.nu
 source aliases/main.nu
-source aliases/ocx.nu
 source aliases/cast.nu
 source aliases/cue.nu
 
