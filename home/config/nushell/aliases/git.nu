@@ -122,3 +122,7 @@ export def gub [] {
     git_fetch_base
     git merge (get_pr_base) --no-edit
 }
+
+export alias gwa = git worktree add
+export alias gwl = git worktree list
+export alias gwr = git worktree remove
