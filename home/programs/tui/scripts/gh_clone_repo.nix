@@ -45,7 +45,7 @@ pkgs.writeShellScriptBin "gh_clone_repo" ''
   mkdir -p "$CODE_DIR/$AUTHOR"
 
   # Clone the repository
-  echo "Cloning $AUTHOR_REPO into $CODE_DIR/$AUTHOR/$REPO..."
+  echo "Cloning $AUTHOR_REPO into $CODE_DIR/$AUTHOR/$REPO"
 
   if command -v gh &> /dev/null; then
       # Use gh cli if available
