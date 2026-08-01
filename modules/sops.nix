@@ -26,7 +26,5 @@
   sops.secrets."spabreaks/gmail/nixos" = { owner = "pl"; };
   sops.secrets."spabreaks/google_generative_ai_api_key" = { owner = "pl"; };
 
-  # sops.secrets."gotify/env" = { owner = "notifications-server"; };
-  sops.secrets."acuity/env" = { owner = "acuity"; };
   sops.secrets."gotify/token" = { owner = "pl"; };
 }
