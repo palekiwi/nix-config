@@ -8,7 +8,6 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    mcp-rspec.url = "github:palekiwi/mcp-rspec";
     cast.url = "github:palekiwi-labs/cast";
     cue.url = "github:palekiwi-labs/cue";
     handy.url = "github:cjpais/Handy";
@@ -21,7 +20,6 @@
         inherit system;
           overlays = [
             (final: prev: {
-              mcp-rspec = inputs.mcp-rspec.packages.x86_64-linux.default;
               cast = inputs.cast.packages.x86_64-linux.cast;
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;

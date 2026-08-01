@@ -6,7 +6,7 @@ pkgs.writeShellScriptBin "_tmux_spabreaks_spabreaks_dev" ''
   tmux rename-window -t $session:1 dev
 
   tmux new-window -t $session -n debug
-  tmux new-window -t $session -n mcp-rspec
+  tmux new-window -t $session -n cast-mcp
 
   tmux send-keys -t $session:1 'make dev' C-m
   tmux send-keys -t $session:2 'sleep 3sec; task debug-web' C-m

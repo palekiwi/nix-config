@@ -6,6 +6,5 @@
     cast-mcp-client
     cue
     curator
-    mcp-rspec
   ];
 }
