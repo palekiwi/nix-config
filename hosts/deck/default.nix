@@ -30,8 +30,16 @@
     modules.docker.enable = true;
     modules.ibus.enable = true;
 
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
+    boot.loader = {
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 1;
+      };
+    };
     boot.kernelPackages = pkgs.linuxPackages_6_12;
 
     networking.hostName = "deck";
