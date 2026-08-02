@@ -291,7 +291,9 @@ M.git_commits = function(opts)
 end
 
 -- list "PR commits", i.e. commits that are present on current branch
--- but absent on the base branch
+-- but absent on the base branch. When no PR is found (e.g. we are on
+-- the default branch itself and the query is empty), fall back to the
+-- last 1000 commits on the default branch, like M.git_commits.
 M.git_pr_commits = function(opts)
   local base_branch = vim.g.git_base
   local command = "git log --pretty=format:'%h %ai %<(20)%an %s' " .. "HEAD ^" .. base_branch
@@ -303,6 +305,26 @@ M.git_pr_commits = function(opts)
   local files = {}
   for token in string.gmatch(result, "[^\n]+") do
     table.insert(files, token)
+  end
+
+  local prompt_title = "PR Commits"
+
+  -- No PR commits found: fall back to the last 1000 commits on the
+  -- default branch so the picker is still useful.
+  if #files == 0 then
+    local default_branch = vim.g.git_master or "master"
+    command = "git log -n 1000 --pretty=format:'%h %ai %<(20)%an %s' " .. default_branch
+
+    handle = assert(io.popen(command))
+    result = handle:read("*a")
+    handle:close()
+
+    files = {}
+    for token in string.gmatch(result, "[^\n]+") do
+      table.insert(files, token)
+    end
+
+    prompt_title = "Commits on " .. default_branch .. " (no PR)"
   end
 
   opts = {
@@ -405,7 +427,7 @@ M.git_pr_commits = function(opts)
   }
 
   pickers.new(opts, {
-    prompt_title = "PR Commits",
+    prompt_title = prompt_title,
     layout_strategy = "vertical",
     layout_config = {
       preview_height = 0.5,
