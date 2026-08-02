@@ -1,5 +1,5 @@
 const DECK_BUILTIN = "eDP-1"
-const DECK_EXTERNAL = "DisplayPort-0"
+const DECK_EXTERNAL = "DP-1"
 
 const PALE_BUILTIN = "eDP-1-1"
 const PALE_ULTRAWIDE = "DP-1-2"
