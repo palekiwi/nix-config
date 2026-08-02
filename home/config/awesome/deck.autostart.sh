@@ -9,6 +9,6 @@ function run {
 
 run sxhkd
 
-run nextcloud
+# run nextcloud
 
 xmodmap ~/.Xmodmap
