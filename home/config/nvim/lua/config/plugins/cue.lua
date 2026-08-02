@@ -1,9 +1,9 @@
 return {
   {
     "palekiwi-labs/cue.nvim",
-    dev = true,
+    branch = "master",
+    dev = false,
     dir = "~/code/palekiwi-labs/cue.nvim",
-    -- branch = "master",
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "folke/snacks.nvim",
