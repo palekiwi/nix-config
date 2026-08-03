@@ -290,13 +290,24 @@ M.git_commits = function(opts)
   }):find()
 end
 
--- list "PR commits", i.e. commits that are present on current branch
--- but absent on the base branch. When no PR is found (e.g. we are on
--- the default branch itself and the query is empty), fall back to the
--- last 1000 commits on the default branch, like M.git_commits.
+-- On the default branch there is no PR to diff against, so list the last
+-- 1000 commits of the default branch (like M.git_commits). On any other
+-- branch, list the commits on HEAD that are absent from the base branch
+-- (the PR commits), exactly as before.
 M.git_pr_commits = function(opts)
-  local base_branch = vim.g.git_base
-  local command = "git log --pretty=format:'%h %ai %<(20)%an %s' " .. "HEAD ^" .. base_branch
+  local default_branch = vim.g.git_master or "master"
+  local current_branch = git_helpers.current_git_branch()
+
+  local command, prompt_title
+
+  if current_branch == default_branch then
+    command = "git log -n 1000 --pretty=format:'%h %ai %<(20)%an %s' " .. default_branch
+    prompt_title = "Commits on " .. default_branch
+  else
+    local base_branch = vim.g.git_base
+    command = "git log --pretty=format:'%h %ai %<(20)%an %s' " .. "HEAD ^" .. base_branch
+    prompt_title = "PR Commits"
+  end
 
   local handle = assert(io.popen(command))
   local result = handle:read("*a")
@@ -305,26 +316,6 @@ M.git_pr_commits = function(opts)
   local files = {}
   for token in string.gmatch(result, "[^\n]+") do
     table.insert(files, token)
-  end
-
-  local prompt_title = "PR Commits"
-
-  -- No PR commits found: fall back to the last 1000 commits on the
-  -- default branch so the picker is still useful.
-  if #files == 0 then
-    local default_branch = vim.g.git_master or "master"
-    command = "git log -n 1000 --pretty=format:'%h %ai %<(20)%an %s' " .. default_branch
-
-    handle = assert(io.popen(command))
-    result = handle:read("*a")
-    handle:close()
-
-    files = {}
-    for token in string.gmatch(result, "[^\n]+") do
-      table.insert(files, token)
-    end
-
-    prompt_title = "Commits on " .. default_branch .. " (no PR)"
   end
 
   opts = {
