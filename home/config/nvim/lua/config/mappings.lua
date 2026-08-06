@@ -75,6 +75,7 @@ local base = {
   { "<space>np",       function() cue_utils.add_with_title("plan") end,                             desc = "Plan" },
   { "<space>ns",       cue_utils.add_spec,                                                          desc = "Spec" },
   { "<space>nd",       function() cue_utils.add_with_title("doc") end,                              desc = "Doc" },
+  { "<space>ne",       function() cue_utils.add_with_slug("trace") end,                             desc = "Trace" },
   { "<space>nu",       "<cmd>CueAdd<cr>",                                                           desc = "UI (Add)" },
   { "<space>o",        group = "opencode" },
   { "<space>oa",       function() oc.ask() end,                                                     desc = "Ask" },
