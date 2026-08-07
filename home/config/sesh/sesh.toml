@@ -45,7 +45,7 @@ path = "~/code/spabreaks/booking-transform"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "booking-transform-dev"
+name = "booking-transform/dev"
 path = "~/code/spabreaks/booking-transform"
 startup_command = "_tmux_spabreaks_booking_transform_dev"
 
@@ -59,7 +59,7 @@ path = "~/code/spabreaks/contacts"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "spabreaks/contacts-dev"
+name = "spabreaks/contacts/dev"
 path = "~/code/spabreaks/contacts"
 startup_command = "_tmux_spabreaks_contacts_dev"
 
@@ -73,7 +73,7 @@ path = "~/code/spabreaks/blog"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "blog-dev"
+name = "blog/dev"
 path = "~/code/spabreaks/blog"
 startup_command = "_tmux_spabreaks_blog_dev"
 
@@ -86,7 +86,7 @@ path = "~/code/spabreaks/wss"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "wss-dev"
+name = "wss/dev"
 path = "~/code/spabreaks/wss"
 startup_command = "_tmux_spabreaks_wss_dev"
 
@@ -99,7 +99,7 @@ path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "wss-data-dev"
+name = "wss-data/dev"
 path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_spabreaks_wss_data_dev"
 
@@ -125,12 +125,12 @@ path = "~/code/spabreaks/voucher-portal"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "vrs-dev"
+name = "vrs/dev"
 path = "~/code/spabreaks/voucher-portal"
 startup_command = "_tmux_spabreaks_vrs_dev"
 
 [[session]]
-name = "vrs-psql"
+name = "vrs/psql"
 path = "~/code/spabreaks/voucher-portal"
 startup_command = "make psql"
 

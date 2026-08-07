@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "_tmux_spabreaks_booking_transform_dev" ''
-  session="booking-transform-dev"
+  session="booking-transform/dev"
 
   tmux rename-window -t $session:1 dev
 
