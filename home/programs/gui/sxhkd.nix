@@ -110,14 +110,14 @@ in
       "super + space; s; c" = "${switchToSession} spabreaks/spabreaks/console";
       "super + space; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
       "super + space; s; e" = "${switchToSession} spabreaks/spabreaks";
-      "super + space; s; s" = "${switchToSession} spabreaks-org";
-      "super + space; s; t" = "${switchToSession} terraform";
+      "super + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
+      "super + space; s; t" = "${switchToSession} spabreaks/terraform";
 
-      "super + space; v; d" = "${switchToSession} vrs-dev";
-      "super + space; v; e" = "${switchToSession} vrs";
+      "super + space; v; d" = "${switchToSession} spabreaks/vrs/dev";
+      "super + space; v; e" = "${switchToSession} spabreaks/vrs";
 
-      "super + space; w; d" = "${switchToSession} wss-dev";
-      "super + space; w; e" = "${switchToSession} wss";
+      "super + space; w; d" = "${switchToSession} spabreaks/wss/dev";
+      "super + space; w; e" = "${switchToSession} spabreaks/wss";
 
       "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
       "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";

@@ -7,7 +7,7 @@ dir_length = 2
 #-------------------
 
 [[session]]
-name = "spabreaks-org"
+name = "spabreaks/spabreaks-org"
 path = "~/code/spabreaks/spabreaks-org"
 
 [[session]]
@@ -81,12 +81,12 @@ startup_command = "_tmux_spabreaks_blog_dev"
 #   --- wss ---
 #-------------------
 [[session]]
-name = "wss"
+name = "spabreaks/wss"
 path = "~/code/spabreaks/wss"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "wss/dev"
+name = "spabreaks/wss/dev"
 path = "~/code/spabreaks/wss"
 startup_command = "_tmux_spabreaks_wss_dev"
 
@@ -94,12 +94,12 @@ startup_command = "_tmux_spabreaks_wss_dev"
 #  --- wss-data ---
 #-------------------
 [[session]]
-name = "wss-data"
+name = "spabreaks/wss-data"
 path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_git-repo"
 
 [[session]]
-name = "wss-data/dev"
+name = "spabreaks/wss-data/dev"
 path = "~/code/spabreaks/wss-data"
 startup_command = "_tmux_spabreaks_wss_data_dev"
 
