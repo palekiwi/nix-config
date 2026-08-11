@@ -1,16 +1,54 @@
 { pkgs, ... }:
 
 pkgs.writeShellScriptBin "gh_clone_repo" ''
-  # Check if argument is provided
-  if [ $# -eq 0 ]; then
-      echo "Usage: $0 <author/repo> or $0 <github-url>"
+  # Option parsing
+  SUBDIR=""
+  INPUT=""
+
+  while [ $# -gt 0 ]; do
+      case "$1" in
+          -s|--subdir)
+              if [ -z "''${2:-}" ]; then
+                  echo "Error: $1 requires an argument" >&2
+                  exit 1
+              fi
+              SUBDIR="$2"
+              shift 2
+              ;;
+          --subdir=*)
+              SUBDIR="''${1#*=}"
+              shift
+              ;;
+          -*)
+              echo "Error: Unknown option: $1" >&2
+              exit 1
+              ;;
+          *)
+              if [ -n "$INPUT" ]; then
+                  echo "Error: expected exactly one repository argument, got '$1'" >&2
+                  exit 1
+              fi
+              INPUT="$1"
+              shift
+              ;;
+      esac
+  done
+
+  # Check if a repository argument is provided
+  if [ -z "$INPUT" ]; then
+      echo "Usage: $0 [-s|--subdir <dir>] <author/repo>"
+      echo "       $0 [-s|--subdir <dir>] <github-url>"
+      echo ""
+      echo "Options:"
+      echo "  -s, --subdir <dir>   Group the repo under ~/code/<dir>/<author>/<repo>"
+      echo ""
       echo "Examples:"
       echo "  $0 microsoft/vscode"
       echo "  $0 https://github.com/microsoft/vscode"
+      echo "  $0 -s embedded raspberrypi/firmware"
+      echo "  $0 --subdir=embedded raspberrypi/firmware"
       exit 1
   fi
-
-  INPUT="$1"
 
   # Function to extract author/repo from different input formats
   extract_author_repo() {
@@ -41,19 +79,26 @@ pkgs.writeShellScriptBin "gh_clone_repo" ''
   # Define the base code directory
   CODE_DIR="$HOME/code"
 
-  # Create the code directory and author subdirectory if they don't exist
-  mkdir -p "$CODE_DIR/$AUTHOR"
+  # Compute the target directory, optionally nested under a subdir grouping
+  if [ -n "$SUBDIR" ]; then
+      TARGET_DIR="$CODE_DIR/$SUBDIR/$AUTHOR/$REPO"
+  else
+      TARGET_DIR="$CODE_DIR/$AUTHOR/$REPO"
+  fi
+
+  # Create the parent directory tree if it doesn't exist
+  mkdir -p "$(dirname "$TARGET_DIR")"
 
   # Clone the repository
-  echo "Cloning $AUTHOR_REPO into $CODE_DIR/$AUTHOR/$REPO"
+  echo "Cloning $AUTHOR_REPO into $TARGET_DIR"
 
   if command -v gh &> /dev/null; then
       # Use gh cli if available
-      gh repo clone "$AUTHOR_REPO" "$CODE_DIR/$AUTHOR/$REPO"
+      gh repo clone "$AUTHOR_REPO" "$TARGET_DIR"
   else
       # Fall back to git clone
-      git clone "https://github.com/$AUTHOR_REPO.git" "$CODE_DIR/$AUTHOR/$REPO"
+      git clone "https://github.com/$AUTHOR_REPO.git" "$TARGET_DIR"
   fi
 
-  echo "Successfully cloned $AUTHOR_REPO into $CODE_DIR/$AUTHOR/$REPO"
+  echo "Successfully cloned $AUTHOR_REPO into $TARGET_DIR"
 ''
