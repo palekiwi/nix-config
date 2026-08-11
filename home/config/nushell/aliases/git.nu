@@ -24,8 +24,11 @@ export def git_branch_delete_variant [variant: string] {
 
 export def git_fetch_base [] {
     let base_branch = (get_pr_base)
-    git fetch origin
-    git fetch origin $"($base_branch):($base_branch)"
+    # Worktree-safe: fetch into the remote-tracking ref origin/<base> only.
+    # Never use a <base>:<base> refspec here -- that writes into the local
+    # refs/heads/<base>, which git refuses to update when the base is checked
+    # out in another worktree (e.g. master in the main worktree).
+    git fetch origin $base_branch
 }
 
 export def git_fetch_master [] {
@@ -102,7 +105,7 @@ export alias gsb = gs (get_pr_base)
 export alias gsi = git_switch_integration_branch
 export def gmb [] {
     set_pr_info
-    git merge (get_pr_base) --no-edit
+    git merge $"origin/(get_pr_base)" --no-edit
 }
 export alias gmv = git_merge_variant
 export alias gsr = git_set_remote
@@ -120,7 +123,7 @@ export alias gfb = git_fetch_base
 export def gub [] {
     set_pr_info
     git_fetch_base
-    git merge (get_pr_base) --no-edit
+    git merge $"origin/(get_pr_base)" --no-edit
 }
 
 export alias gwa = git worktree add
