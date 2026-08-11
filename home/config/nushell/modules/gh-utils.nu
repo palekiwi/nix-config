@@ -79,8 +79,15 @@ export def "run view" [run_id: int, --log, --save] {
     }
 }
 
-export def "repo clone" [repo: string] {
-    gh_clone_repo $repo
+export def "repo clone" [
+    repo: string
+    --subdir(-s): string
+] {
+    if $subdir != null {
+        gh_clone_repo -s $subdir $repo
+    } else {
+        gh_clone_repo $repo
+    }
 }
 
 export def "pr reviews" [pr_number?: int, --full, --with-comments] {
