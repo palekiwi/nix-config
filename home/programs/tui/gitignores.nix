@@ -1,6 +1,5 @@
 [
   "*.swp"
-  ".agents"
   ".direnv"
   ".envrc"
   ".gutctags"
