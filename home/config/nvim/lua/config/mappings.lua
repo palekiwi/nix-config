@@ -45,7 +45,7 @@ local base = {
   -- AI / Cue
   { "<C-t>",           cue_utils.pick_artifacts,                                                    desc = "[Cue] Artifacts (current scope)" },
   { "<A-a>",           cue_utils.open_active_task,                                                  desc = "Open active task" },
-  { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master" }) end,                desc = "[Cue] Artifacts (master scope)" },
+  { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
   { "<C-s>",           function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "[Cue] Task picker" },
   { "<space>e",        group = "entries" },
   { "<space>et",       function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "Tasks (master)" },
