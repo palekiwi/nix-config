@@ -196,7 +196,7 @@ startup_command = "_tmux_git-repo"
 
 [[session]]
 name = "cue-plugins"
-path = "~/.config/opencode/plugin/palekiwi-labs/cue-plugins"
+path = "~/.agents/plugins/palekiwi-labs/cue-plugins"
 startup_command = "_tmux_git-repo"
 
 [[session]]
