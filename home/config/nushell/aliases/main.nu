@@ -41,6 +41,12 @@ def revcom [
     --incremental (-i) # Only save comments added since previous review artifacts
 ] {
     let all_comments_json = (gh-utils review comments $pr_number --json)
+    let all_comments = ($all_comments_json | from json)
+
+    if ($all_comments | is-empty) {
+        print "No review comments found on PR."
+        return
+    }
 
     if $incremental {
         let tmp_list = (do { cue list -t tmp --json } | complete)
@@ -74,13 +80,22 @@ def revcom [
         } | flatten | uniq)
 
         if not ($prev_ids | is-empty) {
-            let all_comments = ($all_comments_json | from json)
             let new_comments = ($all_comments | where {|c| $c.id not-in $prev_ids})
-            $new_comments | to json | cue add --force -t tmp review-comments.json
+            if ($new_comments | is-empty) {
+                print "No new review comments since last snapshot."
+            } else {
+                let count = ($new_comments | length)
+                print $"Saving ($count) new review comment\(s\)..."
+                $new_comments | to json | cue add --force -t tmp review-comments.json
+            }
         } else {
+            let count = ($all_comments | length)
+            print $"No previous review artifacts found. Saving all ($count) comment\(s\)..."
             $all_comments_json | cue add --force -t tmp review-comments.json
         }
     } else {
+        let count = ($all_comments | length)
+        print $"Saving all ($count) review comment\(s\)..."
         $all_comments_json | cue add --force -t tmp review-comments.json
     }
 }
