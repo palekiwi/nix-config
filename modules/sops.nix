@@ -9,6 +9,7 @@
   sops.secrets."cachix/personal/token" = { owner = "pl"; };
   sops.secrets."cachix/github_actions/token" = { owner = "pl"; };
   sops.secrets."github/palekiwi/gh_cli" = { owner = "pl"; };
+  sops.secrets."github/palekiwi/gh_cli_readonly" = { owner = "pl"; };
   sops.secrets."hass/server" = { owner = "pl"; };
   sops.secrets."hass/token" = { owner = "pl"; };
   sops.secrets."jira/email" = { owner = "pl"; };
