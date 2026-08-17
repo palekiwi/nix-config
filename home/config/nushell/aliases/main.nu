@@ -36,8 +36,53 @@ def direnv_rust [] {
     'use flake "github:palekiwi/flake-templates?dir=templates/rust/devshell"' | save .envrc
 }
 
-def revcom [] {
-    gh-utils review comments --json | cue add --force -t tmp review-comments.json
+def revcom [
+    pr_number?: int,
+    --incremental (-i) # Only save comments added since previous review artifacts
+] {
+    let all_comments_json = (gh-utils review comments $pr_number --json)
+
+    if $incremental {
+        let tmp_list = (do { cue list -t tmp --json } | complete)
+        let files = if $tmp_list.exit_code == 0 and not ($tmp_list.stdout | is-empty) {
+            try {
+                $tmp_list.stdout
+                | from json
+                | where name == "review-comments.json" or ($it.path | str ends-with "review-comments.json")
+            } catch {
+                []
+            }
+        } else {
+            []
+        }
+
+        let prev_ids = ($files | each {|f|
+            if ($f.path | path exists) {
+                try {
+                    let content = (open $f.path)
+                    if not ($content | is-empty) {
+                        $content | get id
+                    } else {
+                        []
+                    }
+                } catch {
+                    []
+                }
+            } else {
+                []
+            }
+        } | flatten | uniq)
+
+        if not ($prev_ids | is-empty) {
+            let all_comments = ($all_comments_json | from json)
+            let new_comments = ($all_comments | where {|c| $c.id not-in $prev_ids})
+            $new_comments | to json | cue add --force -t tmp review-comments.json
+        } else {
+            $all_comments_json | cue add --force -t tmp review-comments.json
+        }
+    } else {
+        $all_comments_json | cue add --force -t tmp review-comments.json
+    }
 }
 
 alias cat = bat -p
