@@ -38,7 +38,7 @@ def direnv_rust [] {
 
 def revcom [
     pr_number?: int,
-    --incremental (-i) # Only save comments added since previous review artifacts
+    --full (-f) # Save full snapshot of all review comments to review-comments.json
 ] {
     let all_comments_json = (gh-utils review comments $pr_number --json)
     let all_comments = ($all_comments_json | from json)
@@ -48,13 +48,17 @@ def revcom [
         return
     }
 
-    if $incremental {
+    if $full {
+        let count = ($all_comments | length)
+        print $"Saving full snapshot of ($count) review comment\(s\)..."
+        $all_comments_json | cue add --force -t tmp review-comments.json
+    } else {
         let tmp_list = (do { cue list -t tmp --json } | complete)
         let files = if $tmp_list.exit_code == 0 and not ($tmp_list.stdout | is-empty) {
             try {
                 $tmp_list.stdout
                 | from json
-                | where name == "review-comments.json" or ($it.path | str ends-with "review-comments.json")
+                | where name =~ "^review-comments-delta-" or ($it.path | str contains "review-comments-delta-")
             } catch {
                 []
             }
@@ -79,24 +83,23 @@ def revcom [
             }
         } | flatten | uniq)
 
+        let ts = (date now | format date "%s")
+        let delta_filename = $"review-comments-delta-($ts).json"
+
         if not ($prev_ids | is-empty) {
             let new_comments = ($all_comments | where {|c| $c.id not-in $prev_ids})
             if ($new_comments | is-empty) {
-                print "No new review comments since last snapshot."
+                print "No new review comments since last delta."
             } else {
                 let count = ($new_comments | length)
-                print $"Saving ($count) new review comment\(s\)..."
-                $new_comments | to json | cue add --force -t tmp review-comments.json
+                print $"Saving ($count) new review comment\(s\) to ($delta_filename)..."
+                $new_comments | to json | cue add --force -t tmp $delta_filename
             }
         } else {
             let count = ($all_comments | length)
-            print $"No previous review artifacts found. Saving all ($count) comment\(s\)..."
-            $all_comments_json | cue add --force -t tmp review-comments.json
+            print $"No previous delta artifacts found. Saving initial ($count) comment\(s\) to ($delta_filename)..."
+            $all_comments_json | cue add --force -t tmp $delta_filename
         }
-    } else {
-        let count = ($all_comments | length)
-        print $"Saving all ($count) review comment\(s\)..."
-        $all_comments_json | cue add --force -t tmp review-comments.json
     }
 }
 
