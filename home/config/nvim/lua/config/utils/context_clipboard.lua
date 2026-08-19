@@ -73,12 +73,14 @@ M.copy_file_with_visual_range = function()
     start_line, end_line = end_line, start_line
   end
 
+  -- Use "path:line" so the result works with gF; gF ignores the "-end"
+  -- part of a range and jumps to the first line.
   local filepath = vim.fn.fnamemodify(vim.fn.expand('%'), ':p')
   local result ---@type string
   if start_line == end_line then
-    result = string.format("%s L%d", filepath, start_line)
+    result = string.format("%s:%d", filepath, start_line)
   else
-    result = string.format("%s L%d-L%d", filepath, start_line, end_line)
+    result = string.format("%s:%d-%d", filepath, start_line, end_line)
   end
 
   vim.fn.setreg('+', result)
