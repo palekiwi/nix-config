@@ -38,7 +38,7 @@ if ($env.SSH_CONNECTION? == null) or ((hostname) == "kyomu") {
 $env.config.buffer_editor = "nvim"
 $env.config.edit_mode = 'vi'
 $env.config.show_banner = false
-$env.config.table.mode = "default"
+$env.config.table.mode = "none"
 
 $env.config.cursor_shape = {
     vi_insert: line
