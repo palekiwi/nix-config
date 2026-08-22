@@ -43,10 +43,10 @@ local base = {
   { "<A-PageUp>",      "<cmd>lprev<cr>",                                                            desc = "[Loclist] Prev" },
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                            desc = "[Loclist] Next" },
   -- AI / Cue
-  { "<C-t>",           cue_utils.pick_artifacts,                                                    desc = "[Cue] Artifacts (current scope)" },
+  { "<C-t>",           function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "[Cue] Task picker" },
   { "<A-a>",           cue_utils.open_active_task,                                                  desc = "Open active task" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
-  { "<C-s>",           function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "[Cue] Task picker" },
+  { "<C-s>",           cue_utils.pick_active_task_artifacts,                                       desc = "[Cue] Artifacts (task scope)" },
   { "<space>e",        group = "entries" },
   { "<space>et",       function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "Tasks (master)" },
   { "<space>eo",       function() cue_utils.pick_artifacts({ type = "todo", task = "master" }) end, desc = "Todos (master)" },
