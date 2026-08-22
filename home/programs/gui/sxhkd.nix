@@ -97,6 +97,9 @@ in
       "super + space; c; o" = "${switchToSession} config-opencode";
       "super + space; c; p" = "${switchToSession} config-pi";
 
+      "super + space; m; d" = "${switchToSession} spabreaks/my-account/dev";
+      "super + space; m; e" = "${switchToSession} spabreaks/my-account";
+
       "super + space; n; p" = "${switchToSession} notes-pl";
       "super + space; n; t" = "${switchToSession} notes-sb";
 
