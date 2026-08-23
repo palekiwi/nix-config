@@ -17,7 +17,7 @@ let
     sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7]:#{session_name}'';
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
     gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
-    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; GIT_DIR=$(git rev-parse --git-dir 2>/dev/null) && [ -f "$GIT_DIR/GH_PR_NUMBER" ] && GH_PR_NUMBER=$(cat "$GIT_DIR/GH_PR_NUMBER") && GIT_BASE=$(cat "$GIT_DIR/GIT_BASE") && GIT_BASE_AHEAD=$(cat "$GIT_DIR/GIT_BASE_AHEAD" 2>/dev/null || echo "") && echo "#$GH_PR_NUMBER #[fg=white,nobold,dim]-> #[fg=$([ "$GIT_BASE_AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$GIT_BASE" || echo "")'';
+    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && PR=$(git config "branch.$B.pr" 2>/dev/null) && [ -n "$PR" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && AHEAD=$(git config "branch.$B.ahead" 2>/dev/null || true) && echo "#$PR #[fg=white,nobold,dim]-> #[fg=$([ "$AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
     # Active cue scope (".cue/HEAD"). Hides itself outside a cue-enabled dir;
     # falls back to "master" when HEAD is missing or empty.
     cueScope = ''#[fg=colour15,bold]#(cd #{pane_current_path} && [ -d .cue ] && { s=$(cat .cue/HEAD 2>/dev/null); [ -n "$s" ] && echo "$s" || echo master; })'';
