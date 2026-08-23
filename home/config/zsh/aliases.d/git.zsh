@@ -101,7 +101,7 @@ alias gfb="git_fetch_base"
 alias gub='git_source_pr_info && git_fetch_base && git merge $(get_pr_base) --no-edit' # TODO: improve error handling
 
 git_source_pr_info() {
-    set_pr_info
+    git-pr-sync
 }
 
 git_fetch_base() {

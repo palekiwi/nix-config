@@ -62,5 +62,5 @@ alias pre="gh_pr_create"
 alias pitr="gh pr comment --body 'ITR'"
 alias plgtm="gh pr review --approve --body 'LGTM'"
 
-alias gprc="gh_pr_from_branch_name && set_pr_info"
-alias gprcd="gh_pr_from_branch_name --draft && set_pr_info"
+alias gprc="gh_pr_from_branch_name && git-pr-sync"
+alias gprcd="gh_pr_from_branch_name --draft && git-pr-sync"

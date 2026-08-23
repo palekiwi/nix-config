@@ -10,7 +10,7 @@ def gh_pr_link [] {
 
 def gprc [...args] {
     gh_pr_from_branch_name $args
-    set_pr_info
+    git-pr-sync
 }
 
 def pitr [] {

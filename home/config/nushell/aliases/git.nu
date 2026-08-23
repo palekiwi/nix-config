@@ -104,7 +104,7 @@ export def git_switch_integration_branch [] {
 export alias gsb = gs (get_pr_base)
 export alias gsi = git_switch_integration_branch
 export def gmb [] {
-    set_pr_info
+    git-pr-sync
     git merge $"origin/(get_pr_base)" --no-edit
 }
 export alias gmv = git_merge_variant
@@ -121,7 +121,7 @@ export alias gbnc = git_branch_name_to_clipboard
 export alias gfm = git_fetch_master
 export alias gfb = git_fetch_base
 export def gub [] {
-    set_pr_info
+    git-pr-sync
     git_fetch_base
     git merge $"origin/(get_pr_base)" --no-edit
 }
