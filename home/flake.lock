@@ -57,16 +57,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1787469331,
+        "lastModified": 1787477737,
         "narHash": "sha256-czscHeV+UuW4um88LaNrfMRNGW8pF37QHqFyVkHUrH4=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "fe9b9485d46651615d9af7a77f69ef70745b6472",
+        "rev": "0902ec027bd608b671f5e9e881a60f774e7f9fad",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
-        "ref": "feat/git-pr-sync",
         "repo": "cue",
         "type": "github"
       }
@@ -175,11 +174,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1787122363,
-        "narHash": "sha256-gRxeJUoXrNXebdzBEc7L+g+yyCeH8hZ902DwtnOoRGE=",
+        "lastModified": 1787474842,
+        "narHash": "sha256-Yc5lQYeqg28n1/4eVKGbH0MYr6vsEm4Pi0DBjW0xIx8=",
         "owner": "cjpais",
         "repo": "Handy",
-        "rev": "0e5036721ef6f26c3b89ab31bc10cd2ffd6096fb",
+        "rev": "286e66cb4d9d3e858b320c49a5aafeafd114eede",
         "type": "github"
       },
       "original": {

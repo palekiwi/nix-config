@@ -30,16 +30,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1787469331,
+        "lastModified": 1787477737,
         "narHash": "sha256-czscHeV+UuW4um88LaNrfMRNGW8pF37QHqFyVkHUrH4=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "fe9b9485d46651615d9af7a77f69ef70745b6472",
+        "rev": "0902ec027bd608b671f5e9e881a60f774e7f9fad",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
-        "ref": "feat/git-pr-sync",
         "repo": "cue",
         "type": "github"
       }
