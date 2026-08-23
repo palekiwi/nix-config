@@ -21,7 +21,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
-      url = "github:palekiwi-labs/cue";
+      url = "github:palekiwi-labs/cue/feat/git-pr-sync";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
