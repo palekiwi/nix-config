@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
-      url = "github:palekiwi-labs/cue";
+      url = "github:palekiwi-labs/cue/768a2d02962d7631a744533719e63e6f61ca227e";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     handy.url = "github:cjpais/Handy";
@@ -30,6 +30,7 @@
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;
               curator = inputs.cue.packages.x86_64-linux.curator;
+              git-cue-sync = inputs.cue.packages.x86_64-linux.git-cue-sync;
               git-pr-sync = inputs.cue.packages.x86_64-linux.git-pr-sync;
               handy = inputs.handy.packages.x86_64-linux.default;
             })
