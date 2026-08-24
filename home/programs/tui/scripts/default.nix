@@ -11,7 +11,6 @@
   (import ./gh_pr_from_branch_name.nix { inherit pkgs; })
   (import ./gh_prs.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
-  pkgs.git-cue-sync
   pkgs.git-pr-sync
   (import ./sync_opencode_extra_config.nix { inherit pkgs; })
   (import ./yt-subs.nix { inherit pkgs lib config; })
