@@ -3,4 +3,7 @@
 # Only run if we're checking out a branch (not individual files)
 if [ "$3" = "1" ]; then
     git-pr-sync
+    # Auto-switch the cue task context when the branch is associated
+    # (branch.<name>.cue-task). Inert until git-cue-sync is installed.
+    command -v git-cue-sync >/dev/null 2>&1 && git-cue-sync
 fi
