@@ -3,10 +3,7 @@
 # Only run if we're checking out a branch (not individual files)
 if [ "$3" = "1" ]; then
     git-pr-sync
-    # Restore the cue task context associated with the new branch
-    # (branch.<name>.cue-task). `cue switch` with no args restores the
-    # association and errors when there is none; both stderr noise and a
-    # missing/old binary must never fail the checkout.
+    # Restore the cue context associated with the new branch, if any.
     command -v cue >/dev/null 2>&1 && cue switch 2>/dev/null || true
 fi
 
