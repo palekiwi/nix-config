@@ -35,11 +35,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787497876,
-        "narHash": "sha256-YE7YBRPXu2ytj8EVJOcntXg0I4YZMbh+dBdyH38u6Pk=",
+        "lastModified": 1787679915,
+        "narHash": "sha256-u7d6PuooYRbXhgve9eSfIlhIhrisvh9M8lEdUbbfnrk=",
         "owner": "palekiwi-labs",
         "repo": "cast",
-        "rev": "d580f04e3f7a6c8dbdc2a295e80c308d4328518c",
+        "rev": "63a78a2965c2d7f67ec8331b15c69bb70e00365a",
         "type": "github"
       },
       "original": {
@@ -57,11 +57,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787560601,
-        "narHash": "sha256-A71GihR3XZFpoKNlc9CZ28B/3k3ThvtppXADqEDnOvM=",
+        "lastModified": 1787648356,
+        "narHash": "sha256-g8ZaCnWYptKuJVNYmiIutOiYJoRygjwJVeyP+7pvtnA=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "b217abd5301f85aeadf4fd54b16315e49ef07460",
+        "rev": "e798914c6678ba71ce863406f141c70c52be24db",
         "type": "github"
       },
       "original": {
