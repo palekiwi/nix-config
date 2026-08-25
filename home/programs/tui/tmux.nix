@@ -58,13 +58,18 @@ in
       set -g allow-passthrough on
 
       # Add OSC 52 support to terminal capabilities
-      # set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;c;%p2%s\7'
+      # (Ms must reference %p1 before %p2; skipping %p1 makes the tiparm
+      # expansion fail and tmux silently emits nothing)
       set -ga terminal-overrides ',xterm-256color:Tc:Ms=\E]52;%p1%s;%p2%s\007'
       # set -as terminal-overrides ',*:Ms=\E]52;%p1%s;%p2%s\007'
 
       # ============================================
 
       set -g @thumbs-command 'echo -n {} | xclip -selection clipboard'
+
+      # copy active pane's git branch to buffer + system clipboard
+      # (prefix b; prefix y is taken by tmux-yank's copy-line)
+      bind-key b run-shell -b "_tmux_copy-branch '#{pane_current_path}'"
 
       bind -n M-C-e split-window -v ${tmux_list_sessions}
       bind -n M-C-m run-shell ${tmux_view_output}
