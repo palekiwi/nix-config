@@ -31,6 +31,7 @@ return {
         "sxhkdrc",
         "sql",
         "toml",
+        "tsx",
         "typescript",
         "vimdoc",
         "vue",
