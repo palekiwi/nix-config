@@ -78,6 +78,16 @@ return {
         on_attach = on_attach,
         capabilities = capabilities,
         flags = lsp_flags,
+        init_options = {
+          indexing = {
+            excludedPatterns = {
+              "**/.worktrees/**/*",
+              "**/worktrees/**/*",
+              "**/tmp/**/*",
+              "**/vendor/**/*",
+            },
+          },
+        },
       }
 
       vim.lsp.config.stimulus_ls = {
