@@ -71,6 +71,12 @@ in
       # (prefix b; prefix y is taken by tmux-yank's copy-line)
       bind-key b run-shell -b "_tmux_copy-branch '#{pane_current_path}'"
 
+      # copy active pane's pwd to buffer + system clipboard
+      bind-key p run-shell -b "_tmux_copy-pwd '#{pane_current_path}'"
+
+      # copy active pane's active cue task slug to buffer + system clipboard
+      bind-key t run-shell -b "_tmux_copy-cue-task '#{pane_current_path}'"
+
       bind -n M-C-e split-window -v ${tmux_list_sessions}
       bind -n M-C-m run-shell ${tmux_view_output}
 
