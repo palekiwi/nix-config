@@ -2,8 +2,8 @@ const DECK_BUILTIN = "eDP-1"
 const DECK_EXTERNAL = "DP-1"
 
 const PALE_BUILTIN = "eDP-1-1"
-const PALE_ULTRAWIDE = "DP-1-2"
-const PALE_HUION = "DP-1-3"
+const PALE_ULTRAWIDE = "DP-1-3"
+const PALE_HUION = "DP-1-2"
 
 const CONFIG = {
     deck: {
