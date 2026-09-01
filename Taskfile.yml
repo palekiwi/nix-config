@@ -5,6 +5,11 @@ tasks:
     cmds:
       - gpg --import ~/nix-config/users/pl/pgp.asc
 
+  git-hooks-sync:
+    desc: Sync template git hooks into existing repos (run after hook edits)
+    cmds:
+      - ~/nix-config/home/bin/git-hooks-sync
+
   sops-edit-keys:
     cmds:
       - sops secrets/secrets.yaml
