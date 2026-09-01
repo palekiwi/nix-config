@@ -1,10 +1,5 @@
 { pkgs, config, ... }:
 
-let
-  nixConfigPath = "${config.home.homeDirectory}/nix-config";
-  gitHooksSource = "${nixConfigPath}/home/config/git/hooks";
-in
-
 {
   home.packages = with pkgs; [ git gitui ];
 
@@ -17,20 +12,16 @@ in
       };
       init.defaultBranch = "master";
       pull.rebase = true;
-      init.templateDir = "${config.xdg.configHome}/git/templates";
+      # Template entries must be real files: git copies template entries
+      # verbatim, and home.file can only produce symlinks - which dangle
+      # after store GC and never resolve inside cast containers.
+      init.templateDir =
+        "${config.home.homeDirectory}/nix-config/home/config/git/templates";
     };
     signing = {
       key = "848E5BB30B98EB1D2714BCCB44766C74B3546A52";
       signByDefault = true;
     };
     ignores = import ./gitignores.nix;
-  };
-
-  home.file = {
-    "${config.xdg.configHome}/git/templates/hooks/post-checkout".source =
-      config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-checkout";
-
-    "${config.xdg.configHome}/git/templates/hooks/post-merge".source =
-      config.lib.file.mkOutOfStoreSymlink "${gitHooksSource}/post-merge";
   };
 }
