@@ -71,6 +71,9 @@ in
       # (prefix b; prefix y is taken by tmux-yank's copy-line)
       bind-key b run-shell -b "_tmux_copy-branch '#{pane_current_path}'"
 
+      # copy active pane's base PR branch to buffer + system clipboard
+      bind-key B run-shell -b "_tmux_copy-pr-base '#{pane_current_path}'"
+
       # copy active pane's pwd to buffer + system clipboard
       bind-key p run-shell -b "_tmux_copy-pwd '#{pane_current_path}'"
 

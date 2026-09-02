@@ -3,6 +3,7 @@
 [
   (import ./git-repo.nix { inherit pkgs; })
   (import ./copy-branch.nix { inherit pkgs; })
+  (import ./copy-pr-base.nix { inherit pkgs; })
   (import ./copy-pwd.nix { inherit pkgs; })
   (import ./copy-cue-task.nix { inherit pkgs; })
   (import ./spabreaks-spabreaks-dev.nix { inherit pkgs; })
