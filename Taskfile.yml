@@ -8,7 +8,7 @@ tasks:
   git-hooks-sync:
     desc: Sync template git hooks into existing repos (run after hook edits)
     cmds:
-      - ~/nix-config/home/bin/git-hooks-sync
+      - git-hooks-sync
 
   sops-edit-keys:
     cmds:

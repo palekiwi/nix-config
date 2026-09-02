@@ -10,6 +10,7 @@
   (import ./gh_clone_repo.nix { inherit pkgs; })
   (import ./gh_pr_from_branch_name.nix { inherit pkgs; })
   (import ./gh_prs.nix { inherit pkgs; })
+  (import ./git_hooks_sync.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
   pkgs.git-pr-sync
   (import ./sync_opencode_extra_config.nix { inherit pkgs; })

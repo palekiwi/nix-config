@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# nix-config managed: refresh via nix-config home/bin/git-hooks-sync
+# nix-config managed: refresh via git-hooks-sync
 
 # Only run if we're checking out a branch (not individual files)
 if [ "$3" = "1" ]; then

@@ -23,12 +23,19 @@ roots=("$@")
 
 changed=0
 skipped=0
+readonly_skipped=0
 
 sync_repo() {
     local gitdir=$1
     local repo did hook
     repo=$(dirname "$gitdir")
     did=0
+
+    if ! mkdir -p "$gitdir/hooks" 2>/dev/null || [ ! -w "$gitdir/hooks" ]; then
+        echo "skip (read-only): $repo"
+        readonly_skipped=$((readonly_skipped + 1))
+        return 0
+    fi
 
     for hook in "${hooks[@]}"; do
         local src="$templates/$hook" dst="$gitdir/hooks/$hook"
@@ -62,4 +69,4 @@ for root in "${roots[@]}"; do
     done < <(find "$root" -type d -name .git -prune -print0)
 done
 
-echo "repos changed: $changed, foreign hooks skipped: $skipped"
+echo "repos changed: $changed, foreign hooks skipped: $skipped, read-only repos skipped: $readonly_skipped"
