@@ -34,6 +34,7 @@ def current_branch_for_base [] {
 export def git_base_set [base: string] {
     let branch = (current_branch_for_base)
     ^git config $"branch.($branch).base" $base
+    do { ^git config --unset $"branch.($branch).behindBase" } | complete | ignore
 }
 
 export def git_base_clear [] {
@@ -42,7 +43,7 @@ export def git_base_clear [] {
     do { ^git config --unset $"branch.($branch).behindBase" } | complete | ignore
 }
 
-alias gh_base_set = git_base_set
+export alias gh_base_set = git_base_set
 
 export def git_fetch_base [] {
     let base_branch = (get_pr_base)

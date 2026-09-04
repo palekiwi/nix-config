@@ -21,7 +21,7 @@ let
     # Self-contained styles on both paths; detached HEAD falls back to
     # the plain rev-parse output (branch.HEAD.* is never set).
     gitBranch = ''#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null) && [ -n "$B" ] && D=$(git config "branch.$B.behindDefault" 2>/dev/null || true) && { [ -n "$D" ] && echo "#[fg=yellow,dim,bold]$B" || echo "#[fg=green]$B"; })'';
-    baseInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && PR=$(git config "branch.$B.pr" 2>/dev/null || true) && BB=$(git config "branch.$B.behindBase" 2>/dev/null || true) && echo "$([ -n "$PR" ] && printf '#%s ' "$PR")#[fg=white,nobold,dim]-> #[fg=$([ -n "$BB" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
+    baseInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && PR=$(git config "branch.$B.pr" 2>/dev/null || true) && BB=$(git config "branch.$B.behindBase" 2>/dev/null || true) && echo "$([ -n "$PR" ] && printf "#%s " "$PR")#[fg=white,nobold,dim]-> #[fg=$([ -n "$BB" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
     # Active cue scope (".cue/HEAD"). Hides itself outside a cue-enabled dir;
     # falls back to "master" when HEAD is missing or empty.
     cueScope = ''#[fg=colour15,bold]#(cd #{pane_current_path} && [ -d .cue ] && { s=$(cat .cue/HEAD 2>/dev/null); [ -n "$s" ] && echo "$s" || echo master; })'';
