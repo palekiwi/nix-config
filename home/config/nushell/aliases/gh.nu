@@ -27,8 +27,3 @@ alias pre = gh_pr_create
 alias prl = gh_pr_link
 alias prs = gh_prs
 alias prw = gh pr view --web
-
-def gh_base_set [branch: string] {
-    let git_dir = (^git rev-parse --git-dir | str trim)
-    $branch | save -f ($git_dir | path join GIT_BASE)
-}
