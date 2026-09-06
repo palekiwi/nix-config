@@ -19,7 +19,7 @@ pkgs.writeShellScriptBin "_tmux_copy-pr-base" ''
 
   base="$(git -C "$dir" config "branch.$branch.base" 2>/dev/null)"
   if [ -z "$base" ]; then
-      tmux display-message "copy-pr-base: no base PR branch configured for '$branch'"
+      tmux display-message "copy-pr-base: no base branch configured for '$branch'"
       exit 0
   fi
 

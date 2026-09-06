@@ -16,14 +16,18 @@ let
   widgets = {
     sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7]:#{session_name}'';
     gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
-    gitBranch = ''#(cd #{pane_current_path}; git rev-parse --abbrev-ref HEAD)'';
-    prInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && PR=$(git config "branch.$B.pr" 2>/dev/null) && [ -n "$PR" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && AHEAD=$(git config "branch.$B.ahead" 2>/dev/null || true) && echo "#$PR #[fg=white,nobold,dim]-> #[fg=$([ "$AHEAD" = "true" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
+    # Branch name recolored (yellow, bold) when the branch is behind
+    # the default branch (branch.<name>.behindDefault from git-pr-sync).
+    # Self-contained styles on both paths; detached HEAD falls back to
+    # the plain rev-parse output (branch.HEAD.* is never set).
+    gitBranch = ''#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null) && [ -n "$B" ] && D=$(git config "branch.$B.behindDefault" 2>/dev/null || true) && { [ -n "$D" ] && echo "#[fg=yellow,dim,bold]$B" || echo "#[fg=green]$B"; })'';
+    baseInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && PR=$(git config "branch.$B.pr" 2>/dev/null || true) && BB=$(git config "branch.$B.behindBase" 2>/dev/null || true) && echo "$([ -n "$PR" ] && printf "#%s " "$PR")#[fg=white,nobold,dim]-> #[fg=$([ -n "$BB" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
     # Active cue scope (".cue/HEAD"). Hides itself outside a cue-enabled dir;
     # falls back to "master" when HEAD is missing or empty.
     cueScope = ''#[fg=colour15,bold]#(cd #{pane_current_path} && [ -d .cue ] && { s=$(cat .cue/HEAD 2>/dev/null); [ -n "$s" ] && echo "$s" || echo master; })'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${cueScope} ${gitIcon} ${gitBranch} ${prInfo} '';
+  statusLeft = with widgets; '' ${sessionName} ${cueScope} ${gitIcon} ${gitBranch} ${baseInfo} '';
 in
 {
   home.packages = with pkgs; [

@@ -16,7 +16,7 @@ set -euo pipefail
 
 templates="${HOME}/nix-config/home/config/git/templates/hooks"
 marker="# nix-config managed"
-hooks=(post-checkout post-merge)
+hooks=(post-checkout post-merge post-rewrite)
 
 roots=("$@")
 [ ${#roots[@]} -gt 0 ] || roots=("$HOME/code" "$HOME/nix-config")

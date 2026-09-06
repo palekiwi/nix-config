@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# nix-config managed: refresh via git-hooks-sync
+
+command -v git-pr-sync >/dev/null 2>&1 && git-pr-sync
+
+# Hook safety: never fail the rewrite.
+exit 0
