@@ -14,5 +14,8 @@
     sysstat
     tree
     wget
+    firefox
   ];
+
+  programs.firefox.enable = true;
 }
