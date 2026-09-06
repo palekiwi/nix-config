@@ -3,12 +3,14 @@
 {
   imports =
     [
+      ./desktop.nix
       ./firewall-docker.nix
       ./firewall-ygt.nix
       ./hardware-configuration.nix
       ./locale.nix
       ./notifications-server.nix
       ./packages.nix
+      ./sound.nix
       ./ssh.nix
       ./system.nix
       ./user.nix
