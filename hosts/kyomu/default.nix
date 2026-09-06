@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   imports =
@@ -27,7 +27,6 @@
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-    boot.kernelPackages = pkgs.linuxPackages_6_16;
 
     networking.hostName = "kyomu";
     networking.networkmanager.enable = true;
