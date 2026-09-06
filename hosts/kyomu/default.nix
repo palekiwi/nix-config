@@ -7,6 +7,7 @@
       ./firewall-docker.nix
       ./firewall-ygt.nix
       ./hardware-configuration.nix
+      ./input-method.nix
       ./locale.nix
       ./notifications-server.nix
       ./packages.nix
