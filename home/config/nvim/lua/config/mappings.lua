@@ -105,6 +105,9 @@ local base = {
   { "<space>ms",       function() cue_utils.switch_context("master") end,                           desc = "Switch to master scope" },
   { "<A-m>",           function() cue_utils.open_log("master") end,                                 desc = "Open log (master)" },
   { "<space>mg",       cue_utils.pick_logs,                                                         desc = "Pick log (task context)" },
+  { "<space>mr",       function() require('config.utils.cue_review').load_current_buffer() end,     desc = "Load review findings (buffer)" },
+  { "<space>mR",       function() require('config.utils.cue_review').clear() end,                   desc = "Clear review diagnostics" },
+  { "<space>mq",       function() require('config.utils.cue_review').to_quickfix() end,             desc = "Review findings to Quickfix" },
   -- mod
   --{ "<A-a>",           "<cmd>Trouble<cr>",                                                          desc = "Trouble" },
   { "<A-f>",           "<cmd>Telescope live_grep hidden=false<cr>",                                 desc = "Live Grep" },

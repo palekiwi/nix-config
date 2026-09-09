@@ -10,6 +10,7 @@ return {
     },
     config = function()
       require("cue").setup({})
+      require("config.utils.cue_review").setup()
     end,
   }
 }
