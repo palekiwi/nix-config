@@ -33,7 +33,6 @@
               cast = inputs.cast.packages.x86_64-linux.cast;
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;
-              curator = inputs.cue.packages.x86_64-linux.curator;
               git-pr-sync = inputs.git-pr-sync.packages.x86_64-linux.git-pr-sync;
               handy = inputs.handy.packages.x86_64-linux.default;
             })

@@ -5,6 +5,5 @@
     cast
     cast-mcp-client
     cue
-    curator
   ];
 }
