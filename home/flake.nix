@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cast = {
-      url = "github:palekiwi-labs/cast";
+      url = "github:palekiwi-labs/cast/v0.2.0-rc.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
