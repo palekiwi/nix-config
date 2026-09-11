@@ -20,6 +20,7 @@
     '';
 
     sessionVariables = {
+      CUE_STORE = "$HOME/cue";
       EDITOR = "nvim";
     } // lib.optionalAttrs config.gui {
       GTK_IM_MODULE = "ibus";

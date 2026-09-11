@@ -4,8 +4,6 @@
 # Only run if we're checking out a branch (not individual files)
 if [ "$3" = "1" ]; then
     command -v git-pr-sync >/dev/null 2>&1 && git-pr-sync
-    # Restore the cue context associated with the new branch, if any.
-    command -v cue >/dev/null 2>&1 && cue switch 2>/dev/null || true
 fi
 
 # Hook safety: never fail the checkout.

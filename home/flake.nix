@@ -13,7 +13,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
-      url = "github:palekiwi-labs/cue";
+      url = "github:palekiwi-labs/cue/data-model-spike";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cue-legacy = {
+      url = "github:palekiwi-labs/cue/6748aa3a8a4386fbff90d7aea63443aeb2bfcee7";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     git-pr-sync = {
@@ -33,6 +37,9 @@
               cast = inputs.cast.packages.x86_64-linux.cast;
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;
+              cue-legacy = final.writeShellScriptBin "cue-legacy" ''
+                exec ${inputs.cue-legacy.packages.x86_64-linux.cue}/bin/cue "$@"
+              '';
               git-pr-sync = inputs.git-pr-sync.packages.x86_64-linux.git-pr-sync;
               handy = inputs.handy.packages.x86_64-linux.default;
             })
