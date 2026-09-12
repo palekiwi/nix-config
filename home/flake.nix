@@ -24,7 +24,10 @@
       url = "github:palekiwi-labs/git-pr-sync";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    handy.url = "github:cjpais/Handy";
+    handy = {
+      url = "github:cjpais/Handy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
