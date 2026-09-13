@@ -24,10 +24,10 @@ let
     baseInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && PR=$(git config "branch.$B.pr" 2>/dev/null || true) && BB=$(git config "branch.$B.behindBase" 2>/dev/null || true) && echo "$([ -n "$PR" ] && printf "#%s " "$PR")#[fg=white,nobold,dim]-> #[fg=$([ -n "$BB" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
     # Active cue context associated with the current Git branch. Hides itself
     # when the directory is not a repository or the branch has no context.
-    cueScope = ''#[fg=colour15,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) && [ -n "$B" ] && git config "branch.$B.cue-context" 2>/dev/null || true)'';
+    cueContext = ''#[fg=colour15,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) && [ -n "$B" ] && git config "branch.$B.cue-context" 2>/dev/null || true)'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${cueScope} ${gitIcon} ${gitBranch} ${baseInfo} '';
+  statusLeft = with widgets; '' ${sessionName} ${cueContext} ${gitIcon} ${gitBranch} ${baseInfo} '';
 in
 {
   home.packages = with pkgs; [
