@@ -43,9 +43,9 @@ local base = {
   { "<A-PageUp>",      "<cmd>lprev<cr>",                                                            desc = "[Loclist] Prev" },
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                            desc = "[Loclist] Next" },
   -- AI / Cue
-  { "<C-t>",           function() cue_utils.pick_artifacts({ type = "task", task = "master", status = "in-progress" }) end, desc = "[Cue] In-progress tasks" },
-  { "<C-a>",           function() cue_utils.pick_artifacts({ type = "task", task = "master", board = true }) end, desc = "[Cue] Task board (no done/inbox)" },
-  { "<A-a>",           cue_utils.open_active_task,                                                  desc = "Open active task" },
+  { "<C-t>",           function() cue_utils.pick_contexts({ pinned = true }) end,                   desc = "[Cue] Pinned contexts" },
+  { "<C-a>",           function() cue_utils.pick_contexts() end,                                    desc = "[Cue] All contexts" },
+  { "<A-a>",           cue_utils.open_context,                                                      desc = "[Cue] Open active context" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
   { "<C-s>",           cue_utils.pick_active_context_artifacts,                                    desc = "[Cue] Artifacts (active context)" },
   { "<space>e",        group = "entries" },
