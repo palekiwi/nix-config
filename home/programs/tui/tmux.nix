@@ -14,20 +14,10 @@ let
   '';
 
   widgets = {
-    sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7]:#{session_name}'';
-    gitIcon = ''#[default,fg=green]#([ -d .git ] && echo "")'';
-    # Branch name recolored (yellow, bold) when the branch is behind
-    # the default branch (branch.<name>.behindDefault from git-pr-sync).
-    # Self-contained styles on both paths; detached HEAD falls back to
-    # the plain rev-parse output (branch.HEAD.* is never set).
-    gitBranch = ''#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null) && [ -n "$B" ] && D=$(git config "branch.$B.behindDefault" 2>/dev/null || true) && { [ -n "$D" ] && echo "#[fg=yellow,dim,bold]$B" || echo "#[fg=green]$B"; })'';
-    baseInfo = ''#[fg=green,dim,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --short HEAD 2>/dev/null) && [ -n "$B" ] && BASE=$(git config "branch.$B.base" 2>/dev/null) && [ -n "$BASE" ] && PR=$(git config "branch.$B.pr" 2>/dev/null || true) && BB=$(git config "branch.$B.behindBase" 2>/dev/null || true) && echo "$([ -n "$PR" ] && printf "#%s " "$PR")#[fg=white,nobold,dim]-> #[fg=$([ -n "$BB" ] && echo "yellow" || echo "white"),bold]$BASE" || echo "")'';
-    # Active cue context associated with the current Git branch. Hides itself
-    # when the directory is not a repository or the branch has no context.
-    cueContext = ''#[fg=colour15,bold]#(cd #{pane_current_path}; B=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) && [ -n "$B" ] && git config "branch.$B.cue-context" 2>/dev/null || true)'';
+    sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7,nobold]:#{session_name}'';
   };
 
-  statusLeft = with widgets; '' ${sessionName} ${cueContext} ${gitIcon} ${gitBranch} ${baseInfo} '';
+  statusLeft = '' ${widgets.sessionName}#(_tmux_status-repo #{q:pane_current_path}) '';
 in
 {
   home.packages = with pkgs; [
@@ -73,13 +63,13 @@ in
 
       # copy active pane's git branch to buffer + system clipboard
       # (prefix b; prefix y is taken by tmux-yank's copy-line)
-      bind-key b run-shell -b "_tmux_copy-branch '#{pane_current_path}'"
+      bind-key b run-shell -b "_tmux_copy-branch #{q:pane_current_path}"
 
       # copy active pane's base PR branch to buffer + system clipboard
-      bind-key B run-shell -b "_tmux_copy-pr-base '#{pane_current_path}'"
+      bind-key B run-shell -b "_tmux_copy-pr-base #{q:pane_current_path}"
 
       # copy active pane's pwd to buffer + system clipboard
-      bind-key p run-shell -b "_tmux_copy-pwd '#{pane_current_path}'"
+      bind-key p run-shell -b "_tmux_copy-pwd #{q:pane_current_path}"
 
       # copy active pane's active cue context address to buffer + system clipboard
       bind-key t run-shell -b "_tmux_copy-cue-context #{q:pane_current_path}"

@@ -1,6 +1,7 @@
 { pkgs, ... }:
 
 [
+  (import ./status-repo.nix { inherit pkgs; })
   (import ./git-repo.nix { inherit pkgs; })
   (import ./copy-branch.nix { inherit pkgs; })
   (import ./copy-pr-base.nix { inherit pkgs; })
