@@ -24,17 +24,60 @@ def ticket-to-md [data: record] {
     | $"# [($ticket)] ($in.0.value)\n\n---\n\n## Description\n\n($in.1.value)\n\n## Technical Notes\n\n($in.2.value)"
 }
 
-export def "ticket save" [ticket?: string, --json] {
+# Ensure the scope-wide `jira` context exists. `cue context create` has no
+# idempotency flag and exits 1 on an existing context, so the check is ours.
+def ensure-jira-context [] {
+    let listed = do { cue context list } | complete
+
+    if $listed.exit_code != 0 {
+        error make {msg: $"cue context list failed: ($listed.stderr | str trim)"}
+    }
+
+    if ($listed.stdout | lines | any {|slug| ($slug | str trim) == "jira"}) {
+        return
+    }
+
+    let created = do {
+        (
+            cue context create jira
+                --kind reference
+                --title "Jira"
+                --description "Mirror of Jira tickets, epics and sprints"
+        )
+    } | complete
+
+    if $created.exit_code != 0 {
+        error make {msg: $"cue context create jira failed: ($created.stderr | str trim)"}
+    }
+}
+
+# Mirror a Jira ticket into the `jira` context as
+# `spec/tickets/<TICKET>.md`.
+#
+# One canonical copy, referenced from every context that works the ticket.
+# This deliberately creates no work context: a ticket may be served by a
+# review, a design and a build context at once, and which of those it needs
+# is unknown at fetch time, so the mirror must not assume a shape.
+#
+# Refetching an existing mirror requires --force, and `cue add` replaces the
+# file wholesale, so `created_at` is re-stamped to the refetch time.
+export def "ticket save" [ticket?: string, --force] {
     let ticket = if $ticket != null {
         $ticket
     } else {
         spabreaks_jira_ticket_from_branch
     }
 
-    let data = ticket fetch $ticket
-    let content = if $json { $data } else { ticket-to-md $data }
+    ensure-jira-context
 
-    $content | cue add -t spec --root $"tickets/($ticket).md" --task master
+    let content = ticket-to-md (ticket fetch $ticket)
+    let url = $"($env.JIRA_URL)/browse/($ticket)"
+    let overwrite = if $force { ["--force"] } else { [] }
+
+    (
+        $content
+        | cue add -t spec --context jira $"tickets/($ticket).md" -f $"url=($url)" ...$overwrite
+    )
 }
 
 export def "ticket fetch" [ticket?: string] {
