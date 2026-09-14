@@ -17,6 +17,27 @@ return {
       --- Add additional capabilities supported by nvim-cmp
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      -- Local prototype: rebuild this binary after changing cue-lsp.
+      local cue_store = vim.fs.normalize(vim.fn.fnamemodify(
+        vim.env.CUE_STORE or (vim.env.HOME .. "/cue"), ":p"
+      )):gsub("/+$", "")
+      vim.lsp.config.cue_lsp = {
+        cmd = {
+          "/home/pl/code/palekiwi-labs/cue/worktrees/cue-lsp-prototype/target/debug/cue-lsp",
+          "--store", cue_store,
+        },
+        filetypes = { "markdown" },
+        root_dir = function(bufnr, on_dir)
+          local path = vim.fs.normalize(vim.api.nvim_buf_get_name(bufnr))
+          if vim.startswith(path, cue_store .. "/") then
+            on_dir(cue_store)
+          end
+        end,
+        on_attach = on_attach,
+        capabilities = capabilities,
+        flags = lsp_flags,
+      }
+
       vim.lsp.config.cssls = {
         capabilities = require('cmp_nvim_lsp').default_capabilities(
           vim.lsp.protocol.make_client_capabilities()
@@ -118,6 +139,7 @@ return {
         flags = lsp_flags,
       }
 
+      vim.lsp.enable('cue_lsp')
       vim.lsp.enable('eslint')
       vim.lsp.enable('lua_ls')
       vim.lsp.enable('nixd')
