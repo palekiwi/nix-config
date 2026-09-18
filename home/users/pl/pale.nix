@@ -4,6 +4,7 @@
   imports = [
     ../../programs/gui
     ../../programs/tui
+    ../../services
   ];
 
   config = {
@@ -26,5 +27,7 @@
     services.handy = {
       enable = true;
     };
+
+    services.cue-backup.enable = true;
   };
 }

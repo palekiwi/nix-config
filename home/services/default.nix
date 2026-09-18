@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  imports = [ ./cue-backup.nix ];
+}

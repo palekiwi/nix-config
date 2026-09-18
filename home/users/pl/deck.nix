@@ -4,6 +4,7 @@
   imports = [
     ../../programs/gui
     ../../programs/tui
+    ../../services
   ];
 
   config = {
@@ -22,5 +23,7 @@
       oss.enable = true;
       spabreaks.enable = true;
     };
+
+    services.cue-backup.enable = true;
   };
 }

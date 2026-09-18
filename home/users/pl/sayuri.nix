@@ -17,10 +17,13 @@
       kitty.enable = true;
       spabreaks.enable = true;
     };
+
+    services.cue-backup.enable = true;
   };
 
   imports = [
     ../../programs/gui
     ../../programs/tui
+    ../../services
   ];
 }
