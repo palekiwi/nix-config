@@ -145,6 +145,7 @@ in
       gnumake
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       lastpass-cli
+      sb-scripts
       sops
       terraform-ls
     ] ++ lib.optionals config.gui [

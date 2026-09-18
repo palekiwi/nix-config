@@ -58,11 +58,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789365160,
-        "narHash": "sha256-FKgxAHhFSKLoVFPVahlsIa7jpmXP+ToQwaXz4g6tqE4=",
+        "lastModified": 1789460965,
+        "narHash": "sha256-SjaQrMGy8quboUWO3t3CVtqNQBL3cm4QsPhjna6p1Rg=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "c31f5353366b7ef026b9a3e3480f3221777c9536",
+        "rev": "7f3becbc01633db79fa3737d929654e2f4454e63",
         "type": "github"
       },
       "original": {
@@ -173,6 +173,24 @@
     "flake-utils_3": {
       "inputs": {
         "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_4": {
+      "inputs": {
+        "systems": "systems_5"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -322,7 +340,8 @@
         "handy": "handy",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "sb-scripts": "sb-scripts"
       }
     },
     "rust-analyzer-src": {
@@ -357,6 +376,27 @@
         "ref": "nightly",
         "repo": "rust-analyzer",
         "type": "github"
+      }
+    },
+    "sb-scripts": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789377165,
+        "narHash": "sha256-0tbL/El0wuL+MzKJofvfITg8WDkM/vQWbu0qbskv11U=",
+        "ref": "refs/heads/main",
+        "rev": "659a15dfc4275bd352bea7830823be213eb3da0b",
+        "revCount": 59,
+        "type": "git",
+        "url": "ssh://git@github.com/spabreaks/sb-scripts.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/spabreaks/sb-scripts.git"
       }
     },
     "systems": {
@@ -405,6 +445,21 @@
       }
     },
     "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

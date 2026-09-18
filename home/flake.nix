@@ -20,6 +20,10 @@
       url = "github:palekiwi-labs/git-pr-sync";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sb-scripts = {
+      url = "git+ssh://git@github.com/spabreaks/sb-scripts.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     handy = {
       url = "github:cjpais/Handy/14cfed8aca5d557e0d14f596846bc5bd3fc4b50f";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,6 +41,7 @@
               cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
               cue = inputs.cue.packages.x86_64-linux.cue;
               git-pr-sync = inputs.git-pr-sync.packages.x86_64-linux.git-pr-sync;
+              sb-scripts = inputs.sb-scripts.packages.${system}.default;
               handy = inputs.handy.packages.x86_64-linux.default;
             })
           ];
