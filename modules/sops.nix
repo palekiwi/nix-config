@@ -17,6 +17,7 @@
   sops.secrets."opencode/api_key" = { owner = "pl"; };
   sops.secrets."zai_coding_plan/api_key" = { owner = "pl"; };
   sops.secrets."context7/api_key" = { owner = "pl"; };
+  sops.secrets."typesafe/api_key" = { owner = "pl"; };
   sops.secrets."taskwarrior/sync/encryption_secret" = { owner = "pl"; };
 
   sops.secrets."spabreaks/airbrake_auth_token" = { owner = "pl"; };
