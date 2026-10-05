@@ -8,11 +8,7 @@ local git_helpers = require('config.utils.helpers.git')
 
 local function parse_git_diff()
   -- Get git diff output since the merge-base of the base branch
-  local success, base = pcall(git_helpers.last_commit_on_base)
-  if not success then
-    base = vim.g.git_base or vim.g.git_master or "master"
-  end
-
+  local base = git_helpers.diff_base()
   local diff_cmd = "git diff " .. base .. " --no-prefix --unified=3"
   local diff_output = vim.fn.system(diff_cmd)
 

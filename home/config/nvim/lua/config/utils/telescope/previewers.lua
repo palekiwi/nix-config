@@ -285,10 +285,7 @@ M.file_diff_previewer = previewers.new_buffer_previewer({
   define_preview = function(self, entry, _status)
     -- diff from the merge-base of the (remote-resolved) base branch, the
     -- same starting point the changed-files pickers list files from
-    local success, base = pcall(git_helpers.last_commit_on_base)
-    if not success then
-      base = vim.g.git_base or vim.g.git_master or "master"
-    end
+    local base = git_helpers.diff_base()
 
     local diff_output = vim.fn.system(
       "git --no-pager diff --color=never --unified=3 " .. base .. '..HEAD ' .. entry.value

@@ -10,7 +10,7 @@ local function toggle_git_tree(action, toggle)
     position = "right",
     toggle = toggle,
     source = "git_status",
-    git_base = vim.g.git_base
+    git_base = git_helpers.diff_base()
   })
 end
 
@@ -33,8 +33,9 @@ local function set_base_branch(branch)
 
   vim.g.git_base = base_branch
 
-  gs.change_base(base_branch, true)
-  -- toggle_git_tree("show", false)
+  -- anchor gitsigns to the merge-base of the resolved base so gutter
+  -- hunks show this branch's changes, not base-branch noise
+  gs.change_base(git_helpers.diff_base(), true)
 
   vim.notify("Base branch: " .. base_branch)
 end
