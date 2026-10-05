@@ -159,7 +159,7 @@ M.changed_files_since = function(opts)
     }, true, {})
   end
 
-  local base = vim.g.git_base or vim.g.git_master or "master"
+  local base = git_helpers.resolve_base_ref(vim.g.git_base or vim.g.git_master or "master")
   local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "...HEAD --no-merges")
 
   local files = {};
@@ -191,7 +191,7 @@ M.diffview_since = function()
     }, true, {})
   end
 
-  local base = vim.g.git_base or vim.g.git_master or "master"
+  local base = git_helpers.resolve_base_ref(vim.g.git_base or vim.g.git_master or "master")
   local commits = vim.fn.systemlist("git rev-list --ancestry-path " .. base .. "...HEAD --no-merges")
 
   local files = {};
@@ -304,7 +304,7 @@ M.git_pr_commits = function(opts)
     command = "git log -n 1000 --pretty=format:'%h %ai %<(20)%an %s' " .. default_branch
     prompt_title = "Commits on " .. default_branch
   else
-    local base_branch = vim.g.git_base
+    local base_branch = git_helpers.resolve_base_ref(vim.g.git_base or vim.g.git_master or "master")
     command = "git log --pretty=format:'%h %ai %<(20)%an %s' " .. "HEAD ^" .. base_branch
     prompt_title = "PR Commits"
   end
