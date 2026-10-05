@@ -1,5 +1,6 @@
 local gs = require('gitsigns')
 local nt = require('neo-tree.command')
+local git_helpers = require('config.utils.helpers.git')
 
 local M = {}
 
@@ -45,14 +46,14 @@ M.toggle_git_tree = function(action) toggle_git_tree(action, true) end
 M.diffthis = function(vertical) gs.diffthis(nil, { vertical = vertical }) end
 
 M.diffview_this = function(vertical)
-  local base = vim.g.git_base or vim.g.git_master or "master"
+  local base = git_helpers.resolve_base_ref(vim.g.git_base or vim.g.git_master or "master")
   vim.cmd("DiffviewOpen " .. base .."...HEAD")
 end
 
 ---@param range boolean
 M.diffview_file_history = function(range)
   if range then
-    local base = vim.g.git_base or vim.g.git_master or "master"
+    local base = git_helpers.resolve_base_ref(vim.g.git_base or vim.g.git_master or "master")
     vim.cmd("DiffviewFileHistory % --range=" .. base .. "...HEAD")
   else
     vim.cmd("DiffviewFileHistory %")
@@ -70,10 +71,14 @@ end
 M.hunks_to_loclist = function() gs.setqflist("attached", { use_location_list = true, open = true }) end
 
 M.changed_files_to_loclist = function()
-  local base_branch = vim.g.git_base or vim.g.git_master or "master"
-  local command = "git diff --name-only --diff-filter=d $(git merge-base HEAD " .. base_branch .. " )"
+  local success, merge_base = pcall(git_helpers.last_commit_on_base)
 
-  local list = vim.fn.systemlist(command)
+  if not success then
+    vim.notify("Changed files: " .. merge_base, vim.log.levels.ERROR)
+    return
+  end
+
+  local list = vim.fn.systemlist("git diff --name-only --diff-filter=d " .. merge_base)
 
   vim.fn.setloclist(0, {}, 'r', { title = 'Changed files', efm = '%f', lines = list })
 
