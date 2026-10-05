@@ -65,6 +65,20 @@ M.last_commit_on_base = function()
   return vim.trim(last_commit_on_base)
 end
 
+--- Merge-base of HEAD and the resolved base branch -- the anchor for
+--- "what changed on this branch". Falls back to the raw base when git
+--- fails (not a repo, unborn HEAD, bad ref, ...).
+---@return string
+M.diff_base = function()
+  local success, result = pcall(M.last_commit_on_base)
+
+  if success then
+    return result
+  end
+
+  return vim.g.git_base or vim.g.git_master or "master"
+end
+
 M.current_git_branch = function()
   local current_branch = vim.fn.system({
     "git",
