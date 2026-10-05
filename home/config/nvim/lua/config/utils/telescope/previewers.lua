@@ -1,5 +1,6 @@
 local previewers = require "telescope.previewers"
 local utils = require('telescope.previewers.utils')
+local git_helpers = require('config.utils.helpers.git')
 
 local ns_id = vim.api.nvim_create_namespace("custom_telescope_previewers")
 
@@ -282,10 +283,12 @@ M.diff_previewer = previewers.new_buffer_previewer({
 M.file_diff_previewer = previewers.new_buffer_previewer({
   title = "File Diff",
   define_preview = function(self, entry, _status)
-    local base_branch = vim.g.git_base or vim.g.git_master or "master"
+    -- diff from the merge-base of the (remote-resolved) base branch, the
+    -- same starting point the changed-files pickers list files from
+    local base = git_helpers.diff_base()
 
     local diff_output = vim.fn.system(
-      "git --no-pager diff --color=never --unified=3 " .. base_branch .. '..HEAD ' .. entry.value
+      "git --no-pager diff --color=never --unified=3 " .. base .. '..HEAD ' .. entry.value
     )
 
     local lines = {}
