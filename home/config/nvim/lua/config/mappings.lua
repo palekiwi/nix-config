@@ -44,7 +44,7 @@ local base = {
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                            desc = "[Loclist] Next" },
   -- AI / Cue
   { "<C-t>",           function() cue_utils.pick_contexts({ pinned = true, tree = true }) end,      desc = "[Cue] Pinned contexts (tree)" },
-  { "<C-a>",           function() cue_utils.pick_contexts() end,                                    desc = "[Cue] All contexts" },
+  { "<C-a>",           function() cue_utils.pick_contexts({ tree = true }) end,                        desc = "[Cue] All contexts (tree)" },
   { "<A-a>",           cue_utils.open_context,                                                      desc = "[Cue] Open active context" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
   { "<C-s>",           cue_utils.pick_active_context_artifacts,                                    desc = "[Cue] Artifacts (active context)" },
