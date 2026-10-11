@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cast = {
-      url = "github:palekiwi-labs/cast/v0.2.0-rc.2";
+      url = "github:palekiwi-labs/cast/spike/herdr-service-pivot";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue = {
