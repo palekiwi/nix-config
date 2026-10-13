@@ -9,6 +9,7 @@ dir_length = 2
 [[session]]
 name = "spabreaks/spabreaks-org"
 path = "~/code/spabreaks/spabreaks-org"
+startup_command = "_tmux_spabreaks_org"
 
 [[session]]
 name = "spabreaks/spabreaks"
@@ -146,11 +147,6 @@ startup_command = "_tmux_git-repo"
 [[session]]
 name = "nix-config"
 path = "~/nix-config"
-startup_command = "_tmux_git-repo"
-
-[[session]]
-name = "config-opencode"
-path = "~/.config/opencode"
 startup_command = "_tmux_git-repo"
 
 [[session]]

@@ -8,6 +8,7 @@
   (import ./copy-pwd.nix { inherit pkgs; })
   (import ./copy-cue-context.nix { inherit pkgs; })
   (import ./spabreaks-spabreaks-dev.nix { inherit pkgs; })
+  (import ./spabreaks-org.nix { inherit pkgs; })
   (import ./spabreaks-vrs-dev.nix { inherit pkgs; })
   (import ./spabreaks-blog-dev.nix { inherit pkgs; })
   (import ./spabreaks-contacts-dev.nix { inherit pkgs; })
