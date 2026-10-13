@@ -10,7 +10,7 @@
     ./git.nix
     ./nushell.nix
     ./nvim.nix
-    ./opencode.nix
+    ./cast.nix
     ./oss.nix
     ./scripts.nix
     ./sesh.nix

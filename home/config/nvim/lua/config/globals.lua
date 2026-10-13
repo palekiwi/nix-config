@@ -1,11 +1,3 @@
-local function set_opencode_port()
-  local handle = io.popen("cast port opencode")
-  if handle then
-    vim.g.opencode_port = handle:read("*a"):gsub("%s+", "")
-    handle:close()
-  end
-end
-
 local function set_master_branch_name()
   local handle = io.popen("get_master_branch_name")
   local master_branch = "master"
@@ -42,7 +34,6 @@ local function set_pr_number()
   end
 end
 
-set_opencode_port()
 set_master_branch_name()
 set_git_base()
 set_pr_number()

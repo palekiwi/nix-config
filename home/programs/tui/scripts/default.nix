@@ -13,7 +13,6 @@
   (import ./git_hooks_sync.nix { inherit pkgs; })
   (import ./hass.nix { inherit pkgs; })
   pkgs.git-pr-sync
-  (import ./sync_opencode_extra_config.nix { inherit pkgs; })
   (import ./yt-subs.nix { inherit pkgs lib config; })
 ]
 ++ (import ./ai { inherit pkgs; })

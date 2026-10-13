@@ -13,8 +13,6 @@ local qf_utils = require('config.utils.quickfix')
 local telescope_utils = require('config.utils.telescope')
 local ctx_clipboard = require('config.utils.context_clipboard')
 
-local oc = require("opencode")
-
 local set = vim.keymap.set
 
 set({ 'n', 'v' }, '<Down>', 'gj')
@@ -80,24 +78,7 @@ local base = {
   { "<space>nd",       function() cue_utils.add_with_title("doc") end,                              desc = "Doc" },
   { "<space>ne",       function() cue_utils.add_with_path("trace") end,                            desc = "Trace" },
   { "<space>nu",       "<cmd>CueAdd<cr>",                                                           desc = "UI (Add)" },
-  { "<space>o",        group = "opencode" },
-  { "<space>oa",       function() oc.ask() end,                                                     desc = "Ask" },
-  { "<space>oi",       function() oc.ask("@this: ", { submit = true }) end,                         desc = "Ask about this" },
-  { "<space>of",       function() oc.ask("@buffer: ", { submit = true }) end,                       desc = "Ask about buffer" },
-  { "<space>oF",       function() oc.prompt("@buffer ") end,                                        desc = "Add buffer" },
-  { "<space>od",       function() oc.ask("@diff: ", { submit = true }) end,                         desc = "Ask about diff" },
-  { "<space>on",       function() oc.command("session.new") end,                                    desc = "New session" },
-  { "<space>oe",       function() oc.command("agent.cycle") end,                                    desc = "Cycle agent" },
-  { "<space>os",       function() oc.select() end,                                                  desc = "Select prompt" },
-  { "<space>oy",       function() oc.command("messages_copy") end,                                  desc = "Copy last message" },
   { "<space>or",       telescope_utils.file_review,                                                 desc = "File review" },
-  { "<space>op",       group = "pr" },
-  { "<space>ope",      function() oc.prompt("/pr:explain", { submit = true }) end,                  desc = "PR: Explain" },
-  { "<space>opr",      function() oc.prompt("/pr:fusion-review", { submit = true }) end,            desc = "PR: Fusion Review" },
-  { "<space>o+",       group = "context" },
-  { "<space>o+t",      function() oc.prompt("@this") end,                                           desc = "Add this" },
-  { "<space>o+f",      function() oc.prompt("@buffer") end,                                         desc = "Add buffer" },
-  { "<space>o+g",      function() oc.prompt("@grapple") end,                                        desc = "Add grapple" },
   { "<space>m",        group = "cue" },
   { "<space>mc",       cue_utils.open_context,                                                      desc = "Open context" },
   { "<space>mC",       cue_utils.pick_context,                                                      desc = "Pick context" },

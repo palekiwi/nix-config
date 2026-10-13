@@ -94,7 +94,6 @@ in
 
       "super + space; c; c" = "${switchToSession} config-cast";
       "super + space; c; n" = "${switchToSession} nix-config";
-      "super + space; c; o" = "${switchToSession} config-opencode";
       "super + space; c; p" = "${switchToSession} config-pi";
 
       "super + space; m; d" = "${switchToSession} spabreaks/my-account/dev";
