@@ -4,10 +4,10 @@
     isNormalUser = true;
     description = "pl";
     extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.zsh;
+    shell = pkgs.nushell;
   };
 
-  programs.zsh.enable = true;
+  environment.shells = [ pkgs.nushell ];
 
   nixpkgs.config.allowUnfree = true;
 
