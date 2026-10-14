@@ -111,7 +111,6 @@ client.connect_signal("unfocus",
   end
 )
 
--- handler clients that have emitted a notification through zsh-notify
 -- client.connect_signal("property::urgent", function(c)
 --   Urgent = c
 -- end)

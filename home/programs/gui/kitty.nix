@@ -15,7 +15,6 @@ in
 
     programs.kitty = {
       enable = true;
-      shellIntegration.enableZshIntegration = false;
       shellIntegration.mode = null;
 
       settings = {

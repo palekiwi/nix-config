@@ -7,7 +7,6 @@
     enable = true;
     enableBashIntegration = true;
     enableNushellIntegration = true;
-    enableZshIntegration = true;
     settings = {
       add_newline = true;
       character = {

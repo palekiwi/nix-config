@@ -4,10 +4,8 @@
   programs = {
       direnv = {
         enable = true;
-        enableZshIntegration = false;
+        enableNushellIntegration = true;
         nix-direnv.enable = true;
       };
-
-      zsh.enable = false;
     };
 }
