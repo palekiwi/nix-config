@@ -1,5 +1,5 @@
 {
-  "use_flake": false,
+  "project_shell": ".#default",
   "extra_data_volumes": {
     "cargo": {
       "source": "/home/pl/code/palekiwi-labs/cue.nvim",

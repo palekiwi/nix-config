@@ -127,6 +127,7 @@
           lua-language-server
           nixd
           nixfmt-rfc-style
+          nushell
         ];
       };
     };
