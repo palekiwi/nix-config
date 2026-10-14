@@ -13,15 +13,20 @@ def gprc [...args] {
     git-pr-sync
 }
 
-def pitr [] {
-    gh pr edit --add-reviewer palekiwi
-    gh pr comment --body 'ITR'
+def pitr [pr?: int] {
+    let target = if $pr == null { [] } else { [$pr] }
+    gh pr edit ...$target --add-reviewer palekiwi
+    gh pr comment ...$target --body 'ITR'
+}
+
+def pgrev [pr?: int] {
+    let target = if $pr == null { [] } else { [$pr] }
+    gh pr comment ...$target --body "/gemini review"
 }
 
 alias p = gh_prs
 alias pp = gh_prs -a palekiwi
 alias pP = gh_prs -A palekiwi
-alias pgrev = gh pr comment --body "/gemini review"
 alias plgtm = gh pr review --approve --body 'LGTM'
 alias pre = gh_pr_create
 alias prl = gh_pr_link
