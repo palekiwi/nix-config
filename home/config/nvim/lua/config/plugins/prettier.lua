@@ -13,7 +13,9 @@ return {
           "javascriptreact",
           "json",
           "less",
-          "markdown",
+          -- "markdown" removed: mdformat via conform.nvim owns markdown now
+          -- (see lua/config/plugins/conform.lua); a repo .prettierrc must not
+          -- hijack markdown away from the gw/<leader>f pipeline.
           "scss",
           "typescript",
           "typescriptreact",
