@@ -1,5 +1,6 @@
 #pragma once
 
+#define MASTER_RIGHT
 #define TAPPING_TERM 175
 #define TAPPING_FORCE_HOLD
 #define PERMISSIVE_HOLD
