@@ -494,6 +494,206 @@ export def "pr review" [
     }
 }
 
+# Post replies to PR review comments from a manifest (YAML or JSON):
+#
+#   repo: owner/name
+#   pr: 123
+#   replies:              # reply to existing review comments
+#     - comment_id: 456
+#       commits: [abc1234, "def5678...0a1b2c3"]   # optional
+#       body: |                                  # optional
+#         Explanation.
+#   comments:             # post new comments on the PR diff
+#     - path: src/foo.rs
+#       line: 12          # right side by default; side: LEFT for the old one
+#       body: |
+#
+# Each reply needs commits, body, or both. The posted text is the commits
+# (one per line, as written), a blank line, then the body. Before posting
+# anything it checks:
+# - every comment id belongs to the PR; replies go to the thread root;
+# - every commit (both ends of a range) prefix-matches exactly one PR
+#   commit; one failure aborts the whole run;
+# - a reply whose text already exists from you in the thread is skipped.
+export def "review comments post" [
+    manifest: path
+    --dry-run (-n) # Print what would be posted without posting
+    --yes (-y)     # Post without asking for confirmation
+] {
+    let m = open $manifest
+    mut errors = []
+
+    let extra = ($m | columns | where $it not-in [repo pr replies comments])
+    if not ($extra | is-empty) {
+        $errors = $errors | append $"unknown manifest key\(s\): ($extra | str join ', ')"
+    }
+    for r in ($m.replies? | default []) {
+        let extra = ($r | columns | where $it not-in [comment_id commits body])
+        if not ($extra | is-empty) {
+            $errors = $errors | append $"reply entry has unknown key\(s\): ($extra | str join ', ') \(dropped by GitHub? use comment_id/commits/body\)"
+        }
+        if ($r.comment_id? | is-empty) {
+            $errors = $errors | append "reply entry without comment_id"
+        }
+    }
+    for c in ($m.comments? | default []) {
+        let extra = ($c | columns | where $it not-in [path line side body])
+        if not ($extra | is-empty) {
+            $errors = $errors | append $"comment entry has unknown key\(s\): ($extra | str join ', ')"
+        }
+        if ($c.path? | is-empty) or ($c.line? | is-empty) {
+            $errors = $errors | append $"comment entry missing path or line"
+        }
+    }
+    let repo = $m.repo
+    let pr = $m.pr
+
+    let gh_json = {|endpoint|
+        let r = (do { gh api --paginate --slurp $endpoint } | complete)
+        if $r.exit_code != 0 { error make { msg: $"gh api ($endpoint): ($r.stderr)" } }
+        $r.stdout | from json | flatten
+    }
+
+    let me_r = (do { gh api user --jq .login } | complete)
+    if $me_r.exit_code != 0 { error make { msg: $me_r.stderr } }
+    let me = $me_r.stdout | str trim
+
+    let shas = (do $gh_json $"repos/($repo)/pulls/($pr)/commits") | get sha
+    # PR commits are oldest-first; the head is the PR's head sha.
+    let pr_r = (do { gh api $"repos/($repo)/pulls/($pr)" --jq .head.sha } | complete)
+    if $pr_r.exit_code != 0 { error make { msg: $pr_r.stderr } }
+    let head = $pr_r.stdout | str trim
+    let comments = do $gh_json $"repos/($repo)/pulls/($pr)/comments"
+
+    mut plan = []
+    mut new_plan = []
+    for r in ($m.replies? | default []) {
+        let id = $r.comment_id
+        let commits = $r.commits? | default [] | each {|c| $c | into string | str trim } | where $it != ""
+        let body = $r.body? | default "" | into string | str trim
+
+        if ($commits | is-empty) and ($body | is-empty) {
+            $errors = $errors | append $"comment ($id): needs commits, body, or both"
+            continue
+        }
+        let target = $comments | where id == $id
+        if ($target | is-empty) {
+            $errors = $errors | append $"comment ($id): not a review comment on PR ($pr)"
+            continue
+        }
+        let root = $target.0.in_reply_to_id? | default $id
+
+        let shas_idx = ($shas | enumerate | rename idx sha)
+        for ref in ($commits | each {|c| $c | split row "..." } | flatten | where $it != "") {
+            let t = $ref | str trim --char '.' | str downcase
+            let hits = $shas_idx | where {|s| $s.sha | str starts-with $t }
+            if ($t !~ '^[0-9a-f]{7,40}$') {
+                $errors = $errors | append $"comment ($id): '($ref)' is not a commit hash \(7-40 hex chars\)"
+            } else if ($hits | length) > 1 {
+                $errors = $errors | append $"comment ($id): ($ref) is ambiguous among PR commits"
+            } else if ($hits | is-empty) {
+                $errors = $errors | append $"comment ($id): ($ref) is not a commit of PR ($pr) \(not pushed, or rebased?\)"
+            }
+            $hits | each {|h| $h.idx }
+        }
+        # Range order: PR commits are oldest-first, so index(first) must be below index(last).
+        let idxs = ($commits | where {|c| ($c | str contains "...") } | each {|c|
+            let ends = ($c | split row "..." | each {|t| $t | str trim --char '.' | str downcase })
+            $ends | each {|t| $shas_idx | where {|s| $s.sha | str starts-with $t } | get -o idx | first }
+        } | flatten)
+        if (($idxs | length) mod 2) == 0 and ($idxs | length) > 0 {
+            let pairs = ($idxs | chunks 2)
+            for pair in $pairs {
+                if $pair.0 >= $pair.1 {
+                    $errors = $errors | append $"comment ($id): range is reversed \(older...newer expected\)"
+                }
+            }
+        }
+
+        let text = [($commits | str join "\n") $body] | where $it != "" | str join "\n\n"
+        let dup_remote = $comments | any {|c|
+            ($c.id == $root or ($c.in_reply_to_id? == $root)) and $c.user.login == $me and ($c.body | str trim) == $text
+        }
+        if ($plan | any {|p| $p.root == $root and $p.text == $text }) {
+            $errors = $errors | append $"comment ($id): duplicate reply \(same thread, same text\) within this manifest"
+        }
+        $plan = $plan | append {
+            comment_id: $id
+            root: $root
+            author: $target.0.user.login
+            path: $target.0.path
+            text: $text
+            skip: $dup_remote
+        }
+    }
+
+    for c in ($m.comments? | default []) {
+        let body = $c.body? | default "" | into string | str trim
+        if ($body | is-empty) {
+            $errors = $errors | append $"comment on ($c.path):($c.line): empty body"
+            continue
+        }
+        let dup = ($comments | any {|x| ($x.user.login == $me) and ($x.path == $c.path) and (($x.body | str trim) == $body) and (($x.line? | default ($x.original_line? | default null)) == $c.line) })
+        $new_plan = $new_plan | append {
+            path: $c.path
+            line: $c.line
+            side: ($c.side? | default "RIGHT")
+            body: $body
+            skip: $dup
+        }
+    }
+    let plan = ($plan | append ($new_plan | each {|p| {new: true} | merge $p}))
+
+    for p in $plan {
+        let status = if $p.skip { $"(ansi yellow)[skip: already posted](ansi reset)" } else { "" }
+        let head = if ($p.new? | default false) {
+            $"(ansi cyan)new comment(ansi reset)"
+        } else {
+            let via = if $p.root != $p.comment_id { $" -> thread ($p.root)" } else { "" }
+            $"(ansi cyan)reply(ansi reset) to ($p.comment_id)($via) by (ansi green)($p.author)(ansi reset)"
+        }
+        print $""
+        print $"── ($head) ($status)"
+        let loc = if ($p.new? | default false) { $"($p.path):($p.line) ($p.side)" } else { $p.path }
+        print $"  (ansi blue)($loc)(ansi reset)"
+        let content = if ($p.new? | default false) { $p.body } else { $p.text }
+        print ($content | lines | each {|l| $"  ($l)" } | str join "\n")
+    }
+
+    if not ($errors | is-empty) {
+        error make { msg: ($errors | str join "\n") }
+    }
+
+    let todo = $plan | where skip == false
+    if $dry_run {
+        print $"\nDry run: ($todo | length) to post, ($plan | length) total."
+        return
+    }
+    if not $yes {
+        let answer = (input $"Post ($todo | length) of ($plan | length) to ($repo)#($pr)? [y/N] ")
+        if ($answer | str downcase | str substring 0..0) != "y" {
+            print "Aborted."
+            return
+        }
+    }
+
+    for p in $todo {
+        let res = if ($p.new? | default false) {
+            do {
+                gh api --method POST $"repos/($repo)/pulls/($pr)/comments" -f $"commit_id=($head)" -f $"path=($p.path)" -F $"line=($p.line)" -f $"side=($p.side)" -f $"body=($p.body)" --jq .html_url
+            } | complete
+        } else {
+            do {
+                gh api --method POST $"repos/($repo)/pulls/($pr)/comments/($p.root)/replies" -f $"body=($p.text)" --jq .html_url
+            } | complete
+        }
+        if $res.exit_code != 0 {
+            error make { msg: $"posting ($p.comment_id? | default $"($p.path):($p.line)") failed: ($res.stderr)" }
+        }
+        print ($res.stdout | str trim)
+    }
+}
+
 # TODO:
 # - [] display as threads with grouped replies
 # - [] fix the diff size, show only the relevant few lines sam as what the github UI shows
