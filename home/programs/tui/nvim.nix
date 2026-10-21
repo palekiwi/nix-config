@@ -9,13 +9,17 @@
     extraPackages = with pkgs; [
       notmuch
       # Markdown structural formatter for conform.nvim (see
-      # lua/config/plugins/conform.lua). The three python packages enable the
-      # GFM / YAML frontmatter / footnote extensions, matching the nvf
-      # "mdformat" selector used in the cast sandbox.
-      mdformat
-      python3Packages.mdformat-gfm
-      python3Packages.mdformat-frontmatter
-      python3Packages.mdformat-footnote
+      # lua/config/plugins/conform.lua), wrapped the same way nvf's
+      # "mdformat" selector does: one python3 env bundling mdformat plus
+      # its GFM / YAML-frontmatter / footnote parser plugins. Without the
+      # single env, the bare mdformat binary cannot import the plugins and
+      # mangles frontmatter (parses the `---` block as setext headings).
+      (python3.withPackages (ps: with ps; [
+        mdformat
+        mdformat-gfm
+        mdformat-frontmatter
+        mdformat-footnote
+      ]))
     ];
 
     extraWrapperArgs = [ "--suffix" "LD_LIBRARY_PATH" ":" "${pkgs.notmuch}/lib" ];
