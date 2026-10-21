@@ -143,7 +143,8 @@ local globalkeys = gears.table.join(
   awful.key({ MODKEY }, "u",
     function()
       local list = awful.client.focus.history.list
-      local current_tag = client.focus.first_tag or nil
+      local current_tag = client.focus and client.focus.first_tag or nil
+      if not current_tag then return end
 
       for i = 2, #list do
         local c = list[i]
@@ -165,7 +166,8 @@ local globalkeys = gears.table.join(
       ---  naughty.destroy_all_notifications()
       ---else
       local list = awful.client.focus.history.list
-      local current_tag = client.focus.first_tag or nil
+      local current_tag = client.focus and client.focus.first_tag or nil
+      if not current_tag then return end
       local screen = awful.screen.focused()
 
       for i = 2, #list do
