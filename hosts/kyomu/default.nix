@@ -19,6 +19,7 @@
       ../../users/pl/default.nix
 
       ../../modules/cachix.nix
+      ../../modules/cue-syncthing.nix
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/sops.nix
