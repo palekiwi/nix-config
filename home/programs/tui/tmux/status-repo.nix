@@ -35,15 +35,27 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       esac
   done < <(git -C "$dir" config --local --null --get-regexp '^branch\..*\.(behindDefault|base|pr|behindBase|cue-context)$' 2>/dev/null)
 
+  # Truncate a plain string to <= max chars (appending … when cut), so
+  # tmux never has to trim across #[...] style escapes in status-left.
+  # All clip calls happen on unstyled text, before #[fg=...] wrapping.
+  clip() {
+      local s=$1 max=$2
+      if [ "''${#s}" -gt "$max" ]; then
+          printf '%s' "''${s:0:$((max - 1))}…"
+      else
+          printf '%s' "$s"
+      fi
+  }
+
   components=()
   if [ -n "$cue_context" ]; then
-      components+=("#[fg=colour15,bold]$cue_context")
+      components+=("#[fg=colour15,bold]$(clip "$cue_context" 32)")
   fi
 
   if [ "$behind_default" = "true" ]; then
-      components+=("#[fg=yellow,dim,bold]$branch")
+      components+=("#[fg=yellow,dim,bold]$(clip "$branch" 40)")
   else
-      components+=("#[fg=green]$branch")
+      components+=("#[fg=green]$(clip "$branch" 40)")
   fi
 
   if [ -n "$base" ]; then
@@ -52,6 +64,7 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       else
           base_color="white"
       fi
+      base=$(clip "$base" 24)
       if [ -n "$pr" ]; then
           components+=("#[fg=green,dim,bold]#$pr #[fg=white,nobold,dim]-> #[fg=$base_color,bold]$base")
       else
