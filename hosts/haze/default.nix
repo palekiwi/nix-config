@@ -1,4 +1,4 @@
-{ ... }:
+{ cast-haze, ... }:
 
 {
   imports =
@@ -13,6 +13,7 @@
       ./hardware-configuration.nix
       ./homeassistant.nix
       ./mosquitto.nix
+      ./nextcloud.nix
       ./postgres.nix
       ./sops.nix
       ./taskchampion.nix
@@ -38,6 +39,10 @@
       extraGroups = [ "dialout" ];
       linger = true;
     };
+
+    # Make the pinned cast available systemwide (the timer invokes it by
+    # absolute path, and haze has no pl@haze home-manager config to provide it).
+    environment.systemPackages = [ cast-haze ];
 
     environment.shellAliases = {
       gu = "gitui";
