@@ -140,19 +140,21 @@ startup_command = "make psql"
 #-------------------
 
 [[session]]
-name = "dotfiles"
-path = "~/dotfiles"
-startup_command = "_tmux_git-repo"
-
-[[session]]
 name = "nix-config"
 path = "~/nix-config"
 startup_command = "_tmux_git-repo"
 
 [[session]]
+name = "config-cast"
+path = "~/.config/cast"
+
+[[session]]
+name = "config-cue"
+path = "~/.config/cue"
+
+[[session]]
 name = "config-pi"
 path = "~/.pi"
-startup_command = "_tmux_git-repo"
 
 #-------------------
 #   --- notes ---
@@ -167,14 +169,6 @@ startup_command = "_tmux_git-repo"
 name = "notes-sb"
 path = "~/Nextcloud-sb/Notes"
 startup_command = "_tmux_git-repo"
-
-#-------------------
-#   --- configs ---
-#-------------------
-
-[[session]]
-name = "config-cast"
-path = "~/.config/cast"
 
 #-------------------
 #  --- palekiwi ---
