@@ -1,5 +1,22 @@
-{ ... }:
+{ config, lib, ... }:
 
+let
+  hostName = config.networking.hostName;
+
+  peers = {
+    pale = "TUYKCSW-XWA7FT2-VXXJV4K-NSTVIH4-BQPP5VR-G7ELV7Q-MVA7ZQG-HCE6NA2";
+    kyomu = "SO7T23M-A6PNWMN-2JL3GCY-6BRHNJF-KE4YNMN-VQYPQHM-VT2ZN4Q-LHVN3QF";
+    haze = "XK2UDDG-JGCUIUP-BECYJBJ-YP5FF7H-OWO3ACS-WTX25AG-GRH2ITJ-5DPQCQD";
+  };
+
+  # Hosts receiving the cue store. kyomu joins after pale <-> haze converges.
+  storeHosts = [
+    "pale"
+    "haze"
+  ];
+
+  others = lib.filterAttrs (name: _: name != hostName) peers;
+in
 {
   services.syncthing = {
     enable = true;
@@ -13,10 +30,23 @@
     overrideFolders = true;
 
     settings = {
-      devices = { };
-      folders = { };
+      devices = lib.mapAttrs (name: id: {
+        inherit id;
+        # Tailscale MagicDNS names; no discovery or relays.
+        addresses = [ "tcp://${name}:22000" ];
+      }) others;
+
+      folders.cue-store = {
+        enable = builtins.elem hostName storeHosts;
+        path = "/home/pl/cue";
+        type = "sendreceive";
+        devices = builtins.filter (name: name != hostName) storeHosts;
+        # Declared paused; unpause deliberately after checking each replica.
+        paused = true;
+      };
+
       options = {
-        listenAddresses = [ "tcp://127.0.0.1:22000" ];
+        listenAddresses = [ "tcp://0.0.0.0:22000" ];
         globalAnnounceEnabled = false;
         localAnnounceEnabled = false;
         relaysEnabled = false;
@@ -26,14 +56,7 @@
     };
   };
 
-  # Bootstrap identities without creating Syncthing's default ~/Sync folder.
-  systemd.services.syncthing = {
-    environment.STNODEFAULTFOLDER = "true";
-    # The NixOS settings updater runs after first startup. Keep even that
-    # initial default configuration isolated until peers are configured.
-    serviceConfig = {
-      IPAddressDeny = "any";
-      IPAddressAllow = "localhost";
-    };
-  };
+  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 22000 ];
+
+  systemd.services.syncthing.environment.STNODEFAULTFOLDER = "true";
 }
