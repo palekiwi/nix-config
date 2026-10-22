@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, cast-haze, ... }:
 
 let
   namespaces = [ "cast" "cast-sb" ];
@@ -27,14 +27,13 @@ let
 
       # `cast` shells out to `docker`, which isn't on a service's default PATH.
       # Reference the configured daemon package so the CLI matches its version.
+      # `cast-haze` is invoked by absolute path below, so it needs no PATH entry.
       path = [
-        pkgs.nix
         config.virtualisation.docker.package
       ];
 
       script = ''
-        nix run github:palekiwi-labs/cast#cast -- \
-          run --headless opencode run "hi" --model "anthropic/claude-haiku-4-5"
+        ${cast-haze}/bin/cast run --headless opencode run "hi" --model "anthropic/claude-haiku-4-5"
       '';
     };
 
