@@ -1,14 +1,17 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   imports =
     [
+      ./desktop.nix
       ./firewall-docker.nix
       ./firewall-ygt.nix
       ./hardware-configuration.nix
+      ./input-method.nix
       ./locale.nix
       ./notifications-server.nix
       ./packages.nix
+      ./sound.nix
       ./ssh.nix
       ./system.nix
       ./user.nix
@@ -27,7 +30,6 @@
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-    boot.kernelPackages = pkgs.linuxPackages_6_16;
 
     networking.hostName = "kyomu";
     networking.networkmanager.enable = true;
