@@ -43,8 +43,15 @@ let
     if [ -n "$latest" ]; then
       args+=(--link-dest="$latest")
     fi
-    mkdir -p "$target/$name"
-    rsync "''${args[@]}" "$store"/ "$target/$name/"
+    staging=$(mktemp -d "$target/.incomplete-XXXXXX")
+    trap 'rm -rf -- "$staging"' EXIT
+    rsync "''${args[@]}" "$store"/ "$staging/"
+    # -T prevents nesting into an existing destination; -n refuses replacement.
+    mv -Tn -- "$staging" "$target/$name"
+    if [ -d "$staging" ]; then
+      echo "cue-backup: snapshot already exists: $name" >&2
+      exit 1
+    fi
     echo "cue-backup: created $name"
 
     # Tiered prune: keep every snapshot from the last 24h, the newest per
