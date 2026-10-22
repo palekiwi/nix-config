@@ -41,8 +41,8 @@ in
         path = "/home/pl/cue";
         type = "sendreceive";
         devices = builtins.filter (name: name != hostName) storeHosts;
-        # Declared paused; unpause deliberately after checking each replica.
-        paused = true;
+        # Unpaused after pale <-> haze converged and was verified.
+        paused = false;
       };
 
       options = {
