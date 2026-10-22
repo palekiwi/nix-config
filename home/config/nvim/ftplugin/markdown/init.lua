@@ -222,16 +222,21 @@ end, { buffer = true, desc = "Markdown: protected line-wrap entire file" })
 -- The table wrap runs after mdformat so single-line tables are normalized
 -- first and the wrap (which re-measures trimmed cell text) emits the canonical
 -- layout; its output is fully padded, so a later mdformat pass is a no-op on
--- it. The buffer ends at the top: the point of ,f is paste-then-read.
+-- it. Unlike the cast sandbox original (which jumps to `gg`: ,f there is
+-- paste-then-read), the host keeps the cursor and viewport in place.
 -- Exposed on _G so headless tests can call it directly.
 _G.__markdown_format_all = function()
+  local saved_view = vim.fn.winsaveview()
   vim.api.nvim_buf_set_mark(0, "[", 1, 0, {})
   local last_line = vim.api.nvim_buf_line_count(0)
   vim.api.nvim_buf_set_mark(0, "]", last_line, 0, {})
   _G.__markdown_gw_format("line")
   require("conform").format({ bufnr = 0 })
-  _G.__markdown_wrap_tables(1, vim.api.nvim_buf_line_count(0))
-  vim.cmd("normal! gg")
+  -- quiet = true: "no table in selection" is useful feedback for the
+  -- explicit <leader>tw mapping but pure noise from this background pass
+  -- (e.g. a buffer whose only table is already wrapped).
+  _G.__markdown_wrap_tables(1, vim.api.nvim_buf_line_count(0), true)
+  vim.fn.winrestview(saved_view)
 end
 
 vim.keymap.set("n", "<leader>f", _G.__markdown_format_all,
@@ -544,7 +549,7 @@ local function tw_is_rule_row(cells)
   return true
 end
 
-_G.__markdown_wrap_tables = function(start_line, end_line)
+_G.__markdown_wrap_tables = function(start_line, end_line, quiet)
   if not (start_line and end_line) then
     start_line = vim.api.nvim_buf_get_mark(0, "<")[1]
     end_line = vim.api.nvim_buf_get_mark(0, ">")[1]
@@ -579,7 +584,9 @@ _G.__markdown_wrap_tables = function(start_line, end_line)
     end
   end
   if #tables == 0 then
-    vim.notify("table-wrap: no table in selection", vim.log.levels.WARN)
+    if not quiet then
+      vim.notify("table-wrap: no table in selection", vim.log.levels.WARN)
+    end
     return
   end
 
@@ -687,11 +694,13 @@ _G.__markdown_wrap_tables = function(start_line, end_line)
     vim.cmd("normal! \27")
   end
 
-  local msg = ("table-wrap: wrapped %d table(s) to width %d"):format(converted, target)
-  if skipped > 0 then
-    msg = msg .. (", skipped %d (already at width)"):format(skipped)
+  if not quiet then
+    local msg = ("table-wrap: wrapped %d table(s) to width %d"):format(converted, target)
+    if skipped > 0 then
+      msg = msg .. (", skipped %d (already at width)"):format(skipped)
+    end
+    vim.notify(msg, vim.log.levels.INFO)
   end
-  vim.notify(msg, vim.log.levels.INFO)
 end
 
 vim.keymap.set("x", "<leader>tw", function()
