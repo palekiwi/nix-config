@@ -9,10 +9,11 @@ let
     haze = "XK2UDDG-JGCUIUP-BECYJBJ-YP5FF7H-OWO3ACS-WTX25AG-GRH2ITJ-5DPQCQD";
   };
 
-  # Hosts receiving the cue store. kyomu joins after pale <-> haze converges.
+  # Hosts receiving the cue store.
   storeHosts = [
     "pale"
     "haze"
+    "kyomu"
   ];
 
   others = lib.filterAttrs (name: _: name != hostName) peers;
