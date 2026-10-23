@@ -14,6 +14,7 @@
   sops.secrets."hass/token" = { owner = "pl"; };
   sops.secrets."jira/email" = { owner = "pl"; };
   sops.secrets."jira/token" = { owner = "pl"; };
+  sops.secrets."jira/token_readonly" = { owner = "pl"; };
   sops.secrets."opencode/api_key" = { owner = "pl"; };
   sops.secrets."zai_coding_plan/api_key" = { owner = "pl"; };
   sops.secrets."context7/api_key" = { owner = "pl"; };
