@@ -90,7 +90,7 @@ in
       "super + space; t; n" = "${switchToSession} palekiwi";
       "super + space; t; v" = "${switchToSession} cue-nvim";
       "super + space; t; t" = "${switchToSession} cast";
-      "super + space; t; u" = "${switchToSession} cue-plugins";
+      "super + space; t; u" = "${switchToSession} cue-platform";
 
       "super + space; c; c" = "${switchToSession} config-cast";
       "super + space; c; n" = "${switchToSession} nix-config";
