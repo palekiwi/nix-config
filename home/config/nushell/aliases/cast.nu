@@ -69,6 +69,26 @@ def "cx working" [] {
     cx ls | where state == working
 }
 
+# --- Cross-workspace instance view (cast ps) ---
+# All running cast instances across workspaces: workspace path,
+# instance, uptime. The path is `cast -C`-ready.
+def "cx ps" [] {
+    cast ps
+    | get instances
+    | insert instance { $in.name? | default "default" }
+    | insert up {
+        if $in.started? == null { "-" } else {
+            let now = ((date now | into int) / 1_000_000_000)
+            let hrs = (($now - $in.started) * 1sec) // 1hr
+            if $hrs >= 24 { $"($hrs // 24)d ($hrs mod 24)h" } else if $hrs > 0 { $"($hrs)h" } else {
+                $"(((($now - $in.started) * 1sec)) // 1min)min"
+            }
+        }
+    }
+    | sort-by workspace instance
+    | select workspace instance up
+}
+
 def ccs [] {
     cast config show | from json | transpose | explore
 }
