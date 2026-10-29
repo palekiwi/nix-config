@@ -61,6 +61,18 @@ awful.rules.rules = {
     }
   },
 
+  -- Handy dictation overlay: show on top but never take keyboard focus
+  -- from the client receiving the dictated text.
+  {
+    rule = { name = "Recording" },
+    properties = {
+      floating = true,
+      ontop = true,
+      focusable = false,
+      focus = false,
+    },
+  },
+
   -- Assign clients to tags using role-based placement system
 
   -- Communication apps → external monitor (or ultrawide_left fallback)
