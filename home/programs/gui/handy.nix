@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.services.handy;
@@ -7,7 +7,7 @@ in {
     enable = lib.mkEnableOption "Handy - Speech to Text service";
     package = lib.mkOption {
       type = lib.types.package;
-      default = inputs.nixpkgs-unstable.legacyPackages.${pkgs.system}.handy;
+      default = pkgs.handy;
       description = "The Handy package to use.";
     };
     extraArgs = lib.mkOption {

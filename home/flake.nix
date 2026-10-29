@@ -21,6 +21,10 @@
       url = "git+ssh://git@github.com/spabreaks/sb-scripts.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    handy = {
+      url = "github:cjpais/Handy/14cfed8aca5d557e0d14f596846bc5bd3fc4b50f";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
@@ -36,6 +40,7 @@
               cue = inputs.cue-platform.packages.x86_64-linux.cue;
               git-pr-sync = inputs.git-pr-sync.packages.x86_64-linux.git-pr-sync;
               sb-scripts = inputs.sb-scripts.packages.${system}.default;
+              handy = inputs.handy.packages.x86_64-linux.default;
             })
           ];
       };
