@@ -8,12 +8,9 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    cast = {
-      url = "github:palekiwi-labs/cast/feat/cast-tui";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    cue = {
-      url = "github:palekiwi-labs/cue/data-model-spike";
+    cue-platform = {
+      # TODO: back to github:palekiwi-labs/cue-platform once feat/cast-tui lands
+      url = "git+file:///home/pl/code/palekiwi-labs/cue-platform?ref=feat/cast-tui";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     git-pr-sync = {
@@ -37,9 +34,10 @@
         inherit system;
           overlays = [
             (final: prev: {
-              cast = inputs.cast.packages.x86_64-linux.cast;
-              cast-mcp-client = inputs.cast.packages.x86_64-linux.cast-mcp-client;
-              cue = inputs.cue.packages.x86_64-linux.cue;
+              cast = inputs.cue-platform.packages.x86_64-linux.cast;
+              cast-mcp-client = inputs.cue-platform.packages.x86_64-linux.cast-mcp-client;
+              cast-tui = inputs.cue-platform.packages.x86_64-linux.cast-tui;
+              cue = inputs.cue-platform.packages.x86_64-linux.cue;
               git-pr-sync = inputs.git-pr-sync.packages.x86_64-linux.git-pr-sync;
               sb-scripts = inputs.sb-scripts.packages.${system}.default;
               handy = inputs.handy.packages.x86_64-linux.default;
