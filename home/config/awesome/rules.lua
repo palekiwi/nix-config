@@ -61,8 +61,11 @@ awful.rules.rules = {
     }
   },
 
-  -- Handy dictation overlay: show on top but never take keyboard focus
-  -- from the client receiving the dictated text.
+  -- Handy dictation overlay: anchor to the bottom edge and never take
+  -- keyboard focus from the client receiving the dictated text. Explicit
+  -- placement is required: the global no_overlap placement would otherwise
+  -- park it below the top wibar on every re-manage (handy withdraws and
+  -- remaps the window each recording).
   {
     rule = { name = "Recording" },
     properties = {
@@ -70,6 +73,9 @@ awful.rules.rules = {
       ontop = true,
       focusable = false,
       focus = false,
+      placement = awful.placement.bottom
+          + awful.placement.center_horizontal
+          + awful.placement.no_offscreen,
     },
   },
 
