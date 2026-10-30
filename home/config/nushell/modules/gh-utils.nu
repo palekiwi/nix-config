@@ -659,6 +659,7 @@ export def "review comments post" [
         let content = if ($p.new? | default false) { $p.body } else { $p.text }
         print ($content | lines | each {|l| $"  ($l)" } | str join "\n")
     }
+    print ""
 
     let errors = ($errors | uniq)
     if not ($errors | is-empty) {
