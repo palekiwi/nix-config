@@ -660,8 +660,13 @@ export def "review comments post" [
         print ($content | lines | each {|l| $"  ($l)" } | str join "\n")
     }
 
+    let errors = ($errors | uniq)
     if not ($errors | is-empty) {
-        error make { msg: ($errors | str join "\n") }
+        print -e $"(ansi red)Cannot post, ($errors | length) error\(s\):(ansi reset)"
+        for e in $errors {
+            print -e $"  (ansi red)✗(ansi reset) ($e)"
+        }
+        return
     }
 
     let todo = $plan | where skip == false
