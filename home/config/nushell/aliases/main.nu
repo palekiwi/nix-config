@@ -106,6 +106,7 @@ def revcom [
 alias cat = bat -p
 alias ctc = cat_to_clipboard
 alias ghrc = gh-utils repo clone
+alias grcp = gh-utils review comments post
 alias gu = gitui
 alias hms = home-manager switch --flake $"($nu.home-dir)/nix-config/home#(whoami)@(hostname -s)"
 alias o = opencode
