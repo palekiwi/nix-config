@@ -17,8 +17,12 @@ M.gen_from_git_commits = function(opts)
   }
 
   local make_display = function(entry)
+    local hash_hl = opts.unpushed_hashes and opts.unpushed_hashes[entry.value]
+      and "TelescopeResultsConstant"
+      or "TelescopeResultsComment"
+
     return displayer {
-      { entry.value,  "TelescopeResultsComment" },
+      { entry.value,  hash_hl },
       { entry.date,   "TelescopePreviewDate" },
       { entry.author, "TelescopePreviewUser" },
       { entry.msg,    "TelescopePreviewMessage" }

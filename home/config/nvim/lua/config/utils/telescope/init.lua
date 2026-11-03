@@ -318,7 +318,18 @@ M.git_pr_commits = function(opts)
     table.insert(files, token)
   end
 
-  opts = {
+  local unpushed = {}
+  local upstream = vim.fn.system("git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null"):gsub("%s+", "")
+  local range = upstream ~= "" and (upstream .. "..HEAD")
+    or ("origin/" .. default_branch .. "..HEAD")
+  for hash in string.gmatch(vim.fn.system("git log --pretty=format:%h " .. range), "[^\n]+") do
+    unpushed[hash] = true
+  end
+
+  opts = opts or {}
+  opts.unpushed_hashes = unpushed
+
+  local picker_opts = {
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         local picker = action_state.get_current_picker(prompt_bufnr)
@@ -417,7 +428,7 @@ M.git_pr_commits = function(opts)
     end
   }
 
-  pickers.new(opts, {
+  pickers.new(vim.tbl_extend("force", opts, picker_opts), {
     prompt_title = prompt_title,
     layout_strategy = "vertical",
     layout_config = {
