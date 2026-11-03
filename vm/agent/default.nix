@@ -23,7 +23,23 @@
         mountPoint = "/persist/ssh";
         size = 16;
       }
+      {
+        image = "nix-store-rw.img";
+        mountPoint = "/nix/.rw-store";
+        size = 40960;
+      }
+      {
+        image = "nix-var.img";
+        mountPoint = "/nix/var";
+        size = 1024;
+      }
+      {
+        image = "var.img";
+        mountPoint = "/var";
+        size = 40960;
+      }
     ];
+    writableStoreOverlay = "/nix/.rw-store";
     shares = [
       {
         proto = "virtiofs";
@@ -34,6 +50,8 @@
       }
     ];
   };
+
+  fileSystems."/nix/var".neededForBoot = true;
 
   networking.useNetworkd = true;
   systemd.network.networks."10-uplink" = {
