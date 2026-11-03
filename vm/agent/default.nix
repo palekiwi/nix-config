@@ -1,6 +1,9 @@
 { pkgs, ... }:
 {
-  imports = [ ../../users/pl/default.nix ];
+  imports = [
+    ../../users/pl/default.nix
+    ./nvim.nix
+  ];
 
   networking.hostName = "agent-vm";
 
@@ -105,7 +108,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  environment.systemPackages = with pkgs; [ git tmux neovim ];
+  environment.systemPackages = with pkgs; [ git tmux ];
 
   system.stateVersion = "26.05";
 }
