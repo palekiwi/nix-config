@@ -1,5 +1,6 @@
 { pkgs, lib, ... }:
 let
+  nvimConfig = ../../home/config/nvim;
   nvim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
     withPython3 = false;
     withRuby = false;
@@ -16,6 +17,7 @@ in
 
   systemd.tmpfiles.rules = [
     "d /home/pl/.config 0755 pl users -"
-    "L+ /home/pl/.config/nvim - - - - ${../../home/config/nvim}"
-  ];
+    "d /home/pl/.config/nvim 0755 pl users -"
+  ] ++ map (name: "L+ /home/pl/.config/nvim/${name} - - - - ${nvimConfig}/${name}")
+    (builtins.attrNames (builtins.readDir nvimConfig));
 }
