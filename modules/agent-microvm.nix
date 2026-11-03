@@ -64,5 +64,16 @@ in
     ip6tables -w -t mangle -D FORWARD -i ${tap} -j DROP 2>/dev/null || true
   '';
 
+  fileSystems."/srv/agent-vm/cue" = {
+    device = "/home/pl/cue";
+    fsType = "none";
+    options = [ "bind" "nosuid" "nodev" ];
+  };
+
+  systemd.services."microvm-virtiofsd@agent" = {
+    overrideStrategy = "asDropin";
+    unitConfig.RequiresMountsFor = [ "/srv/agent-vm/cue" ];
+  };
+
   networking.hosts.${guestAddr} = [ "agent-vm" ];
 }
