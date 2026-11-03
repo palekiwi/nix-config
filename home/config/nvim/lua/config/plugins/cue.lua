@@ -3,7 +3,7 @@ return {
     "palekiwi-labs/cue.nvim",
     branch = "master",
     dev = false,
-    dir = "~/code/palekiwi-labs/cue.nvim",
+    dir = vim.uv.fs_stat(vim.fn.expand("~/code/palekiwi-labs/cue.nvim")) and "~/code/palekiwi-labs/cue.nvim" or nil,
     dependencies = {
       "nvim-telescope/telescope.nvim",
       "folke/snacks.nvim",
