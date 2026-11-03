@@ -12,12 +12,17 @@ with pkgs; [
     mdformat-frontmatter
     mdformat-footnote
   ]))
+  curl
+  gcc
+  gnumake
   lua-language-server
   nixd
   nixpkgs-fmt
+  nodejs_24
   prettier
   taplo
   tree-sitter
   typescript-language-server
+  unzip
   vscode-langservers-extracted
 ]
