@@ -6,8 +6,8 @@
 
   microvm = {
     hypervisor = "cloud-hypervisor";
-    vcpu = 8;
-    mem = 16384;
+    vcpu = 4;
+    mem = 4096;
     vsock.cid = 3;
     vsock.ssh.enable = true;
     shares = [
