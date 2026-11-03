@@ -10,6 +10,13 @@
     mem = 4096;
     vsock.cid = 3;
     vsock.ssh.enable = true;
+    interfaces = [
+      {
+        type = "tap";
+        id = "vm-agent";
+        mac = "02:00:00:00:77:02";
+      }
+    ];
     shares = [
       {
         proto = "virtiofs";
@@ -19,6 +26,19 @@
         readOnly = true;
       }
     ];
+  };
+
+  networking.useNetworkd = true;
+  systemd.network.networks."10-uplink" = {
+    matchConfig.MACAddress = "02:00:00:00:77:02";
+    address = [ "10.77.0.2/32" ];
+    routes = [
+      {
+        Gateway = "10.77.0.1";
+        GatewayOnLink = true;
+      }
+    ];
+    dns = [ "1.1.1.1" "9.9.9.9" ];
   };
 
   users.users.pl = {
