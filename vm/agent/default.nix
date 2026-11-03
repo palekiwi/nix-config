@@ -67,10 +67,17 @@
     dns = [ "1.1.1.1" "9.9.9.9" ];
   };
 
+  systemd.network.networks."05-docker" = {
+    matchConfig.Name = "docker* br-* veth*";
+    linkConfig.Unmanaged = true;
+  };
+
+  virtualisation.docker.enable = true;
+
   users.users.pl = {
     isNormalUser = true;
     uid = 1000;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
   };
 
   security.sudo.wheelNeedsPassword = false;
