@@ -90,6 +90,8 @@
     PermitRootLogin = "no";
   };
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   environment.systemPackages = with pkgs; [ git tmux neovim ];
 
   system.stateVersion = "26.05";
