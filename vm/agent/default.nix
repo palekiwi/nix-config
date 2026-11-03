@@ -6,8 +6,8 @@
 
   microvm = {
     hypervisor = "cloud-hypervisor";
-    vcpu = 4;
-    mem = 4096;
+    vcpu = 8;
+    mem = 12288;
     vsock.cid = 3;
     vsock.ssh.enable = true;
     interfaces = [
@@ -38,6 +38,11 @@
         mountPoint = "/var";
         size = 40960;
       }
+      {
+        image = "home.img";
+        mountPoint = "/home";
+        size = 40960;
+      }
     ];
     writableStoreOverlay = "/nix/.rw-store";
     shares = [
@@ -52,6 +57,7 @@
   };
 
   fileSystems."/nix/var".neededForBoot = true;
+  fileSystems."/home".neededForBoot = true;
 
   networking.useNetworkd = true;
   systemd.network.networks."10-uplink" = {
