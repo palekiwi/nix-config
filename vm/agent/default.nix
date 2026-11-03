@@ -32,18 +32,6 @@
         mountPoint = "/nix/.ro-store";
         readOnly = true;
       }
-      {
-        proto = "virtiofs";
-        tag = "cue";
-        source = "/srv/agent-vm/cue";
-        mountPoint = "/home/pl/cue";
-        posixAcl = false;
-        extraArgs = [
-          "--translate-uid=squash-guest:0:1000:4294967295"
-          "--translate-gid=squash-guest:0:100:4294967295"
-          "--modcaps=-mknod:-setfcap"
-        ];
-      }
     ];
   };
 
