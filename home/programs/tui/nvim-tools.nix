@@ -15,6 +15,7 @@ with pkgs; [
   curl
   gcc
   gnumake
+  go
   lua-language-server
   nixd
   nixpkgs-fmt
