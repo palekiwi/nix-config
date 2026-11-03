@@ -3,6 +3,7 @@ let
   nvim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
     withPython3 = false;
     withRuby = false;
+    wrapRc = false;
     wrapperArgs = [
       "--prefix" "PATH" ":" (lib.makeBinPath (import ../../home/programs/tui/nvim-tools.nix pkgs))
       "--set" "NVIM_NO_PERSONAL" "1"
