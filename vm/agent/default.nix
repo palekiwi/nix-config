@@ -34,6 +34,7 @@
     address = [ "10.77.0.2/32" ];
     routes = [
       {
+        Destination = "0.0.0.0/0";
         Gateway = "10.77.0.1";
         GatewayOnLink = true;
       }
@@ -49,6 +50,7 @@
 
   security.sudo.wheelNeedsPassword = false;
 
+  services.openssh.enable = true;
   services.openssh.settings = {
     PasswordAuthentication = false;
     KbdInteractiveAuthentication = false;
