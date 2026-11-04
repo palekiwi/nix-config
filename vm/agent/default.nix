@@ -118,8 +118,8 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  nix.settings.build-dir = "/var/tmp/nix-build";
-  systemd.tmpfiles.rules = [ "d /var/tmp/nix-build 0755 root root 7d" ];
+  nix.settings.build-dir = "/var/lib/nix-builds";
+  systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
 
   environment.systemPackages = with pkgs; [ git nushell ];
 
