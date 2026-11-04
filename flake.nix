@@ -26,6 +26,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue-platform.url = "github:palekiwi-labs/cue-platform/dev";
+    git-pr-sync = {
+      url = "github:palekiwi-labs/git-pr-sync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     microvm = {
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";

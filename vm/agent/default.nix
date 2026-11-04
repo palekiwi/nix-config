@@ -6,6 +6,7 @@
     ./cue-platform.nix
     ./tmux.nix
     ./proxy.nix
+    ./git-hooks.nix
     ../../modules/machine-role.nix
   ];
 
