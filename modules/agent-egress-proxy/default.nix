@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, utils, ... }:
 let
   tap = "vm-agent";
   listenAddr = "10.77.0.1";
@@ -78,7 +78,7 @@ in
       ExecStartPre = pkgs.writeShellScript "agent-egress-proxy-confdir" ''
         install -m 0600 ${secretsDir}/ca "$RUNTIME_DIRECTORY/mitmproxy-ca.pem"
       '';
-      ExecStart = lib.escapeShellArgs [
+      ExecStart = utils.escapeSystemdExecArgs [
         (lib.getExe' pkgs.mitmproxy "mitmdump")
         "--mode" "regular@${toString port}"
         "--listen-host" listenAddr
