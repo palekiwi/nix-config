@@ -88,6 +88,8 @@
 
   virtualisation.docker.enable = true;
 
+  boot.kernel.sysctl."vm.max_map_count" = 262144;
+
   users.users.pl = {
     isNormalUser = true;
     uid = 1000;
