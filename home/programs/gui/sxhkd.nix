@@ -77,7 +77,7 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux --cast";
+      "super + Return + control" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "${switchToDefaultSession}";
 
@@ -116,7 +116,6 @@ in
       "super + space; r; d" = "${switchToSession} vrs/dev";
       "super + space; r; e" = "${switchToSession} vrs";
 
-      "super + space; v; Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
       "super + space; v; space" = "dmenu_remote_tmux agent-vm --prefix agent";
 
       "super + space; v; t; e" = "${switchToAgentSession} cue";
