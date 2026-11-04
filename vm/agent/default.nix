@@ -5,7 +5,10 @@
     ./nvim.nix
     ./cue-platform.nix
     ./proxy.nix
+    ../../modules/machine-role.nix
   ];
+
+  palekiwi.machineRole = "vm";
 
   networking.hostName = "agent-vm";
 
@@ -115,7 +118,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  environment.systemPackages = with pkgs; [ git ];
+  environment.systemPackages = with pkgs; [ git nushell ];
 
   system.stateVersion = "26.05";
 }
