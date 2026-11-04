@@ -8,8 +8,9 @@ let
   tapUnit = "microvm-tap-interfaces@agent.service";
   secretsDir = "/run/secrets/agent-proxy";
   # Every secret the egress proxy can read is declared here and nowhere else.
-  # Only read-only scoped tokens may be added; typesafe/api_key has no scopes
-  # and is an accepted exception.
+  # Only read-only scoped tokens may be added. Accepted exceptions without
+  # scopes: typesafe and the model provider API keys (anthropic, gemini, zai).
+  # Never add airbrake or jira/token (read-write).
   injections = {
     github = {
       secret = "github/palekiwi/gh_cli_readonly";
@@ -26,9 +27,36 @@ let
       placeholder = "PLACEHOLDER-typesafe";
       hosts = [ "api.typesafe.ai" ];
     };
+    jira = {
+      secret = "jira/token_readonly";
+      placeholder = "PLACEHOLDER-jira";
+      hosts = [ "spabreaks.atlassian.net" ];
+    };
+    zai = {
+      secret = "zai_coding_plan/api_key";
+      placeholder = "PLACEHOLDER-zai";
+      hosts = [ "api.z.ai" ];
+    };
+    anthropic = {
+      secret = "spabreaks/anthropic/dev-02-01";
+      placeholder = "PLACEHOLDER-anthropic";
+      hosts = [ "api.anthropic.com" ];
+      header = "x-api-key";
+    };
+    gemini = {
+      secret = "spabreaks/gemini_api_key";
+      placeholder = "PLACEHOLDER-gemini";
+      hosts = [ "generativelanguage.googleapis.com" ];
+      header = "x-goog-api-key";
+    };
   };
+  headerOf = r: r.header or "authorization";
   rulesFile = pkgs.writeText "agent-egress-proxy-rules.json" (builtins.toJSON
-    (lib.mapAttrsToList (name: r: { inherit name; inherit (r) placeholder hosts; }) injections));
+    (lib.mapAttrsToList (name: r: {
+      inherit name;
+      inherit (r) placeholder hosts;
+      header = headerOf r;
+    }) injections));
   interceptHosts = lib.unique (lib.concatMap (r: r.hosts) (lib.attrValues injections));
   allowHosts = "^(${lib.concatMapStringsSep "|" lib.escapeRegex interceptHosts}):443$";
   deniedUpstream = [
@@ -61,6 +89,7 @@ in
       assertion = lib.length (lib.unique placeholders) == lib.length placeholders;
       message = "agent-egress-proxy: duplicate placeholders";
     }
+
   ];
 
   sops.secrets = {

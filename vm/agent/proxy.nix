@@ -28,6 +28,7 @@ in
     NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
     GH_TOKEN = "PLACEHOLDER-github";
     TYPESAFE_API_KEY = "PLACEHOLDER-typesafe";
+    ZAI_API_KEY = "PLACEHOLDER-zai";
   };
 
   programs.git = {

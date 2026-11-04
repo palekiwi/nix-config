@@ -13,6 +13,7 @@ with open(os.environ["AGENT_PROXY_RULES"]) as _fh:
 
 for _rule in RULES:
     _rule["hosts"] = set(_rule["hosts"])
+    _rule["header"] = _rule["header"].lower()
     try:
         with open(os.path.join(SECRETS_DIR, _rule["name"])) as _fh:
             _rule["secret"] = _fh.read().strip()
@@ -46,6 +47,16 @@ def _swap_authorization(value: str, rule: dict) -> tuple[str, str | None]:
     return "none", None
 
 
+def _swap(value: str, rule: dict) -> tuple[str, str | None]:
+    if rule["header"] == "authorization":
+        return _swap_authorization(value, rule)
+    if value == rule["placeholder"]:
+        return "ok", rule["secret"]
+    if rule["placeholder"] in value:
+        return "malformed", None
+    return "none", None
+
+
 def _target(flow: http.HTTPFlow) -> str:
     return flow.request.host.lower().rstrip(".")
 
@@ -68,11 +79,11 @@ def _deny(flow: http.HTTPFlow, rule: str, where: str, reason: str) -> None:
         403, b"placeholder not allowed\n", {"content-type": "text/plain"})
 
 
-def _placeholder_outside_authorization(flow: http.HTTPFlow) -> tuple | None:
+def _placeholder_outside_rule_header(flow: http.HTTPFlow) -> tuple | None:
     for rule in RULES:
         marker = rule["placeholder"]
         for name, value in flow.request.headers.items(multi=True):
-            if name.lower() != "authorization" and marker in value:
+            if name.lower() != rule["header"] and marker in value:
                 return rule["name"], f"header:{name.lower()}"
         if marker in flow.request.url:
             return rule["name"], "url"
@@ -88,37 +99,34 @@ def requestheaders(flow: http.HTTPFlow) -> None:
     if flow.response is not None:
         return
     host = _target(flow)
-    found = _placeholder_outside_authorization(flow)
+    found = _placeholder_outside_rule_header(flow)
     if found:
-        _deny(flow, found[0], found[1], "outside_authorization")
+        _deny(flow, found[0], found[1], "outside_rule_header")
         return
-    values = flow.request.headers.get_all("authorization")
-    if not values:
-        return
-    if len(values) > 1:
-        for rule in RULES:
-            if any(rule["placeholder"] in v for v in values):
-                _deny(flow, rule["name"], "header:authorization", "multiple")
-                return
-        return
-    value = values[0]
     for rule in RULES:
-        status, swapped = _swap_authorization(value, rule)
-        if status == "none":
+        header = rule["header"]
+        where = f"header:{header}"
+        values = flow.request.headers.get_all(header)
+        swaps = [_swap(v, rule) for v in values]
+        if all(status == "none" for status, _ in swaps):
             continue
+        if len(values) > 1:
+            _deny(flow, rule["name"], where, "multiple")
+            return
+        status, swapped = swaps[0]
         if status == "malformed":
-            _deny(flow, rule["name"], "header:authorization", "malformed")
+            _deny(flow, rule["name"], where, "malformed")
             return
         if host not in rule["hosts"]:
-            _deny(flow, rule["name"], "header:authorization", "host")
+            _deny(flow, rule["name"], where, "host")
             return
         if not _authority_consistent(flow, host):
-            _deny(flow, rule["name"], "header:authorization", "authority")
+            _deny(flow, rule["name"], where, "authority")
             return
         if not rule["secret"]:
-            _deny(flow, rule["name"], "header:authorization", "no_secret")
+            _deny(flow, rule["name"], where, "no_secret")
             return
-        flow.request.headers["authorization"] = swapped
+        flow.request.headers[header] = swapped
         flow.request.headers.pop("accept-encoding", None)
         flow.metadata["agent_proxy_rule"] = rule["name"]
         flow.metadata["agent_proxy_redact"] = _redactions(rule, swapped)
