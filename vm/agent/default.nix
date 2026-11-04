@@ -4,6 +4,7 @@
     ../../users/pl/default.nix
     ./nvim.nix
     ./cue-platform.nix
+    ./proxy.nix
   ];
 
   networking.hostName = "agent-vm";
