@@ -30,7 +30,7 @@ let
     jira = {
       secret = "jira/token_readonly";
       placeholder = "PLACEHOLDER-jira";
-      hosts = [ "spabreaks.atlassian.net" ];
+      hosts = [ "api.atlassian.com" ];
     };
     zai = {
       secret = "zai_coding_plan/api_key";
