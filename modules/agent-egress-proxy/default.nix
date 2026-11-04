@@ -12,8 +12,13 @@ let
   # and is an accepted exception.
   injections = {
     github = {
-      secret = "spabreaks/github_readonly";
+      secret = "github/palekiwi/gh_cli_readonly";
       placeholder = "PLACEHOLDER-github";
+      hosts = [ "github.com" "api.github.com" ];
+    };
+    github-spabreaks = {
+      secret = "spabreaks/github_readonly";
+      placeholder = "PLACEHOLDER-gh-spabreaks";
       hosts = [ "github.com" "api.github.com" ];
     };
     typesafe = {
@@ -43,8 +48,21 @@ let
     "240.0.0.0/4"
     "::/0"
   ];
+  placeholders = lib.mapAttrsToList (_: r: r.placeholder) injections;
+  overlapping = lib.filter (a: lib.any (b: a != b && lib.hasInfix a b) placeholders) placeholders;
 in
 {
+  assertions = [
+    {
+      assertion = overlapping == [ ];
+      message = "agent-egress-proxy: placeholder is a substring of another: ${toString overlapping}";
+    }
+    {
+      assertion = lib.length (lib.unique placeholders) == lib.length placeholders;
+      message = "agent-egress-proxy: duplicate placeholders";
+    }
+  ];
+
   sops.secrets = {
     "agent-proxy/ca" = {
       owner = user;

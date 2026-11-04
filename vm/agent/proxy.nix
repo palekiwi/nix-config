@@ -1,4 +1,17 @@
+{ pkgs, ... }:
 let
+  credentialHelper = pkgs.writeShellScript "git-credential-placeholder" ''
+    [ "$1" = get ] || exit 0
+    path=
+    while IFS= read -r line && [ -n "$line" ]; do
+      case "$line" in path=*) path="''${line#path=}" ;; esac
+    done
+    case "$path" in
+      spabreaks/*) token=PLACEHOLDER-gh-spabreaks ;;
+      *) token=PLACEHOLDER-github ;;
+    esac
+    printf 'username=x-access-token\npassword=%s\n' "$token"
+  '';
   proxy = "http://10.77.0.1:3128";
   noProxy = "localhost,127.0.0.1,::1,10.77.0.0/24";
 in
@@ -30,7 +43,10 @@ in
         "git@github.com:"
         "ssh://git@github.com/"
       ];
-      credential."https://github.com".helper = "!gh auth git-credential";
+      credential."https://github.com" = {
+        helper = "${credentialHelper}";
+        useHttpPath = true;
+      };
     };
   };
 }
