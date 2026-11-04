@@ -1,39 +1,44 @@
-local function set_master_branch_name()
-  local handle = io.popen("get_master_branch_name")
-  local master_branch = "master"
-  if handle then
-    local result = handle:read("*a"):gsub("%s+", "")
-    if result ~= "" then
-      master_branch = result
-    end
-    handle:close()
+local missing = {}
+
+local function run_helper(name)
+  if vim.fn.executable(name) == 0 then
+    table.insert(missing, name)
+    return ""
   end
 
-  vim.g.git_master = master_branch
+  local handle = io.popen(name)
+  if not handle then
+    return ""
+  end
+  local result = handle:read("*a"):gsub("%s+", "")
+  handle:close()
+
+  return result
+end
+
+local function set_master_branch_name()
+  local result = run_helper("get_master_branch_name")
+  vim.g.git_master = result ~= "" and result or "master"
 end
 
 local function set_git_base()
-  local handle = io.popen("get_pr_base")
-  local base_branch = vim.g.git_master or "master"
-  if handle then
-    local result = handle:read("*a"):gsub("%s+", "")
-    if result ~= "" then
-      base_branch = result
-    end
-    handle:close()
-  end
-
-  vim.g.git_base = base_branch
+  local result = run_helper("get_pr_base")
+  vim.g.git_base = result ~= "" and result or vim.g.git_master
 end
 
 local function set_pr_number()
-  local handle = io.popen("get_pr_number")
-  if handle then
-    vim.g.gh_pr_number = handle:read("*a"):gsub("%s+", "")
-    handle:close()
-  end
+  vim.g.gh_pr_number = run_helper("get_pr_number")
 end
 
 set_master_branch_name()
 set_git_base()
 set_pr_number()
+
+if #missing > 0 then
+  vim.schedule(function()
+    vim.notify(
+      "Missing git helpers: " .. table.concat(missing, ", ") .. "; base branch assumed '" .. vim.g.git_base .. "'",
+      vim.log.levels.WARN
+    )
+  end)
+end
