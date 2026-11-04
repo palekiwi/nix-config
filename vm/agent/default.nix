@@ -4,6 +4,7 @@
     ../../users/pl/default.nix
     ./nvim.nix
     ./cue-platform.nix
+    ./tmux.nix
     ./proxy.nix
     ../../modules/machine-role.nix
   ];
