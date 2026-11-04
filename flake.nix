@@ -75,6 +75,7 @@
           modules = [
             ./hosts/pale
             ./modules/agent-microvm.nix
+            ./modules/agent-egress-proxy
             inputs.microvm.nixosModules.host
             inputs.notifications-server.nixosModules.default
             inputs.cue.nixosModules.acuity
