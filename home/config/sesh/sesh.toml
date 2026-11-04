@@ -185,6 +185,11 @@ path = "~/code/palekiwi-labs/cue"
 startup_command = "_tmux_git-repo"
 
 [[session]]
+name = "cue-platform"
+path = "~/code/palekiwi-labs/cue-platform"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "cue-plugins"
 path = "~/.agents/plugins/palekiwi-labs/cue-plugins"
 startup_command = "_tmux_git-repo"

@@ -51,9 +51,10 @@ let
   switchToAgentSession = pkgs.writeShellScript "switchToAgentSession" ''
     session_name="$1"
     window_name="agent:''${session_name}"
+    window_id=$(wmctrl -l | awk -v t="$window_name" '{ id = $1; $1 = $2 = $3 = ""; sub(/^ +/, ""); if ($0 == t) { print id; exit } }')
 
-    if wmctrl -l | grep -q "\b$window_name\b"; then
-        wmctrl -Fa $window_name
+    if [ -n "$window_id" ]; then
+        wmctrl -ia "$window_id"
     else
         kitty -T $window_name -e ssh agent-vm -t "sesh connect $session_name"
     fi
@@ -144,8 +145,8 @@ in
       "super + space; v; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
       "super + space; v; m; e" = "${switchToAgentSession} spabreaks/my-account";
 
-      "super + space; v; r; d" = "${switchToAgentSession} spabreaks/vrs/dev";
-      "super + space; v; r; e" = "${switchToAgentSession} spabreaks/vrs";
+      "super + space; v; r; d" = "${switchToAgentSession} vrs/dev";
+      "super + space; v; r; e" = "${switchToAgentSession} vrs";
 
       "super + space; v; w; d" = "${switchToAgentSession} spabreaks/wss/dev";
       "super + space; v; w; e" = "${switchToAgentSession} spabreaks/wss";

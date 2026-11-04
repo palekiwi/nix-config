@@ -11,6 +11,9 @@ in
   programs.tmux = {
     enable = true;
     plugins = shared.plugins;
+    extraConfigBeforePlugins = ''
+      set -g @override_copy_command 'tmux load-buffer -w -'
+    '';
     extraConfig = shared.extraConfig + ''
       bind-key w display-popup -E -w 90% -h 55% ${picker}
       bind-key -n C-f display-popup -E -w 90% -h 55% ${picker}
