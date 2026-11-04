@@ -76,9 +76,6 @@ def _placeholder_outside_authorization(flow: http.HTTPFlow) -> tuple | None:
                 return rule["name"], f"header:{name.lower()}"
         if marker in flow.request.url:
             return rule["name"], "url"
-        body = flow.request.get_content(strict=False) or b""
-        if marker.encode() in body:
-            return rule["name"], "body"
     return None
 
 
@@ -87,7 +84,7 @@ def http_connect(flow: http.HTTPFlow) -> None:
           "host": flow.request.host, "port": flow.request.port})
 
 
-def request(flow: http.HTTPFlow) -> None:
+def requestheaders(flow: http.HTTPFlow) -> None:
     if flow.response is not None:
         return
     host = _target(flow)
@@ -122,24 +119,54 @@ def request(flow: http.HTTPFlow) -> None:
             _deny(flow, rule["name"], "header:authorization", "no_secret")
             return
         flow.request.headers["authorization"] = swapped
+        flow.request.headers.pop("accept-encoding", None)
         flow.metadata["agent_proxy_rule"] = rule["name"]
+        flow.metadata["agent_proxy_redact"] = _redactions(rule, swapped)
         return
 
 
+def _redactions(rule: dict, header: str) -> list[bytes]:
+    values = [rule["secret"], header.partition(" ")[2]]
+    return [v.encode() for v in values if v]
+
+
+def _redact(data: bytes, secrets: list[bytes]) -> bytes:
+    for secret in secrets:
+        data = data.replace(secret, b"[redacted]")
+    return data
+
+
+def _redacting_stream(secrets: list[bytes]):
+    keep = max(len(s) for s in secrets) - 1
+    tail = b""
+
+    def stream(chunk: bytes) -> bytes:
+        nonlocal tail
+        if not chunk:
+            out, tail = _redact(tail, secrets), b""
+            return out
+        data = _redact(tail + chunk, secrets)
+        tail = data[-keep:] if keep > 0 else b""
+        return data[:len(data) - len(tail)]
+
+    return stream
+
+
+def responseheaders(flow: http.HTTPFlow) -> None:
+    secrets = flow.metadata.get("agent_proxy_redact")
+    if not secrets:
+        return
+    flow.response.headers.fields = tuple(
+        (name, _redact(value, secrets))
+        for name, value in flow.response.headers.fields)
+    flow.response.stream = _redacting_stream(secrets)
+
+
 def response(flow: http.HTTPFlow) -> None:
-    rule_name = flow.metadata.get("agent_proxy_rule")
-    if rule_name:
-        secret = next(r["secret"] for r in RULES if r["name"] == rule_name)
-        for name, value in list(flow.response.headers.items(multi=True)):
-            if secret in value:
-                flow.response.headers[name] = value.replace(secret, "[redacted]")
-        body = flow.response.get_content(strict=False)
-        if body and secret.encode() in body:
-            flow.response.set_content(
-                body.replace(secret.encode(), b"[redacted]"))
     _log({"event": "response", "client": flow.client_conn.peername[0],
           "method": flow.request.method, "host": _target(flow),
           "path": flow.request.path.split("?", 1)[0],
-          "status": flow.response.status_code, "injected": rule_name,
+          "status": flow.response.status_code,
+          "injected": flow.metadata.get("agent_proxy_rule"),
           "origin": "proxy" if flow.metadata.get("agent_proxy_blocked")
           else "upstream"})

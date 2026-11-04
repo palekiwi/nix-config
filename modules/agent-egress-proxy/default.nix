@@ -35,26 +35,23 @@ let
     "172.16.0.0/12"
     "192.168.0.0/16"
     "224.0.0.0/4"
+    "192.0.0.0/24"
+    "192.0.2.0/24"
+    "198.18.0.0/15"
+    "198.51.100.0/24"
+    "203.0.113.0/24"
     "240.0.0.0/4"
-    "::/128"
-    "::1/128"
-    "::ffff:0:0/96"
-    "64:ff9b::/96"
-    "fc00::/7"
-    "fe80::/10"
-    "ff00::/8"
+    "::/0"
   ];
 in
 {
   sops.secrets = {
     "agent-proxy/ca" = {
       owner = user;
-      restartUnits = [ "agent-egress-proxy.service" ];
     };
   } // lib.mapAttrs' (name: r: lib.nameValuePair "agent-proxy/${name}" {
     key = r.secret;
     owner = user;
-    restartUnits = [ "agent-egress-proxy.service" ];
   }) injections;
 
   users.users.${user} = {
@@ -67,7 +64,8 @@ in
     description = "Egress proxy for the agent microVM";
     bindsTo = [ tapUnit ];
     after = [ tapUnit ];
-    wantedBy = [ tapUnit ];
+    before = [ "microvm@agent.service" ];
+    wantedBy = [ "microvm@agent.service" ];
     environment = {
       AGENT_PROXY_SECRETS_DIR = secretsDir;
       AGENT_PROXY_RULES = rulesFile;
@@ -111,7 +109,9 @@ in
       ProtectHostname = true;
       ProtectProc = "invisible";
       ProcSubset = "pid";
-      RestrictAddressFamilies = [ "AF_INET" "AF_INET6" "AF_UNIX" ];
+      RestrictAddressFamilies = [ "AF_INET" "AF_UNIX" ];
+      MemoryMax = "1G";
+      TasksMax = 256;
       RestrictNamespaces = true;
       RestrictRealtime = true;
       RestrictSUIDSGID = true;
