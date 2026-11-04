@@ -12,7 +12,7 @@ let
   # and is an accepted exception.
   injections = {
     github = {
-      secret = "github/palekiwi/gh_cli_readonly";
+      secret = "spabreaks/github_readonly";
       placeholder = "PLACEHOLDER-github";
       hosts = [ "github.com" "api.github.com" ];
     };
