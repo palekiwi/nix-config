@@ -123,7 +123,7 @@
   nix.settings.build-dir = "/var/lib/nix-builds";
   systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
 
-  environment.systemPackages = with pkgs; [ git nushell nodejs ];
+  environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs ];
 
   system.stateVersion = "26.05";
 }
