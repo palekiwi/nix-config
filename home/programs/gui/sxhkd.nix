@@ -48,6 +48,17 @@ let
     fi
   '';
 
+  switchToAgentSession = pkgs.writeShellScript "switchToAgentSession" ''
+    session_name="$1"
+    window_name="agent:''${session_name}"
+
+    if wmctrl -l | grep -q "\b$window_name\b"; then
+        wmctrl -Fa $window_name
+    else
+        kitty -T $window_name -e ssh agent-vm -t "sesh connect $session_name"
+    fi
+  '';
+
   switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
     window_name=$USER
 
@@ -115,8 +126,29 @@ in
       "super + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
       "super + space; s; t" = "${switchToSession} spabreaks/terraform";
 
-      "super + space; v; d" = "${switchToSession} spabreaks/vrs/dev";
-      "super + space; v; e" = "${switchToSession} spabreaks/vrs";
+      "super + space; r; d" = "${switchToSession} spabreaks/vrs/dev";
+      "super + space; r; e" = "${switchToSession} spabreaks/vrs";
+
+      "super + space; v; t; e" = "${switchToAgentSession} cue";
+      "super + space; v; t; n" = "${switchToAgentSession} palekiwi";
+      "super + space; v; t; v" = "${switchToAgentSession} cue-nvim";
+      "super + space; v; t; t" = "${switchToAgentSession} cast";
+      "super + space; v; t; u" = "${switchToAgentSession} cue-platform";
+
+      "super + space; v; c; n" = "${switchToAgentSession} nix-config";
+
+      "super + space; v; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
+      "super + space; v; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
+      "super + space; v; s; e" = "${switchToAgentSession} spabreaks/spabreaks";
+
+      "super + space; v; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
+      "super + space; v; m; e" = "${switchToAgentSession} spabreaks/my-account";
+
+      "super + space; v; r; d" = "${switchToAgentSession} spabreaks/vrs/dev";
+      "super + space; v; r; e" = "${switchToAgentSession} spabreaks/vrs";
+
+      "super + space; v; w; d" = "${switchToAgentSession} spabreaks/wss/dev";
+      "super + space; v; w; e" = "${switchToAgentSession} spabreaks/wss";
 
       "super + space; w; d" = "${switchToSession} spabreaks/wss/dev";
       "super + space; w; e" = "${switchToSession} spabreaks/wss";
