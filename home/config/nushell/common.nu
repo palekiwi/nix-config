@@ -68,6 +68,3 @@ $env.config.hooks.pre_prompt = [{ ||
     direnv export json | from json | default {} | load-env
     $env.PATH = $env.PATH | split row (char env_sep)
 }]
-
-mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")

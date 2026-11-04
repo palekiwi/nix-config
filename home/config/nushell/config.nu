@@ -1,5 +1,6 @@
 source common.nu
 source aliases/tn.nu
+source aliases/host.nu
 
 $env.GPG_TTY = ^tty
 $env.BROWSER = "firefox"
@@ -21,3 +22,6 @@ if ($env.SSH_CONNECTION? == null) or ((hostname) == "kyomu") {
 }
 
 if $env.TMUX? == null { tmux new-session -A -s $env.USER }
+
+mkdir ($nu.data-dir | path join "vendor/autoload")
+starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")

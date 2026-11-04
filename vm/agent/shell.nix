@@ -5,7 +5,7 @@ let
     (import ../../home/programs/tui/atuin-settings.nix);
 in
 {
-  environment.systemPackages = with pkgs; [ atuin bat carapace starship ];
+  environment.systemPackages = with pkgs; [ atuin bat carapace ];
 
   programs.bash.interactiveShellInit = ''
     if [ -z "$__AGENT_VM_NU" ] && [ -z "$NO_NU" ]; then
