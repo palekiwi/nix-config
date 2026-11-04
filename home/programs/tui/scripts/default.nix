@@ -4,9 +4,6 @@
   (import ./docker_ps_short.nix { inherit pkgs lib config; })
   (import ./exec_gotify.nix { inherit pkgs lib config; })
   (import ./generate_port_from_path.nix { inherit pkgs; })
-  (import ./get_master_branch_name.nix { inherit pkgs; })
-  (import ./get_pr_base.nix { inherit pkgs; })
-  (import ./get_pr_number.nix { inherit pkgs; })
   (import ./gh_clone_repo.nix { inherit pkgs; })
   (import ./gh_pr_from_branch_name.nix { inherit pkgs; })
   (import ./gh_prs.nix { inherit pkgs; })
@@ -15,4 +12,5 @@
   pkgs.git-pr-sync
   (import ./yt-subs.nix { inherit pkgs lib config; })
 ]
+++ import ./git-base.nix pkgs
 ++ (import ./ai { inherit pkgs; })

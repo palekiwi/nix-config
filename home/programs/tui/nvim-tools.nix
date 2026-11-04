@@ -1,5 +1,5 @@
 pkgs:
-with pkgs; [
+import ./scripts/git-base.nix pkgs ++ (with pkgs; [
   # Markdown structural formatter for conform.nvim (see
   # lua/config/plugins/conform.lua), wrapped the same way nvf's
   # "mdformat" selector does: one python3 env bundling mdformat plus
@@ -26,4 +26,4 @@ with pkgs; [
   typescript-language-server
   unzip
   vscode-langservers-extracted
-]
+])

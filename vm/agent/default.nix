@@ -124,7 +124,8 @@
   nix.settings.build-dir = "/var/lib/nix-builds";
   systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
 
-  environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs ];
+  environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs ]
+    ++ import ../../home/programs/tui/scripts/git-base.nix pkgs;
 
   system.stateVersion = "26.05";
 }
