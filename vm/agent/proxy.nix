@@ -29,6 +29,8 @@ in
     GH_TOKEN = "PLACEHOLDER-github";
     TYPESAFE_API_KEY = "PLACEHOLDER-typesafe";
     ZAI_API_KEY = "PLACEHOLDER-zai";
+    GEMINI_API_KEY = "PLACEHOLDER-gemini";
+    GOOGLE_GENERATIVE_AI_API_KEY = "PLACEHOLDER-gemini";
   };
 
   programs.git = {

@@ -44,7 +44,7 @@ let
       header = "x-api-key";
     };
     gemini = {
-      secret = "spabreaks/gemini_api_key";
+      secret = "spabreaks/google_generative_ai_api_key";
       placeholder = "PLACEHOLDER-gemini";
       hosts = [ "generativelanguage.googleapis.com" ];
       header = "x-goog-api-key";
