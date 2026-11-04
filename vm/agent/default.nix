@@ -7,6 +7,7 @@
     ./tmux.nix
     ./proxy.nix
     ./git-hooks.nix
+    ./shell.nix
     ../../modules/machine-role.nix
   ];
 
