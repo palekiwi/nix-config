@@ -41,36 +41,22 @@ let
     session_name="$1"
     window_name="kyomu:''${session_name}"
 
-    if wmctrl -l | grep -q "\b$window_name\b"; then
-        wmctrl -Fa $window_name
-    else
-        kitty -T $window_name -e ssh pl@kyomu -A -t "sesh connect $session_name"
-    fi
+    wmctrl -Fa "$window_name" ||
+        kitty -T "$window_name" -e ssh pl@kyomu -A -t "sesh connect $session_name"
   '';
 
   switchToAgentSession = pkgs.writeShellScript "switchToAgentSession" ''
     session_name="$1"
     window_name="agent:''${session_name}"
-    window_id=$(wmctrl -l | awk -v t="$window_name" '{ id = $1; $1 = $2 = $3 = ""; sub(/^ +/, ""); if ($0 == t) { print id; exit } }')
-
-    if [ -n "$window_id" ]; then
-        wmctrl -ia "$window_id"
-    else
-        kitty -T $window_name -e ssh agent-vm -t "sesh connect $session_name"
-    fi
+    wmctrl -Fa "$window_name" ||
+        kitty -T "$window_name" -e ssh agent-vm -t "sesh connect $session_name"
   '';
 
   switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
     window_name=$USER
 
-    # Check if kitty window with username already exists
-    if wmctrl -l | grep -q "\b$window_name\b"; then
-        # Focus existing window
-        wmctrl -Fa "$window_name"
-    else
-        # Create new terminal with tmux session
+    wmctrl -Fa "$window_name" ||
         kitty -T "$window_name" -e tmux new-session -A -s "$window_name"
-    fi
   '';
 
   switchToApp = pkgs.writeShellScript "switchToApp" ''
@@ -127,8 +113,8 @@ in
       "super + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
       "super + space; s; t" = "${switchToSession} spabreaks/terraform";
 
-      "super + space; r; d" = "${switchToSession} spabreaks/vrs/dev";
-      "super + space; r; e" = "${switchToSession} spabreaks/vrs";
+      "super + space; r; d" = "${switchToSession} vrs/dev";
+      "super + space; r; e" = "${switchToSession} vrs";
 
       "super + space; v; t; e" = "${switchToAgentSession} cue";
       "super + space; v; t; n" = "${switchToAgentSession} palekiwi";
