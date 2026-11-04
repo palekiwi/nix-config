@@ -118,7 +118,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp/nix-build";
+  nix.settings.build-dir = "/var/tmp/nix-build";
   systemd.tmpfiles.rules = [ "d /var/tmp/nix-build 0755 root root 7d" ];
 
   environment.systemPackages = with pkgs; [ git nushell ];
