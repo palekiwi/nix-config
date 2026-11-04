@@ -25,6 +25,7 @@
       url = "github:palekiwi-labs/cue";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    cue-platform.url = "github:palekiwi-labs/cue-platform/dev";
     microvm = {
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -70,6 +71,7 @@
 
         pale = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/pale
             ./modules/agent-microvm.nix

@@ -3,6 +3,7 @@
   imports = [
     ../../users/pl/default.nix
     ./nvim.nix
+    ./cue-platform.nix
   ];
 
   networking.hostName = "agent-vm";
@@ -108,7 +109,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  environment.systemPackages = with pkgs; [ git tmux ];
+  environment.systemPackages = with pkgs; [ git ];
 
   system.stateVersion = "26.05";
 }

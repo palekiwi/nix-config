@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, inputs, ... }:
 let
   tap = "vm-agent";
   hostAddr = "10.77.0.1";
@@ -19,6 +19,7 @@ in
 {
   microvm.vms.agent = {
     autostart = false;
+    specialArgs = { inherit inputs; };
     config = {
       imports = [ ../vm/agent ];
 
