@@ -8,6 +8,7 @@ let
     wrapperArgs = [
       "--prefix" "PATH" ":" (lib.makeBinPath (import ../../home/programs/tui/nvim-tools.nix pkgs))
       "--set" "NVIM_NO_PERSONAL" "1"
+      "--set" "NVIM_CLIPBOARD_OSC52" "1"
     ];
   };
 in
