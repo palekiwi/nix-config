@@ -2,25 +2,27 @@
 
 pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
   def main [
+    host: string
+    --prefix: string
     --tmux
   ] {
-    run-external "notify-send" "Remote Tmux" "Fetching sessions from kyomu..."
-    
-    let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" "Kyomu tmux sessions"]
+    let prefix = ($prefix | default $host)
+
+    let launcher_args = ["-dmenu" "-i" "-theme-str" "window { width: 40%; location: center; }" "-p" $"($prefix) tmux sessions"]
 
     let sessions = try {
       if $tmux {
-        run-external "ssh" "kyomu" "sesh" "list" "--json" "--tmux" | from json
+        run-external "ssh" $host "sesh" "list" "--json" "--tmux" | from json
       } else {
-        run-external "ssh" "kyomu" "sesh" "list" "--json" | from json
+        run-external "ssh" $host "sesh" "list" "--json" | from json
       }
     } catch {
-      print "Error: Could not connect to kyomu or retrieve sessions"
+      run-external "notify-send" "Remote Tmux" $"Could not retrieve sessions from ($host)"
       exit 1
     }
 
     if ($sessions | is-empty) {
-      run-external "notify-send" "Remote Tmux" "No sessions found on kyomu"
+      run-external "notify-send" "Remote Tmux" $"No sessions found on ($host)"
       exit 1
     }
 
@@ -42,19 +44,11 @@ pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
     }
 
     let session_name = ($choice | split row " " | get 0)
-    let window_title = $"kyomu:($session_name)"
+    let window_title = $"($prefix):($session_name)"
 
-    # Try to find existing window with this session
-    let existing_window = try {
-      run-external "wmctrl" "-l" | lines | where ($it | str contains $window_title) | get 0?
-    } catch { null }
-
-    if ($existing_window | is-not-empty) {
-      # Switch to existing window
-      run-external "wmctrl" "-Fa" $window_title
-    } else {
-      # Launch new terminal with connection to remote session
-      run-external "kitty" "-T" $window_title "-e" "ssh" "kyomu" "-t" "sesh" "connect" $session_name
+    let focused = (do { run-external "wmctrl" "-Fa" $window_title } | complete | get exit_code) == 0
+    if not $focused {
+      run-external "kitty" "-T" $window_title "-e" "ssh" $host "-t" "sesh" "connect" $session_name
     }
   }
 ''

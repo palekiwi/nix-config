@@ -15,6 +15,8 @@ in
       set -g @override_copy_command 'tmux load-buffer -w -'
     '';
     extraConfig = shared.extraConfig + ''
+      set -g extended-keys on
+      set -g extended-keys-format csi-u
       bind-key w display-popup -E -w 90% -h 55% ${picker}
       bind-key -n C-f display-popup -E -w 90% -h 55% ${picker}
       bind-key C new-window -c "#{pane_current_path}" \; send-keys pi Enter

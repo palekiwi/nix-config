@@ -116,6 +116,9 @@ in
       "super + space; r; d" = "${switchToSession} vrs/dev";
       "super + space; r; e" = "${switchToSession} vrs";
 
+      "super + space; v; Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
+      "super + space; v; space" = "dmenu_remote_tmux agent-vm --prefix agent";
+
       "super + space; v; t; e" = "${switchToAgentSession} cue";
       "super + space; v; t; n" = "${switchToAgentSession} palekiwi";
       "super + space; v; t; v" = "${switchToAgentSession} cue-nvim";
