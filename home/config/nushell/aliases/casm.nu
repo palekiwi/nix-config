@@ -50,3 +50,15 @@ def "casm proxy status" [] { systemctl status agent-egress-proxy }
 def "casm proxy restart" [] { sudo systemctl restart agent-egress-proxy }
 
 def "casm proxy logs" [] { journalctl -u agent-egress-proxy -f }
+
+def "cx up" [] { casm up }
+def "cx down" [] { casm down }
+def "cx restart" [] { casm restart }
+def "cx status" [] { casm status }
+def "cx logs" [] { casm logs }
+def "cx ip" [] { casm ip }
+def --wrapped "cx shell" [...args] { casm shell ...$args }
+def "cx forward" [...targets: string] { casm forward ...$targets }
+def "cx proxy status" [] { casm proxy status }
+def "cx proxy restart" [] { casm proxy restart }
+def "cx proxy logs" [] { casm proxy logs }
