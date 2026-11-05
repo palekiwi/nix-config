@@ -13,6 +13,7 @@
       init.defaultBranch = "master";
       pull.rebase = true;
       merge.ff = "only";
+      alias.vm-pull = ''!f() { b=$(git symbolic-ref --short HEAD) && git fetch vm && git log --oneline "HEAD..vm/$b" && git merge --ff-only "vm/$b"; }; f'';
       # Template entries must be real files: git copies template entries
       # verbatim, and home.file can only produce symlinks - which dangle
       # after store GC and never resolve inside cast containers.
