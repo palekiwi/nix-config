@@ -136,11 +136,11 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1793797793,
-        "narHash": "sha256-4ts24e0O6kkYrpa95Ui+DXHQsd+wiz5lzurEicukVYw=",
+        "lastModified": 1793858238,
+        "narHash": "sha256-JGCpdQJkgf47qf8u4QIHEsWQ730bA4GQKB5BTnZzSCI=",
         "owner": "palekiwi-labs",
         "repo": "cue-platform",
-        "rev": "e411c9158af808a65f50ea58fb2a351d6edc22ff",
+        "rev": "c2431a9d3d40b6aef1a87c4ceb68ce7d1c640a61",
         "type": "github"
       },
       "original": {
