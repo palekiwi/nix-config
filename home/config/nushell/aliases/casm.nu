@@ -13,8 +13,18 @@ def "casm logs" [] { journalctl -u microvm@agent -f }
 
 def "casm ip" [] { "10.77.0.2" }
 
-# Interactive shell in the guest, or run a command: casm shell -- uptime
-def --wrapped "casm shell" [...args] { ssh pl@agent-vm ...$args }
+# Interactive shell in the guest, or run a command: casm shell -- uptime.
+# --here (-H) starts in the guest path matching the host cwd.
+def --wrapped "casm shell" [--here (-H), ...args] {
+  if not $here { return (ssh pl@agent-vm ...$args) }
+  let dir = $env.PWD | str replace -a "'" "'\\''"
+  let cd = $"cd '($dir)' || exit 1"
+  if ($args | is-empty) {
+    ssh -t pl@agent-vm $"($cd); exec bash -il"
+  } else {
+    ssh pl@agent-vm $"($cd); ($args | str join ' ')"
+  }
+}
 
 const CASM_FORWARD_APPS = {
   spabreaks: [3030 8080]
@@ -57,7 +67,9 @@ def "cx restart" [] { casm restart }
 def "cx status" [] { casm status }
 def "cx logs" [] { casm logs }
 def "cx ip" [] { casm ip }
-def --wrapped "cx shell" [...args] { casm shell ...$args }
+def --wrapped "cx shell" [--here (-H), ...args] {
+  if $here { casm shell --here ...$args } else { casm shell ...$args }
+}
 def "cx forward" [...targets: string] { casm forward ...$targets }
 def "cx proxy status" [] { casm proxy status }
 def "cx proxy restart" [] { casm proxy restart }
