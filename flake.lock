@@ -136,11 +136,11 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1793510071,
-        "narHash": "sha256-vZlES19P8ihLgBOUExduUjG7Nal+p8/7RwGB6qzzUrA=",
+        "lastModified": 1793797793,
+        "narHash": "sha256-4ts24e0O6kkYrpa95Ui+DXHQsd+wiz5lzurEicukVYw=",
         "owner": "palekiwi-labs",
         "repo": "cue-platform",
-        "rev": "bf2630bca93dce6f280d8f4664492642edad12f2",
+        "rev": "e411c9158af808a65f50ea58fb2a351d6edc22ff",
         "type": "github"
       },
       "original": {
@@ -587,11 +587,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1793706278,
-        "narHash": "sha256-CE1GD35mj//AKYuLNbQJZDelQYWzef5GBpQno9uyNP0=",
+        "lastModified": 1792506237,
+        "narHash": "sha256-Q/8KLB6jNfpaUN1HAedE/u/Et9feE/zYSsutBLKrCFk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ea9e3ef341e11c193537f674f821a99f9f436729",
+        "rev": "5adc50831c259f87faeb09ddf930d43597197473",
         "type": "github"
       },
       "original": {

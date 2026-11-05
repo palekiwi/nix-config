@@ -14,6 +14,7 @@
   palekiwi.machineRole = "vm";
 
   networking.hostName = "agent-vm";
+  time.timeZone = "Asia/Taipei";
 
   microvm = {
     hypervisor = "cloud-hypervisor";
