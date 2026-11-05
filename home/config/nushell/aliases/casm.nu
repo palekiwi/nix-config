@@ -54,7 +54,7 @@ def "casm forward" [...targets: string] {
   }
   let flags = $ports | each {|p| [-L $"($p):localhost:($p)"] } | flatten
   print $"forwarding ($ports | str join ', ') to casm, Ctrl-C to stop"
-  ^ssh -N -o ExitOnForwardFailure=yes ...$flags pl@agent-vm
+  ^ssh -N -o ExitOnForwardFailure=yes -o ControlMaster=no -o ControlPath=none ...$flags pl@agent-vm
 }
 
 def "casm proxy status" [] { systemctl status agent-egress-proxy }
