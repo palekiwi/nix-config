@@ -15,6 +15,11 @@ local function toggle_git_tree(action, toggle)
 end
 
 local function fetch_base_branch()
+  if vim.fn.executable("get_pr_base") == 0 then
+    vim.notify("get_pr_base not found; using " .. (vim.g.git_master or "master"), vim.log.levels.WARN)
+    return vim.g.git_master or "master"
+  end
+
   local handle = io.popen("get_pr_base")
   local base_branch = vim.g.git_master or "master"     -- fallback
   if handle then

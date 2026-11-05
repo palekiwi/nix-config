@@ -1,5 +1,4 @@
 local wk = require("which-key")
-local kiwi = require('kiwi')
 require("config.keymaps.rails")
 local keymaps_telescope = require("config.keymaps.telescope")
 
@@ -113,7 +112,7 @@ local base = {
   { "<F6>",            "<C-R>=strftime('%F')<cr>",                                                  desc = "Insert date",                                                   mode = "i" },
   { "<F8>",            "<C-R>=expand('%:t')<cr>",                                                   desc = "Insert current filename",                                       mode = "i" },
   -- no leader
-  { "T",               kiwi.todo.toggle,                                                            desc = "Toggle Todo" },
+  { "T",               function() require('kiwi').todo.toggle() end,                               desc = "Toggle Todo" },
   { "W",               "<cmd>HopWord<cr>",                                                          desc = "Hop Word",                                                      mode = "n" },
   { "g",               group = "go to" },
   { "gc",              vim.lsp.buf.declaration,                                                     desc = "[LSP] Go to Declaration" },

@@ -1,0 +1,185 @@
+{ lib, pkgs, utils, ... }:
+let
+  tap = "vm-agent";
+  listenAddr = "10.77.0.1";
+  guestAddr = "10.77.0.2";
+  port = 3128;
+  user = "agent-proxy";
+  tapUnit = "microvm-tap-interfaces@agent.service";
+  secretsDir = "/run/secrets/agent-proxy";
+  # Every secret the egress proxy can read is declared here and nowhere else.
+  # Only read-only scoped tokens may be added. Accepted exceptions without
+  # scopes: typesafe and the model provider API keys (anthropic, gemini, zai).
+  # Never add airbrake or jira/token (read-write).
+  injections = {
+    github = {
+      secret = "github/palekiwi/gh_cli_readonly";
+      placeholder = "PLACEHOLDER-github";
+      hosts = [ "github.com" "api.github.com" ];
+    };
+    github-spabreaks = {
+      secret = "spabreaks/github_readonly";
+      placeholder = "PLACEHOLDER-gh-spabreaks";
+      hosts = [ "github.com" "api.github.com" ];
+    };
+    typesafe = {
+      secret = "typesafe/api_key";
+      placeholder = "PLACEHOLDER-typesafe";
+      hosts = [ "api.typesafe.ai" ];
+    };
+    jira = {
+      secret = "jira/token_readonly";
+      placeholder = "PLACEHOLDER-jira";
+      hosts = [ "api.atlassian.com" ];
+    };
+    zai = {
+      secret = "zai_coding_plan/api_key";
+      placeholder = "PLACEHOLDER-zai";
+      hosts = [ "api.z.ai" ];
+    };
+    anthropic = {
+      secret = "spabreaks/anthropic/dev-02-01";
+      placeholder = "PLACEHOLDER-anthropic";
+      hosts = [ "api.anthropic.com" ];
+      header = "x-api-key";
+    };
+    gemini = {
+      secret = "spabreaks/google_generative_ai_api_key";
+      placeholder = "PLACEHOLDER-gemini";
+      hosts = [ "generativelanguage.googleapis.com" ];
+      header = "x-goog-api-key";
+    };
+  };
+  headerOf = r: r.header or "authorization";
+  rulesFile = pkgs.writeText "agent-egress-proxy-rules.json" (builtins.toJSON
+    (lib.mapAttrsToList (name: r: {
+      inherit name;
+      inherit (r) placeholder hosts;
+      header = headerOf r;
+    }) injections));
+  interceptHosts = lib.unique (lib.concatMap (r: r.hosts) (lib.attrValues injections));
+  allowHosts = "^(${lib.concatMapStringsSep "|" lib.escapeRegex interceptHosts}):443$";
+  deniedUpstream = [
+    "0.0.0.0/8"
+    "10.0.0.0/8"
+    "100.64.0.0/10"
+    "127.0.0.0/8"
+    "169.254.0.0/16"
+    "172.16.0.0/12"
+    "192.168.0.0/16"
+    "224.0.0.0/4"
+    "192.0.0.0/24"
+    "192.0.2.0/24"
+    "198.18.0.0/15"
+    "198.51.100.0/24"
+    "203.0.113.0/24"
+    "240.0.0.0/4"
+    "::/0"
+  ];
+  placeholders = lib.mapAttrsToList (_: r: r.placeholder) injections;
+  overlapping = lib.filter (a: lib.any (b: a != b && lib.hasInfix a b) placeholders) placeholders;
+in
+{
+  assertions = [
+    {
+      assertion = overlapping == [ ];
+      message = "agent-egress-proxy: placeholder is a substring of another: ${toString overlapping}";
+    }
+    {
+      assertion = lib.length (lib.unique placeholders) == lib.length placeholders;
+      message = "agent-egress-proxy: duplicate placeholders";
+    }
+
+  ];
+
+  sops.secrets = {
+    "agent-proxy/ca" = {
+      owner = user;
+    };
+  } // lib.mapAttrs' (name: r: lib.nameValuePair "agent-proxy/${name}" {
+    key = r.secret;
+    owner = user;
+  }) injections;
+
+  users.users.${user} = {
+    isSystemUser = true;
+    group = user;
+  };
+  users.groups.${user} = { };
+
+  systemd.services.agent-egress-proxy = {
+    description = "Egress proxy for the agent microVM";
+    bindsTo = [ tapUnit ];
+    after = [ tapUnit ];
+    before = [ "microvm@agent.service" ];
+    wantedBy = [ "microvm@agent.service" ];
+    environment = {
+      AGENT_PROXY_SECRETS_DIR = secretsDir;
+      AGENT_PROXY_RULES = rulesFile;
+    };
+    serviceConfig = {
+      User = user;
+      Group = user;
+      RuntimeDirectory = "agent-egress-proxy";
+      RuntimeDirectoryMode = "0700";
+      ExecStartPre = pkgs.writeShellScript "agent-egress-proxy-confdir" ''
+        install -m 0600 ${secretsDir}/ca "$RUNTIME_DIRECTORY/mitmproxy-ca.pem"
+      '';
+      ExecStart = utils.escapeSystemdExecArgs [
+        (lib.getExe' pkgs.mitmproxy "mitmdump")
+        "--mode" "regular@${toString port}"
+        "--listen-host" listenAddr
+        "--set" "confdir=/run/agent-egress-proxy"
+        "--set" "allow_hosts=${allowHosts}"
+        "--set" "flow_detail=0"
+        "--set" "termlog_verbosity=warn"
+        "--set" "stream_large_bodies=1m"
+        "-s" "${./egress.py}"
+      ];
+      Restart = "on-failure";
+      RestartSec = 2;
+
+      IPAddressAllow = [ "${guestAddr}/32" ];
+      IPAddressDeny = deniedUpstream;
+
+      CapabilityBoundingSet = "";
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      PrivateDevices = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      ProtectKernelTunables = true;
+      ProtectKernelModules = true;
+      ProtectKernelLogs = true;
+      ProtectControlGroups = true;
+      ProtectClock = true;
+      ProtectHostname = true;
+      ProtectProc = "invisible";
+      ProcSubset = "pid";
+      RestrictAddressFamilies = [ "AF_INET" "AF_UNIX" ];
+      MemoryMax = "1G";
+      TasksMax = 256;
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      LockPersonality = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = [ "@system-service" "~@privileged" ];
+      UMask = "0077";
+    };
+  };
+
+  networking.firewall.extraCommands = lib.mkAfter ''
+    iptables -w -D INPUT -p tcp --dport ${toString port} -j agent-proxy-guard 2>/dev/null || true
+    iptables -w -N agent-proxy-guard 2>/dev/null || true
+    iptables -w -F agent-proxy-guard
+    iptables -w -A agent-proxy-guard -i ${tap} -s ${guestAddr} -d ${listenAddr} -j ACCEPT
+    iptables -w -A agent-proxy-guard -j DROP
+    iptables -w -I INPUT -p tcp --dport ${toString port} -j agent-proxy-guard
+  '';
+  networking.firewall.extraStopCommands = ''
+    iptables -w -D INPUT -p tcp --dport ${toString port} -j agent-proxy-guard 2>/dev/null || true
+    iptables -w -F agent-proxy-guard 2>/dev/null || true
+    iptables -w -X agent-proxy-guard 2>/dev/null || true
+  '';
+}

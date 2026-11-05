@@ -139,7 +139,9 @@ return {
         flags = lsp_flags,
       }
 
-      vim.lsp.enable('cue_lsp')
+      if vim.fn.executable(vim.lsp.config.cue_lsp.cmd[1]) == 1 then
+        vim.lsp.enable('cue_lsp')
+      end
       vim.lsp.enable('eslint')
       vim.lsp.enable('lua_ls')
       vim.lsp.enable('nixd')

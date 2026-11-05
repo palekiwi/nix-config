@@ -25,6 +25,15 @@
       url = "github:palekiwi-labs/cue";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    cue-platform.url = "github:palekiwi-labs/cue-platform/dev";
+    git-pr-sync = {
+      url = "github:palekiwi-labs/git-pr-sync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     cast-haze = {
       # Pinned to a specific rev so the claude-ping service and the haze
       # systemwide cast use one reproducible version. Bump deliberately.
@@ -66,8 +75,12 @@
 
         pale = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/pale
+            ./modules/agent-microvm.nix
+            ./modules/agent-egress-proxy
+            inputs.microvm.nixosModules.host
             inputs.notifications-server.nixosModules.default
             inputs.cue.nixosModules.acuity
             inputs.sops-nix.nixosModules.sops

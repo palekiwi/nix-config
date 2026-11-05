@@ -20,6 +20,15 @@ in
       HostName = "${host}.paradise-liberty.ts.net";
       User = user;
       Port = port;
-    });
+    }) // {
+      agent-vm = {
+        User = user;
+        ForwardAgent = "no";
+        ForwardX11 = "no";
+        ControlMaster = "auto";
+        ControlPath = "~/.ssh/cm-%C";
+        ControlPersist = "10m";
+      };
+    };
   };
 }

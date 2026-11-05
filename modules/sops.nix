@@ -1,6 +1,10 @@
 { ... }:
 
 {
+  imports = [ ./machine-role.nix ];
+
+  palekiwi.machineRole = "host";
+
   sops.defaultSopsFile = ../secrets/secrets.yaml;
   sops.defaultSopsFormat = "yaml";
   sops.age.keyFile = "/home/pl/.config/sops/age/keys.txt";

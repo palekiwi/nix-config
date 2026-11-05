@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-templates="${HOME}/nix-config/home/config/git/templates/hooks"
+templates="${GIT_HOOKS_TEMPLATES:-${HOME}/nix-config/home/config/git/templates}/hooks"
 marker="# nix-config managed"
 hooks=(post-checkout post-merge post-rewrite)
 

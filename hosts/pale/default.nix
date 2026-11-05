@@ -4,7 +4,6 @@
   imports =
     [
       ../../modules/cachix.nix
-      ../../modules/cue-syncthing.nix
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/ibus.nix
