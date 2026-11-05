@@ -12,6 +12,7 @@
       };
       init.defaultBranch = "master";
       pull.rebase = true;
+      merge.ff = "only";
       # Template entries must be real files: git copies template entries
       # verbatim, and home.file can only produce symlinks - which dangle
       # after store GC and never resolve inside cast containers.
