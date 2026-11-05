@@ -1,8 +1,8 @@
 # casm: host-side commands for the agent microVM workspace.
 
-def "casm start" [] { sudo systemctl start microvm@agent }
+def "casm up" [] { sudo systemctl start microvm@agent }
 
-def "casm stop" [] { sudo systemctl stop microvm@agent }
+def "casm down" [] { sudo systemctl stop microvm@agent }
 
 def "casm restart" [] { sudo systemctl restart microvm@agent }
 
