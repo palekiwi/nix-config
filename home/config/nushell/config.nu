@@ -1,5 +1,5 @@
 source common.nu
-source aliases/tn.nu
+source aliases/casm.nu
 source aliases/host.nu
 
 $env.GPG_TTY = ^tty
