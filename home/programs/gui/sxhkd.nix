@@ -76,71 +76,71 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
+      "super + Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
+      "super + Return + control" = "dmenu_tmux --tmux";
       "super + Return + shift" = "dmenu_tmux";
       "super + BackSpace" = "${switchToDefaultSession}";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
-      "super + space; t; e" = "${switchToSession} cue";
-      "super + space; t; n" = "${switchToSession} palekiwi";
-      "super + space; t; v" = "${switchToSession} cue-nvim";
-      "super + space; t; t" = "${switchToSession} cast";
-      "super + space; t; u" = "${switchToSession} cue-platform";
+      "super + space; h; t; e" = "${switchToSession} cue";
+      "super + space; h; t; n" = "${switchToSession} palekiwi";
+      "super + space; h; t; v" = "${switchToSession} cue-nvim";
+      "super + space; h; t; t" = "${switchToSession} cast";
+      "super + space; h; t; u" = "${switchToSession} cue-platform";
 
-      "super + space; c; c" = "${switchToSession} config-cast";
-      "super + space; c; n" = "${switchToSession} nix-config";
-      "super + space; c; p" = "${switchToSession} config-pi";
+      "super + space; h; c; c" = "${switchToSession} config-cast";
+      "super + space; h; c; n" = "${switchToSession} nix-config";
+      "super + space; h; c; p" = "${switchToSession} config-pi";
 
-      "super + space; m; d" = "${switchToSession} spabreaks/my-account/dev";
-      "super + space; m; e" = "${switchToSession} spabreaks/my-account";
+      "super + space; h; m; d" = "${switchToSession} spabreaks/my-account/dev";
+      "super + space; h; m; e" = "${switchToSession} spabreaks/my-account";
 
-      "super + space; n; p" = "${switchToSession} notes-pl";
-      "super + space; n; t" = "${switchToSession} notes-sb";
+      "super + space; h; n; p" = "${switchToSession} notes-pl";
+      "super + space; h; n; t" = "${switchToSession} notes-sb";
 
-      "super + space; k; s; c" = "${switchToKyomuSession} spabreaks/spabreaks/console";
-      "super + space; k; s; d" = "${switchToKyomuSession} spabreaks/spabreaks/dev";
-      "super + space; k; s; e" = "${switchToKyomuSession} spabreaks/spabreaks";
-      "super + space; k; s; t" = "${switchToKyomuSession} terraform";
+      "super + space; h; k; s; c" = "${switchToKyomuSession} spabreaks/spabreaks/console";
+      "super + space; h; k; s; d" = "${switchToKyomuSession} spabreaks/spabreaks/dev";
+      "super + space; h; k; s; e" = "${switchToKyomuSession} spabreaks/spabreaks";
+      "super + space; h; k; s; t" = "${switchToKyomuSession} terraform";
 
-      "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
+      "super + space; h; k; n; c" = "${switchToKyomuSession} nix-config";
 
-      "super + space; s; c" = "${switchToSession} spabreaks/spabreaks/console";
-      "super + space; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
-      "super + space; s; e" = "${switchToSession} spabreaks/spabreaks";
-      "super + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
-      "super + space; s; t" = "${switchToSession} spabreaks/terraform";
+      "super + space; h; s; c" = "${switchToSession} spabreaks/spabreaks/console";
+      "super + space; h; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
+      "super + space; h; s; e" = "${switchToSession} spabreaks/spabreaks";
+      "super + space; h; s; s" = "${switchToSession} spabreaks/spabreaks-org";
+      "super + space; h; s; t" = "${switchToSession} spabreaks/terraform";
 
-      "super + space; r; d" = "${switchToSession} vrs/dev";
-      "super + space; r; e" = "${switchToSession} vrs";
+      "super + space; h; r; d" = "${switchToSession} vrs/dev";
+      "super + space; h; r; e" = "${switchToSession} vrs";
 
-      "super + space; v; space" = "dmenu_remote_tmux agent-vm --prefix agent";
+      "super + space; space" = "dmenu_remote_tmux agent-vm --prefix agent";
 
-      "super + space; v; t; e" = "${switchToAgentSession} cue";
-      "super + space; v; t; n" = "${switchToAgentSession} palekiwi";
-      "super + space; v; t; v" = "${switchToAgentSession} cue-nvim";
-      "super + space; v; t; t" = "${switchToAgentSession} cast";
-      "super + space; v; t; u" = "${switchToAgentSession} cue-platform";
+      "super + space; t; e" = "${switchToAgentSession} cue";
+      "super + space; t; n" = "${switchToAgentSession} palekiwi";
+      "super + space; t; v" = "${switchToAgentSession} cue-nvim";
+      "super + space; t; t" = "${switchToAgentSession} cast";
+      "super + space; t; u" = "${switchToAgentSession} cue-platform";
 
-      "super + space; v; c; n" = "${switchToAgentSession} nix-config";
+      "super + space; c; n" = "${switchToAgentSession} nix-config";
 
-      "super + space; v; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
-      "super + space; v; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
-      "super + space; v; s; e" = "${switchToAgentSession} spabreaks/spabreaks";
+      "super + space; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
+      "super + space; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
+      "super + space; s; e" = "${switchToAgentSession} spabreaks/spabreaks";
 
-      "super + space; v; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
-      "super + space; v; m; e" = "${switchToAgentSession} spabreaks/my-account";
+      "super + space; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
+      "super + space; m; e" = "${switchToAgentSession} spabreaks/my-account";
 
-      "super + space; v; r; d" = "${switchToAgentSession} vrs/dev";
-      "super + space; v; r; e" = "${switchToAgentSession} vrs";
+      "super + space; r; d" = "${switchToAgentSession} vrs/dev";
+      "super + space; r; e" = "${switchToAgentSession} vrs";
 
-      "super + space; v; w; d" = "${switchToAgentSession} spabreaks/wss/dev";
-      "super + space; v; w; e" = "${switchToAgentSession} spabreaks/wss";
+      "super + space; w; d" = "${switchToAgentSession} spabreaks/wss/dev";
+      "super + space; w; e" = "${switchToAgentSession} spabreaks/wss";
 
-      "super + space; w; d" = "${switchToSession} spabreaks/wss/dev";
-      "super + space; w; e" = "${switchToSession} spabreaks/wss";
+      "super + space; h; w; d" = "${switchToSession} spabreaks/wss/dev";
+      "super + space; h; w; e" = "${switchToSession} spabreaks/wss";
 
       "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
       "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";
