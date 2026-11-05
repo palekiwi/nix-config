@@ -14,16 +14,17 @@ def "casm logs" [] { journalctl -u microvm@agent -f }
 def "casm ip" [] { "10.77.0.2" }
 
 # Interactive shell in the guest, or run a command: casm shell -- uptime.
-# --here (-H) starts in the guest path matching the host cwd.
-def --wrapped "casm shell" [--here (-H), ...args] {
+# Starts in the guest path matching the host cwd; --home starts in ~.
+# An interactive shell falls back to ~ when the path is missing in the guest.
+def --wrapped "casm shell" [--home, ...args] {
   let dir = $env.PWD | str replace -a "'" "'\\''"
-  let cd = $"cd '($dir)' || exit 1"
-  if not $here {
+  if $home {
     ssh pl@agent-vm ...$args
   } else if ($args | is-empty) {
+    let cd = $"cd '($dir)' 2>/dev/null || echo 'casm: ($dir) not in guest, using ~'"
     ssh -t pl@agent-vm $"($cd); exec bash -il"
   } else {
-    ssh pl@agent-vm $"($cd); ($args | str join ' ')"
+    ssh pl@agent-vm $"cd '($dir)' || exit 1; ($args | str join ' ')"
   }
 }
 
@@ -68,8 +69,8 @@ def "cx restart" [] { casm restart }
 def "cx status" [] { casm status }
 def "cx logs" [] { casm logs }
 def "cx ip" [] { casm ip }
-def --wrapped "cx shell" [--here (-H), ...args] {
-  if $here { casm shell --here ...$args } else { casm shell ...$args }
+def --wrapped "cx shell" [--home, ...args] {
+  if $home { casm shell --home ...$args } else { casm shell ...$args }
 }
 def "cx forward" [...targets: string] { casm forward ...$targets }
 def "cx proxy status" [] { casm proxy status }
