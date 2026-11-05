@@ -4,7 +4,7 @@ let
   shared = import ./tmux-config.nix {
     inherit pkgs;
     copyCommand = "echo -n {} | xclip -selection clipboard";
-    borderColour = "colour208";
+    hostColour = "colour208";
   };
 in
 {

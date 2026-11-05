@@ -1,13 +1,11 @@
 {
   pkgs,
   copyCommand,
-  borderColour ? null,
+  hostColour ? "blue",
 }:
 
 let
   fg = "colour10";
-  border = if borderColour == null then fg else borderColour;
-  activeBorder = if borderColour == null then "colour3" else borderColour;
 
   tmux_view_output = pkgs.writeShellScript "tmux_view_output" ''
     file=`mktemp`.sh
@@ -20,7 +18,7 @@ let
   '';
 
   widgets = {
-    sessionName = ''#[fg=blue,bold]#{host_short}#[fg=color7,nobold]:#{session_name}'';
+    sessionName = ''#[fg=${hostColour},bold]#{host_short}#[fg=color7,nobold]:#{session_name}'';
   };
 
   statusLeft = '' ${widgets.sessionName}#(_tmux_status-repo #{q:pane_current_path}) '';
@@ -101,8 +99,8 @@ in
     setw -g mode-style 'fg=colour1 bg=colour18 bold'
 
     # pane borders
-    set -g pane-border-style 'fg=${border}'
-    set -g pane-active-border-style 'fg=${activeBorder}'
+    set -g pane-border-style 'fg=${fg}'
+    set -g pane-active-border-style 'fg=colour3'
 
     # statusbar
     set-option -g status-style bg=default
