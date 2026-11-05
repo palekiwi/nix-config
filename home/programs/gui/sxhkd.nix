@@ -129,6 +129,8 @@ in
       "super + space; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
       "super + space; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
       "super + space; s; e" = "${switchToAgentSession} spabreaks/spabreaks";
+      "super + space; s; s" = "${switchToAgentSession} spabreaks/spabreaks-org";
+      "super + space; s; t" = "${switchToAgentSession} spabreaks/terraform";
 
       "super + space; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
       "super + space; m; e" = "${switchToAgentSession} spabreaks/my-account";
