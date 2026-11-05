@@ -19,6 +19,7 @@ in
 {
   microvm.vms.agent = {
     autostart = true;
+    restartIfChanged = false;
     specialArgs = { inherit inputs; };
     config = {
       imports = [ ../vm/agent ];

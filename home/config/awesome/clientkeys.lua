@@ -197,8 +197,8 @@ local clientkeys = gears.table.join(
     end,
     { description = "toggle minimize backdrop", group = "client" }),
 
-  -- fullscreen toggle
-  awful.key({ MODKEY, "Control" }, "space",
+  -- max layout toggle
+  awful.key({ MODKEY, "Shift" }, "space",
     function(c)
       c.floating = false
       if awful.layout.getname() == LAYOUT_MAX_NAME then
