@@ -16,10 +16,11 @@ def "casm ip" [] { "10.77.0.2" }
 # Interactive shell in the guest, or run a command: casm shell -- uptime.
 # --here (-H) starts in the guest path matching the host cwd.
 def --wrapped "casm shell" [--here (-H), ...args] {
-  if not $here { return (ssh pl@agent-vm ...$args) }
   let dir = $env.PWD | str replace -a "'" "'\\''"
   let cd = $"cd '($dir)' || exit 1"
-  if ($args | is-empty) {
+  if not $here {
+    ssh pl@agent-vm ...$args
+  } else if ($args | is-empty) {
     ssh -t pl@agent-vm $"($cd); exec bash -il"
   } else {
     ssh pl@agent-vm $"($cd); ($args | str join ' ')"
