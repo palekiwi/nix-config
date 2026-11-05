@@ -13,7 +13,7 @@
 
   palekiwi.machineRole = "vm";
 
-  networking.hostName = "agent-vm";
+  networking.hostName = "casm";
   time.timeZone = "Asia/Taipei";
 
   microvm = {
