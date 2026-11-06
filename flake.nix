@@ -140,6 +140,8 @@
       packages.x86_64-linux = {
         claude = self.nixosConfigurations.claude-vm.config.system.build.vm;
 
+        vertoxr = pkgs.callPackage ./pkgs/vertoxr.nix { };
+
         claude-spice = pkgs.writeShellScriptBin "claude-spice" ''
           ${pkgs.spice-gtk}/bin/spicy -h localhost -p 5930
         '';
