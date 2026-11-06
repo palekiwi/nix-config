@@ -20,6 +20,8 @@ appimageTools.wrapType2 {
 
   extraPkgs = p: with p; [ libepoxy ];
 
+  extraBwrapArgs = [ "--ro-bind-try /etc/udev /etc/udev" ];
+
   extraInstallCommands = ''
     install -Dm444 ${contents}/lib/udev/70-vertoxr-drivers.rules \
       $out/lib/udev/rules.d/70-vertoxr-drivers.rules
