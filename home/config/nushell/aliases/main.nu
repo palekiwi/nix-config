@@ -76,6 +76,7 @@ def revcom [
 alias cat = bat -p
 alias ghrc = gh-utils repo clone
 alias grcp = gh-utils review comments post
+alias grpv = gh-utils review comments post --vm
 alias gu = gitui
 alias o = opencode
 alias orun = opencode-run
