@@ -18,7 +18,10 @@ in
 appimageTools.wrapType2 {
   inherit pname version src;
 
-  extraPkgs = p: with p; [ libepoxy ];
+  extraPkgs = p: with p; [
+      libepoxy
+      libinput
+    ];
 
   extraBwrapArgs = [ "--ro-bind-try /etc/udev /etc/udev" ];
 
