@@ -13,6 +13,7 @@ import ./scripts/git-base.nix pkgs ++ (with pkgs; [
     mdformat-footnote
   ]))
   curl
+  fd
   gcc
   gnumake
   go
@@ -21,6 +22,7 @@ import ./scripts/git-base.nix pkgs ++ (with pkgs; [
   nixpkgs-fmt
   nodejs_24
   prettier
+  ripgrep
   taplo
   tree-sitter
   typescript-language-server
