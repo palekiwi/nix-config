@@ -1,6 +1,6 @@
 { appimageTools, requireFile }:
 
-appimageTools.wrapType2 rec {
+let
   pname = "vertoxr";
   version = "0.2.14";
 
@@ -13,5 +13,15 @@ appimageTools.wrapType2 rec {
     '';
   };
 
+  contents = appimageTools.extract { inherit pname version src; };
+in
+appimageTools.wrapType2 {
+  inherit pname version src;
+
   extraPkgs = p: with p; [ libepoxy ];
+
+  extraInstallCommands = ''
+    install -Dm444 ${contents}/lib/udev/70-vertoxr-drivers.rules \
+      $out/lib/udev/rules.d/70-vertoxr-drivers.rules
+  '';
 }
