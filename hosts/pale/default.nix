@@ -25,7 +25,6 @@
       ./ssh.nix
       ./system.nix
       ./user.nix
-      ./vertoxr.nix
     ];
 
   config = {
