@@ -1,6 +1,7 @@
 { pkgs, ... }:
 
 let
+  repoPicker = import ../tui/host-repo-picker { inherit pkgs; };
   cplay = pkgs.writeShellScript "cplay" ''
     if ! pgrep -x cmus ; then
       ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
@@ -77,15 +78,15 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux";
-      "super + Return + shift" = "dmenu_tmux";
+      "super + Return + control" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
+      "super + Return + shift" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
       "super + BackSpace" = "${switchToDefaultSession}";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
       "super + control + space; t; e" = "${switchToSession} cue";
-      "super + control + space; t; n" = "${switchToSession} palekiwi";
+      "super + control + space; t; n" = "${switchToSession} palekiwi-legacy";
       "super + control + space; t; v" = "${switchToSession} cue-nvim";
       "super + control + space; t; t" = "${switchToSession} cast";
       "super + control + space; t; u" = "${switchToSession} cue-platform";
@@ -160,8 +161,10 @@ in
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
       "shift + {button7,button6}" = "light -{U,A} 1";
       "{XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
-      "control + XF86AudioLowerVolume" = "pactl set-sink-volume @DEFAULT_SINK@ 50%; notify-send -t 800 'Master Vol:' 50%";
-      "control + XF86AudioRaiseVolume" = "pactl set-sink-volume @DEFAULT_SINK@ 65%; notify-send -t 800 'Master Vol:' 65%";
+      "control + XF86AudioLowerVolume" =
+        "pactl set-sink-volume @DEFAULT_SINK@ 50%; notify-send -t 800 'Master Vol:' 50%";
+      "control + XF86AudioRaiseVolume" =
+        "pactl set-sink-volume @DEFAULT_SINK@ 65%; notify-send -t 800 'Master Vol:' 65%";
       "shift + XF86AudioLowerVolume" = "cmus-remote -v -5%";
       "shift + XF86AudioRaiseVolume" = "cmus-remote -v +5%";
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";

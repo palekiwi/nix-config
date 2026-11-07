@@ -1,0 +1,11 @@
+[groups.palekiwi]
+nix-config = "~/nix-config"
+palekiwi = "~/code/palekiwi/palekiwi"
+cue = "~/code/palekiwi-labs/cue"
+cue-platform = "~/code/palekiwi-labs/cue-platform"
+config-cue = "~/.config/cue"
+
+[groups.spabreaks]
+spabreaks = "~/code/spabreaks/spabreaks"
+voucher-portal = "~/code/spabreaks/voucher-portal"
+my-account = "~/code/spabreaks/my-account"
