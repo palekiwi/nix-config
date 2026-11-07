@@ -240,12 +240,11 @@ def format_rows(repos, group=None):
     ]
 
 
-def choose(repos, desktop=False, group=None, current=None):
+def choose(repos, desktop=False, group=None):
     if group is not None and not any(repo.group == group for repo in repos):
         raise ValueError(f"Unknown workspace: {group}")
     groups = {repo.group for repo in repos}
-    current = current if current in groups and len(groups) > 1 and not desktop else None
-    initial = group if desktop else current
+    initial = group
     if initial is None and len(groups) == 1:
         initial = next(iter(groups))
     rows = format_rows(repos, initial)
@@ -253,9 +252,7 @@ def choose(repos, desktop=False, group=None, current=None):
     env = os.environ.copy()
     env.pop("FZF_DEFAULT_OPTS", None)
     env.pop("FZF_DEFAULT_OPTS_FILE", None)
-    with tempfile.TemporaryDirectory(
-        prefix="host-repo-picker-", dir="/tmp"
-    ) as directory:
+    with tempfile.TemporaryDirectory(prefix="host-repo-picker-", dir="/tmp"):
         command = ["rofi", "-dmenu", "-i", "-no-custom", "-format", "i", "-p", prompt]
         allowed = rows
         if not desktop:
@@ -268,28 +265,6 @@ def choose(repos, desktop=False, group=None, current=None):
                 "--with-nth=2..",
                 f"--prompt={prompt}> ",
             ]
-            if current:
-                all_rows = format_rows(repos)
-                allowed = rows + all_rows
-                root = Path(directory)
-                for name, content in (
-                    ("current", "\n".join(rows) + "\n"),
-                    ("all", "\n".join(all_rows) + "\n"),
-                    ("prompt", display_group(current) + "> "),
-                ):
-                    (root / name).write_text(content)
-                to_all = f"reload(cat {root}/all)+change-prompt(Host repo> )+change-header(Ctrl-a: current workspace)"
-                to_current = f"reload(cat {root}/current)+transform-prompt(cat {root}/prompt)+change-header(Ctrl-a: all workspaces)"
-                toggle = (
-                    f"if [ -f {root}/all-active ]; then rm {root}/all-active; "
-                    f"printf '%s\\n' {shlex.quote(to_current)}; else touch {root}/all-active; "
-                    f"printf '%s\\n' {shlex.quote(to_all)}; fi"
-                )
-                command += [
-                    "--header=Ctrl-a: all workspaces",
-                    "--bind",
-                    "ctrl-a:transform:" + toggle,
-                ]
         result = subprocess.run(
             command,
             input="\n".join(row.split("\t", 1)[1] for row in rows) + "\n"
@@ -312,6 +287,95 @@ def choose(repos, desktop=False, group=None, current=None):
     return repos[int(row.split("\t", 1)[0])]
 
 
+def window_rows(tmux, session):
+    fields = []
+    windows = tmux.run("list-windows", "-t", session, "-F", "#{window_id}")
+    for window in windows.splitlines():
+        values = [
+            tmux.run("display-message", "-p", "-t", f"{session}:{window}", fmt)
+            for fmt in ("#{window_index}", "#{window_name}", "#{pane_current_path}")
+        ]
+        fields.append((window, "\t".join(" ".join(v.split()) for v in values)))
+    formatted = subprocess.run(
+        ["column", "-t", "-s", "\t"],
+        input="\n".join(row for _, row in fields) + "\n",
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    return [
+        f"{window}\t{row}" for (window, _), row in zip(fields, formatted, strict=True)
+    ]
+
+
+def choose_session(tmux, repos, session, group):
+    rows = window_rows(tmux, session)
+    repo_rows = [
+        f"repo:{repos[int(row.split(chr(9), 1)[0])].identity}\t{row.split(chr(9), 1)[1]}"
+        for row in format_rows(repos, group)
+    ]
+    env = os.environ.copy()
+    env.pop("FZF_DEFAULT_OPTS", None)
+    env.pop("FZF_DEFAULT_OPTS_FILE", None)
+    with tempfile.TemporaryDirectory(
+        prefix="host-repo-picker-", dir="/tmp"
+    ) as directory:
+        root = Path(directory)
+        command = [
+            "fzf",
+            "--with-shell=bash -c",
+            "--layout=reverse",
+            "--no-multi",
+            "--delimiter=\t",
+            "--with-nth=2..",
+            f"--prompt=Windows: {group}> ",
+        ]
+        if repo_rows:
+            (root / "repos").write_text("\n".join(repo_rows) + "\n")
+            (root / "windows-prompt").write_text(f"Windows: {group}> ")
+            (root / "repos-prompt").write_text(f"Repos: {group}> ")
+            reload_windows = shlex.join(
+                [
+                    sys.executable,
+                    str(Path(__file__).resolve()),
+                    "--window-rows",
+                    session,
+                ]
+            )
+            to_windows = f"reload-sync({reload_windows})+transform-prompt(cat {root}/windows-prompt)+clear-query"
+            to_repos = f"reload-sync(cat {root}/repos)+transform-prompt(cat {root}/repos-prompt)+clear-query"
+            toggle = (
+                f"if [ -f {root}/repos-active ]; then rm {root}/repos-active; "
+                f"printf '%s\\n' {shlex.quote(to_windows)}; else touch {root}/repos-active; "
+                f"printf '%s\\n' {shlex.quote(to_repos)}; fi"
+            )
+            command += [
+                "--header=Ctrl-a: toggle",
+                "--bind",
+                "ctrl-a:transform:" + toggle,
+            ]
+        result = subprocess.run(
+            command,
+            input="\n".join(rows) + "\n",
+            stdout=subprocess.PIPE,
+            text=True,
+            env=env,
+        )
+    if result.returncode in (1, 130):
+        return None
+    result.check_returncode()
+    identity = result.stdout.rstrip("\n").split("\t", 1)[0]
+    if identity.startswith("repo:"):
+        for repo in repos:
+            if repo.group == group and identity == f"repo:{repo.identity}":
+                return repo
+    elif re.fullmatch(r"@[0-9]+", identity):
+        existing = tmux.run("list-windows", "-t", session, "-F", "#{window_id}")
+        if identity in existing.splitlines():
+            return identity
+    raise ValueError("Unexpected picker selection")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -323,24 +387,35 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--client")
     mode.add_argument("--desktop", action="store_true")
+    mode.add_argument("--window-rows")
+    parser.add_argument("--session")
     parser.add_argument("--group")
     args = parser.parse_args()
     tmux = Tmux()
     try:
-        repos = load_repos(args.config)
+        if args.window_rows:
+            print("\n".join(window_rows(tmux, args.window_rows)))
+            return 0
         if args.group and not args.desktop:
             raise ValueError("--group requires --desktop")
-        current = (
-            tmux.run("display-message", "-p", "-c", args.client, "#{session_name}")
-            if args.client
-            else None
-        )
-        repo = choose(repos, desktop=args.desktop, group=args.group, current=current)
-        if repo is not None:
-            if args.desktop:
+        if args.desktop:
+            repo = choose(load_repos(args.config), desktop=True, group=args.group)
+            if repo is not None:
                 tmux.desktop(repo)
-            else:
-                tmux.select(repo, args.client)
+        else:
+            session = args.session or tmux.run(
+                "display-message", "-p", "-c", args.client, "#{session_id}"
+            )
+            group = tmux.run("display-message", "-p", "-t", session, "#{session_name}")
+            repos = load_repos(args.config) if args.config.exists() else []
+            selected = choose_session(tmux, repos, session, group)
+            if isinstance(selected, Repo):
+                tmux.select(selected, args.client)
+            elif selected is not None:
+                tmux.run("select-window", "-t", f"{session}:{selected}")
+                tmux.run(
+                    "switch-client", "-c", args.client, "-t", f"{session}:{selected}"
+                )
     except (
         OSError,
         ValueError,

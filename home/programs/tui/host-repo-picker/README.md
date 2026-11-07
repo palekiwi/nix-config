@@ -1,22 +1,30 @@
 # Host repo picker
 
-Host-only C-f initially lists repos in the calling tmux workspace. Ctrl-a
-switches between that original workspace and all configured workspaces,
-without restarting the popup. From an unrelated session it lists all repos
-without a misleading current-workspace toggle. Search by repo or workspace,
-use arrows/Ctrl-n/Ctrl-p to move, Enter to select, and Escape or Ctrl-c to
-cancel. No open-state markers are shown.
+Host-only C-f lists ALL existing windows in the calling tmux session,
+including manually created and non-repository windows. The prompt is
+`Windows: spabreaks` (using the actual session name). Enter switches that
+existing window by stable window ID; it never creates a window.
+
+Ctrl-a toggles to configured repositories for that same workspace, with
+`Repos: spabreaks` and a compact `Ctrl-a: toggle` hint. This includes repos
+that are not open yet. Enter creates or reuses their managed window using
+the existing repository backend. Ctrl-a again returns to existing windows,
+reloading live names and newly created windows. Switching modes clears the
+search. Neither mode crosses workspace boundaries. In an unconfigured
+session, or with no config file, windows work normally and the repo toggle
+and hint are disabled. Use arrows/Ctrl-n/Ctrl-p to move, Enter to select,
+and Escape or Ctrl-c to cancel. No open-state markers are shown.
 
 fzf actions explicitly run with packaged Bash, independent of the host's
 login shell (Nushell). This covers both the toggle's transform and its
 reload/prompt subprocesses; repo windows still use tmux's configured shell.
 
-A single-workspace view has a workspace prompt (Spabreaks or Palekiwi) and
-two columns: repo and path. The all-workspaces view adds a workspace column.
-Paths under home use `~`. Both frontends align TAB-separated fields using
+The windows view shows index, window name and active-pane path. Repo views
+show repo and path, abbreviating paths under home with `~`. Desktop prompts
+remain Spabreaks or Palekiwi. Both frontends align TAB-separated fields using
 Linux `column -t -s TAB`, so spaces and commas in paths stay intact.
-Desktop selection uses rofi's row index; fzf carries a hidden stable index.
-Neither backend parses padded display text for repo identity.
+Desktop selection uses rofi's row index; the popup carries hidden stable
+window IDs or repository IDs. Neither parses padded display text for identity.
 
 Edit `home/config/tmux/repos.toml`, deployed by Home Manager to
 `~/.config/tmux/repos.toml`. Each table names a session, and each entry maps
@@ -71,8 +79,8 @@ VM's single-row layout retain the default 40-character branch cap.
 Each desktop picker contains only that workspace's repos, with no toggle.
 The redundant Super+Ctrl+Space, Space trial launcher is removed.
 **Super+Return** still opens the VM launcher, unchanged.
-Both host shortcuts use `rofi -dmenu` with the same config, formatting and
-selection backend as C-f. They work without a running tmux server and create
+Both host shortcuts use `rofi -dmenu` with the same repository config,
+formatting and creation/reuse backend as C-f's Repos mode. They work without a running tmux server and create
 only the selected repo shell, not a bootstrap window. Cancellation never
 starts a server. Existing rofi monospace fonts are unchanged.
 
@@ -205,8 +213,9 @@ HOST_PICKER_TEST_CONFIG="$artifact" PYTHONDONTWRITEBYTECODE=1 \
 Tests use unique temporary sockets, real attached PTY clients, and cleanup.
 They never connect to the default server. The generated-config test uses
 Nushell as both inherited SHELL and tmux's default shell, opens C-f's actual
-packaged popup, selects a repo and cancels another popup. It sends literal
-Ctrl-a bytes and checks rendered repo rows across all/current/all toggles,
+packaged popup, selects existing/manual windows, creates/reuses a repo and
+cancels another popup. It sends literal Ctrl-a bytes and checks rendered
+Windows/Repos rows, live rename/create reloads and unconfigured sessions,
 not just header changes or subprocess exit codes. If
 `HOST_PICKER_TEST_CONFIG` is omitted, generated-config tests are skipped.
 This build validates the picker and generated host tmux, sxhkd and sesh configuration,
@@ -228,10 +237,13 @@ focus and fresh-boot keyboard behavior still require operator QA.
   click visible repo labels and verify native window selection.
 - In the VM, confirm the original single-row status remains unchanged.
 
-- C-f in Palekiwi/Spabreaks starts with only that workspace's repos.
-  Ctrl-a shows all eight repos and toggles back to the original workspace.
-  Only the compact Ctrl-a hint appears; no Enter/Escape help or open marker.
-- C-f in an unrelated session starts with all repos and has no toggle hint.
+- C-f starts with every existing window in the current session, including
+  manual/non-repo windows. Enter switches without creating anything.
+  Ctrl-a shows only that workspace's configured repos, including unopened
+  repos; Enter creates/reuses a managed window. Ctrl-a returns to a fresh
+  window list. Only the compact Ctrl-a hint appears; no open marker.
+- C-f in an unrelated session lists its existing windows, with no toggle or
+  hint and no access to another workspace's repos.
 - From a fresh boot, Super+Ctrl+Return lists only Spabreaks repos;
   Super+Shift+Return lists only Palekiwi repos. Check aligned repo/path
   columns, workspace prompts and abbreviated home paths. Escape creates no

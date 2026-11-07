@@ -104,30 +104,6 @@ class ConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unknown workspace"):
             choose(repos, desktop=True, group="absent")
 
-    def test_current_filter_and_unrelated_session(self):
-        repos = [
-            Repo("palekiwi", "one", Path("/tmp/one")),
-            Repo("spabreaks", "two", Path("/tmp/two")),
-        ]
-        for current in ("palekiwi", "unrelated", None):
-            result = subprocess.CompletedProcess([], 130, "")
-            with patch(
-                "picker.subprocess.run", side_effect=picker_result(result)
-            ) as run:
-                self.assertIsNone(choose(repos, current=current))
-            command = run.call_args.args[0]
-            rows = run.call_args.kwargs["input"]
-            self.assertIn("one", rows)
-            self.assertEqual("two" in rows, current != "palekiwi")
-            self.assertIn("--with-shell=bash -c", command)
-            self.assertEqual("--bind" in command, current == "palekiwi")
-            self.assertFalse(any("Enter:" in arg or "Esc:" in arg for arg in command))
-        with patch("picker.subprocess.run", side_effect=picker_result(result)) as run:
-            choose(repos[:1], current="palekiwi")
-        self.assertNotIn("--bind", run.call_args.args[0])
-        self.assertIn("--prompt=Palekiwi> ", run.call_args.args[0])
-        self.assertNotIn("Palekiwi", run.call_args.kwargs["input"])
-
 
 class ServerTests(unittest.TestCase):
     def setUp(self):
@@ -335,7 +311,7 @@ class ServerTests(unittest.TestCase):
         screen = PickerScreen(100, 30)
         stream = pyte.Stream(screen)
 
-        def wait_view(prompt, hint, other):
+        def wait_view(prompt, hint, row):
             deadline = time.monotonic() + 8
             while time.monotonic() < deadline:
                 if select.select([self.master], [], [], 0.05)[0]:
@@ -344,46 +320,129 @@ class ServerTests(unittest.TestCase):
                 if (
                     prompt in visible
                     and (hint in visible if hint else "Ctrl-a:" not in visible)
-                    and "popup-repo" in visible
-                    and ("other-repo" in visible) == other
+                    and row in visible
+                    and "other-repo" not in visible
                 ):
                     return
-            self.fail(f"Expected {prompt!r}, {hint!r}, other={other}:\n{visible}")
+            self.fail(f"Expected {prompt!r}, {hint!r}, row={row}:\n{visible}")
 
+        def wait_closed():
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                if select.select([self.master], [], [], 0.05)[0]:
+                    stream.feed(os.read(self.master, 65536).decode(errors="replace"))
+                if not any(
+                    "Windows:" in line or "Repos:" in line for line in screen.display
+                ):
+                    time.sleep(0.3)
+                    return
+            self.fail("Popup did not close")
+
+        before = self.snapshot()
         os.write(self.master, b"\x06")
-        wait_view("Host repo>", None, True)
-        output = b""
-        os.write(self.master, b"popup-repo\r")
-        deadline = time.monotonic() + 30
-        while time.monotonic() < deadline:
-            if self.tmux.run("list-clients", "-F", "#{session_name}") == repo.group:
-                break
-            if select.select([self.master], [], [], 0.05)[0]:
-                output += os.read(self.master, 65536)
-        self.assertIn(repo.group, self.tmux.sessions(), output.decode(errors="replace"))
-        self.assertEqual(
-            self.tmux.run("list-clients", "-F", "#{session_name}"), repo.group
-        )
+        wait_view("Windows: palekiwi>", None, "legacy")
+        os.write(self.master, b"\x01")
+        time.sleep(0.2)
+        self.assertEqual(before, self.snapshot())
+        os.write(self.master, b"\r")
+        wait_closed()
+        self.assertEqual(before, self.snapshot())
+
+        self.tmux.run("rename-session", "-t", "=palekiwi", repo.group)
         session = self.tmux.sessions()[repo.group]
-        window = self.tmux.windows(session)[repo.identity]
-        self.assertEqual(
-            self.tmux.run(
-                "display-message", "-p", "-t", window, "#{pane_current_path}"
-            ),
-            str(repo.path),
+        self.tmux.run("set-option", "-t", session, "@host-repo-workspace", "1")
+        manual = self.tmux.run(
+            "new-window",
+            "-d",
+            "-P",
+            "-F",
+            "#{window_id}",
+            "-t",
+            session + ":",
+            "-n",
+            "manual notes",
+            nu,
         )
         before = self.snapshot()
         os.write(self.master, b"\x06")
-        wait_view("host/spabreaks>", "Ctrl-a: all workspaces", False)
-        for other in (True, False, True):
-            os.write(self.master, b"\x01")
-            wait_view(
-                "Host repo>" if other else "host/spabreaks>",
-                "Ctrl-a: current workspace" if other else "Ctrl-a: all workspaces",
-                other,
-            )
-        os.write(self.master, b"\x1b")
+        wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "manual notes")
+        os.write(self.master, b"manual\r")
+        wait_closed()
+        self.assertEqual(before, self.snapshot())
+        self.assertEqual(
+            self.tmux.run("display-message", "-p", "-c", self.client, "#{window_id}"),
+            manual,
+        )
+
+        os.write(self.master, b"\x06")
+        wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "manual notes")
+        os.write(self.master, b"\x01")
+        wait_view("Repos: host/spabreaks>", "Ctrl-a: toggle", "popup-repo")
+        self.assertNotIn(repo.identity, self.tmux.windows(session))
+        self.tmux.run("rename-window", "-t", manual, "renamed live")
+        added = self.tmux.run(
+            "new-window",
+            "-d",
+            "-P",
+            "-F",
+            "#{window_id}",
+            "-t",
+            session + ":",
+            "-n",
+            "added live",
+            nu,
+        )
+        os.write(self.master, b"\x01")
+        wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "added live")
+        self.assertIn("renamed live", "\n".join(screen.display))
+        time.sleep(0.5)
+        os.write(self.master, b"added")
         time.sleep(0.3)
+        os.write(self.master, b"\r")
+        wait_closed()
+        self.assertEqual(
+            self.tmux.run("display-message", "-p", "-c", self.client, "#{window_id}"),
+            added,
+        )
+
+        for attempt in range(2):
+            before = self.snapshot()
+            os.write(self.master, b"\x06")
+            wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "renamed live")
+            os.write(self.master, b"\x01")
+            wait_view("Repos: host/spabreaks>", "Ctrl-a: toggle", "popup-repo")
+            os.write(self.master, b"popup-repo\r")
+            wait_closed()
+            window = self.tmux.windows(session)[repo.identity]
+            self.assertEqual(
+                self.tmux.run(
+                    "display-message", "-p", "-c", self.client, "#{window_id}"
+                ),
+                window,
+            )
+            if attempt:
+                self.assertEqual(before, self.snapshot())
+            else:
+                self.assertEqual(
+                    len(self.snapshot().splitlines()), len(before.splitlines()) + 1
+                )
+                self.assertEqual(
+                    self.tmux.run(
+                        "display-message", "-p", "-t", window, "#{pane_current_path}"
+                    ),
+                    str(repo.path),
+                )
+                self.tmux.run("rename-window", "-t", window, "renamed repo")
+
+        before = self.snapshot()
+        os.write(self.master, b"\x06")
+        wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "renamed repo")
+        os.write(self.master, b"\x01")
+        wait_view("Repos: host/spabreaks>", "Ctrl-a: toggle", "popup-repo")
+        os.write(self.master, b"\x01")
+        wait_view("Windows: host/spabreaks>", "Ctrl-a: toggle", "renamed repo")
+        os.write(self.master, b"\x1b")
+        wait_closed()
         self.assertEqual(before, self.snapshot())
 
     @unittest.skipUnless(
