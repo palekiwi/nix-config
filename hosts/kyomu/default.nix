@@ -22,11 +22,14 @@
       ../../modules/docker.nix
       ../../modules/fonts.nix
       ../../modules/sops.nix
+      ../../modules/sc-controller-cc
       ../../modules/yubikey.nix
     ];
 
   config = {
     modules.docker.enable = true;
+
+    systemd.user.services.scc-daemon.unitConfig.ConditionUser = "pl";
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
