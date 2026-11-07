@@ -14,6 +14,7 @@
     sysstat
     tree
     wget
+    xscreensaver
     firefox
   ];
 
