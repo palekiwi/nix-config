@@ -20,7 +20,6 @@
       ./nvidia.nix
       ./opentabletdriver.nix
       ./packages.nix
-      ./picom.nix
       ./sound.nix
       ./ssh.nix
       ./system.nix

@@ -1,5 +1,22 @@
-{ ... }:
+{ pkgs, ... }:
 {
+  services.xserver = {
+    enable = true;
+
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
+
+    windowManager.awesome = {
+      enable = true;
+      luaModules = with pkgs.luaPackages; [
+        luarocks
+        luadbi-mysql
+      ];
+    };
+  };
+
   services.picom = {
     enable = true;
 
@@ -27,4 +44,8 @@
 
     vSync = true;
   };
+
+  services.gnome.gnome-keyring.enable = true;
+
+  services.xscreensaver.enable = true;
 }
