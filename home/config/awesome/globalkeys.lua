@@ -416,10 +416,6 @@ local globalkeys = gears.table.join(
   ),
 
   -- Spawn programs
-  awful.key({ MODKEY, "Control" }, "BackSpace",
-    function() awful.spawn(TERMINAL) end,
-    { description = "open a terminal", group = "launcher" }),
-
   awful.key({ ALTKEY }, "XF86AudioRaiseVolume",
     function() awful.spawn("cplay", { tag = "med" }) end,
     { description = "open cmus", group = "launcher" }),

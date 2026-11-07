@@ -81,6 +81,7 @@ in
       "super + Return + control" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
       "super + Return + shift" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
       "super + BackSpace" = "${switchToDefaultSession}";
+      "super + control + BackSpace" = "dmenu_tmux --tmux";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
