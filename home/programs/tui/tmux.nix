@@ -31,7 +31,7 @@ in
         set -g status 2
         set -g status-left ' #[fg=colour208,bold]#{host_short}#[fg=colour7,nobold]:#{session_name} '
         set -g status-left-length 40
-        set -g status-format[1] '#[align=left]#(_tmux_status-repo #{q:pane_current_path})'
+        set -g status-format[1] '#[align=left]#(_tmux_status-repo #{q:pane_current_path} --full-branch)'
         setw -g window-status-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
         setw -g window-status-current-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
       ''

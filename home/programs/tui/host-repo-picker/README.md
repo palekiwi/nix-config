@@ -55,12 +55,14 @@ Its left segment is the orange hostname and session (capped at 40 cells
 so long session names leave navigation space). Managed windows keep their
 repository names; unmanaged windows use their normal names.
 
-Row two runs the unchanged git/branch/PR/cue detail helper for the active
-pane's quoted current directory, outside the window-list loop. It has the
-full terminal width, independent of row one's left-length budget. Existing
-per-field ellipses remain; tmux clips the rendered row at the terminal's
-right edge without wrapping. A non-repository pane leaves this row blank.
-The shared configuration and VM's single-row layout are unchanged.
+Row two runs the git/branch/PR/cue detail helper for the active pane's
+quoted current directory, outside the window-list loop. It passes
+`--full-branch` to remove the helper's 40-character branch cap on the host
+only. It has the full terminal width, independent of row one's left-length
+budget. Cue context and base retain their 32- and 24-character caps;
+tmux clips the rendered row at the terminal's right edge without wrapping.
+A non-repository pane leaves this row blank. The shared configuration and
+VM's single-row layout retain the default 40-character branch cap.
 
 ## Binding order and deployment
 

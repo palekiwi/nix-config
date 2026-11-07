@@ -412,7 +412,7 @@ class ServerTests(unittest.TestCase):
         )
         self.assertEqual(
             self.tmux.run("show-options", "-gv", "status-format[1]"),
-            "#[align=left]#(_tmux_status-repo #{q:pane_current_path})",
+            "#[align=left]#(_tmux_status-repo #{q:pane_current_path} --full-branch)",
         )
         for option in ("window-status-format", "window-status-current-format"):
             self.assertIn(
@@ -427,8 +427,9 @@ class ServerTests(unittest.TestCase):
         )
         self.tmux.run("set-option", "-g", "status-interval", "1")
         repo = self.repo(group="palekiwi", name="active-repo")
+        branch = "feature/host-status-displays-the-entire-long-branch-name"
         subprocess.run(
-            ["git", "init", "-b", "branch-active", str(repo.path)],
+            ["git", "init", "-b", branch, str(repo.path)],
             check=True,
             capture_output=True,
         )
@@ -443,11 +444,37 @@ class ServerTests(unittest.TestCase):
                     "-C",
                     str(repo.path),
                     "config",
-                    f"branch.branch-active.{key}",
+                    f"branch.{branch}.{key}",
                     value,
                 ],
                 check=True,
             )
+        helper = artifact / "status/bin/_tmux_status-repo"
+        for behind, style in (("false", "green"), ("true", "yellow,dim,bold")):
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repo.path),
+                    "config",
+                    f"branch.{branch}.behindDefault",
+                    behind,
+                ],
+                check=True,
+            )
+            expected = (
+                f" #[fg=colour15,bold]scope/context #[fg={style}]{{}}"
+                " #[fg=green,dim,bold]#123 #[fg=white,nobold,dim]->"
+                " #[fg=white,bold]main"
+            )
+            for args, displayed in (
+                ([], branch[:39] + "…"),
+                (["--full-branch"], branch),
+            ):
+                output = subprocess.check_output(
+                    [str(helper), str(repo.path), *args], text=True
+                )
+                self.assertEqual(output, expected.format(displayed))
         window = self.tmux.run(
             "new-window",
             "-P",
@@ -481,11 +508,11 @@ class ServerTests(unittest.TestCase):
             self.fail(f"Missing {text!r} in {screen.display[:2]!r}")
 
         wait_row(0, "managed-repo")
-        wait_row(1, "branch-active")
+        wait_row(1, branch)
         self.assertIn("scope/context", screen.display[1])
         self.assertIn("#123", screen.display[1])
         self.assertIn("main", screen.display[1])
-        self.assertNotIn("branch-active", screen.display[0])
+        self.assertNotIn(branch, screen.display[0])
         navigation = screen.display[0]
         plain = self.root / "plain"
         plain.mkdir()
