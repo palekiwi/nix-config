@@ -4,6 +4,7 @@ import pty
 import subprocess
 import struct
 import select
+import shutil
 import tempfile
 import termios
 import fcntl
@@ -118,6 +119,7 @@ class ConfigTests(unittest.TestCase):
             rows = run.call_args.kwargs["input"]
             self.assertIn("one", rows)
             self.assertEqual("two" in rows, current != "palekiwi")
+            self.assertIn("--with-shell=bash -c", command)
             self.assertEqual("--bind" in command, current == "palekiwi")
             self.assertFalse(any("Enter:" in arg or "Esc:" in arg for arg in command))
         with patch("picker.subprocess.run", side_effect=picker_result(result)) as run:
@@ -319,15 +321,38 @@ class ServerTests(unittest.TestCase):
             + '"\n[groups.other]\nother-repo = "/tmp"\n'
         )
         self.tmux.run("set-environment", "-g", "XDG_CONFIG_HOME", str(config_dir))
+        nu = shutil.which("nu")
+        self.assertIsNotNone(nu)
+        self.tmux.run("set-environment", "-g", "SHELL", nu)
+        self.tmux.run("set-option", "-g", "default-shell", nu)
+        self.assertEqual(self.tmux.run("show-options", "-gv", "prefix"), "M-g")
+        import pyte
+
+        class PickerScreen(pyte.Screen):
+            def report_device_status(self, mode, **kwargs):
+                super().report_device_status(mode)
+
+        screen = PickerScreen(100, 30)
+        stream = pyte.Stream(screen)
+
+        def wait_view(prompt, hint, other):
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                if select.select([self.master], [], [], 0.05)[0]:
+                    stream.feed(os.read(self.master, 65536).decode(errors="replace"))
+                visible = "\n".join(screen.display)
+                if (
+                    prompt in visible
+                    and (hint in visible if hint else "Ctrl-a:" not in visible)
+                    and "popup-repo" in visible
+                    and ("other-repo" in visible) == other
+                ):
+                    return
+            self.fail(f"Expected {prompt!r}, {hint!r}, other={other}:\n{visible}")
+
         os.write(self.master, b"\x06")
+        wait_view("Host repo>", None, True)
         output = b""
-        deadline = time.monotonic() + 30
-        while time.monotonic() < deadline:
-            if select.select([self.master], [], [], 0.05)[0]:
-                output += os.read(self.master, 65536)
-            if b"Host repo>" in output:
-                break
-        self.assertTrue(b"Host repo>" in output, output[-1500:])
         os.write(self.master, b"popup-repo\r")
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline:
@@ -349,28 +374,14 @@ class ServerTests(unittest.TestCase):
         )
         before = self.snapshot()
         os.write(self.master, b"\x06")
-        output = b""
-        deadline = time.monotonic() + 10
-        while time.monotonic() < deadline:
-            if select.select([self.master], [], [], 0.05)[0]:
-                output += os.read(self.master, 65536)
-            if b"host/spabreaks>" in output:
-                break
-        self.assertTrue(b"host/spabreaks>" in output, output[-1500:])
-        for expected in (
-            b"Ctrl-a: current workspace",
-            b"Ctrl-a: all workspaces",
-            b"Ctrl-a: current workspace",
-        ):
+        wait_view("host/spabreaks>", "Ctrl-a: all workspaces", False)
+        for other in (True, False, True):
             os.write(self.master, b"\x01")
-            output = b""
-            deadline = time.monotonic() + 5
-            while time.monotonic() < deadline:
-                if select.select([self.master], [], [], 0.05)[0]:
-                    output += os.read(self.master, 65536)
-                if expected in output:
-                    break
-            self.assertIn(expected, output, output[-1500:])
+            wait_view(
+                "Host repo>" if other else "host/spabreaks>",
+                "Ctrl-a: current workspace" if other else "Ctrl-a: all workspaces",
+                other,
+            )
         os.write(self.master, b"\x1b")
         time.sleep(0.3)
         self.assertEqual(before, self.snapshot())

@@ -3,6 +3,7 @@
 pkgs.writeShellApplication {
   name = "host-repo-picker";
   runtimeInputs = [
+    pkgs.bash
     pkgs.python3
     pkgs.tmux
     pkgs.fzf

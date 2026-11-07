@@ -7,6 +7,10 @@ without a misleading current-workspace toggle. Search by repo or workspace,
 use arrows/Ctrl-n/Ctrl-p to move, Enter to select, and Escape or Ctrl-c to
 cancel. No open-state markers are shown.
 
+fzf actions explicitly run with packaged Bash, independent of the host's
+login shell (Nushell). This covers both the toggle's transform and its
+reload/prompt subprocesses; repo windows still use tmux's configured shell.
+
 A single-workspace view has a workspace prompt (Spabreaks or Palekiwi) and
 two columns: repo and path. The all-workspaces view adds a workspace column.
 Paths under home use `~`. Both frontends align TAB-separated fields using
@@ -197,10 +201,13 @@ HOST_PICKER_TEST_CONFIG="$artifact" PYTHONDONTWRITEBYTECODE=1 \
 ```
 
 Tests use unique temporary sockets, real attached PTY clients, and cleanup.
-They never connect to the default server. The generated-config test opens
-C-f's actual packaged popup, selects a repo and cancels another popup. If
-`HOST_PICKER_TEST_CONFIG` is omitted, that one test is skipped. This build
-validates the picker and generated host tmux, sxhkd and sesh configuration,
+They never connect to the default server. The generated-config test uses
+Nushell as both inherited SHELL and tmux's default shell, opens C-f's actual
+packaged popup, selects a repo and cancels another popup. It sends literal
+Ctrl-a bytes and checks rendered repo rows across all/current/all toggles,
+not just header changes or subprocess exit codes. If
+`HOST_PICKER_TEST_CONFIG` is omitted, generated-config tests are skipped.
+This build validates the picker and generated host tmux, sxhkd and sesh configuration,
 not a full host activation. The status test also sources the real VM
 module's generated extraConfig on its isolated server, checks one versus
 two rows and the unchanged native first-row format, and renders the host

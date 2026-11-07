@@ -261,6 +261,7 @@ def choose(repos, desktop=False, group=None, current=None):
         if not desktop:
             command = [
                 "fzf",
+                "--with-shell=bash -c",
                 "--layout=reverse",
                 "--no-multi",
                 "--delimiter=\t",
