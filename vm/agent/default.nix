@@ -38,7 +38,7 @@
       {
         image = "nix-store-rw.img";
         mountPoint = "/nix/.rw-store";
-        size = 40960;
+        size = 153600;
       }
       {
         image = "nix-var.img";
@@ -57,15 +57,6 @@
       }
     ];
     writableStoreOverlay = "/nix/.rw-store";
-    shares = [
-      {
-        proto = "virtiofs";
-        tag = "ro-store";
-        source = "/nix/store";
-        mountPoint = "/nix/.ro-store";
-        readOnly = true;
-      }
-    ];
   };
 
   fileSystems."/nix/var".neededForBoot = true;
@@ -125,6 +116,13 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   nix.settings.build-dir = "/var/lib/nix-builds";
+  nix.settings.min-free = 10 * 1024 * 1024 * 1024;
+  nix.settings.max-free = 40 * 1024 * 1024 * 1024;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
   systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
 
   environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs ]
