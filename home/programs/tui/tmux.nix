@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
+  picker = import ./host-repo-picker { inherit pkgs; };
   shared = import ./tmux-config.nix {
     inherit pkgs;
     copyCommand = "echo -n {} | xclip -selection clipboard";
@@ -8,7 +9,12 @@ let
   };
 in
 {
-  home.packages = [ pkgs.tmux ] ++ shared.packages;
+  home.packages = [
+    pkgs.tmux
+    picker
+  ]
+  ++ shared.packages;
+  xdg.configFile."tmux/repos.toml".source = ../../config/tmux/repos.toml;
 
   programs.tmux = {
     baseIndex = 1;
@@ -17,6 +23,14 @@ in
     mouse = true;
     prefix = "M-g";
     plugins = shared.plugins;
-    extraConfig = shared.extraConfig;
+    extraConfig = lib.mkAfter (
+      shared.extraConfig
+      + ''
+        bind-key -n C-f run-shell -b '${pkgs.tmux}/bin/tmux display-popup -c #{q:client_name} -E -w 90% -h 55% ${picker}/bin/host-repo-picker --client #{q:client_name}'
+        bind-key w choose-tree -w
+        setw -g window-status-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
+        setw -g window-status-current-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
+      ''
+    );
   };
 }
