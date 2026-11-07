@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../programs/gui
     ../../programs/tui
     ../../services
   ];
@@ -16,11 +17,15 @@
     nixpkgs.config.allowUnfree = true;
     programs.home-manager.enable = true;
 
-    gui = false; # Disable GUI applications for headless server
-
     modules = {
+      chrome.enable = true;
+      kitty.enable = true;
       oss.enable = true;
       spabreaks.enable = true;
+    };
+
+    services.handy = {
+      enable = true;
     };
 
     services.cue-backup.enable = true;
