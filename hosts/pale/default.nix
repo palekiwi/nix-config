@@ -20,7 +20,7 @@
       ./nvidia.nix
       ./opentabletdriver.nix
       ./packages.nix
-      ./sc-controller-cc
+      ../../modules/sc-controller-cc
       ./sound.nix
       ./ssh.nix
       ./system.nix
