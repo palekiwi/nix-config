@@ -21,6 +21,7 @@
       ./opentabletdriver.nix
       ./packages.nix
       ./picom.nix
+      ./sc-controller-cc
       ./sound.nix
       ./ssh.nix
       ./system.nix
