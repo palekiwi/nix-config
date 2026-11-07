@@ -6,6 +6,7 @@ pkgs.writeShellApplication {
     pkgs.python3
     pkgs.tmux
     pkgs.fzf
+    pkgs.util-linux
     pkgs.rofi
     pkgs.wmctrl
     pkgs.kitty

@@ -1,9 +1,18 @@
 # Host repo picker
 
-Host-only C-f opens all configured repos in one searchable list. Search by
-repo or group, use arrows/Ctrl-n/Ctrl-p to move, Enter to select, and Escape
-or Ctrl-c to cancel. There is no current-group filter. `[open]` means a
-managed repo window exists.
+Host-only C-f initially lists repos in the calling tmux workspace. Ctrl-a
+switches between that original workspace and all configured workspaces,
+without restarting the popup. From an unrelated session it lists all repos
+without a misleading current-workspace toggle. Search by repo or workspace,
+use arrows/Ctrl-n/Ctrl-p to move, Enter to select, and Escape or Ctrl-c to
+cancel. No open-state markers are shown.
+
+A single-workspace view has a workspace prompt (Spabreaks or Palekiwi) and
+two columns: repo and path. The all-workspaces view adds a workspace column.
+Paths under home use `~`. Both frontends align TAB-separated fields using
+Linux `column -t -s TAB`, so spaces and commas in paths stay intact.
+Desktop selection uses rofi's row index; fzf carries a hidden stable index.
+Neither backend parses padded display text for repo identity.
 
 Edit `home/config/tmux/repos.toml`, deployed by Home Manager to
 `~/.config/tmux/repos.toml`. Each table names a session, and each entry maps
@@ -36,11 +45,15 @@ exit. No windows or sessions are created on picker cancellation.
 
 ## Binding order and deployment
 
-The desktop shortcut is **Super+Ctrl+Space, then Space** (release the first
-chord before pressing Space). It runs `host-repo-picker --desktop` using
-`rofi -dmenu`, with the same config, open markers and selection backend as
-C-f. It works without a running tmux server and creates only the selected
-repo shell, not a bootstrap window. Cancellation never starts a server.
+**Super+Ctrl+Return** runs `host-repo-picker --desktop --group spabreaks`;
+**Super+Shift+Return** runs `host-repo-picker --desktop --group palekiwi`.
+Each desktop picker contains only that workspace's repos, with no toggle.
+The redundant Super+Ctrl+Space, Space trial launcher is removed.
+**Super+Return** still opens the VM launcher, unchanged.
+Both host shortcuts use `rofi -dmenu` with the same config, formatting and
+selection backend as C-f. They work without a running tmux server and create
+only the selected repo shell, not a bootstrap window. Cancellation never
+starts a server. Existing rofi monospace fonts are unchanged.
 
 Desktop focus matches workspace tmux client PIDs and their process ancestors
 to `wmctrl -lp`, never a title alone. Exactly one matching X window is
@@ -53,7 +66,7 @@ rofi, kitty and notifications are packaged dependencies.
 Host Home Manager generates a `palekiwi-legacy` sesh entry from the shared
 source; the VM continues reading the unchanged original `palekiwi` entry.
 The old host Super+Ctrl+Space, t, n chord now opens `palekiwi-legacy`.
-All other chords remain unchanged. Host extraConfig
+Other chord-layer bindings remain unchanged. Host extraConfig
 uses `mkAfter` so C-f and prefix-w override earlier normal definitions.
 Home Manager loads plugins before extraConfig. `run-shell` expands the
 calling client before launching the popup; popup shell commands do not
@@ -140,7 +153,7 @@ nix develop --impure --expr '
     p = f.inputs.nixpkgs.legacyPackages.x86_64-linux;
   in p.mkShell {
     inputsFrom = [ f.devShells.x86_64-linux.default ];
-    packages = [ p.python3 p.ruff p.tmux ];
+    packages = [ p.python3 p.ruff p.tmux p.fzf p.util-linux ];
   }
 '
 ```
@@ -175,9 +188,14 @@ focus and fresh-boot keyboard behavior still require operator QA.
 
 ## Operator QA after deployment
 
-- C-f lists all eight repos across both groups, including unopened repos.
-- From a fresh boot, use Super+Ctrl+Space, Space: rofi lists every repo
-  with `palekiwi`/`spabreaks` labels. Escape creates no terminal/session.
+- C-f in Palekiwi/Spabreaks starts with only that workspace's repos.
+  Ctrl-a shows all eight repos and toggles back to the original workspace.
+  Only the compact Ctrl-a hint appears; no Enter/Escape help or open marker.
+- C-f in an unrelated session starts with all repos and has no toggle hint.
+- From a fresh boot, Super+Ctrl+Return lists only Spabreaks repos;
+  Super+Shift+Return lists only Palekiwi repos. Check aligned repo/path
+  columns, workspace prompts and abbreviated home paths. Escape creates no
+  terminal/session. Super+Return still opens the VM launcher.
 - Select a repo: correct plain-named session, correct directory, plain shell.
 - Reselect from desktop: focus its verified terminal or attach a new kitty,
   preserving its repo process and leaving unrelated terminals untouched.

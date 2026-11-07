@@ -78,15 +78,14 @@ in
     enable = true;
     keybindings = {
       "super + Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux";
-      "super + Return + shift" = "dmenu_tmux";
+      "super + Return + control" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
+      "super + Return + shift" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
       "super + BackSpace" = "${switchToDefaultSession}";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
       "super + control + space; t; e" = "${switchToSession} cue";
-      "super + control + space; space" = "${repoPicker}/bin/host-repo-picker --desktop";
       "super + control + space; t; n" = "${switchToSession} palekiwi-legacy";
       "super + control + space; t; v" = "${switchToSession} cue-nvim";
       "super + control + space; t; t" = "${switchToSession} cast";

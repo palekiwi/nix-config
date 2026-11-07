@@ -7,6 +7,7 @@ import re
 import shlex
 import subprocess
 import sys
+import tempfile
 import tomllib
 
 
@@ -84,13 +85,6 @@ class Tmux:
             )
             if identity
         )
-
-    def open_repos(self):
-        return {
-            identity
-            for session in self.sessions().values()
-            for identity in self.windows(session)
-        }
 
     def select(self, repo, client=None):
         sessions = self.sessions()
@@ -211,37 +205,108 @@ class Tmux:
         )
 
 
-def choose(repos, opened, desktop=False):
-    rows = [
-        f"{index}\t{repo.group}  {repo.name}"
-        f"  {'[open]' if repo.identity in opened else ''}  {repo.path}"
+def display_group(group):
+    return {"spabreaks": "Spabreaks", "palekiwi": "Palekiwi"}.get(group, group)
+
+
+def format_rows(repos, group=None):
+    visible = [
+        (index, repo)
         for index, repo in enumerate(repos)
+        if group is None or repo.group == group
     ]
+    fields = []
+    for _, repo in visible:
+        try:
+            relative = repo.path.relative_to(Path.home())
+            path = "~" if relative == Path(".") else "~/" + str(relative)
+        except ValueError:
+            path = str(repo.path)
+        columns = [repo.name, path]
+        if group is None:
+            columns.insert(0, display_group(repo.group))
+        fields.append("\t".join(columns))
+    if not fields:
+        return []
+    formatted = subprocess.run(
+        ["column", "-t", "-s", "\t"],
+        input="\n".join(fields) + "\n",
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    return [
+        f"{index}\t{row}" for (index, _), row in zip(visible, formatted, strict=True)
+    ]
+
+
+def choose(repos, desktop=False, group=None, current=None):
+    if group is not None and not any(repo.group == group for repo in repos):
+        raise ValueError(f"Unknown workspace: {group}")
+    groups = {repo.group for repo in repos}
+    current = current if current in groups and len(groups) > 1 and not desktop else None
+    initial = group if desktop else current
+    if initial is None and len(groups) == 1:
+        initial = next(iter(groups))
+    rows = format_rows(repos, initial)
+    prompt = display_group(initial) if initial else "Host repo"
     env = os.environ.copy()
     env.pop("FZF_DEFAULT_OPTS", None)
     env.pop("FZF_DEFAULT_OPTS_FILE", None)
-    result = subprocess.run(
-        ["rofi", "-dmenu", "-i", "-no-custom", "-p", "Host repo"]
-        if desktop
-        else [
-            "fzf",
-            "--layout=reverse",
-            "--no-multi",
-            "--delimiter=\t",
-            "--with-nth=2..",
-            "--prompt=Host repo> ",
-            "--header=All groups | Enter: open shell | Esc: cancel",
-        ],
-        input="\n".join(rows) + "\n",
-        stdout=subprocess.PIPE,
-        text=True,
-        env=env,
-    )
+    with tempfile.TemporaryDirectory(
+        prefix="host-repo-picker-", dir="/tmp"
+    ) as directory:
+        command = ["rofi", "-dmenu", "-i", "-no-custom", "-format", "i", "-p", prompt]
+        allowed = rows
+        if not desktop:
+            command = [
+                "fzf",
+                "--layout=reverse",
+                "--no-multi",
+                "--delimiter=\t",
+                "--with-nth=2..",
+                f"--prompt={prompt}> ",
+            ]
+            if current:
+                all_rows = format_rows(repos)
+                allowed = rows + all_rows
+                root = Path(directory)
+                for name, content in (
+                    ("current", "\n".join(rows) + "\n"),
+                    ("all", "\n".join(all_rows) + "\n"),
+                    ("prompt", display_group(current) + "> "),
+                ):
+                    (root / name).write_text(content)
+                to_all = f"reload(cat {root}/all)+change-prompt(Host repo> )+change-header(Ctrl-a: current workspace)"
+                to_current = f"reload(cat {root}/current)+transform-prompt(cat {root}/prompt)+change-header(Ctrl-a: all workspaces)"
+                toggle = (
+                    f"if [ -f {root}/all-active ]; then rm {root}/all-active; "
+                    f"printf '%s\\n' {shlex.quote(to_current)}; else touch {root}/all-active; "
+                    f"printf '%s\\n' {shlex.quote(to_all)}; fi"
+                )
+                command += [
+                    "--header=Ctrl-a: all workspaces",
+                    "--bind",
+                    "ctrl-a:transform:" + toggle,
+                ]
+        result = subprocess.run(
+            command,
+            input="\n".join(row.split("\t", 1)[1] for row in rows) + "\n"
+            if desktop
+            else "\n".join(rows) + "\n",
+            stdout=subprocess.PIPE,
+            text=True,
+            env=env,
+        )
     if result.returncode in (1, 130):
         return None
     result.check_returncode()
     row = result.stdout.rstrip("\n")
-    if row not in rows:
+    if desktop:
+        if not row.isdecimal() or int(row) >= len(rows):
+            raise ValueError("Unexpected picker selection")
+        row = rows[int(row)]
+    if row not in allowed:
         raise ValueError("Unexpected picker selection")
     return repos[int(row.split("\t", 1)[0])]
 
@@ -257,11 +322,19 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--client")
     mode.add_argument("--desktop", action="store_true")
+    parser.add_argument("--group")
     args = parser.parse_args()
     tmux = Tmux()
     try:
         repos = load_repos(args.config)
-        repo = choose(repos, tmux.open_repos(), desktop=args.desktop)
+        if args.group and not args.desktop:
+            raise ValueError("--group requires --desktop")
+        current = (
+            tmux.run("display-message", "-p", "-c", args.client, "#{session_name}")
+            if args.client
+            else None
+        )
+        repo = choose(repos, desktop=args.desktop, group=args.group, current=current)
         if repo is not None:
             if args.desktop:
                 tmux.desktop(repo)

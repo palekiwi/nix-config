@@ -11,7 +11,19 @@ import time
 import unittest
 from unittest.mock import patch
 
-from picker import Repo, Tmux, choose, load_repos, main
+from picker import Repo, Tmux, choose, format_rows, load_repos, main
+
+
+REAL_RUN = subprocess.run
+
+
+def picker_result(result):
+    def run(command, **kwargs):
+        if command[0] == "column":
+            return REAL_RUN(command, **kwargs)
+        return result
+
+    return run
 
 
 class ConfigTests(unittest.TestCase):
@@ -64,23 +76,55 @@ class ConfigTests(unittest.TestCase):
                 self.assertEqual(load_repos(config)[0].group, group)
         repo = Repo("palekiwi", "repo", Path("/tmp"))
         with patch(
-            "picker.subprocess.run", return_value=subprocess.CompletedProcess([], 1, "")
+            "picker.subprocess.run",
+            side_effect=picker_result(subprocess.CompletedProcess([], 1, "")),
         ) as run:
-            self.assertIsNone(choose([repo], set(), desktop=True))
+            self.assertIsNone(choose([repo], desktop=True))
         self.assertEqual(run.call_args.args[0][0:2], ["rofi", "-dmenu"])
-        self.assertIn("palekiwi  repo", run.call_args.kwargs["input"])
+        self.assertEqual(run.call_args.args[0][-1], "Palekiwi")
+        self.assertIn("repo", run.call_args.kwargs["input"])
 
-    def test_picker_lists_all_groups_and_marks_open(self):
+    def test_formatting_and_desktop_filter_identity(self):
         repos = [
-            Repo("host/a", "one", Path("/tmp/one")),
-            Repo("host/b", "two", Path("/tmp/two")),
+            Repo("spabreaks", "one", Path.home() / "a space, ' quote"),
+            Repo("palekiwi", "longer-name", Path("/tmp/two")),
         ]
-        result = subprocess.CompletedProcess([], 0, "1\thost/b  two    /tmp/two\n")
-        with patch("picker.subprocess.run", return_value=result) as run:
-            self.assertEqual(choose(repos, {"host/a/one"}), repos[1])
-        rows = run.call_args.kwargs["input"]
-        self.assertIn("host/a  one  [open]", rows)
-        self.assertIn("host/b  two", rows)
+        rows = format_rows(repos)
+        self.assertIn("Spabreaks", rows[0])
+        self.assertIn("~/a space, ' quote", rows[0])
+        self.assertEqual(rows[0].index("one"), rows[1].index("longer-name"))
+        result = subprocess.CompletedProcess([], 0, "0\n")
+        with patch("picker.subprocess.run", side_effect=picker_result(result)) as run:
+            self.assertEqual(choose(repos, desktop=True, group="palekiwi"), repos[1])
+        self.assertEqual(run.call_args.args[0][-1], "Palekiwi")
+        self.assertNotIn("one", run.call_args.kwargs["input"])
+        self.assertNotIn("palekiwi", run.call_args.kwargs["input"])
+        self.assertIn("longer-name", run.call_args.kwargs["input"])
+        with self.assertRaisesRegex(ValueError, "Unknown workspace"):
+            choose(repos, desktop=True, group="absent")
+
+    def test_current_filter_and_unrelated_session(self):
+        repos = [
+            Repo("palekiwi", "one", Path("/tmp/one")),
+            Repo("spabreaks", "two", Path("/tmp/two")),
+        ]
+        for current in ("palekiwi", "unrelated", None):
+            result = subprocess.CompletedProcess([], 130, "")
+            with patch(
+                "picker.subprocess.run", side_effect=picker_result(result)
+            ) as run:
+                self.assertIsNone(choose(repos, current=current))
+            command = run.call_args.args[0]
+            rows = run.call_args.kwargs["input"]
+            self.assertIn("one", rows)
+            self.assertEqual("two" in rows, current != "palekiwi")
+            self.assertEqual("--bind" in command, current == "palekiwi")
+            self.assertFalse(any("Enter:" in arg or "Esc:" in arg for arg in command))
+        with patch("picker.subprocess.run", side_effect=picker_result(result)) as run:
+            choose(repos[:1], current="palekiwi")
+        self.assertNotIn("--bind", run.call_args.args[0])
+        self.assertIn("--prompt=Palekiwi> ", run.call_args.args[0])
+        self.assertNotIn("Palekiwi", run.call_args.kwargs["input"])
 
 
 class ServerTests(unittest.TestCase):
@@ -160,7 +204,6 @@ class ServerTests(unittest.TestCase):
             "send-keys", "-t", window, "printf 'PRESERVED-CONTENT\\n'", "Enter"
         )
         self.tmux.run("rename-window", "-t", window, "user renamed")
-        self.assertIn(repo.identity, self.tmux.open_repos())
         self.assertEqual(self.tmux.select(repo, self.client), window)
         self.assertEqual(
             self.tmux.run("list-panes", "-t", window, "-F", "#{pane_id}:#{pane_pid}"),
@@ -222,8 +265,8 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(before, self.snapshot())
         for code in (1, 130):
             result = subprocess.CompletedProcess([], code, "")
-            with patch("picker.subprocess.run", return_value=result):
-                self.assertIsNone(choose([repo], set()))
+            with patch("picker.subprocess.run", side_effect=picker_result(result)):
+                self.assertIsNone(choose([repo]))
             self.assertEqual(before, self.snapshot())
         valid = self.repo()
         self.tmux.select(valid, self.client)
@@ -239,8 +282,19 @@ class ServerTests(unittest.TestCase):
     def test_generated_bindings_and_real_popup(self):
         artifact = Path(os.environ["HOST_PICKER_TEST_CONFIG"])
         sxhkd = (artifact / "sxhkdrc").read_text()
-        self.assertIn("super + control + space; space", sxhkd)
-        self.assertIn("host-repo-picker --desktop", sxhkd)
+        self.assertNotIn("super + control + space; space", sxhkd)
+        self.assertRegex(
+            sxhkd,
+            r"super \+ Return \+ control\n\s+.*host-repo-picker --desktop --group spabreaks",
+        )
+        self.assertRegex(
+            sxhkd,
+            r"super \+ Return \+ shift\n\s+.*host-repo-picker --desktop --group palekiwi",
+        )
+        self.assertRegex(
+            sxhkd,
+            r"super \+ Return\n\s+dmenu_remote_tmux agent-vm --prefix agent --tmux",
+        )
         self.assertIn("switchToSession palekiwi-legacy", sxhkd)
         self.assertIn("switchToAgentSession palekiwi", sxhkd)
         host_sesh = (artifact / "sesh.toml").read_text()
@@ -260,7 +314,9 @@ class ServerTests(unittest.TestCase):
         config_dir = self.root / "config"
         (config_dir / "tmux").mkdir(parents=True)
         (config_dir / "tmux/repos.toml").write_text(
-            '[groups."host/spabreaks"]\npopup-repo = "' + str(repo.path) + '"\n'
+            '[groups."host/spabreaks"]\npopup-repo = "'
+            + str(repo.path)
+            + '"\n[groups.other]\nother-repo = "/tmp"\n'
         )
         self.tmux.run("set-environment", "-g", "XDG_CONFIG_HOME", str(config_dir))
         os.write(self.master, b"\x06")
@@ -294,13 +350,27 @@ class ServerTests(unittest.TestCase):
         before = self.snapshot()
         os.write(self.master, b"\x06")
         output = b""
-        deadline = time.monotonic() + 30
+        deadline = time.monotonic() + 10
         while time.monotonic() < deadline:
             if select.select([self.master], [], [], 0.05)[0]:
                 output += os.read(self.master, 65536)
-            if b"Host repo>" in output:
+            if b"host/spabreaks>" in output:
                 break
-        self.assertTrue(b"Host repo>" in output, output[-1500:])
+        self.assertTrue(b"host/spabreaks>" in output, output[-1500:])
+        for expected in (
+            b"Ctrl-a: current workspace",
+            b"Ctrl-a: all workspaces",
+            b"Ctrl-a: current workspace",
+        ):
+            os.write(self.master, b"\x01")
+            output = b""
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline:
+                if select.select([self.master], [], [], 0.05)[0]:
+                    output += os.read(self.master, 65536)
+                if expected in output:
+                    break
+            self.assertIn(expected, output, output[-1500:])
         os.write(self.master, b"\x1b")
         time.sleep(0.3)
         self.assertEqual(before, self.snapshot())
@@ -383,7 +453,7 @@ class ServerTests(unittest.TestCase):
         self.addCleanup(
             lambda: subprocess.run([*cold.command, "kill-server"], capture_output=True)
         )
-        self.assertEqual(cold.open_repos(), set())
+        self.assertEqual(cold.sessions(), {})
         config = self.root / "cold.toml"
         config.write_text('[groups.palekiwi]\nrepo = "/tmp"')
         real_run = subprocess.run
