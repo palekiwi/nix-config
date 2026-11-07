@@ -10,12 +10,14 @@ Edit `home/config/tmux/repos.toml`, deployed by Home Manager to
 one stable repo name to an absolute or `~/` directory:
 
 ```toml
-[groups."host/palekiwi"]
+[groups.palekiwi]
 nix-config = "~/nix-config"
 ```
 
-Group names must be `host/` followed by letters, digits, underscores or
-hyphens. Repo names allow the same characters without a slash. Changing a
+Workspace names are freely configurable tmux session names: nonempty,
+without periods, colons or control characters. Spaces and slashes are fine;
+there is no mandatory namespace. Repo keys allow letters, digits,
+underscores and hyphens. Changing a
 repo name changes its identity; changing its path only affects new windows.
 The picker reads TOML at runtime with Nix-provided Python. `--config PATH`
 can select an alternate file when invoking the CLI manually.
@@ -34,8 +36,24 @@ exit. No windows or sessions are created on picker cancellation.
 
 ## Binding order and deployment
 
-Only `home/programs/tui/tmux.nix` imports this package. The shared module,
-VM, sesh configuration and desktop chords are unchanged. Host extraConfig
+The desktop shortcut is **Super+Ctrl+Space, then Space** (release the first
+chord before pressing Space). It runs `host-repo-picker --desktop` using
+`rofi -dmenu`, with the same config, open markers and selection backend as
+C-f. It works without a running tmux server and creates only the selected
+repo shell, not a bootstrap window. Cancellation never starts a server.
+
+Desktop focus matches workspace tmux client PIDs and their process ancestors
+to `wmctrl -lp`, never a title alone. Exactly one matching X window is
+focused by ID; otherwise a new kitty attaches to the exact session ID.
+Ambiguous multi-window terminal PIDs deliberately open another terminal
+rather than risk focusing an unrelated window. Existing unrelated clients
+are never switched. This desktop path requires X11/wmctrl; those tools,
+rofi, kitty and notifications are packaged dependencies.
+
+Host Home Manager generates a `palekiwi-legacy` sesh entry from the shared
+source; the VM continues reading the unchanged original `palekiwi` entry.
+The old host Super+Ctrl+Space, t, n chord now opens `palekiwi-legacy`.
+All other chords remain unchanged. Host extraConfig
 uses `mkAfter` so C-f and prefix-w override earlier normal definitions.
 Home Manager loads plugins before extraConfig. `run-shell` expands the
 calling client before launching the popup; popup shell commands do not
@@ -51,8 +69,15 @@ cd ~/nix-config
 nix develop --command task home-build HOST=pale
 ```
 
-Activate through the usual host Home Manager workflow (the Taskfile only
-builds), then explicitly reload the host tmux configuration when ready:
+Activate the resulting path with `/nix/store/...-home-manager-generation/activate`
+(use the exact path printed by home-build). Then reload sxhkd and host tmux:
+
+```sh
+pkill -USR1 -x sxhkd
+```
+
+Before using either picker, migrate the original host session as described
+below. Then explicitly reload the host tmux configuration when ready:
 
 ```sh
 tmux source-file ~/.config/tmux/tmux.conf
@@ -62,6 +87,47 @@ tmux list-keys -T prefix w
 
 Do not run those tmux commands through the agent VM's connection. No live
 activation or reload is performed by the automated tests.
+
+## Explicit host-only migration before first launch
+
+Run these commands in a **host terminal**, not through agent-vm. Inspect
+first, confirming `palekiwi` is the original legacy multi-window session
+and `palekiwi-legacy` does not already exist:
+
+```sh
+tmux list-sessions
+tmux list-windows -t '=palekiwi' -F '#{window_id} #{window_name} #{@host-repo-id}'
+tmux rename-session -t '=palekiwi' palekiwi-legacy
+```
+
+Do not rename an already managed `palekiwi` workspace. The picker refuses
+an existing untagged session instead of silently adding repos to it. It
+never automatically renames any session. Renaming preserves windows and
+processes. No live host migration is performed from the VM.
+
+If trial `host/palekiwi` or `host/spabreaks` sessions exist, either leave
+them alone (the new names create separate workspaces), or explicitly migrate
+them after freeing the destination name. To preserve their tagged processes,
+run this in a POSIX host shell, only for the trial sessions you inspected:
+
+```sh
+for group in palekiwi spabreaks; do
+  if tmux has-session -t "=host/$group" 2>/dev/null; then
+    tmux rename-session -t "=host/$group" "$group" || break
+    tmux list-windows -t "=$group" -F '#{window_id}' |
+      while read -r window; do
+        identity=$(tmux show-options -wqv -t "$window" @host-repo-id)
+        case "$identity" in
+          host/*) tmux set-option -w -t "$window" @host-repo-id "${identity#host/}" ;;
+        esac
+      done
+    tmux set-option -t "=$group" @host-repo-workspace 1
+  fi
+done
+```
+
+Do not use this loop for unrelated sessions. The destination must be absent;
+if rename fails, stop and inspect instead of killing or merging sessions.
 
 ## Validation
 
@@ -93,7 +159,8 @@ artifact=$(nix build --impure --no-link --print-out-paths --expr '
 ruff check home/programs/tui/host-repo-picker
 ruff format --check home/programs/tui/host-repo-picker
 nixfmt --check home/programs/tui/tmux.nix \
-  home/programs/tui/host-repo-picker/*.nix
+  home/programs/tui/host-repo-picker/*.nix \
+  home/programs/tui/sesh.nix home/programs/gui/sxhkd.nix
 HOST_PICKER_TEST_CONFIG="$artifact" PYTHONDONTWRITEBYTECODE=1 \
   python3 -m unittest discover -s home/programs/tui/host-repo-picker -v
 ```
@@ -102,15 +169,21 @@ Tests use unique temporary sockets, real attached PTY clients, and cleanup.
 They never connect to the default server. The generated-config test opens
 C-f's actual packaged popup, selects a repo and cancels another popup. If
 `HOST_PICKER_TEST_CONFIG` is omitted, that one test is skipped. This build
-validates the picker and host tmux configuration, not a full host activation.
+validates the picker and generated host tmux, sxhkd and sesh configuration,
+not a full host activation. Desktop external tools are mocked; real X11
+focus and fresh-boot keyboard behavior still require operator QA.
 
 ## Operator QA after deployment
 
 - C-f lists all eight repos across both groups, including unopened repos.
-- Select a repo: correct `host/...` session, correct directory, plain shell.
+- From a fresh boot, use Super+Ctrl+Space, Space: rofi lists every repo
+  with `palekiwi`/`spabreaks` labels. Escape creates no terminal/session.
+- Select a repo: correct plain-named session, correct directory, plain shell.
+- Reselect from desktop: focus its verified terminal or attach a new kitty,
+  preserving its repo process and leaving unrelated terminals untouched.
 - Run something, switch groups, then reselect: the same process survives.
 - Rename a managed window: reselect still finds it, status shows index/repo.
 - Escape/Ctrl-c leaves the session/window set unchanged.
 - An unavailable repo reports its missing path without a broken session.
-- Prefix-w opens native window tree; old `palekiwi`, sesh entries and chords
-  still behave as before. VM bindings/layout are unchanged.
+- Prefix-w opens native window tree; the original host workflow remains
+  available as `palekiwi-legacy`. VM `palekiwi` and bindings are unchanged.

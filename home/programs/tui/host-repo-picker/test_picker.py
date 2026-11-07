@@ -11,7 +11,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from picker import Repo, Tmux, choose, load_repos
+from picker import Repo, Tmux, choose, load_repos, main
 
 
 class ConfigTests(unittest.TestCase):
@@ -24,14 +24,14 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(
             paths,
             {
-                "host/palekiwi/nix-config": "/tmp/picker-home/nix-config",
-                "host/palekiwi/palekiwi": "/tmp/picker-home/code/palekiwi/palekiwi",
-                "host/palekiwi/cue": "/tmp/picker-home/code/palekiwi-labs/cue",
-                "host/palekiwi/cue-platform": "/tmp/picker-home/code/palekiwi-labs/cue-platform",
-                "host/palekiwi/config-cue": "/tmp/picker-home/.config/cue",
-                "host/spabreaks/spabreaks": "/tmp/picker-home/code/spabreaks/spabreaks",
-                "host/spabreaks/voucher-portal": "/tmp/picker-home/code/spabreaks/voucher-portal",
-                "host/spabreaks/my-account": "/tmp/picker-home/code/spabreaks/my-account",
+                "palekiwi/nix-config": "/tmp/picker-home/nix-config",
+                "palekiwi/palekiwi": "/tmp/picker-home/code/palekiwi/palekiwi",
+                "palekiwi/cue": "/tmp/picker-home/code/palekiwi-labs/cue",
+                "palekiwi/cue-platform": "/tmp/picker-home/code/palekiwi-labs/cue-platform",
+                "palekiwi/config-cue": "/tmp/picker-home/.config/cue",
+                "spabreaks/spabreaks": "/tmp/picker-home/code/spabreaks/spabreaks",
+                "spabreaks/voucher-portal": "/tmp/picker-home/code/spabreaks/voucher-portal",
+                "spabreaks/my-account": "/tmp/picker-home/code/spabreaks/my-account",
             },
         )
 
@@ -39,7 +39,9 @@ class ConfigTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             config = Path(directory) / "repos.toml"
             for content in (
-                '[groups.palekiwi]\nrepo = "/tmp"',
+                '[groups."bad:name"]\nrepo = "/tmp"',
+                '[groups."bad.name"]\nrepo = "/tmp"',
+                '[groups.""]\nrepo = "/tmp"',
                 '[groups."host/test"]\nrepo = "relative"',
                 '[groups."host/test"]\n"bad:name" = "/tmp"',
                 "[groups]",
@@ -47,6 +49,26 @@ class ConfigTests(unittest.TestCase):
                 config.write_text(content)
                 with self.assertRaises(ValueError):
                     load_repos(config)
+
+    def test_workspace_names_and_desktop_cancel(self):
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "repos.toml"
+            for group in (
+                "palekiwi",
+                "spabreaks",
+                "a workspace",
+                "team/project",
+                "-team",
+            ):
+                config.write_text(f'[groups."{group}"]\nrepo = "/tmp"')
+                self.assertEqual(load_repos(config)[0].group, group)
+        repo = Repo("palekiwi", "repo", Path("/tmp"))
+        with patch(
+            "picker.subprocess.run", return_value=subprocess.CompletedProcess([], 1, "")
+        ) as run:
+            self.assertIsNone(choose([repo], set(), desktop=True))
+        self.assertEqual(run.call_args.args[0][0:2], ["rofi", "-dmenu"])
+        self.assertIn("palekiwi  repo", run.call_args.kwargs["input"])
 
     def test_picker_lists_all_groups_and_marks_open(self):
         repos = [
@@ -216,6 +238,16 @@ class ServerTests(unittest.TestCase):
     )
     def test_generated_bindings_and_real_popup(self):
         artifact = Path(os.environ["HOST_PICKER_TEST_CONFIG"])
+        sxhkd = (artifact / "sxhkdrc").read_text()
+        self.assertIn("super + control + space; space", sxhkd)
+        self.assertIn("host-repo-picker --desktop", sxhkd)
+        self.assertIn("switchToSession palekiwi-legacy", sxhkd)
+        self.assertIn("switchToAgentSession palekiwi", sxhkd)
+        host_sesh = (artifact / "sesh.toml").read_text()
+        self.assertIn('name = "palekiwi-legacy"', host_sesh)
+        self.assertNotIn('name = "palekiwi"', host_sesh)
+        shared_sesh = (Path(__file__).parents[3] / "config/sesh/sesh.toml").read_text()
+        self.assertIn('name = "palekiwi"', shared_sesh)
         self.tmux.run("source-file", str(artifact / "tmux.conf"))
         binding = self.tmux.run("list-keys", "-T", "root", "C-f")
         self.assertIn("host-repo-picker --client #{q:client_name}", binding)
@@ -272,6 +304,108 @@ class ServerTests(unittest.TestCase):
         os.write(self.master, b"\x1b")
         time.sleep(0.3)
         self.assertEqual(before, self.snapshot())
+
+    def test_legacy_collision_and_explicit_rename(self):
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, "Unmanaged session collision"):
+            self.tmux.select(self.repo(group="palekiwi"), self.client)
+        self.assertEqual(before, self.snapshot())
+        self.tmux.run("rename-session", "-t", "=palekiwi", "palekiwi-legacy")
+        repo = self.repo(group="palekiwi")
+        window = self.tmux.select(repo, self.client)
+        self.assertEqual(self.tmux.select(repo, self.client), window)
+        self.assertEqual(len(self.tmux.windows(self.tmux.sessions()[repo.group])), 1)
+        self.assertIn("palekiwi-legacy", self.tmux.sessions())
+
+    def test_desktop_focus_verifies_client_pid_not_title(self):
+        repo = self.repo(group="spabreaks")
+        window = self.tmux.select(repo, self.client)
+        pid = self.tmux.run("list-clients", "-F", "#{client_pid}")
+        real_run = subprocess.run
+        real_popen = subprocess.Popen
+        calls = []
+
+        def external(command, **kwargs):
+            if command[0] == "wmctrl":
+                calls.append(command)
+                return subprocess.CompletedProcess(
+                    command, 0, f"0x123 0 {pid} host unrelated-title\n"
+                )
+            return real_run(command, **kwargs)
+
+        with (
+            patch("picker.subprocess.run", side_effect=external),
+            patch("picker.subprocess.Popen", side_effect=real_popen) as launch,
+        ):
+            self.tmux.desktop(repo)
+            self.assertFalse(
+                any(call.args[0][0] == "kitty" for call in launch.call_args_list)
+            )
+        self.assertEqual(calls[-1], ["wmctrl", "-ia", "0x123"])
+        self.assertEqual(
+            self.tmux.windows(self.tmux.sessions()[repo.group])[repo.identity], window
+        )
+
+    def test_desktop_opens_without_hijacking_unrelated_client(self):
+        repo = self.repo(group="spabreaks")
+        real_run = subprocess.run
+        real_popen = subprocess.Popen
+        launched = []
+
+        def spawn(command, **kwargs):
+            if command[0] == "kitty":
+                launched.append(command)
+                return None
+            return real_popen(command, **kwargs)
+
+        def external(command, **kwargs):
+            if command[0] == "wmctrl":
+                self.assertEqual(command, ["wmctrl", "-lp"])
+                return subprocess.CompletedProcess(
+                    command, 0, "0x999 0 999999 host spabreaks\n"
+                )
+            return real_run(command, **kwargs)
+
+        with (
+            patch("picker.subprocess.run", side_effect=external),
+            patch("picker.subprocess.Popen", side_effect=spawn),
+        ):
+            self.tmux.desktop(repo)
+        session = self.tmux.sessions()[repo.group]
+        self.assertEqual(launched[0][-3:], ["attach-session", "-t", session])
+        self.assertEqual(
+            self.tmux.run("list-clients", "-F", "#{session_name}"), "palekiwi"
+        )
+        self.assertEqual(len(self.tmux.windows(session)), 1)
+
+    def test_cold_server_no_bootstrap_window(self):
+        cold = Tmux(["tmux", "-S", str(self.root / "cold-socket"), "-f", "/dev/null"])
+        self.addCleanup(
+            lambda: subprocess.run([*cold.command, "kill-server"], capture_output=True)
+        )
+        self.assertEqual(cold.open_repos(), set())
+        config = self.root / "cold.toml"
+        config.write_text('[groups.palekiwi]\nrepo = "/tmp"')
+        real_run = subprocess.run
+
+        def cancel(command, **kwargs):
+            if command[0] == "rofi":
+                return subprocess.CompletedProcess(command, 1, "")
+            return real_run(command, **kwargs)
+
+        with (
+            patch("picker.Tmux", return_value=cold),
+            patch("sys.argv", ["picker", "--desktop", "--config", str(config)]),
+            patch("picker.subprocess.run", side_effect=cancel),
+        ):
+            self.assertEqual(main(), 0)
+        self.assertFalse((self.root / "cold-socket").exists())
+        self.assertEqual(cold.sessions(), {})
+        repo = self.repo(group="fresh workspace")
+        window = cold.select(repo)
+        self.assertEqual(cold.select(repo), window)
+        self.assertEqual(list(cold.sessions()), [repo.group])
+        self.assertEqual(len(cold.windows(cold.sessions()[repo.group])), 1)
 
     def test_prefix_session_is_not_reused(self):
         self.tmux.run("new-session", "-d", "-s", "host/palekiwi-old", "/bin/sh")

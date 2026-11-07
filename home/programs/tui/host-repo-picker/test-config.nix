@@ -5,6 +5,8 @@ let
     inherit pkgs;
     modules = [
       ../tmux.nix
+      ../sesh.nix
+      ../../gui/sxhkd.nix
       {
         home.username = "picker-test";
         home.homeDirectory = "/home/picker-test";
@@ -26,6 +28,14 @@ pkgs.linkFarm "host-repo-picker-test-config" [
   {
     name = "repos.toml";
     path = home.config.xdg.configFile."tmux/repos.toml".source;
+  }
+  {
+    name = "sxhkdrc";
+    path = home.config.xdg.configFile."sxhkd/sxhkdrc".source;
+  }
+  {
+    name = "sesh.toml";
+    path = home.config.home.file."/home/picker-test/.config/sesh/sesh.toml".source;
   }
   {
     name = "picker";
