@@ -28,6 +28,10 @@ in
       + ''
         bind-key -n C-f run-shell -b '${pkgs.tmux}/bin/tmux display-popup -c #{q:client_name} -E -w 90% -h 55% ${picker}/bin/host-repo-picker --client #{q:client_name}'
         bind-key w choose-tree -w
+        set -g status 2
+        set -g status-left ' #[fg=colour208,bold]#{host_short}#[fg=colour7,nobold]:#{session_name} '
+        set -g status-left-length 40
+        set -g status-format[1] '#[align=left]#(_tmux_status-repo #{q:pane_current_path})'
         setw -g window-status-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
         setw -g window-status-current-format ' #I:#{?@host-repo-name,#{@host-repo-name},#W} '
       ''

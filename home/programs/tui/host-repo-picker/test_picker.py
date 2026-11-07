@@ -375,6 +375,120 @@ class ServerTests(unittest.TestCase):
         time.sleep(0.3)
         self.assertEqual(before, self.snapshot())
 
+    @unittest.skipUnless(
+        os.environ.get("HOST_PICKER_TEST_CONFIG"), "build test-config.nix first"
+    )
+    def test_host_two_rows_and_vm_single_row(self):
+        import pyte
+
+        artifact = Path(os.environ["HOST_PICKER_TEST_CONFIG"])
+        native = self.tmux.run("show-options", "-gv", "status-format[0]")
+        self.tmux.run("source-file", str(artifact / "vm-tmux.conf"))
+        self.assertEqual(self.tmux.run("show-options", "-gv", "status"), "on")
+        self.assertIn(
+            "#(_tmux_status-repo #{q:pane_current_path})",
+            self.tmux.run("show-options", "-gv", "status-left"),
+        )
+        self.tmux.run("source-file", str(artifact / "tmux.conf"))
+        self.assertEqual(self.tmux.run("show-options", "-gv", "status"), "2")
+        self.assertEqual(
+            self.tmux.run("show-options", "-gv", "status-format[0]"), native
+        )
+        self.assertNotIn("#(", self.tmux.run("show-options", "-gv", "status-left"))
+        self.assertIn(
+            "fg=colour208,bold",
+            self.tmux.run("show-options", "-gv", "status-left"),
+        )
+        self.assertEqual(
+            self.tmux.run("show-options", "-gv", "status-format[1]"),
+            "#[align=left]#(_tmux_status-repo #{q:pane_current_path})",
+        )
+        for option in ("window-status-format", "window-status-current-format"):
+            self.assertIn(
+                "#{?@host-repo-name,#{@host-repo-name},#W}",
+                self.tmux.run("show-options", "-gwv", option),
+            )
+        self.tmux.run(
+            "set-environment",
+            "-g",
+            "PATH",
+            f"{artifact / 'status/bin'}:{os.environ['PATH']}",
+        )
+        self.tmux.run("set-option", "-g", "status-interval", "1")
+        repo = self.repo(group="palekiwi", name="active-repo")
+        subprocess.run(
+            ["git", "init", "-b", "branch-active", str(repo.path)],
+            check=True,
+            capture_output=True,
+        )
+        for key, value in (
+            ("base", "main"),
+            ("pr", "123"),
+            ("cue-context", "scope/context"),
+        ):
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repo.path),
+                    "config",
+                    f"branch.branch-active.{key}",
+                    value,
+                ],
+                check=True,
+            )
+        window = self.tmux.run(
+            "new-window",
+            "-P",
+            "-F",
+            "#{window_id}",
+            "-c",
+            str(repo.path),
+            "-n",
+            "unmanaged",
+            "/bin/sh",
+        )
+        self.tmux.run(
+            "set-option", "-w", "-t", window, "@host-repo-name", "managed-repo"
+        )
+
+        class StatusScreen(pyte.Screen):
+            def report_device_status(self, mode, **kwargs):
+                super().report_device_status(mode)
+
+        screen = StatusScreen(100, 30)
+        stream = pyte.Stream(screen)
+
+        def wait_row(row, text):
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                self.tmux.run("refresh-client", "-S", "-t", self.client)
+                if select.select([self.master], [], [], 0.1)[0]:
+                    stream.feed(os.read(self.master, 65536).decode(errors="replace"))
+                if text in screen.display[row]:
+                    return
+            self.fail(f"Missing {text!r} in {screen.display[:2]!r}")
+
+        wait_row(0, "managed-repo")
+        wait_row(1, "branch-active")
+        self.assertIn("scope/context", screen.display[1])
+        self.assertIn("#123", screen.display[1])
+        self.assertIn("main", screen.display[1])
+        self.assertNotIn("branch-active", screen.display[0])
+        navigation = screen.display[0]
+        plain = self.root / "plain"
+        plain.mkdir()
+        self.tmux.run("split-window", "-v", "-c", str(plain), "/bin/sh")
+        deadline = time.monotonic() + 8
+        while time.monotonic() < deadline:
+            self.tmux.run("refresh-client", "-S", "-t", self.client)
+            if select.select([self.master], [], [], 0.1)[0]:
+                stream.feed(os.read(self.master, 65536).decode(errors="replace"))
+            if not screen.display[1].strip():
+                break
+        self.assertEqual(screen.display[0], navigation)
+        self.assertFalse(screen.display[1].strip(), screen.display[1])
+
     def test_legacy_collision_and_explicit_rename(self):
         before = self.snapshot()
         with self.assertRaisesRegex(ValueError, "Unmanaged session collision"):

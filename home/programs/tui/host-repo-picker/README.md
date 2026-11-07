@@ -43,6 +43,21 @@ Selection uses session/window IDs and a per-server file lock next to the
 tmux socket. The lock file can persist, but its lock is released on process
 exit. No windows or sessions are created on picker cancellation.
 
+## Host two-row status
+
+The host uses two status rows at the top. Row one keeps tmux's native
+window list, current/alert styles, overflow scrolling and mouse ranges.
+Its left segment is the orange hostname and session (capped at 40 cells
+so long session names leave navigation space). Managed windows keep their
+repository names; unmanaged windows use their normal names.
+
+Row two runs the unchanged git/branch/PR/cue detail helper for the active
+pane's quoted current directory, outside the window-list loop. It has the
+full terminal width, independent of row one's left-length budget. Existing
+per-field ellipses remain; tmux clips the rendered row at the terminal's
+right edge without wrapping. A non-repository pane leaves this row blank.
+The shared configuration and VM's single-row layout are unchanged.
+
 ## Binding order and deployment
 
 **Super+Ctrl+Return** runs `host-repo-picker --desktop --group spabreaks`;
@@ -153,7 +168,10 @@ nix develop --impure --expr '
     p = f.inputs.nixpkgs.legacyPackages.x86_64-linux;
   in p.mkShell {
     inputsFrom = [ f.devShells.x86_64-linux.default ];
-    packages = [ p.python3 p.ruff p.tmux p.fzf p.util-linux ];
+    packages = [
+      (p.python3.withPackages (ps: [ ps.pyte ]))
+      p.ruff p.tmux p.fzf p.util-linux p.git
+    ];
   }
 '
 ```
@@ -183,10 +201,23 @@ They never connect to the default server. The generated-config test opens
 C-f's actual packaged popup, selects a repo and cancels another popup. If
 `HOST_PICKER_TEST_CONFIG` is omitted, that one test is skipped. This build
 validates the picker and generated host tmux, sxhkd and sesh configuration,
-not a full host activation. Desktop external tools are mocked; real X11
+not a full host activation. The status test also sources the real VM
+module's generated extraConfig on its isolated server, checks one versus
+two rows and the unchanged native first-row format, and renders the host
+status through a PTY with an active Git pane and a non-Git split.
+Desktop external tools are mocked; real X11
 focus and fresh-boot keyboard behavior still require operator QA.
 
 ## Operator QA after deployment
+
+- Confirm two host rows: orange hostname/session plus repo windows on row
+  one; existing cue, branch, PR and base content on row two. Switch panes
+  between repositories and non-Git directories; only row two should change.
+- With a long branch/context and many repo windows, narrow and widen the
+  terminal: details clip on row two without moving navigation. Select an
+  offscreen window and verify native overflow markers/current visibility;
+  click visible repo labels and verify native window selection.
+- In the VM, confirm the original single-row status remains unchanged.
 
 - C-f in Palekiwi/Spabreaks starts with only that workspace's repos.
   Ctrl-a shows all eight repos and toggles back to the original workspace.
