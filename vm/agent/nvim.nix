@@ -16,6 +16,15 @@ in
   environment.systemPackages = [ nvim ];
   environment.variables.EDITOR = "nvim";
 
+  systemd.services.nvim-luac-cache-clear = {
+    description = "Clear nvim bytecode cache (stale across epoch-mtime store paths)";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "-${pkgs.coreutils}/bin/rm -rf /home/pl/.cache/nvim/luac";
+    };
+  };
+
   systemd.tmpfiles.rules = [
     "d /home/pl/.config 0755 pl users -"
     "d /home/pl/.config/nvim 0755 pl users -"
