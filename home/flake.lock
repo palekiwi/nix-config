@@ -124,18 +124,18 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1793278270,
-        "narHash": "sha256-ED31SKvZCLPokCeWCWk//h2GycouXMg1/Dqkq19jMbs=",
-        "ref": "feat/cast-tui",
-        "rev": "e58a28342ed9d4fad226bbd3c194b1e7b6c6f153",
-        "revCount": 223,
-        "type": "git",
-        "url": "file:///home/pl/code/palekiwi-labs/cue-platform"
+        "lastModified": 1793859004,
+        "narHash": "sha256-gi8tO3zysjB4lpln5fG4EXmt5PRp9ebaOM2H13BUwxA=",
+        "owner": "palekiwi-labs",
+        "repo": "cue-platform",
+        "rev": "d58c3c69def9d96f9849645bd1221005a67f93cc",
+        "type": "github"
       },
       "original": {
-        "ref": "feat/cast-tui",
-        "type": "git",
-        "url": "file:///home/pl/code/palekiwi-labs/cue-platform"
+        "owner": "palekiwi-labs",
+        "ref": "dev",
+        "repo": "cue-platform",
+        "type": "github"
       }
     },
     "fenix": {

@@ -9,8 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue-platform = {
-      # TODO: back to github:palekiwi-labs/cue-platform once feat/cast-tui lands
-      url = "git+file:///home/pl/code/palekiwi-labs/cue-platform?ref=feat/cast-tui";
+      url = "github:palekiwi-labs/cue-platform/dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     git-pr-sync = {
