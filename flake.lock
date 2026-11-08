@@ -136,11 +136,11 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1794121318,
-        "narHash": "sha256-Icmd+rdUgj0Ek7uU6dk8MyVU8xgbn0Iy5bXnJT0fBRE=",
+        "lastModified": 1794158003,
+        "narHash": "sha256-K173noN+5KXr9GaVU19RAoyW+CtHYwGQN9MbDuHL5RI=",
         "owner": "palekiwi-labs",
         "repo": "cue-platform",
-        "rev": "6285020a982c946f37941b90d8b0cd5365c66898",
+        "rev": "4a3afee96a37b51c44a33c7dd62a91fbcf41b8af",
         "type": "github"
       },
       "original": {
@@ -160,16 +160,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1793116359,
-        "narHash": "sha256-1G9DlaLqICtV9eTdZ7RwaywnFgBcypyBvX5+yuGhXjU=",
+        "lastModified": 1794157605,
+        "narHash": "sha256-R0OoEZJZk1F1f5y43xcsvNX+atL4dQb835CK8FTTi84=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "10a611b11dd4d160e3524b9ed6bdb14284118a4c",
+        "rev": "8fb0334826e8abe6754eb29b8ef1cace66f83276",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
-        "ref": "feat/cue-agent-claude-harness",
+        "ref": "cue-agent-prototype",
         "repo": "cue",
         "type": "github"
       }
