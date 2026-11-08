@@ -41,6 +41,10 @@
       B = [ "KEY_F4" ];
       Y = [ "KEY_LEFTCTRL" "KEY_F" ];
     };
+    layers.LT.dpad = {
+      up = [ "KEY_VOLUMEUP" ];
+      down = [ "KEY_VOLUMEDOWN" ];
+    };
     layers.RT = {
       pads.left.menu = "tags";
       buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
