@@ -39,6 +39,17 @@
         Y = [ "KEY_SPACE" ];
         DOTS = [ "KEY_PAUSE" ];
         LGRIP = [ "BTN_LEFT" ];
+        START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
+        BACK = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
+      };
+      layers.RT = {
+        buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
+        dpad = {
+          up = [ "KEY_LEFTMETA" "KEY_TAB" ];
+          down = [ "KEY_LEFTMETA" "KEY_U" ];
+          left = [ "KEY_LEFTMETA" "KEY_N" ];
+          right = [ "KEY_LEFTMETA" "KEY_I" ];
+        };
       };
     };
   };
