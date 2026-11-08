@@ -29,5 +29,17 @@
     };
 
     services.cue-backup.enable = true;
+
+    programs.sc-controller = {
+      enable = true;
+      buttons = {
+        A = [ "KEY_ENTER" ];
+        B = [ "KEY_ESC" ];
+        X = [ "KEY_BACKSPACE" ];
+        Y = [ "KEY_SPACE" ];
+        DOTS = [ "KEY_PAUSE" ];
+        LGRIP = [ "BTN_LEFT" ];
+      };
+    };
   };
 }
