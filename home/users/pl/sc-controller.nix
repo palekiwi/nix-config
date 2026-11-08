@@ -12,8 +12,8 @@
       LPAD = [ "BTN_RIGHT" ];
       LGRIP = [ "KEY_LEFTSHIFT" ];
       RGRIP = [ "KEY_LEFTCTRL" ];
-      START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
-      BACK = [ "KEY_LEFTMETA" "KEY_LEFTCTRL" "KEY_ENTER" ];
+      START = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
+      BACK = [ "KEY_LEFTMETA" "KEY_LEFTCTRL" "KEY_BACKSPACE" ];
       LB = [ "KEY_LEFTCTRL" "KEY_PAGEUP" ];
       RB = [ "KEY_LEFTCTRL" "KEY_PAGEDOWN" ];
     };
