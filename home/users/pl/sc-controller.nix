@@ -10,10 +10,10 @@
       DOTS = [ "KEY_PAUSE" ];
       RPAD = [ "BTN_LEFT" ];
       LPAD = [ "BTN_RIGHT" ];
-      LGRIP = [ "KEY_LEFTCTRL" ];
-      RGRIP = [ "KEY_LEFTSHIFT" ];
+      LGRIP = [ "KEY_LEFTSHIFT" ];
+      RGRIP = [ "KEY_LEFTCTRL" ];
       START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
-      BACK = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
+      BACK = [ "KEY_LEFTMETA" "KEY_LEFTCTRL" "KEY_ENTER" ];
       LB = [ "KEY_LEFTCTRL" "KEY_PAGEUP" ];
       RB = [ "KEY_LEFTCTRL" "KEY_PAGEDOWN" ];
     };
@@ -36,7 +36,7 @@
       { label = "chat"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
     ];
     layers.LT.buttons = {
-      Y = [ "KEY_F2" ];
+      A = [ "KEY_F2" ];
       X = [ "KEY_F3" ];
       B = [ "KEY_F4" ];
     };
@@ -45,7 +45,7 @@
       buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
       dpad = {
         up = [ "KEY_LEFTMETA" "KEY_TAB" ];
-        down = [ "KEY_LEFTMETA" "KEY_U" ];
+        down = [ "KEY_LEFTMETA" "KEY_Q" ];
         left = [ "KEY_LEFTMETA" "KEY_N" ];
         right = [ "KEY_LEFTMETA" "KEY_I" ];
       };
