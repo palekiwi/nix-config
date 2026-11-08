@@ -39,6 +39,7 @@
       A = [ "KEY_F2" ];
       X = [ "KEY_F3" ];
       B = [ "KEY_F4" ];
+      Y = [ "KEY_LEFTCTRL" "KEY_F" ];
     };
     layers.RT = {
       pads.left.menu = "tags";
