@@ -41,6 +41,8 @@
         LGRIP = [ "BTN_LEFT" ];
         START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
         BACK = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
+        LB = [ "KEY_LEFTCTRL" "KEY_PAGEUP" ];
+        RB = [ "KEY_LEFTCTRL" "KEY_PAGEDOWN" ];
       };
       layers.RT = {
         buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
