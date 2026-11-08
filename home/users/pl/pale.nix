@@ -54,7 +54,16 @@
           haptics = 256;
         };
       };
+      menus.tags.items = [
+        { label = "r 一"; keys = [ "KEY_LEFTMETA" "KEY_R" ]; }
+        { label = "s 二"; keys = [ "KEY_LEFTMETA" "KEY_S" ]; }
+        { label = "t 三"; keys = [ "KEY_LEFTMETA" "KEY_T" ]; }
+        { label = "f 八"; keys = [ "KEY_LEFTMETA" "KEY_F" ]; }
+        { label = "w 七"; keys = [ "KEY_LEFTMETA" "KEY_W" ]; }
+        { label = "a 〇"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
+      ];
       layers.RT = {
+        pads.left.menu = "tags";
         buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
         dpad = {
           up = [ "KEY_LEFTMETA" "KEY_TAB" ];

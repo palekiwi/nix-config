@@ -73,18 +73,50 @@ let
       + lib.optionalString (period != null) ", ${toString period}"
       + ", ${action})";
 
+  menuCommands = {
+    radial = "radialmenu";
+    list = "menu";
+    row = "hmenu";
+    grid = "gridmenu";
+  };
+
+  menuAction = side: name:
+    let m = cfg.menus.${name};
+    in "${menuCommands.${m.type}}('${name}.menu', ${side}"
+      + lib.optionalString (m.confirm == "release") ", SAME"
+      + ")";
+
+  padWithLayers = pad: side: base:
+    let
+      layered = lib.concatMap (m:
+        let menu = cfg.layers.${m}.pads.${pad}.menu;
+        in lib.optional (menu != null) "${m}, ${menuAction side menu}") layerNames;
+    in
+    if layered == [ ] then base
+    else "mode(${lib.concatStringsSep ", " (layered ++ [ base ])})";
+
+  menuFile = name: m: builtins.toJSON (lib.imap0 (i: item: {
+    id = "i${toString i}";
+    name = item.label;
+    action = keyAction item.keys;
+  }) m.items);
+
+  layerMenuNames = lib.concatMap (l:
+    lib.filter (n: n != null) [ l.pads.left.menu l.pads.right.menu ])
+    (lib.attrValues cfg.layers);
+
   dpadAction = dir: withLayers (l: l.dpad.${dir} or null)
     (keyAction [ "KEY_${lib.toUpper dir}" ]);
 
   profile = {
     buttons = lib.genAttrs usedButtons (n: { action = buttonAction n; });
     dpad.action = "dpad(${lib.concatMapStringsSep ", " dpadAction directions})";
-    pad_left.action = withFeedback "LEFT" cfg.pads.left.haptics 16
-      "ball(XY(None, mouse(Rels.REL_WHEEL, ${toString cfg.pads.left.scrollSpeed})))";
-    pad_right.action = "smooth(8, 0.78, 2.0, "
+    pad_left.action = padWithLayers "left" "LEFT" (withFeedback "LEFT" cfg.pads.left.haptics 16
+      "ball(XY(None, mouse(Rels.REL_WHEEL, ${toString cfg.pads.left.scrollSpeed})))");
+    pad_right.action = padWithLayers "right" "RIGHT" ("smooth(8, 0.78, 2.0, "
       + withFeedback "RIGHT" cfg.pads.right.haptics null
         "sens(${toString cfg.pads.right.sensitivity}, ${toString cfg.pads.right.sensitivity}, ball(mouse()))"
-      + ")";
+      + ")");
     stick = { };
     rstick = { };
     gyro = { };
@@ -98,7 +130,8 @@ let
 
   allBindings = lib.attrValues cfg.buttons
     ++ lib.concatMap (l: lib.attrValues l.buttons ++ lib.attrValues l.dpad)
-      (lib.attrValues cfg.layers);
+      (lib.attrValues cfg.layers)
+    ++ lib.concatMap (m: map (i: i.keys) m.items) (lib.attrValues cfg.menus);
 
   allKeys = lib.unique (lib.concatLists allBindings);
 
@@ -134,6 +167,45 @@ let
         default = { };
         description = "D-pad bindings (up, down, left, right) while the modifier is held.";
       };
+      pads = lib.genAttrs [ "left" "right" ] (pad: {
+        menu = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Name of a menu (from `menus`) the ${pad} pad opens and steers while the modifier is held.";
+        };
+      });
+    };
+  };
+
+  menuItemType = lib.types.submodule {
+    options = {
+      label = lib.mkOption {
+        type = lib.types.str;
+        description = "Text shown for the entry.";
+      };
+      keys = lib.mkOption {
+        type = binding;
+        description = "Evdev keys pressed together when the entry is chosen.";
+      };
+    };
+  };
+
+  menuType = lib.types.submodule {
+    options = {
+      type = lib.mkOption {
+        type = lib.types.enum (lib.attrNames menuCommands);
+        default = "radial";
+        description = "Menu layout.";
+      };
+      confirm = lib.mkOption {
+        type = lib.types.enum [ "click" "release" ];
+        default = "click";
+        description = "Choose the entry by clicking the pad, or by lifting the thumb off it.";
+      };
+      items = lib.mkOption {
+        type = lib.types.nonEmptyListOf menuItemType;
+        description = "Menu entries, in order.";
+      };
     };
   };
 in {
@@ -161,6 +233,17 @@ in {
         Layers keyed by the modifier button that activates them while held.
         Unbound buttons fall through to the base layer.
       '';
+    };
+
+    menus = lib.mkOption {
+      type = lib.types.attrsOf menuType;
+      default = { };
+      example = {
+        tags.items = [
+          { label = "r"; keys = [ "KEY_LEFTMETA" "KEY_R" ]; }
+        ];
+      };
+      description = "Menus by name, opened from layer pads (`layers.<modifier>.pads.<pad>.menu`).";
     };
 
     pads = {
@@ -212,17 +295,26 @@ in {
           + "; valid: " + toString directions;
       }
       {
+        assertion = unknown (lib.attrNames cfg.menus) layerMenuNames == [ ];
+        message = "programs.sc-controller.layers.*.pads: unknown menu(s) "
+          + toString (unknown (lib.attrNames cfg.menus) layerMenuNames);
+      }
+      {
         assertion = boundModifiers == [ ];
         message = "programs.sc-controller: layer modifier(s) "
           + toString boundModifiers + " must not also be bound in buttons";
       }
     ];
 
-    xdg.configFile."scc/profiles/Default.sccprofile" = {
+    xdg.configFile = lib.mapAttrs' (name: m:
+      lib.nameValuePair "scc/menus/${name}.menu" { text = menuFile name m; }) cfg.menus
+    // {
+    "scc/profiles/Default.sccprofile" = {
       source = profileFile;
       onChange = ''
         ${pkgs.systemd}/bin/systemctl --user try-restart scc-daemon.service || true
       '';
+    };
     };
   };
 }
