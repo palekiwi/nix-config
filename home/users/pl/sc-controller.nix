@@ -41,14 +41,7 @@
       B = [ "KEY_F4" ];
     };
     layers.RT = {
-      pads.left.zones = {
-        up = [ "KEY_LEFTMETA" "KEY_T" ];
-        right = [ "KEY_LEFTMETA" "KEY_S" ];
-        down = [ "KEY_LEFTMETA" "KEY_R" ];
-        left = [ "KEY_LEFTMETA" "KEY_A" ];
-        up-right = [ "KEY_LEFTMETA" "KEY_F" ];
-        up-left = [ "KEY_LEFTMETA" "KEY_W" ];
-      };
+      pads.left.menu = "tags";
       buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
       dpad = {
         up = [ "KEY_LEFTMETA" "KEY_TAB" ];
