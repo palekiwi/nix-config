@@ -14,7 +14,7 @@ pkgs.writers.writeNuBin "dmenu_remote_tmux" ''
       if $tmux {
         run-external "ssh" $host "sesh" "list" "--json" "--tmux" | from json
       } else {
-        run-external "ssh" $host "sesh" "list" "--json" | from json
+        run-external "ssh" $host "sesh" "list" "--json" "--tmux" "--config" | from json
       }
     } catch {
       run-external "notify-send" "Remote Tmux" $"Could not retrieve sessions from ($host)"
