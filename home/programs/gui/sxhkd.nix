@@ -53,12 +53,7 @@ let
         kitty -T "$window_name" -e ssh agent-vm -t "sesh connect $session_name"
   '';
 
-  switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
-    window_name=$USER
-
-    wmctrl -Fa "$window_name" ||
-        kitty -T "$window_name" -e tmux new-session -A -s "$window_name"
-  '';
+  scratch = import ./tmux-scratch.nix { inherit pkgs; };
 
   switchToApp = pkgs.writeShellScript "switchToApp" ''
     app_name=$1
@@ -77,11 +72,12 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
-      "super + Return + control" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
-      "super + Return + shift" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
-      "super + BackSpace" = "${switchToDefaultSession}";
-      "super + control + BackSpace" = "dmenu_tmux --tmux";
+      "super + Return" = "${scratch}/bin/tmux-scratch";
+      "super + control + Return" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
+      "super + alt + Return" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
+      "super + shift + Return" = "dmenu_remote_tmux agent-vm --prefix agent";
+      "super + BackSpace" = "dmenu_tmux --tmux";
+      "super + control + BackSpace" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
@@ -117,8 +113,6 @@ in
 
       "super + control + space; r; d" = "${switchToSession} vrs/dev";
       "super + control + space; r; e" = "${switchToSession} vrs";
-
-      "super + space; space" = "dmenu_remote_tmux agent-vm --prefix agent";
 
       "super + space; t; e" = "${switchToAgentSession} cue";
       "super + space; t; n" = "${switchToAgentSession} palekiwi";
