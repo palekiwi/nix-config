@@ -67,18 +67,24 @@ let
       || lib.any (m: cfg.layers.${m}.buttons ? ${n}) layerNames)
     buttonNames;
 
+  withFeedback = side: amplitude: period: action:
+    if amplitude == 0 then action
+    else "feedback(${side}, ${toString amplitude}"
+      + lib.optionalString (period != null) ", ${toString period}"
+      + ", ${action})";
+
   dpadAction = dir: withLayers (l: l.dpad.${dir} or null)
     (keyAction [ "KEY_${lib.toUpper dir}" ]);
 
   profile = {
     buttons = lib.genAttrs usedButtons (n: { action = buttonAction n; });
     dpad.action = "dpad(${lib.concatMapStringsSep ", " dpadAction directions})";
-    pad_left.action =
-      "feedback(LEFT, 4096, 16, ball(XY(None, mouse(Rels.REL_WHEEL, "
-      + "${toString cfg.scrollSpeed}))))";
-    pad_right.action =
-      "smooth(8, 0.78, 2.0, feedback(RIGHT, 256, sens(${toString cfg.pointerSensitivity}, "
-      + "${toString cfg.pointerSensitivity}, ball(mouse()))))";
+    pad_left.action = withFeedback "LEFT" cfg.pads.left.haptics 16
+      "ball(XY(None, mouse(Rels.REL_WHEEL, ${toString cfg.pads.left.scrollSpeed})))";
+    pad_right.action = "smooth(8, 0.78, 2.0, "
+      + withFeedback "RIGHT" cfg.pads.right.haptics null
+        "sens(${toString cfg.pads.right.sensitivity}, ${toString cfg.pads.right.sensitivity}, ball(mouse()))"
+      + ")";
     stick = { };
     rstick = { };
     gyro = { };
@@ -157,16 +163,31 @@ in {
       '';
     };
 
-    pointerSensitivity = lib.mkOption {
-      type = lib.types.number;
-      default = 3.0;
-      description = "Right pad pointer speed multiplier.";
-    };
-
-    scrollSpeed = lib.mkOption {
-      type = lib.types.number;
-      default = 1.0;
-      description = "Left pad vertical scroll speed multiplier.";
+    pads = {
+      left = {
+        scrollSpeed = lib.mkOption {
+          type = lib.types.number;
+          default = 1.0;
+          description = "Left pad vertical scroll speed multiplier.";
+        };
+        haptics = lib.mkOption {
+          type = lib.types.ints.between 0 32768;
+          default = 4096;
+          description = "Left pad haptic feedback amplitude while scrolling; 0 disables it.";
+        };
+      };
+      right = {
+        sensitivity = lib.mkOption {
+          type = lib.types.number;
+          default = 3.0;
+          description = "Right pad pointer speed multiplier.";
+        };
+        haptics = lib.mkOption {
+          type = lib.types.ints.between 0 32768;
+          default = 256;
+          description = "Right pad haptic feedback amplitude while moving the pointer; 0 disables it.";
+        };
+      };
     };
   };
 

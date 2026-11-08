@@ -38,11 +38,21 @@
         X = [ "KEY_BACKSPACE" ];
         Y = [ "KEY_SPACE" ];
         DOTS = [ "KEY_PAUSE" ];
-        LGRIP = [ "BTN_LEFT" ];
+        RPAD = [ "BTN_LEFT" ];
         START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
         BACK = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
         LB = [ "KEY_LEFTCTRL" "KEY_PAGEUP" ];
         RB = [ "KEY_LEFTCTRL" "KEY_PAGEDOWN" ];
+      };
+      pads = {
+        left = {
+          scrollSpeed = 1.0;
+          haptics = 4096;
+        };
+        right = {
+          sensitivity = 3.0;
+          haptics = 256;
+        };
       };
       layers.RT = {
         buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
