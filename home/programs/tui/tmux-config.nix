@@ -76,6 +76,9 @@ in
     bind -n M-e select-window -t2
     bind -n M-i select-window -t3
 
+    bind -n C-PageUp previous-window
+    bind -n C-PageDown next-window
+
     bind -n M-C-y send-keys -R\; clear-history
 
     bind-key -n M-y copy-mode -e
