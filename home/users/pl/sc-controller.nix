@@ -40,6 +40,7 @@
       X = [ "KEY_F3" ];
       B = [ "KEY_F4" ];
       Y = [ "KEY_LEFTCTRL" "KEY_F" ];
+      RPAD = [ "BTN_MIDDLE" ];
     };
     layers.LT.dpad = {
       up = [ "KEY_VOLUMEUP" ];
