@@ -39,6 +39,8 @@
         Y = [ "KEY_SPACE" ];
         DOTS = [ "KEY_PAUSE" ];
         RPAD = [ "BTN_LEFT" ];
+        LGRIP = [ "KEY_LEFTCTRL" ];
+        RGRIP = [ "KEY_LEFTSHIFT" ];
         START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
         BACK = [ "KEY_LEFTMETA" "KEY_BACKSPACE" ];
         LB = [ "KEY_LEFTCTRL" "KEY_PAGEUP" ];
@@ -62,6 +64,11 @@
         { label = "w 七"; keys = [ "KEY_LEFTMETA" "KEY_W" ]; }
         { label = "a 〇"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
       ];
+      layers.LT.buttons = {
+        Y = [ "KEY_F2" ];
+        X = [ "KEY_F3" ];
+        B = [ "KEY_F4" ];
+      };
       layers.RT = {
         pads.left.menu = "tags";
         buttons.B = [ "KEY_LEFTMETA" "KEY_Q" ];
