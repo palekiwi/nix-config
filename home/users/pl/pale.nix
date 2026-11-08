@@ -39,6 +39,7 @@
         Y = [ "KEY_SPACE" ];
         DOTS = [ "KEY_PAUSE" ];
         RPAD = [ "BTN_LEFT" ];
+        LPAD = [ "BTN_RIGHT" ];
         LGRIP = [ "KEY_LEFTCTRL" ];
         RGRIP = [ "KEY_LEFTSHIFT" ];
         START = [ "KEY_LEFTMETA" "KEY_ENTER" ];
