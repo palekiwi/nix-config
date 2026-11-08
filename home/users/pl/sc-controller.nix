@@ -28,12 +28,12 @@
       };
     };
     menus.tags.items = [
-      { label = "r 一"; keys = [ "KEY_LEFTMETA" "KEY_R" ]; }
-      { label = "s 二"; keys = [ "KEY_LEFTMETA" "KEY_S" ]; }
-      { label = "t 三"; keys = [ "KEY_LEFTMETA" "KEY_T" ]; }
-      { label = "f 八"; keys = [ "KEY_LEFTMETA" "KEY_F" ]; }
-      { label = "w 七"; keys = [ "KEY_LEFTMETA" "KEY_W" ]; }
-      { label = "a 〇"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
+      { label = "vm"; keys = [ "KEY_LEFTMETA" "KEY_R" ]; }
+      { label = "web"; keys = [ "KEY_LEFTMETA" "KEY_S" ]; }
+      { label = "editor"; keys = [ "KEY_LEFTMETA" "KEY_T" ]; }
+      { label = "web 2"; keys = [ "KEY_LEFTMETA" "KEY_F" ]; }
+      { label = "coord"; keys = [ "KEY_LEFTMETA" "KEY_W" ]; }
+      { label = "chat"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
     ];
     layers.LT.buttons = {
       Y = [ "KEY_F2" ];
