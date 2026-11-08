@@ -83,7 +83,8 @@ let
   menuAction = side: name:
     let m = cfg.menus.${name};
     in "${menuCommands.${m.type}}('${name}.menu', ${side}"
-      + lib.optionalString (m.confirm == "release") ", SAME"
+      + ", ${if m.confirm == "release" then "SAME" else m.confirm}"
+      + lib.optionalString (m.cancel != null) ", ${m.cancel}"
       + ")";
 
   padWithLayers = pad: side: base:
@@ -198,9 +199,14 @@ let
         description = "Menu layout.";
       };
       confirm = lib.mkOption {
-        type = lib.types.enum [ "click" "release" ];
-        default = "click";
-        description = "Choose the entry by clicking the pad, or by lifting the thumb off it.";
+        type = lib.types.enum ([ "release" ] ++ buttonNames);
+        default = "release";
+        description = "Choose the entry when the thumb lifts off the steering pad (release), or when the given button is released.";
+      };
+      cancel = lib.mkOption {
+        type = lib.types.nullOr (lib.types.enum buttonNames);
+        default = null;
+        description = "Button that closes the menu without choosing; null keeps the daemon default (B).";
       };
       items = lib.mkOption {
         type = lib.types.nonEmptyListOf menuItemType;
