@@ -87,11 +87,22 @@ let
       + lib.optionalString (m.cancel != null) ", ${m.cancel}"
       + ")";
 
+  zoneNames = [ "up" "down" "left" "right" "up-left" "up-right" "down-left" "down-right" ];
+
+  zonesAction = zones: "click(dpad8("
+    + lib.concatMapStringsSep ", "
+      (z: if zones ? ${z} then keyAction zones.${z} else "None") zoneNames
+    + "))";
+
+  layerPads = lib.concatMap (l: [ l.pads.left l.pads.right ]) (lib.attrValues cfg.layers);
+
   padWithLayers = pad: side: base:
     let
       layered = lib.concatMap (m:
-        let menu = cfg.layers.${m}.pads.${pad}.menu;
-        in lib.optional (menu != null) "${m}, ${menuAction side menu}") layerNames;
+        let p = cfg.layers.${m}.pads.${pad};
+        in if p.menu != null then [ "${m}, ${menuAction side p.menu}" ]
+        else if p.zones != { } then [ "${m}, ${zonesAction p.zones}" ]
+        else [ ]) layerNames;
     in
     if layered == [ ] then base
     else "mode(${lib.concatStringsSep ", " (layered ++ [ base ])})";
@@ -132,7 +143,8 @@ let
   allBindings = lib.attrValues cfg.buttons
     ++ lib.concatMap (l: lib.attrValues l.buttons ++ lib.attrValues l.dpad)
       (lib.attrValues cfg.layers)
-    ++ lib.concatMap (m: map (i: i.keys) m.items) (lib.attrValues cfg.menus);
+    ++ lib.concatMap (m: map (i: i.keys) m.items) (lib.attrValues cfg.menus)
+    ++ lib.concatMap (p: lib.attrValues p.zones) layerPads;
 
   allKeys = lib.unique (lib.concatLists allBindings);
 
@@ -173,6 +185,12 @@ let
           type = lib.types.nullOr lib.types.str;
           default = null;
           description = "Name of a menu (from `menus`) the ${pad} pad opens and steers while the modifier is held.";
+        };
+        zones = lib.mkOption {
+          type = lib.types.attrsOf binding;
+          default = { };
+          example = { up = [ "KEY_LEFTMETA" "KEY_T" ]; };
+          description = "Keys sent by pressing the ${pad} pad in one of eight 45-degree zones while the modifier is held. Zones: ${toString zoneNames}.";
         };
       });
     };
@@ -304,6 +322,16 @@ in {
         assertion = unknown (lib.attrNames cfg.menus) layerMenuNames == [ ];
         message = "programs.sc-controller.layers.*.pads: unknown menu(s) "
           + toString (unknown (lib.attrNames cfg.menus) layerMenuNames);
+      }
+      {
+        assertion = unknown zoneNames (lib.concatMap (p: lib.attrNames p.zones) layerPads) == [ ];
+        message = "programs.sc-controller.layers.*.pads.*.zones: unknown zone(s) "
+          + toString (unknown zoneNames (lib.concatMap (p: lib.attrNames p.zones) layerPads))
+          + "; valid: " + toString zoneNames;
+      }
+      {
+        assertion = lib.all (p: p.menu == null || p.zones == { }) layerPads;
+        message = "programs.sc-controller.layers.*.pads: a pad takes either menu or zones, not both";
       }
       {
         assertion = boundModifiers == [ ];
