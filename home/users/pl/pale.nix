@@ -49,11 +49,11 @@
       pads = {
         left = {
           scrollSpeed = 1.0;
-          haptics = 4096;
+          haptics = 0;
         };
         right = {
           sensitivity = 3.0;
-          haptics = 256;
+          haptics = 0;
         };
       };
       menus.tags.items = [
