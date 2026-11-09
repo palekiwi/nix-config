@@ -75,6 +75,7 @@ in
     bind -n M-n select-window -t1
     bind -n M-e select-window -t2
     bind -n M-i select-window -t3
+    bind -n M-h last-window
 
     bind -n C-PageUp previous-window
     bind -n C-PageDown next-window
