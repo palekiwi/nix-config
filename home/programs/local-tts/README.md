@@ -12,7 +12,9 @@ Ctrl+C stops only the invocation in that terminal. CPU remains the default;
 no GPU deployment or speedup claim is made. The abandoned custom CUDA pilot
 has been removed; GPU investigation evidence is retained in coordination
 memory, not shipped as runtime tooling. A provider flag alone is not a
-supported GPU path.
+supported GPU path. The separate [manual packaged GPU test](CONTAINER.md)
+starts with pale host activation, then a pinned localhost-only container;
+it does not change `speak` or install a TTS service.
 
 ## Run without rebuilding or installing
 
