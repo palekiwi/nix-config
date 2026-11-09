@@ -5,6 +5,7 @@
     ../../programs/gui
     ../../programs/tui
     ../../services
+    ./sc-controller.nix
   ];
 
   config = {
@@ -29,5 +30,7 @@
     };
 
     services.cue-backup.enable = true;
+
+    programs.sc-controller.enable = true;
   };
 }
