@@ -1,8 +1,10 @@
 # GPU feasibility investigation
 
 Investigated against `fb878f80b136e542ad6a86b2022460d7cdd27bfe` and its
-unchanged root flake lock. No GPU backend is implemented. CPU is still the
-only supported runtime; no activation or lock update is needed.
+unchanged root flake lock. CPU is still the only supported runtime; no
+activation or lock update is needed. The subsequently approved, isolated
+[host-only prebuilt pilot](PILOT.md) is now prepared, but GPU runtime QA is
+pending. The findings and source-build cost evidence below remain relevant.
 
 ## Findings
 
