@@ -15,6 +15,7 @@
     ./firewall-docker.nix
     ./hardware-configuration.nix
     ./locale.nix
+    ./local-tts.nix
     ./notifications-server.nix
     ./nvidia.nix
     ./opentabletdriver.nix
