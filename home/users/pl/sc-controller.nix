@@ -36,9 +36,9 @@
       { label = "chat"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
     ];
     layers.LT.buttons = {
-      A = [ "KEY_F2" ];
-      X = [ "KEY_F3" ];
-      B = [ "KEY_F4" ];
+      A = [ "KEY_F1" ];
+      X = [ "KEY_F2" ];
+      B = [ "KEY_F3" ];
       Y = [ "KEY_LEFTCTRL" "KEY_F" ];
       RPAD = [ "BTN_MIDDLE" ];
     };
