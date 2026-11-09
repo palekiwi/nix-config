@@ -9,7 +9,9 @@ paragraph. This is sentence-batch delivery, not token-level streaming.
 No services, GUI, keybindings, clipboard watcher, replacement behavior, or
 stop command. Concurrent invocations are independent and can overlap;
 Ctrl+C stops only the invocation in that terminal. CPU remains the default;
-no GPU implementation or speedup claim is made.
+no GPU implementation or speedup claim is made. See [GPU feasibility](GPU.md)
+for pinned runtime/model compatibility, build costs and the recommended host
+experiment; a provider flag alone is not a supported GPU path.
 
 ## Run without rebuilding or installing
 
@@ -192,4 +194,6 @@ the earlier 84-word whole-file sample. Host playback/clipboard/Ctrl+C were
 confirmed for the original whole-file CLI; incremental sound, routing,
 startup latency, gaps and interruption require fresh operator verification.
 GUI, keybindings, daemon/resident engine, automatic clipboard watching,
-background replacement, stop command and GPU evaluation remain deferred.
+background replacement and stop command remain deferred. GPU feasibility was
+investigated in [GPU.md](GPU.md); implementation and host GPU QA remain
+blocked on approval of the runtime/model packaging experiment.
