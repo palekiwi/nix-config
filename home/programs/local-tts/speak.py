@@ -15,6 +15,10 @@ class Cancelled(Exception):
 
 
 def run_child(argv, **kwargs):
+    run_children([(argv, kwargs)])
+
+
+def run_children(commands, pipeline=False):
     cancelled = False
 
     def cancel(signum, frame):
@@ -24,35 +28,49 @@ def run_child(argv, **kwargs):
     previous = {
         sig: signal.signal(sig, cancel) for sig in (signal.SIGINT, signal.SIGTERM)
     }
-    process = None
+    processes = []
     try:
-        process = subprocess.Popen(argv, start_new_session=True, **kwargs)
+        for index, (argv, options) in enumerate(commands):
+            kwargs = dict(options)
+            if pipeline:
+                if index == 0:
+                    kwargs["stdin"] = subprocess.PIPE
+                else:
+                    kwargs["stdout"] = processes[0].stdin
+            processes.append(subprocess.Popen(argv, start_new_session=True, **kwargs))
+        if pipeline:
+            processes[0].stdin.close()
         while not cancelled:
-            try:
-                code = process.wait(timeout=0.1)
-                if cancelled:
-                    break
+            codes = [process.poll() for process in processes]
+            if cancelled:
+                break
+            for process, code in zip(processes, codes):
                 if code:
-                    raise subprocess.CalledProcessError(code, argv)
+                    raise subprocess.CalledProcessError(code, process.args)
+            if all(code is not None for code in codes):
                 return
-            except subprocess.TimeoutExpired:
-                pass
+            time.sleep(0.02)
         raise Cancelled()
     finally:
-        if process is not None:
+        for process in processes:
             try:
                 os.killpg(process.pid, signal.SIGTERM)
             except ProcessLookupError:
                 pass
+        deadline = time.monotonic() + 0.5
+        for process in processes:
             try:
-                process.wait(timeout=0.5)
+                process.wait(timeout=max(0, deadline - time.monotonic()))
             except subprocess.TimeoutExpired:
                 pass
+        for process in processes:
             try:
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
             process.wait()
+            if pipeline and process.stdin is not None:
+                process.stdin.close()
         for sig, handler in previous.items():
             signal.signal(sig, handler)
 
@@ -116,34 +134,44 @@ def read_input(args, stdin):
     return stdin.read()
 
 
-def generate(text, output):
-    model = Path(os.environ["SPEAK_MODEL"])
+def synthesize(text, output=None, verbose=False):
     command = [
-        os.environ.get("SPEAK_ENGINE", "sherpa-onnx-offline-tts"),
-        "--provider=cpu",
-        "--num-threads=4",
-        f"--kokoro-model={model}/model.int8.onnx",
-        f"--kokoro-voices={model}/voices.bin",
-        f"--kokoro-tokens={model}/tokens.txt",
-        f"--kokoro-data-dir={model}/espeak-ng-data",
-        "--kokoro-length-scale=1",
-        "--tts-max-num-sentences=1",
-        "--tts-silence-scale=0.2",
-        "--sid=1",
-        f"--output-filename={output}",
-        "--",
-        text,
+        os.environ.get("SPEAK_ENGINE", "speak-engine"),
+        os.environ["SPEAK_MODEL"],
+        str(output) if output is not None else "-",
+        "1" if verbose else "0",
     ]
-    run_child(command, stdout=sys.stderr)
-
-
-def playback(output):
-    run_child([os.environ.get("SPEAK_PLAYER", "pw-play"), str(output)])
+    with tempfile.TemporaryFile() as source, tempfile.TemporaryFile() as diagnostics:
+        source.write(text.encode("utf-8"))
+        source.seek(0)
+        options = {"stdin": source, "stderr": sys.stderr if verbose else diagnostics}
+        commands = [(command, options)]
+        if output is None:
+            player = [
+                os.environ.get("SPEAK_PLAYER", "pw-play"),
+                "--raw",
+                "--format=f32",
+                "--rate=24000",
+                "--channels=1",
+                "-",
+            ]
+            commands.insert(0, (player, {"stderr": options["stderr"]}))
+        try:
+            run_children(commands, pipeline=output is None)
+        except subprocess.CalledProcessError:
+            if not verbose:
+                diagnostics.seek(0, os.SEEK_END)
+                size = diagnostics.tell()
+                diagnostics.seek(max(0, size - 8192))
+                message = diagnostics.read().decode("utf-8", errors="replace")
+                if message:
+                    print(message.rstrip(), file=sys.stderr)
+            raise
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description="Foreground local Bella CPU speech (whole-file, not streaming)."
+        description="Foreground local Bella CPU speech with incremental playback."
     )
     parser.add_argument(
         "text", nargs="*", help="text to speak (use -- before leading dashes)"
@@ -154,6 +182,9 @@ def main(argv=None):
     parser.add_argument("--raw", action="store_true", help="skip Markdown cleanup")
     parser.add_argument(
         "--output", metavar="WAV", help="generate a WAV instead of playing it"
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="show engine diagnostics and timing"
     )
     args = parser.parse_args(argv)
     if args.text and (args.file is not None or args.clipboard):
@@ -167,15 +198,14 @@ def main(argv=None):
         with tempfile.TemporaryDirectory(prefix="speak-") as directory:
             output = Path(directory) / "speech.wav"
             started = time.monotonic()
-            generate(text, output)
-            print(
-                f"speak: whole-file generation {time.monotonic() - started:.2f}s",
-                file=sys.stderr,
-            )
+            synthesize(text, output if args.output else None, args.verbose)
+            if args.verbose:
+                print(
+                    f"speak: request completed in {time.monotonic() - started:.2f}s",
+                    file=sys.stderr,
+                )
             if args.output:
                 shutil.copyfile(output, args.output)
-            else:
-                playback(output)
         return 0
     except (KeyboardInterrupt, Cancelled):
         print("speak: cancelled", file=sys.stderr)

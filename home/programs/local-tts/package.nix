@@ -1,6 +1,7 @@
 {
   lib,
   stdenvNoCC,
+  stdenv,
   fetchurl,
   python3,
   makeWrapper,
@@ -26,13 +27,19 @@ let
     meta.license = lib.licenses.asl20;
   };
 in
-stdenvNoCC.mkDerivation {
+stdenv.mkDerivation {
   pname = "local-tts";
-  version = "0.1.0";
+  version = "0.2.0";
   src = ./.;
   nativeBuildInputs = [ makeWrapper ];
   nativeCheckInputs = [ python3 ];
-  dontBuild = true;
+  buildInputs = [ sherpa-onnx ];
+  buildPhase = ''
+    runHook preBuild
+    $CXX -std=c++17 -Wall -Wextra -Werror engine.cc -o speak-engine \
+      -lsherpa-onnx-cxx-api -lsherpa-onnx-c-api
+    runHook postBuild
+  '';
   doCheck = true;
   checkPhase = ''
     runHook preCheck
@@ -42,11 +49,11 @@ stdenvNoCC.mkDerivation {
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py "$out/lib/local-tts/"
+    cp speak.py speak-engine "$out/lib/local-tts/"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
       --set-default SPEAK_MODEL ${model} \
-      --set-default SPEAK_ENGINE ${sherpa-onnx}/bin/sherpa-onnx-offline-tts \
+      --set-default SPEAK_ENGINE "$out/lib/local-tts/speak-engine" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
       --set-default SPEAK_WL_PASTE ${wl-clipboard}/bin/wl-paste \
       --set-default SPEAK_XCLIP ${xclip}/bin/xclip
