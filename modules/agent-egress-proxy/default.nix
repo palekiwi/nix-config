@@ -10,7 +10,8 @@ let
   # Every secret the egress proxy can read is declared here and nowhere else.
   # Only read-only scoped tokens may be added. Accepted exceptions without
   # scopes: typesafe and the model provider API keys (anthropic, gemini, zai).
-  # Never add airbrake or jira/token (read-write).
+  # airbrake is unscoped and only allowed because the proxy restricts it to
+  # GET under its read paths (methods/paths). Never add jira/token (read-write).
   injections = {
     github = {
       secret = "github/palekiwi/gh_cli_readonly";
@@ -49,6 +50,13 @@ let
       hosts = [ "generativelanguage.googleapis.com" ];
       header = "x-goog-api-key";
     };
+    airbrake = {
+      secret = "spabreaks/airbrake_auth_token";
+      placeholder = "PLACEHOLDER-airbrake";
+      hosts = [ "api.airbrake.io" ];
+      methods = [ "GET" ];
+      paths = [ "/api/v4/projects" ];
+    };
   };
   headerOf = r: r.header or "authorization";
   rulesFile = pkgs.writeText "agent-egress-proxy-rules.json" (builtins.toJSON
@@ -56,6 +64,8 @@ let
       inherit name;
       inherit (r) placeholder hosts;
       header = headerOf r;
+      methods = r.methods or null;
+      paths = r.paths or null;
     }) injections));
   interceptHosts = lib.unique (lib.concatMap (r: r.hosts) (lib.attrValues injections));
   allowHosts = "^(${lib.concatMapStringsSep "|" lib.escapeRegex interceptHosts}):443$";

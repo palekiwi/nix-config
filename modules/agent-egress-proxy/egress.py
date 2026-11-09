@@ -14,6 +14,8 @@ with open(os.environ["AGENT_PROXY_RULES"]) as _fh:
 for _rule in RULES:
     _rule["hosts"] = set(_rule["hosts"])
     _rule["header"] = _rule["header"].lower()
+    if _rule.get("methods") is not None:
+        _rule["methods"] = {m.upper() for m in _rule["methods"]}
     try:
         with open(os.path.join(SECRETS_DIR, _rule["name"])) as _fh:
             _rule["secret"] = _fh.read().strip()
@@ -55,6 +57,25 @@ def _swap(value: str, rule: dict) -> tuple[str, str | None]:
     if rule["placeholder"] in value:
         return "malformed", None
     return "none", None
+
+
+def _method_allowed(flow: http.HTTPFlow, rule: dict) -> bool:
+    methods = rule.get("methods")
+    return methods is None or flow.request.method.upper() in methods
+
+
+def _path_allowed(flow: http.HTTPFlow, rule: dict) -> bool:
+    prefixes = rule.get("paths")
+    if prefixes is None:
+        return True
+    path = flow.request.path.split("?", 1)[0].split("#", 1)[0]
+    lowered = path.lower()
+    if "\\" in path or any(e in lowered for e in ("%2e", "%2f", "%5c")):
+        return False
+    if any(seg in (".", "..") for seg in path.split("/")) or "//" in path:
+        return False
+    return any(path == p or path.startswith(p.rstrip("/") + "/")
+               for p in prefixes)
 
 
 def _target(flow: http.HTTPFlow) -> str:
@@ -122,6 +143,12 @@ def requestheaders(flow: http.HTTPFlow) -> None:
             return
         if not _authority_consistent(flow, host):
             _deny(flow, rule["name"], where, "authority")
+            return
+        if not _method_allowed(flow, rule):
+            _deny(flow, rule["name"], where, "method")
+            return
+        if not _path_allowed(flow, rule):
+            _deny(flow, rule["name"], where, "path")
             return
         if not rule["secret"]:
             _deny(flow, rule["name"], where, "no_secret")
