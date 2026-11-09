@@ -118,6 +118,14 @@
   nix.settings.build-dir = "/var/lib/nix-builds";
   nix.settings.min-free = 10 * 1024 * 1024 * 1024;
   nix.settings.max-free = 40 * 1024 * 1024 * 1024;
+  nix.settings.extra-substituters = [
+    "https://palekiwi.cachix.org"
+    "https://cache.numtide.com"
+  ];
+  nix.settings.extra-trusted-public-keys = [
+    "palekiwi.cachix.org-1:/S23j64quRTMpe+zteCPAd0p8fczVTWzOpV5mFoFOg8="
+    "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+  ];
   nix.gc = {
     automatic = true;
     dates = "weekly";
