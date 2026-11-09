@@ -106,6 +106,27 @@ class InputTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"wave")
 
 
+class OutputTests(unittest.TestCase):
+    def test_publish_failure_preserves_destination_and_cleans_staging(self):
+        def generate(text, output, verbose):
+            output.write_bytes(b"complete wave")
+
+        def fail_copy(source, destination):
+            Path(destination).write_bytes(b"partial")
+            raise OSError("disk full")
+
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.object(speak, "synthesize", side_effect=generate),
+            patch.object(speak.shutil, "copyfile", side_effect=fail_copy),
+        ):
+            output = Path(directory) / "out.wav"
+            output.write_bytes(b"old")
+            self.assertEqual(speak.main(["--output", str(output), "hello"]), 1)
+            self.assertEqual(output.read_bytes(), b"old")
+            self.assertEqual(list(Path(directory).iterdir()), [output])
+
+
 class CleanupTests(unittest.TestCase):
     def test_markdown_preserves_content(self):
         text = "# Heading\n- Read `path/a.py`\n> [Docs](https://example.com)\n![diagram](image.png)\n```python\nprint('hello')\n# code heading\n```\nAfter **important** text."

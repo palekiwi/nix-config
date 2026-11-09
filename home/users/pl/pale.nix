@@ -33,6 +33,9 @@
     services.cue-backup.enable = true;
 
     programs.sc-controller.enable = true;
-    programs.local-tts.enable = true;
+    programs.local-tts = {
+      enable = true;
+      backend = "http";
+    };
   };
 }

@@ -9,6 +9,7 @@
   pipewire,
   wl-clipboard,
   xclip,
+  backend ? "cpu",
 }:
 let
   model = stdenvNoCC.mkDerivation {
@@ -29,7 +30,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "local-tts";
-  version = "0.2.0";
+  version = "0.3.0";
   src = ./.;
   nativeBuildInputs = [ makeWrapper ];
   nativeCheckInputs = [ python3 ];
@@ -49,9 +50,10 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py speak-engine "$out/lib/local-tts/"
+    cp speak.py http_engine.py speak-engine "$out/lib/local-tts/"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
+      --set-default SPEAK_BACKEND ${lib.escapeShellArg backend} \
       --set-default SPEAK_MODEL ${model} \
       --set-default SPEAK_ENGINE "$out/lib/local-tts/speak-engine" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
@@ -61,7 +63,7 @@ stdenv.mkDerivation {
   '';
   passthru = { inherit model; };
   meta = {
-    description = "Foreground local CPU Kokoro speech with Bella";
+    description = "Foreground local Kokoro speech with Bella";
     mainProgram = "speak";
     platforms = lib.platforms.linux;
   };

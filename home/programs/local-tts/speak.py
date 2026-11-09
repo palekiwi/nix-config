@@ -135,12 +135,22 @@ def read_input(args, stdin):
 
 
 def synthesize(text, output=None, verbose=False):
-    command = [
-        os.environ.get("SPEAK_ENGINE", "speak-engine"),
-        os.environ["SPEAK_MODEL"],
-        str(output) if output is not None else "-",
-        "1" if verbose else "0",
-    ]
+    backend = os.environ.get("SPEAK_BACKEND", "cpu")
+    if backend == "http":
+        command = [
+            sys.executable,
+            str(Path(__file__).with_name("http_engine.py")),
+            str(output) if output is not None else "-",
+        ]
+    elif backend == "cpu":
+        command = [
+            os.environ.get("SPEAK_ENGINE", "speak-engine"),
+            os.environ["SPEAK_MODEL"],
+            str(output) if output is not None else "-",
+            "1" if verbose else "0",
+        ]
+    else:
+        raise ValueError("SPEAK_BACKEND must be cpu or http")
     with tempfile.TemporaryFile() as source, tempfile.TemporaryFile() as diagnostics:
         source.write(text.encode("utf-8"))
         source.seek(0)
@@ -150,7 +160,7 @@ def synthesize(text, output=None, verbose=False):
             player = [
                 os.environ.get("SPEAK_PLAYER", "pw-play"),
                 "--raw",
-                "--format=f32",
+                "--format=s16" if backend == "http" else "--format=f32",
                 "--rate=24000",
                 "--channels=1",
                 "-",
@@ -171,7 +181,7 @@ def synthesize(text, output=None, verbose=False):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description="Foreground local Bella CPU speech with incremental playback."
+        description="Foreground local Bella speech with streaming playback."
     )
     parser.add_argument(
         "text", nargs="*", help="text to speak (use -- before leading dashes)"
@@ -180,6 +190,11 @@ def main(argv=None):
     source.add_argument("--file", metavar="PATH", help="read a UTF-8 file")
     source.add_argument("--clipboard", action="store_true", help="read clipboard once")
     parser.add_argument("--raw", action="store_true", help="skip Markdown cleanup")
+    parser.add_argument(
+        "--backend",
+        choices=("cpu", "http"),
+        help="explicit backend (no automatic fallback)",
+    )
     parser.add_argument(
         "--output", metavar="WAV", help="generate a WAV instead of playing it"
     )
@@ -190,6 +205,8 @@ def main(argv=None):
     if args.text and (args.file is not None or args.clipboard):
         parser.error("positional text cannot be combined with --file or --clipboard")
     try:
+        if args.backend:
+            os.environ["SPEAK_BACKEND"] = args.backend
         text = read_input(args, sys.stdin)
         if not args.raw:
             text = clean_markdown(text)
@@ -205,7 +222,16 @@ def main(argv=None):
                     file=sys.stderr,
                 )
             if args.output:
-                shutil.copyfile(output, args.output)
+                destination = Path(args.output)
+                with tempfile.NamedTemporaryFile(
+                    prefix=".speak-", dir=destination.absolute().parent, delete=False
+                ) as staging:
+                    staged = Path(staging.name)
+                try:
+                    shutil.copyfile(output, staged)
+                    os.replace(staged, destination)
+                finally:
+                    staged.unlink(missing_ok=True)
         return 0
     except (KeyboardInterrupt, Cancelled):
         print("speak: cancelled", file=sys.stderr)
