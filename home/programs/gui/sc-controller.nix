@@ -88,7 +88,9 @@ let
       + ")";
 
   stickMenuAction = name:
-    "${menuCommands.${cfg.menus.${name}.type}}('${name}.menu')";
+    "${menuCommands.${cfg.menus.${name}.type}}('${name}.menu'"
+      + lib.optionalString (cfg.stick.confirm == "release") ", DEFAULT, LSTICKTOUCH"
+      + ")";
 
   zoneNames = [ "up" "down" "left" "right" "up-left" "up-right" "down-left" "down-right" ];
 
@@ -281,9 +283,21 @@ in {
       example = "tags";
       description = ''
         Name of a menu (from `menus`) the left stick opens when tilted past a
-        third of its travel, and then steers. Pressing the stick confirms;
-        returning it to center cancels. The menu's `confirm` and `cancel`
-        settings do not apply to the stick.
+        third of its travel, and then steers. Returning the stick to center
+        cancels; `stick.confirm` chooses how an entry is picked. The menu's
+        `confirm` and `cancel` settings do not apply to the stick.
+      '';
+    };
+
+    stick.confirm = lib.mkOption {
+      type = lib.types.enum [ "press" "release" ];
+      default = "press";
+      description = ''
+        How the stick menu picks the selected entry: pressing the stick
+        (press), or lifting the thumb off the stick's capacitive surface
+        (release, needs a controller with stick touch sensing such as the
+        Steam Controller 2). If the stick returns to center before the touch
+        sensor reports the lift, the menu is cancelled instead.
       '';
     };
 

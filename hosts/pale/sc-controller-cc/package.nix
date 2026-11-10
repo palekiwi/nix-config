@@ -46,7 +46,10 @@ python3.pkgs.buildPythonApplication rec {
     hash = "sha256-4ttaCCF5WGFvRV8p8XjZ+7xVhmcf2AvLlMCXGzSObJU=";
   };
 
-  patches = [ ./stick-menu-cancel.patch ];
+  patches = [
+    ./stick-menu-cancel.patch
+    ./stick-menu-confirm.patch
+  ];
 
   # The project's version is "dynamic" via setuptools_scm, which reads it from
   # git tags. fetchFromGitHub strips the .git directory, so hand setuptools_scm
