@@ -1,0 +1,23 @@
+diff --git a/scc/special_actions.py b/scc/special_actions.py
+index 47f45a4c..55cc81e7 100644
+--- a/scc/special_actions.py
++++ b/scc/special_actions.py
+@@ -424,6 +424,9 @@ class MenuAction(Action, SpecialAction, HapticEnabledAction):
+ 			# Special case, menu is displayed only if is moved enought
+ 			distance = sqrt(x * x + y * y)
+ 			if self._stick_distance < MenuAction.MIN_STICK_DISTANCE and distance > MenuAction.MIN_STICK_DISTANCE:
++				confirm_with = self.confirm_with
++				if confirm_with == DEFAULT:
++					confirm_with = SCButtons.STICKPRESS
+ 				self.execute(
+ 					mapper,
+ 					"--control-with",
+@@ -436,7 +439,7 @@ class MenuAction(Action, SpecialAction, HapticEnabledAction):
+ 					"--size",
+ 					str(self.size),
+ 					"--confirm-with",
+-					"STICKPRESS",
++					nameof(confirm_with),
+ 					"--cancel-with",
+ 					STICK,
+ 					*params,
