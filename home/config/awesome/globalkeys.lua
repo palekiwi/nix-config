@@ -129,9 +129,6 @@ local function focus_screen_by_role(preferred_role, fallback_role)
 end
 
 local globalkeys = gears.table.join(
-  awful.key({ "Shift" }, "Pause",
-    function() awful.spawn({ "clipboard-speech-toggle" }, false) end,
-    { description = "toggle clipboard speech", group = "speech" }),
 -- Focus screen 1
 -- awful.key({ MODKEY }, "Return",
 --     -- function() awful.screen.focus_relative(1) end,

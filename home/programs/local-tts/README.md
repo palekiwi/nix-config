@@ -51,8 +51,11 @@ secret-input facility.
 
 ## Desktop clipboard toggle
 
-Awesome binds **Shift+Pause** to `clipboard-speech-toggle`. First press
-starts `speak --clipboard`; the next stops only `clipboard-speech.service`.
+sxhkd binds **Shift+Pause** to `clipboard-speech-toggle` when
+`programs.local-tts.enable` is true. The command resolves through the desktop
+PATH to the Home Manager-installed toggle, as it did in Awesome. Awesome
+no longer grabs this shortcut. First press starts `speak --clipboard`; the
+next stops only `clipboard-speech.service`.
 No Super key is needed on the controller. Plain Pause is not bound here
 and remains available to Handy. No other configured Shift+Pause binding
 was found in this checkout; Handy's runtime shortcut configuration is not
@@ -65,10 +68,10 @@ without systemd start throttling. Stop targets the service cgroup, including
 HTTP generation and playback children even in separate process sessions.
 The resident GPU server, direct `speak` calls and Pi-owned playback are not
 stopped. A disconnected server may finish its current inference chunk.
-Display variables present in Awesome's environment are imported into the
+Display variables present in sxhkd's environment are imported into the
 user manager before starting, for clipboard access. Errors are available via
 `journalctl --user -u clipboard-speech.service`; toggle control errors also
-go to Awesome's stderr.
+go to sxhkd's stderr (`journalctl --user -u sxhkd.service`).
 
 ### Host activation and controller QA
 
@@ -92,12 +95,15 @@ sudo nixos-rebuild switch --flake .#pale
 home-manager switch --flake './home#pl@pale'
 systemctl --user daemon-reload
 awesome-client 'awesome.restart()'
+systemctl --user restart sxhkd.service
 ```
 
 The NixOS rebuild is only needed if the earlier resident GPU system changes
-have not been activated; this toggle itself changes Home Manager and Awesome
-only. Awesome restart briefly reorganizes/restarts the WM, not applications.
-Do not enable the clipboard service; it starts only on demand.
+have not been activated; this binding move needs only Home Manager. Awesome
+restart briefly reorganizes/restarts the WM, not applications. Reload it first
+to release the old grab, then restart sxhkd to acquire Shift+Pause (even if
+Home Manager already restarted sxhkd during activation). Do not enable the
+clipboard service; it starts only on demand.
 
 Pending human acceptance on the host, with the actual controller:
 
