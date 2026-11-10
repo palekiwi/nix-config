@@ -1,0 +1,29 @@
+diff --git a/scc/osd/radial_menu.py b/scc/osd/radial_menu.py
+index f6c6e82..4f1692e 100644
+--- a/scc/osd/radial_menu.py
++++ b/scc/osd/radial_menu.py
+@@ -9,7 +9,7 @@ import json
+ import logging
+ import os
+ import sys
+-from math import atan2, cos, sin
++from math import atan2, cos, sin, sqrt
+ from math import pi as PI
+ 
+ import cairo
+@@ -280,6 +280,15 @@ class RadialMenu(Menu):
+ 			if what == STICK and self._cancel_with == STICK and self._control_with == STICK:
+ 				if self._control_equals_cancel(daemon, x, y):
+ 					return None
++			if what == STICK and self._confirm_with == STICK and self._control_with == STICK:
++				if sqrt(x * x + y * y) < STICK_PAD_MAX / 8:
++					if self._selected and self._selected.callback:
++						self._selected.callback(self, self.daemon, self.controller, self._selected)
++					elif self._selected:
++						self.quit(0)
++					else:
++						self.quit(-1)
++					return None
+ 
+ 			if self.rotation:
+ 				rx = x * cos(self.rotation) - y * sin(self.rotation)
