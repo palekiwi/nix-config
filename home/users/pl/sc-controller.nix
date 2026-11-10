@@ -35,6 +35,7 @@
       { label = "coord"; keys = [ "KEY_LEFTMETA" "KEY_W" ]; }
       { label = "chat"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
     ];
+    stick.menu = "tags";
     layers.LT.buttons = {
       A = [ "KEY_F1" ];
       X = [ "KEY_F2" ];
