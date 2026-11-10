@@ -138,6 +138,7 @@
       };
 
       packages.x86_64-linux = {
+        local-tts = pkgs.callPackage ./home/programs/local-tts/package.nix { };
         claude = self.nixosConfigurations.claude-vm.config.system.build.vm;
 
         claude-spice = pkgs.writeShellScriptBin "claude-spice" ''

@@ -4,6 +4,7 @@
   imports = [
     ../../programs/gui
     ../../programs/tui
+    ../../programs/local-tts
     ../../services
     ./sc-controller.nix
   ];
@@ -32,5 +33,9 @@
     services.cue-backup.enable = true;
 
     programs.sc-controller.enable = true;
+    programs.local-tts = {
+      enable = true;
+      backend = "http";
+    };
   };
 }

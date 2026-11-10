@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   repoPicker = import ../tui/host-repo-picker { inherit pkgs; };
@@ -179,6 +184,9 @@ in
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "dmenu_audio-sinks";
+    }
+    // lib.optionalAttrs (config.programs.local-tts.enable or false) {
+      "shift + Pause" = "clipboard-speech-toggle";
     };
   };
 }
