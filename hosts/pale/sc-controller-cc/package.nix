@@ -49,6 +49,7 @@ python3.pkgs.buildPythonApplication rec {
   patches = [
     ./stick-menu-cancel.patch
     ./stick-menu-confirm.patch
+    ./stick-menu-centre-confirm.patch
   ];
 
   # The project's version is "dynamic" via setuptools_scm, which reads it from

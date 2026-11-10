@@ -36,7 +36,7 @@
       { label = "chat"; keys = [ "KEY_LEFTMETA" "KEY_A" ]; }
     ];
     stick.menu = "tags";
-    stick.confirm = "release";
+    stick.confirm = "centre";
     layers.LT.buttons = {
       A = [ "KEY_F1" ];
       X = [ "KEY_F2" ];

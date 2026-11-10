@@ -89,7 +89,7 @@ let
 
   stickMenuAction = name:
     "${menuCommands.${cfg.menus.${name}.type}}('${name}.menu'"
-      + lib.optionalString (cfg.stick.confirm == "release") ", DEFAULT, LSTICKTOUCH"
+      + lib.optionalString (cfg.stick.confirm == "centre") ", DEFAULT, STICK, B"
       + ")";
 
   zoneNames = [ "up" "down" "left" "right" "up-left" "up-right" "down-left" "down-right" ];
@@ -283,21 +283,20 @@ in {
       example = "tags";
       description = ''
         Name of a menu (from `menus`) the left stick opens when tilted past a
-        third of its travel, and then steers. Returning the stick to center
-        cancels; `stick.confirm` chooses how an entry is picked. The menu's
-        `confirm` and `cancel` settings do not apply to the stick.
+        third of its travel, and then steers. `stick.confirm` chooses how an
+        entry is picked and how the menu is cancelled. The menu's `confirm`
+        and `cancel` settings do not apply to the stick.
       '';
     };
 
     stick.confirm = lib.mkOption {
-      type = lib.types.enum [ "press" "release" ];
+      type = lib.types.enum [ "press" "centre" ];
       default = "press";
       description = ''
-        How the stick menu picks the selected entry: pressing the stick
-        (press), or lifting the thumb off the stick's capacitive surface
-        (release, needs a controller with stick touch sensing such as the
-        Steam Controller 2). If the stick returns to center before the touch
-        sensor reports the lift, the menu is cancelled instead.
+        How the stick menu picks the selected entry. press: pressing the
+        stick picks it, returning the stick to center cancels. centre:
+        returning the stick to center picks the highlighted entry (or closes
+        the menu if none is highlighted), B cancels; radial menus only.
       '';
     };
 
@@ -358,6 +357,11 @@ in {
         assertion = cfg.stick.menu == null || cfg.menus ? ${cfg.stick.menu};
         message = "programs.sc-controller.stick.menu: unknown menu '${toString cfg.stick.menu}'"
           + "; defined: " + toString (lib.attrNames cfg.menus);
+      }
+      {
+        assertion = cfg.stick.confirm != "centre" || cfg.stick.menu == null
+          || (cfg.menus.${cfg.stick.menu}.type or "radial") == "radial";
+        message = "programs.sc-controller.stick.confirm: centre needs a radial stick menu";
       }
       {
         assertion = unknown zoneNames (lib.concatMap (p: lib.attrNames p.zones) layerPads) == [ ];
