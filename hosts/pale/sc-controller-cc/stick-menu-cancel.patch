@@ -1,0 +1,26 @@
+diff --git a/scc/osd/menu.py b/scc/osd/menu.py
+index b1bfc181..f286fde5 100644
+--- a/scc/osd/menu.py
++++ b/scc/osd/menu.py
+@@ -700,7 +700,7 @@ class Menu(OSDWindow):
+ 			if self._use_cursor:
+ 				# Special case, both confirm_with and cancel_with
+ 				# can be set to STICK
+-				if self._cancel_with == STICK and self._control_with == STICK:
++				if what == STICK and self._cancel_with == STICK and self._control_with == STICK:
+ 					if self._control_equals_cancel(daemon, x, y):
+ 						return None
+ 
+diff --git a/scc/osd/radial_menu.py b/scc/osd/radial_menu.py
+index 05ac4b04..f6c6e823 100644
+--- a/scc/osd/radial_menu.py
++++ b/scc/osd/radial_menu.py
+@@ -277,7 +277,7 @@ class RadialMenu(Menu):
+ 		if self._is_control_event(what):
+ 			x, y = data
+ 			# Special case, both confirm_with and cancel_with can be set to STICK
+-			if self._cancel_with == STICK and self._control_with == STICK:
++			if what == STICK and self._cancel_with == STICK and self._control_with == STICK:
+ 				if self._control_equals_cancel(daemon, x, y):
+ 					return None
+ 
