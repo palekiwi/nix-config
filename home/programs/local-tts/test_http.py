@@ -197,7 +197,7 @@ class HTTPTests(unittest.TestCase):
 
     def test_player_failure_closes_request(self):
         self.mode = "cancel"
-        self.script("player", "raise SystemExit(7)\n")
+        self.script("player", "assert os.read(0, 4) == b'abcd'\nraise SystemExit(7)\n")
         process = self.start()
         _, err = process.communicate(timeout=5)
         self.assertEqual(process.returncode, 1, err)

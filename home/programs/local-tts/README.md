@@ -35,8 +35,9 @@ Ctrl+C or SIGTERM stops this invocation's request/generator and player,
 including process-group descendants; the resident service stays running.
 Children get 0.5 seconds before SIGKILL and are reaped. Exit statuses: 130
 cancelled, 1 operational failure, 2 usage error. Concurrent invocations are
-independent and can overlap. No queue, replacement behavior, GUI, keybindings,
-notification integration, clipboard watcher, Pi extension or VM bridge.
+independent and can overlap. The desktop clipboard toggle below owns a
+separate invocation. No notification integration, clipboard watcher, Pi
+extension or VM bridge.
 
 `--output PATH` writes mono 24 kHz signed 16-bit PCM WAV and atomically
 replaces PATH only after success, preserving an existing file on failure or
@@ -47,6 +48,72 @@ Text is passed through an anonymous stdin file, not child arguments; use
 stdin/file/clipboard to keep it out of the CLI's own argument list as well.
 Errors/verbose diagnostics may contain content; do not treat this as a
 secret-input facility.
+
+## Desktop clipboard toggle
+
+Awesome binds **Shift+Pause** to `clipboard-speech-toggle`. First press
+starts `speak --clipboard`; the next stops only `clipboard-speech.service`.
+No Super key is needed on the controller. Plain Pause is not bound here
+and remains available to Handy. No other configured Shift+Pause binding
+was found in this checkout; Handy's runtime shortcut configuration is not
+managed here, so modifier collision still requires a host test.
+
+The user service is not enabled at login. A per-user runtime lock serializes
+state checks and synchronous starts/stops, including rapid repeated
+presses. Natural completion is idle; failed requests can restart immediately
+without systemd start throttling. Stop targets the service cgroup, including
+HTTP generation and playback children even in separate process sessions.
+The resident GPU server, direct `speak` calls and Pi-owned playback are not
+stopped. A disconnected server may finish its current inference chunk.
+Display variables present in Awesome's environment are imported into the
+user manager before starting, for clipboard access. Errors are available via
+`journalctl --user -u clipboard-speech.service`; toggle control errors also
+go to Awesome's stderr.
+
+### Host activation and controller QA
+
+Fetch the VM branch on the host, inspect clean status and compare history
+before advancing the existing host feature checkout. Stop for divergence
+or host-only changes; never reset them away:
+
+```sh
+git fetch vm
+git status --short --branch
+git log --oneline --left-right HEAD...vm/feat/local-tts
+git merge --ff-only vm/feat/local-tts
+```
+
+Run the merge in the host checkout already on `feat/local-tts`, not blindly
+in the integration checkout. Integration into `feat/agent-microvm` is a
+separate operator-controlled merge. From the updated feature checkout:
+
+```sh
+sudo nixos-rebuild switch --flake .#pale
+home-manager switch --flake './home#pl@pale'
+systemctl --user daemon-reload
+awesome-client 'awesome.restart()'
+```
+
+The NixOS rebuild is only needed if the earlier resident GPU system changes
+have not been activated; this toggle itself changes Home Manager and Awesome
+only. Awesome restart briefly reorganizes/restarts the WM, not applications.
+Do not enable the clipboard service; it starts only on demand.
+
+Pending human acceptance on the host, with the actual controller:
+
+- Copy a long passage; Shift+Pause starts speech, second press stops it.
+- Stop before first audio and during audio, then immediately start again.
+- Let speech finish; next press starts a new clipboard read. Empty clipboard
+  or server failure must return to retryable idle; test recovery.
+- Try rapid distinct presses. Each press toggles in serialized order; there
+  is no queue of utterances or key-repeat debouncing.
+- Run independent/Pi speech concurrently; stopping clipboard speech must
+  leave it playing. Stopping Pi must likewise leave clipboard speech alone.
+- Verify plain Pause still starts/stops Handy dictation. Verify Shift+Pause
+  never triggers Handy and plain Pause never triggers clipboard speech.
+  Check both physical keyboard and controller key/modifier delivery.
+  If Handy treats Pause without respecting modifiers, resolve its shortcut
+  configuration before accepting the binding; VM checks cannot prove this.
 
 ## GPU service and HTTP client
 
@@ -93,8 +160,9 @@ The package builds only the small C++ adapter and runs Python tests.
 
 The Home Manager module defaults disabled. Enable with
 `programs.local-tts.enable = true`, optionally setting `backend = "http"`;
-the default is `"cpu"`. Only pale opts in to HTTP, with no user service.
-System and standalone Home Manager must be activated separately.
+the default is `"cpu"`. Only pale opts in to HTTP. Enabling the module also
+installs the clipboard toggle and its on-demand user service. System and
+standalone Home Manager must be activated separately.
 
 Development overrides: `SPEAK_BACKEND` (`cpu`/`http`, overridden by
 `--backend`), `SPEAK_URL` (default
@@ -135,9 +203,19 @@ nix develop --command nix run .#local-tts -- \
   --backend cpu --output /tmp/bella-smoke.wav 'Hello. Bella is speaking locally.'
 ```
 
+For real user-systemd lifecycle tests (no GPU/audio device required), run
+from the same Python tools shell with `SPEAK_TEST_SYSTEMD=1 python3 -m
+unittest -v` in `home/programs/local-tts`. These create uniquely named
+runtime test services and clean them up; normal package checks skip them.
+They verify HTTP disconnect, player termination, unrelated process survival,
+natural completion and repeated error recovery. Subprocess controller tests
+also cover concurrent presses and control errors.
+
 Fake local HTTP and subprocess tests cover first audio before completion,
 backpressure, output success/atomicity/errors, request disconnect and player
 cancellation, no silent fallback, and CPU regression. VM checks cannot prove
 host sound, GPU execution, startup after reboot or playback routing. The
 manual GPU stream was accepted as perceptually instant with no gaps; the
-new declarative service and integrated CLI still require host acceptance.
+operator also reports the integrated GPU CLI and CPU fallback work on host.
+The new desktop toggle and Handy/controller interaction still require the
+human acceptance checks above.

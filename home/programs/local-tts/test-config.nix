@@ -26,9 +26,16 @@ let
 in
 assert builtins.length (speechPackages enabled) == 1;
 assert speechPackages disabled == [ ];
-assert enabled.config.systemd.user.services == { };
+assert disabled.config.systemd.user.services == { };
+assert builtins.attrNames enabled.config.systemd.user.services == [ "clipboard-speech" ];
+assert enabled.config.systemd.user.services.clipboard-speech.Service.KillMode == "control-group";
+assert enabled.config.systemd.user.services.clipboard-speech.Service.Type == "exec";
+assert enabled.config.systemd.user.services.clipboard-speech.Unit.StartLimitIntervalSec == 0;
+assert !(enabled.config.systemd.user.services.clipboard-speech ? Install);
 assert builtins.length (speechPackages http) == 1;
-assert http.config.systemd.user.services == { };
+assert
+  http.config.systemd.user.services.clipboard-speech.Service.ExecStart
+  == [ "${builtins.head (speechPackages http)}/bin/speak --clipboard" ];
 assert
   (builtins.head (speechPackages http)).drvPath != (builtins.head (speechPackages enabled)).drvPath;
 {
