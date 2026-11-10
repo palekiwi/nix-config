@@ -87,6 +87,9 @@ let
       + lib.optionalString (m.cancel != null) ", ${m.cancel}"
       + ")";
 
+  stickMenuAction = name:
+    "${menuCommands.${cfg.menus.${name}.type}}('${name}.menu')";
+
   zoneNames = [ "up" "down" "left" "right" "up-left" "up-right" "down-left" "down-right" ];
 
   zonesAction = zones: "click(dpad8("
@@ -129,7 +132,9 @@ let
       + withFeedback "RIGHT" cfg.pads.right.haptics null
         "sens(${toString cfg.pads.right.sensitivity}, ${toString cfg.pads.right.sensitivity}, ball(mouse()))"
       + ")");
-    stick = { };
+    stick = lib.optionalAttrs (cfg.stick.menu != null) {
+      action = stickMenuAction cfg.stick.menu;
+    };
     rstick = { };
     gyro = { };
     cpad = { };
@@ -267,7 +272,19 @@ in {
           { label = "r"; keys = [ "KEY_LEFTMETA" "KEY_R" ]; }
         ];
       };
-      description = "Menus by name, opened from layer pads (`layers.<modifier>.pads.<pad>.menu`).";
+      description = "Menus by name, opened from layer pads (`layers.<modifier>.pads.<pad>.menu`) or the left stick (`stick.menu`).";
+    };
+
+    stick.menu = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "tags";
+      description = ''
+        Name of a menu (from `menus`) the left stick opens when tilted past a
+        third of its travel, and then steers. Pressing the stick confirms;
+        returning it to center cancels. The menu's `confirm` and `cancel`
+        settings do not apply to the stick.
+      '';
     };
 
     pads = {
@@ -322,6 +339,11 @@ in {
         assertion = unknown (lib.attrNames cfg.menus) layerMenuNames == [ ];
         message = "programs.sc-controller.layers.*.pads: unknown menu(s) "
           + toString (unknown (lib.attrNames cfg.menus) layerMenuNames);
+      }
+      {
+        assertion = cfg.stick.menu == null || cfg.menus ? ${cfg.stick.menu};
+        message = "programs.sc-controller.stick.menu: unknown menu '${toString cfg.stick.menu}'"
+          + "; defined: " + toString (lib.attrNames cfg.menus);
       }
       {
         assertion = unknown zoneNames (lib.concatMap (p: lib.attrNames p.zones) layerPads) == [ ];
