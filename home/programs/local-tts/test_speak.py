@@ -341,7 +341,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, err)
             argv = (self.root / "argv").read_text().split("\n")
             self.assertIn(volume, argv)
-            self.assertIn("--properties={ application.name = speak }", argv)
+            self.assertIn("--properties={ application.name = speak state.restore-props = false }", argv)
 
     def test_cancel_callback_blocked_on_pipe(self):
         self.script(

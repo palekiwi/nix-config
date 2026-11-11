@@ -164,7 +164,7 @@ def synthesize(text, output=None, verbose=False):
                 "--rate=24000",
                 "--channels=1",
                 f"--volume={os.environ.get('SPEAK_VOLUME', '1')}",
-                "--properties={ application.name = speak }",
+                "--properties={ application.name = speak state.restore-props = false }",
                 "-",
             ]
             commands.insert(0, (player, {"stderr": options["stderr"]}))
