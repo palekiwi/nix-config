@@ -186,7 +186,7 @@ in
       "XF86Launch9" = "dmenu_audio-sinks";
     }
     // lib.optionalAttrs (config.programs.local-tts.enable or false) {
-      "shift + Pause" = "clipboard-speech-toggle";
+      "control + Pause" = "clipboard-speech-toggle";
     };
   };
 }

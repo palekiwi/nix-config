@@ -51,13 +51,13 @@ secret-input facility.
 
 ## Desktop clipboard toggle
 
-sxhkd binds **Shift+Pause** to `clipboard-speech-toggle` when
+sxhkd binds **Ctrl+Pause** to `clipboard-speech-toggle` when
 `programs.local-tts.enable` is true. The command resolves through the desktop
 PATH to the Home Manager-installed toggle, as it did in Awesome. Awesome
 no longer grabs this shortcut. First press starts `speak --clipboard`; the
 next stops only `clipboard-speech.service`.
 No Super key is needed on the controller. Plain Pause is not bound here
-and remains available to Handy. No other configured Shift+Pause binding
+and remains available to Handy. No other configured Ctrl+Pause binding
 was found in this checkout; Handy's runtime shortcut configuration is not
 managed here, so modifier collision still requires a host test.
 
@@ -101,13 +101,13 @@ systemctl --user restart sxhkd.service
 The NixOS rebuild is only needed if the earlier resident GPU system changes
 have not been activated; this binding move needs only Home Manager. Awesome
 restart briefly reorganizes/restarts the WM, not applications. Reload it first
-to release the old grab, then restart sxhkd to acquire Shift+Pause (even if
+to release the old grab, then restart sxhkd to acquire Ctrl+Pause (even if
 Home Manager already restarted sxhkd during activation). Do not enable the
 clipboard service; it starts only on demand.
 
 Pending human acceptance on the host, with the actual controller:
 
-- Copy a long passage; Shift+Pause starts speech, second press stops it.
+- Copy a long passage; Ctrl+Pause starts speech, second press stops it.
 - Stop before first audio and during audio, then immediately start again.
 - Let speech finish; next press starts a new clipboard read. Empty clipboard
   or server failure must return to retryable idle; test recovery.
@@ -115,7 +115,7 @@ Pending human acceptance on the host, with the actual controller:
   is no queue of utterances or key-repeat debouncing.
 - Run independent/Pi speech concurrently; stopping clipboard speech must
   leave it playing. Stopping Pi must likewise leave clipboard speech alone.
-- Verify plain Pause still starts/stops Handy dictation. Verify Shift+Pause
+- Verify plain Pause still starts/stops Handy dictation. Verify Ctrl+Pause
   never triggers Handy and plain Pause never triggers clipboard speech.
   Check both physical keyboard and controller key/modifier delivery.
   If Handy treats Pause without respecting modifiers, resolve its shortcut
