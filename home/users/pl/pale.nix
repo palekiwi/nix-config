@@ -36,7 +36,7 @@
     programs.local-tts = {
       enable = true;
       backend = "http";
-      volume = 1.9;
+      volume = 1.5;
     };
   };
 }
