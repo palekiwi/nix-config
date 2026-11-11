@@ -52,7 +52,11 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       components+=("#[fg=colour15,bold]$(clip "$cue_context" 32)")
   fi
 
-  if [ "''${2:-}" != "--full-branch" ]; then
+  full_branch=false
+  if [ "''${2:-}" = "--full-branch" ]; then
+      full_branch=true
+      branch=$(clip "$branch" 132)
+  else
       branch=$(clip "$branch" 40)
   fi
 
@@ -62,7 +66,7 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       components+=("#[fg=green]$branch")
   fi
 
-  if [ -n "$base" ]; then
+  if [ -n "$base" ] && [ "$full_branch" != true ]; then
       if [ "$behind_base" = "true" ]; then
           base_color="yellow"
       else

@@ -526,14 +526,15 @@ class ServerTests(unittest.TestCase):
                 " #[fg=green,dim,bold]#123 #[fg=white,nobold,dim]->"
                 " #[fg=white,bold]main"
             )
-            for args, displayed in (
-                ([], branch[:39] + "…"),
-                (["--full-branch"], branch),
+            full_expected = f" #[fg=colour15,bold]scope/context #[fg={style}]{{}}"
+            for args, displayed, expected in (
+                ([], branch[:39] + "…", expected.format(branch[:39] + "…")),
+                (["--full-branch"], branch, full_expected.format(branch)),
             ):
                 output = subprocess.check_output(
                     [str(helper), str(repo.path), *args], text=True
                 )
-                self.assertEqual(output, expected.format(displayed))
+                self.assertEqual(output, expected)
         window = self.tmux.run(
             "new-window",
             "-P",
