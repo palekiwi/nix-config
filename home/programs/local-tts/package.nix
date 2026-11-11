@@ -10,6 +10,7 @@
   wl-clipboard,
   xclip,
   backend ? "cpu",
+  volume ? 1.0,
 }:
 let
   model = stdenvNoCC.mkDerivation {
@@ -57,6 +58,7 @@ stdenv.mkDerivation {
       --set-default SPEAK_MODEL ${model} \
       --set-default SPEAK_ENGINE "$out/lib/local-tts/speak-engine" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
+      --set-default SPEAK_VOLUME ${toString volume} \
       --set-default SPEAK_WL_PASTE ${wl-clipboard}/bin/wl-paste \
       --set-default SPEAK_XCLIP ${xclip}/bin/xclip
     runHook postInstall

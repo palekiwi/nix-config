@@ -163,6 +163,8 @@ def synthesize(text, output=None, verbose=False):
                 "--format=s16" if backend == "http" else "--format=f32",
                 "--rate=24000",
                 "--channels=1",
+                f"--volume={os.environ.get('SPEAK_VOLUME', '1')}",
+                "--properties={ application.name = speak }",
                 "-",
             ]
             commands.insert(0, (player, {"stderr": options["stderr"]}))

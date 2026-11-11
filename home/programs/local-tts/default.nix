@@ -5,7 +5,7 @@
   ...
 }:
 let
-  speech = pkgs.callPackage ./package.nix { inherit (config.programs.local-tts) backend; };
+  speech = pkgs.callPackage ./package.nix { inherit (config.programs.local-tts) backend volume; };
   toggle = pkgs.writeShellScriptBin "clipboard-speech-toggle" ''
     exec ${pkgs.python3}/bin/python3 ${./clipboard_toggle.py} ${pkgs.systemd}/bin/systemctl
   '';
@@ -20,6 +20,11 @@ in
       ];
       default = "cpu";
       description = "Default speech backend; failures never select another backend.";
+    };
+    volume = lib.mkOption {
+      type = lib.types.numbers.positive;
+      default = 1.0;
+      description = "Playback gain passed to pw-play; values above 1 amplify and may clip.";
     };
   };
   config = lib.mkIf config.programs.local-tts.enable {
