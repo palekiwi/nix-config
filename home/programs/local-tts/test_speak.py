@@ -326,6 +326,23 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual((out, err), (b"", b""))
         self.assertTrue((self.root / "generated").exists())
 
+    def test_player_stream_identity_and_volume(self):
+        self.script("engine", "sys.stdin.read()\n")
+        self.script(
+            "player",
+            "(root / 'argv').write_text('\\n'.join(sys.argv[1:]))\n"
+            "sys.stdin.buffer.read()\n",
+        )
+        for env, volume in (({}, "--volume=1"), ({"SPEAK_VOLUME": "2.5"}, "--volume=2.5")):
+            self.env.pop("SPEAK_VOLUME", None)
+            self.env.update(env)
+            process = self.start()
+            out, err = process.communicate(timeout=10)
+            self.assertEqual(process.returncode, 0, err)
+            argv = (self.root / "argv").read_text().split("\n")
+            self.assertIn(volume, argv)
+            self.assertIn("--properties={ application.name = speak }", argv)
+
     def test_cancel_callback_blocked_on_pipe(self):
         self.script(
             "engine",

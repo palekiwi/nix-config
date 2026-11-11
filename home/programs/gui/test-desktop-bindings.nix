@@ -22,8 +22,8 @@ let
   disabled = evaluate false;
   absent = evaluate null;
 in
-assert !(absent.config.services.sxhkd.keybindings ? "shift + Pause");
-assert !(disabled.config.services.sxhkd.keybindings ? "shift + Pause");
+assert !(absent.config.services.sxhkd.keybindings ? "control + Pause");
+assert !(disabled.config.services.sxhkd.keybindings ? "control + Pause");
 pkgs.linkFarm "desktop-bindings-test-config" [
   {
     name = "sxhkdrc";

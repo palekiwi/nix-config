@@ -56,9 +56,9 @@ class DesktopBindings(unittest.TestCase):
             else:
                 self.assertEqual(bindings[key], command)
         self.assertNotIn("super + space; space", bindings)
-        self.assertEqual(bindings["shift + Pause"], "clipboard-speech-toggle")
+        self.assertEqual(bindings["control + Pause"], "clipboard-speech-toggle")
         self.assertEqual(
-            [key for key in bindings if re.search(r"\bPause\b", key)], ["shift + Pause"]
+            [key for key in bindings if re.search(r"\bPause\b", key)], ["control + Pause"]
         )
         self.assertNotRegex((CONFIG / "sxhkdrc-disabled").read_text(), r"\bPause\b")
         self.assertNotIn(
