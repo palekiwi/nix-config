@@ -66,13 +66,17 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       components+=("#[fg=green]$branch")
   fi
 
-  if [ -n "$base" ] && [ "$full_branch" != true ]; then
+  if [ -n "$base" ]; then
       if [ "$behind_base" = "true" ]; then
           base_color="yellow"
       else
           base_color="white"
       fi
-      base=$(clip "$base" 24)
+      if [ "$full_branch" = true ]; then
+          base=$(clip "$base" 132)
+      else
+          base=$(clip "$base" 24)
+      fi
       if [ -n "$pr" ]; then
           components+=("#[fg=green,dim,bold]#$pr #[fg=white,nobold,dim]-> #[fg=$base_color,bold]$base")
       else
