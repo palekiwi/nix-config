@@ -143,10 +143,16 @@ export alias gbn = git rev-parse --abbrev-ref HEAD
 export alias gbnc = git_branch_name_to_clipboard
 export alias gfm = git_fetch_master
 export alias gfb = git_fetch_base
-export def gub [] {
+export def gub [
+  --rebase(-r)   # rebase onto the base branch when it has diverged
+] {
     git-pr-sync
     git_fetch_base
-    git merge $"origin/(get_pr_base)" --no-edit
+    if $rebase {
+      git rebase $"origin/(get_pr_base)"
+    } else {
+      git merge $"origin/(get_pr_base)" --no-edit
+    }
 }
 
 export alias gwa = git worktree add
