@@ -6,7 +6,12 @@ import urllib.parse
 import wave
 
 
-def generate(text, output=None):
+def generate(text, output=None, voice="af_bella", speed=1, on_connect=None):
+    """Stream Kokoro PCM for text to stdout or output.writeframesraw.
+
+    on_connect, when given, receives the connected socket before the request
+    is sent, so a caller can shut it down to cancel a blocked read.
+    """
     url = urllib.parse.urlsplit(
         os.environ.get("SPEAK_URL", "http://127.0.0.1:8880/v1/audio/speech")
     )
@@ -16,14 +21,16 @@ def generate(text, output=None):
     try:
         connection.connect()
         connection.sock.settimeout(120)
+        if on_connect is not None:
+            on_connect(connection.sock)
         body = json.dumps(
             {
                 "model": "kokoro",
-                "voice": "af_bella",
+                "voice": voice,
                 "input": text,
                 "response_format": "pcm",
                 "stream": True,
-                "speed": 1,
+                "speed": speed,
             }
         ).encode("utf-8")
         path = urllib.parse.urlunsplit(("", "", url.path or "/", url.query, ""))

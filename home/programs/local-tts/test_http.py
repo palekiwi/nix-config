@@ -5,6 +5,7 @@ import socket
 import threading
 import time
 import unittest
+import unittest.mock
 import wave
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -116,6 +117,33 @@ class HTTPTests(unittest.TestCase):
         self.release.set()
         out, err = process.communicate(timeout=5)
         self.assertEqual((process.returncode, out, err), (0, b"", b""))
+
+    def test_generate_passes_voice_speed_and_socket(self):
+        import http_engine
+
+        self.mode = "plain"
+        frames = []
+        sockets = []
+
+        class Output:
+            def writeframesraw(self, data):
+                frames.append(data)
+
+        with unittest.mock.patch.dict(os.environ, self.env):
+            http_engine.generate(
+                "hello",
+                Output(),
+                voice="am_adam",
+                speed=1.25,
+                on_connect=sockets.append,
+            )
+        self.assertEqual(b"".join(frames), b"abcd")
+        self.assertEqual(len(sockets), 1)
+        self.assertIsInstance(sockets[0], socket.socket)
+        self.assertEqual(
+            (self.request["voice"], self.request["speed"], self.request["input"]),
+            ("am_adam", 1.25, "hello"),
+        )
 
     def test_output_wav_is_complete_and_replaced_atomically(self):
         output = self.root / "out.wav"
