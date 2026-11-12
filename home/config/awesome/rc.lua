@@ -48,13 +48,14 @@ beautiful.init(THEME_PATH)
 local globalkeys = require("globalkeys")
 
 local function setup_fake_screens(s)
-  local geo = s[1].geometry
+  local target = awesome.hostname == "pale" and s.primary or s[1]
+  local geo = target.geometry
   if geo.width > 3000 then
     local side_width = math.ceil((geo.width / 2) - FAKE_RESIZE_DELTA)
     local main_width = geo.width - side_width
 
     -- resize main screen
-    s[1]:fake_resize(geo.x + side_width, geo.y, main_width, geo.height)
+    target:fake_resize(geo.x + side_width, geo.y, main_width, geo.height)
 
     --secondary screen
     s.fake_add(geo.x, geo.y, side_width, geo.height)

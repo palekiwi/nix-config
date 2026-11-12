@@ -1,5 +1,10 @@
 { pkgs, ... }:
+let
+  displayLayout = import ../../home/programs/gui/dmenu/xrandr.nix { inherit pkgs; };
+in
 {
+  environment.systemPackages = [ displayLayout ];
+
   services = {
     displayManager.defaultSession = "none+awesome";
 
@@ -12,6 +17,14 @@
         layout = "us";
         variant = "";
       };
+
+      displayManager.setupCommands = ''
+        ${displayLayout}/bin/dmenu_xrandr --profile auto --layout-only || echo "Display layout failed; keeping X defaults" >&2
+      '';
+
+      displayManager.sessionCommands = ''
+        ${displayLayout}/bin/dmenu_xrandr --profile auto --layout-only || echo "Display layout failed; keeping X defaults" >&2
+      '';
 
       displayManager.lightdm.greeters.mini = {
         enable = true;
