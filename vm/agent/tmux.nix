@@ -26,8 +26,8 @@ in
       # window picker colours: ● working (orange), ✖ blocked (red), ○
       # green while @pi_unseen (idle, unseen result), else plain ○.
       # Non-pi windows past 3 fall back to their index.
-      setw -g window-status-format ' #{?#{e|>:#{window_index},3},#{?@pi_state,#{?#{==:#{@pi_state},working},#[fg=colour3]●#[fg=default] ,#{?#{==:#{@pi_state},blocked},#[fg=colour1]✖#[fg=default] ,#{?@pi_unseen,#[fg=colour2]○#[fg=default] ,○ }}},}#{?@pi_state,, #I }, #I }'
-      setw -g window-status-current-format ' #{?#{e|>:#{window_index},3},#{?@pi_state,#{?#{==:#{@pi_state},working},#[fg=colour3]●#[fg=default] ,#{?#{==:#{@pi_state},blocked},#[fg=colour1]✖#[fg=default] ,#{?@pi_unseen,#[fg=colour2]○#[fg=default] ,○ }}},}#{?@pi_state,, #I }, #I }'
+      setw -g window-status-format ' #{?#{e|>:#{window_index},3},#{?@pi_state,#{?#{==:#{@pi_state},working},#[fg=colour3]●#[fg=default] ,#{?#{==:#{@pi_state},blocked},#[fg=colour1]✖#[fg=default] ,#{?@pi_unseen,#[fg=colour2]●#[fg=default] ,○ }}},}#{?@pi_state,, #I }, #I }'
+      setw -g window-status-current-format ' #{?#{e|>:#{window_index},3},#{?@pi_state,#{?#{==:#{@pi_state},working},#[fg=colour3]●#[fg=default] ,#{?#{==:#{@pi_state},blocked},#[fg=colour1]✖#[fg=default] ,#{?@pi_unseen,#[fg=colour2]●#[fg=default] ,○ }}},}#{?@pi_state,, #I }, #I }'
     '';
   };
 
