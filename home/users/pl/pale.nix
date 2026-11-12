@@ -37,6 +37,7 @@
       actions = {
         shake = "xdotool key Pause";
         tap = "xdotool key Return";
+        slide = "xdotool key ctrl+y && sleep 0.3 && xdotool key ctrl+Pause";
         rotate_right = ''wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ "$(( (''${ANGLE%.*} + 4) / 5 ))%+"'';
         rotate_left = ''wpctl set-volume @DEFAULT_AUDIO_SINK@ "$(( (-''${ANGLE%.*} + 4) / 5 ))%-"'';
       };
