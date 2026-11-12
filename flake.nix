@@ -80,6 +80,7 @@
             ./hosts/pale
             ./modules/agent-microvm.nix
             ./modules/agent-egress-proxy
+            ./modules/agent-speech-guard.nix
             inputs.microvm.nixosModules.host
             inputs.notifications-server.nixosModules.default
             inputs.cue.nixosModules.acuity
@@ -144,6 +145,15 @@
         claude-spice = pkgs.writeShellScriptBin "claude-spice" ''
           ${pkgs.spice-gtk}/bin/spicy -h localhost -p 5930
         '';
+      };
+
+      checks.x86_64-linux = {
+        local-tts = self.packages.x86_64-linux.local-tts;
+        speech-bridge = pkgs.writeText "speech-bridge-check.json" (
+          builtins.unsafeDiscardStringContext (
+            builtins.toJSON (import ./hosts/pale/test-speech-bridge.nix { flake = self; })
+          )
+        );
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
