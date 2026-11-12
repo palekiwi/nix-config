@@ -37,6 +37,7 @@
       enable = true;
       backend = "http";
       volume = 1.5;
+      bridge.enable = true;
     };
   };
 }
