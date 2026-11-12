@@ -32,6 +32,11 @@
 
     services.cue-backup.enable = true;
 
+    services.cube-remote = {
+      enable = true;
+      keys.shake = "Pause";
+    };
+
     programs.sc-controller.enable = true;
     programs.local-tts = {
       enable = true;
