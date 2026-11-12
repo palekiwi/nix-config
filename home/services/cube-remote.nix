@@ -9,8 +9,8 @@ let
   cfg = config.services.cube-remote;
 
   cases = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (action: key: ''
-      ${lib.escapeShellArg action}) xdotool key ${lib.escapeShellArg key} || echo "cube-remote: xdotool failed" >&2 ;;'') cfg.keys
+    lib.mapAttrsToList (action: command: ''
+      ${lib.escapeShellArg action}) ( ${command} ) || echo "cube-remote: $action failed" >&2 ;;'') cfg.actions
   );
 
   script = pkgs.writeShellApplication {
@@ -19,6 +19,7 @@ let
       pkgs.mosquitto
       pkgs.jq
       pkgs.xdotool
+      pkgs.wireplumber
     ];
     text = ''
       if [ -z "''${DISPLAY:-}" ]; then
@@ -28,9 +29,10 @@ let
 
       mosquitto_sub -h ${lib.escapeShellArg cfg.host} -p ${toString cfg.port} \
         -t ${lib.escapeShellArg cfg.topic} \
-        | jq --unbuffered -r '.action | strings | select(. != "")' \
-        | while read -r action; do
-            echo "cube-remote: $action"
+        | jq --unbuffered -r 'select((.action | type) == "string" and .action != "") | "\(.action) \(.angle // 0)"' \
+        | while read -r action angle; do
+            echo "cube-remote: $action $angle"
+            export ANGLE="$angle"
             case "$action" in
               ${cases}
               *) ;;
@@ -57,13 +59,17 @@ in
       default = "zigbee2mqtt/Cube";
       description = "zigbee2mqtt topic of the cube.";
     };
-    keys = lib.mkOption {
+    actions = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
       example = {
-        shake = "Pause";
+        shake = "xdotool key Pause";
       };
-      description = "Map of cube action to xdotool key name.";
+      description = ''
+        Map of cube action to a shell command. The rotation angle in degrees
+        is available as $ANGLE (0 for actions without an angle). xdotool and
+        wpctl are on PATH.
+      '';
     };
   };
 

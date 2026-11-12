@@ -34,7 +34,12 @@
 
     services.cube-remote = {
       enable = true;
-      keys.shake = "Pause";
+      actions = {
+        shake = "xdotool key Pause";
+        tap = "xdotool key Return";
+        rotate_right = ''wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ "$(( (''${ANGLE%.*} + 4) / 5 ))%+"'';
+        rotate_left = ''wpctl set-volume @DEFAULT_AUDIO_SINK@ "$(( (-''${ANGLE%.*} + 4) / 5 ))%-"'';
+      };
     };
 
     programs.sc-controller.enable = true;
