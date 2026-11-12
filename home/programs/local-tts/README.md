@@ -36,8 +36,8 @@ including process-group descendants; the resident service stays running.
 Children get 0.5 seconds before SIGKILL and are reaped. Exit statuses: 130
 cancelled, 1 operational failure, 2 usage error. Concurrent invocations are
 independent and can overlap. The desktop clipboard toggle below owns a
-separate invocation. No notification integration, clipboard watcher, Pi
-extension or VM bridge.
+separate invocation. No notification integration, clipboard watcher or Pi
+extension; the agent VM speaks through the speech bridge below.
 
 `--output PATH` writes mono 24 kHz signed 16-bit PCM WAV and atomically
 replaces PATH only after success, preserving an existing file on failure or
@@ -179,6 +179,39 @@ protocol is `MODEL OUTPUT-OR-DASH VERBOSE-0-OR-1` with UTF-8 stdin, raw f32
 on `-`, WAV otherwise. Player overrides must accept `pw-play`'s raw options.
 HTTP does not use proxy environment variables or follow redirects.
 
+## Speech bridge
+
+`programs.local-tts.bridge.enable` runs `speech-bridge.service`, a user
+service started with the login session (`default.target`, after PipeWire,
+restarted on failure). It listens on `10.77.0.1:8881` with `IP_FREEBIND`, so
+it starts before the agent VM's tap device exists and survives VM restarts.
+Address and port live once in `bridge-endpoint.nix`, read by both the user
+service and the NixOS `agent-speech-guard` firewall chain, which accepts the
+port only from `10.77.0.2` on `vm-agent` and drops everything else,
+including host-local and LAN callers.
+
+```sh
+curl -X POST -d '{"text": "Hello from the VM."}' http://10.77.0.1:8881/say
+curl -X POST http://10.77.0.1:8881/stop
+curl http://10.77.0.1:8881/health
+```
+
+- `POST /say` takes `{"text": ...}` up to `maxChars` (default 1000) in a
+  body of at most 8 KiB. The sentence is queued before the 202 reply; 400
+  for bad JSON or empty text, 413 for oversized input, 503 when the queue
+  (`maxQueue`, default 64) or the request slots are full.
+- `POST /stop` kills playback, clears the queue and cancels synthesis by
+  shutting down the Kokoro socket. 204, idempotent, served even when /say
+  is saturated.
+- `GET /health` returns queue length and whether a sentence is in progress.
+
+Each sentence streams from the resident Kokoro server into its own `pw-play`
+with the same stream properties and gain as `speak`; short gaps between
+sentences are expected. Voice and speed are module options
+(`bridge.voice`, `bridge.speed`), never caller choices. Kokoro failures drop
+the sentence and are logged without its text in
+`journalctl --user -u speech-bridge.service`.
+
 ## Validation
 
 From the root checkout (no activation, image download or full system build):
@@ -202,6 +235,7 @@ nix develop --command nix eval --json --impure --expr '
     pkgs = f.inputs.nixpkgs.legacyPackages.x86_64-linux;
     home-manager = f.inputs.home-manager;
   }'
+nix build --no-link .#checks.x86_64-linux.speech-bridge
 nix develop --command nix eval --raw \
   './home#homeConfigurations."pl@pale".activationPackage.drvPath' \
   --no-write-lock-file
