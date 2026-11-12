@@ -1,3 +1,12 @@
 { pkgs }:
 
-pkgs.writers.writeNuBin "dmenu_xrandr" (builtins.readFile ./xrandr.nu)
+pkgs.writeShellApplication {
+  name = "dmenu_xrandr";
+  runtimeInputs = with pkgs; [
+    xorg.xrandr
+    coreutils
+  ];
+  text = ''
+    exec ${pkgs.nushell}/bin/nu ${./xrandr.nu} "$@"
+  '';
+}
