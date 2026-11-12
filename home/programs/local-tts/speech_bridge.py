@@ -271,6 +271,7 @@ class Server(ThreadingHTTPServer):
     daemon_threads = True
     block_on_close = False
     allow_reuse_address = True
+    request_queue_size = 16
 
     def __init__(
         self,
