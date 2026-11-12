@@ -1,5 +1,4 @@
 local wk = require("which-key")
-local kiwi = require('kiwi')
 require("config.keymaps.rails")
 local keymaps_telescope = require("config.keymaps.telescope")
 
@@ -43,9 +42,9 @@ local base = {
   -- AI / Cue
   { "<C-t>",           function() cue_utils.pick_contexts({ pinned = true, tree = true }) end,      desc = "[Cue] Pinned contexts (tree)" },
   { "<C-a>",           function() cue_utils.pick_contexts({ tree = true }) end,                        desc = "[Cue] All contexts (tree)" },
-  { "<A-a>",           cue_utils.open_context,                                                      desc = "[Cue] Open active context" },
+  { "<A-a>",           cue_utils.pick_active_context_artifacts,                                    desc = "[Cue] Artifacts (active context)" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
-  { "<C-s>",           cue_utils.pick_active_context_artifacts,                                    desc = "[Cue] Artifacts (active context)" },
+  { "<A-c>",           cue_utils.open_context,                                                      desc = "[Cue] Open active context" },
   { "<space>e",        group = "entries" },
   { "<space>et",       function() cue_utils.pick_artifacts({ type = "task", task = "master" }) end, desc = "Tasks (master)" },
   { "<space>ei",       cue_utils.pick_inbox_tasks,                                                desc = "Inbox tasks (status inbox)" },
@@ -101,7 +100,7 @@ local base = {
   { "<C-b>",           "<cmd>Telescope buffers ignore_current_buffer=false sort_mru=true<cr>",      desc = "Buffers" },
   { "<C-d>",           telescope_utils.diagnostics,                                                 desc = "[LSP] diagnostics" },
   { "<C-e>",           "<cmd>Telescope oldfiles cwd_only=true<cr>",                                 desc = "Recent Files" },
-  { "<C-f>",           "<cmd>Telescope find_files hidden=false<cr>",                                desc = "Find File" },
+  { "<C-s>",           "<cmd>Telescope find_files hidden=false<cr>",                                desc = "Find File" },
   { "<C-p>",           telescope_utils.changed_files,                                               desc = "Search changed files" },
   { "<C-q>",           "<cmd>Telescope quickfix show_line=false<cr>",                               desc = "Quickfix" },
   { "<C-u>",           telescope_utils.lsp_references,                                              desc = "Ref" },
@@ -113,7 +112,7 @@ local base = {
   { "<F6>",            "<C-R>=strftime('%F')<cr>",                                                  desc = "Insert date",                                                   mode = "i" },
   { "<F8>",            "<C-R>=expand('%:t')<cr>",                                                   desc = "Insert current filename",                                       mode = "i" },
   -- no leader
-  { "T",               kiwi.todo.toggle,                                                            desc = "Toggle Todo" },
+  { "T",               function() require('kiwi').todo.toggle() end,                               desc = "Toggle Todo" },
   { "W",               "<cmd>HopWord<cr>",                                                          desc = "Hop Word",                                                      mode = "n" },
   { "g",               group = "go to" },
   { "gc",              vim.lsp.buf.declaration,                                                     desc = "[LSP] Go to Declaration" },

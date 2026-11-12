@@ -9,6 +9,7 @@
     ./handy.nix
     ./kitty.nix
     ./rofi.nix
+    ./sc-controller.nix
     ./sxhkd.nix
     ./unclutter.nix
     ./utils.nix

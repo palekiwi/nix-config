@@ -1,5 +1,6 @@
 local gears = require("gears")
 local awful = require("awful")
+local naughty = require("naughty")
 
 local capslock = require('widgets.capslock')
 local mic = require('widgets.mic')
@@ -187,6 +188,45 @@ local globalkeys = gears.table.join(
       end
     end,
     { description = "go back", group = "tag" }),
+
+  awful.key({ MODKEY, "Shift" }, "e",
+    function()
+      local c = client.focus
+      if not c or not c.name then return end
+
+      local function find(pred)
+        local function match(x)
+          return x ~= c and x.valid and x.class == "kitty" and x.name and pred(x.name)
+        end
+        for _, x in ipairs(awful.client.focus.history.list) do
+          if match(x) then return x end
+        end
+        for _, x in ipairs(client.get()) do
+          if match(x) then return x end
+        end
+      end
+
+      local vm = c.name:match("^agent:(.+)$")
+      local target
+      if vm then
+        local group = vm:match("^([^/]+)")
+        target = find(function(n) return n == group end)
+        if not target then
+          naughty.notify({ title = "counterpart", text = "no host window: " .. group })
+        end
+      else
+        local prefix = "agent:" .. c.name
+        target = find(function(n)
+          return n == prefix or n:sub(1, #prefix + 1) == prefix .. "/"
+        end)
+        if not target then
+          awful.spawn({ "kitty", "-T", prefix, "-e", "ssh", "agent-vm", "-t",
+            "sesh connect " .. c.name })
+        end
+      end
+      if target then target:jump_to() end
+    end,
+    { description = "host <-> vm counterpart", group = "tag" }),
 
 
   -- Focus left screen
@@ -416,10 +456,6 @@ local globalkeys = gears.table.join(
   ),
 
   -- Spawn programs
-  awful.key({ MODKEY, "Control" }, "BackSpace",
-    function() awful.spawn(TERMINAL) end,
-    { description = "open a terminal", group = "launcher" }),
-
   awful.key({ ALTKEY }, "XF86AudioRaiseVolume",
     function() awful.spawn("cplay", { tag = "med" }) end,
     { description = "open cmus", group = "launcher" }),

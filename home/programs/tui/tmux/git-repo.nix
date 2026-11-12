@@ -11,16 +11,10 @@ pkgs.writeShellScriptBin "_tmux_git-repo" ''
   tmux rename-window -t $session:1 edit
 
   tmux new-window -t $session -n gitui
-  tmux new-window -t $session -n cast
-  tmux new-window -t $session -n agents
-  tmux new-window -t $session -n run
+  tmux new-window -t $session
 
   tmux send-keys -t $session:1 'nvim' C-m
   tmux send-keys -t $session:2 'gitui' C-m
 
   tmux select-window -t $session:1
-
-  if [[ -d ".agents" ]]; then
-      tmux send-keys -t $session:1 "gitui" C-m
-  fi
 ''

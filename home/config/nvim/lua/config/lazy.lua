@@ -32,7 +32,7 @@ vim.g.maplocalleader = "\\"
 --- @type LazyConfig
 local opt = {
   dev = {
-    fallback = false,
+    fallback = true,
     path = "~/code/neovim/plugins/",
     patterns = {}
   },

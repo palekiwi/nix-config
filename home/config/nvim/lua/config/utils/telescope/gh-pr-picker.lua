@@ -14,6 +14,14 @@ local function is_git_repo()
   return vim.v.shell_error == 0
 end
 
+local function has_gh()
+  if vim.fn.executable('gh') == 1 then
+    return true
+  end
+  vim.notify("Error: gh not found in PATH", vim.log.levels.ERROR)
+  return false
+end
+
 -- Execute shell command and return result
 local function execute_command(cmd)
   local handle = io.popen(cmd)
@@ -44,6 +52,9 @@ end
 local function get_pr_list()
   if not is_git_repo() then
     vim.notify("Error: Not in a git repository", vim.log.levels.ERROR)
+    return nil
+  end
+  if not has_gh() then
     return nil
   end
 
@@ -202,6 +213,9 @@ end
 function M.checkout_pr_by_number(pr_string)
   if not is_git_repo() then
     vim.notify("Error: Not in a git repository", vim.log.levels.ERROR)
+    return
+  end
+  if not has_gh() then
     return
   end
 

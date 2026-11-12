@@ -52,10 +52,18 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       components+=("#[fg=colour15,bold]$(clip "$cue_context" 32)")
   fi
 
-  if [ "$behind_default" = "true" ]; then
-      components+=("#[fg=yellow,dim,bold]$(clip "$branch" 40)")
+  full_branch=false
+  if [ "''${2:-}" = "--full-branch" ]; then
+      full_branch=true
+      branch=$(clip "$branch" 132)
   else
-      components+=("#[fg=green]$(clip "$branch" 40)")
+      branch=$(clip "$branch" 40)
+  fi
+
+  if [ "$behind_default" = "true" ]; then
+      components+=("#[fg=yellow,dim,bold]$branch")
+  else
+      components+=("#[fg=green]$branch")
   fi
 
   if [ -n "$base" ]; then
@@ -64,7 +72,11 @@ pkgs.writeShellScriptBin "_tmux_status-repo" ''
       else
           base_color="white"
       fi
-      base=$(clip "$base" 24)
+      if [ "$full_branch" = true ]; then
+          base=$(clip "$base" 132)
+      else
+          base=$(clip "$base" 24)
+      fi
       if [ -n "$pr" ]; then
           components+=("#[fg=green,dim,bold]#$pr #[fg=white,nobold,dim]-> #[fg=$base_color,bold]$base")
       else

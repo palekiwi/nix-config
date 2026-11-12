@@ -516,11 +516,12 @@ export def "pr review" [
 #   commit; one failure aborts the whole run;
 # - a reply whose text already exists from you in the thread is skipped.
 export def "review comments post" [
-    manifest: path
+    manifest: string # Local path, or cue store address with --vm
+    --vm           # Read the manifest from the agent VM's cue store over ssh
     --dry-run (-n) # Print what would be posted without posting
     --yes (-y)     # Post without asking for confirmation
 ] {
-    let m = open $manifest
+    let m = if $vm { vm-artifact $manifest } else { open $manifest }
     mut errors = []
 
     let extra = ($m | columns | where $it not-in [repo pr replies comments])
@@ -703,6 +704,19 @@ export def "review comments post" [
 # TODO:
 # - [] display as threads with grouped replies
 # - [] fix the diff size, show only the relevant few lines sam as what the github UI shows
+def vm-artifact [address: string] {
+    if ($address | str contains "..") or not ($address =~ '^[A-Za-z0-9._/-]+$') {
+        error make { msg: $"invalid cue address: ($address)" }
+    }
+    let r = (do { ssh agent-vm head -c 1000000 $"cue/($address)" } | complete)
+    if $r.exit_code != 0 { error make { msg: $"ssh agent-vm: ($r.stderr)" } }
+    match ($address | path parse | get extension) {
+        "yaml" | "yml" => ($r.stdout | from yaml)
+        "json" => ($r.stdout | from json)
+        _ => (error make { msg: "manifest must be .yaml, .yml or .json" })
+    }
+}
+
 def review-comments-to-md [comments: list<record>] {
     $comments
         | each { |it|

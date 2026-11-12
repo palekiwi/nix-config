@@ -1,6 +1,12 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
+  repoPicker = import ../tui/host-repo-picker { inherit pkgs; };
   cplay = pkgs.writeShellScript "cplay" ''
     if ! pgrep -x cmus ; then
       ${pkgs.tmux}/bin/tmux new -d -s "cmus" "cmus"
@@ -41,25 +47,18 @@ let
     session_name="$1"
     window_name="kyomu:''${session_name}"
 
-    if wmctrl -l | grep -q "\b$window_name\b"; then
-        wmctrl -Fa $window_name
-    else
-        kitty -T $window_name -e ssh pl@kyomu -A -t "sesh connect $session_name"
-    fi
+    wmctrl -Fa "$window_name" ||
+        kitty -T "$window_name" -e ssh pl@kyomu -A -t "sesh connect $session_name"
   '';
 
-  switchToDefaultSession = pkgs.writeShellScript "switchToDefaultSession" ''
-    window_name=$USER
-
-    # Check if kitty window with username already exists
-    if wmctrl -l | grep -q "\b$window_name\b"; then
-        # Focus existing window
-        wmctrl -Fa "$window_name"
-    else
-        # Create new terminal with tmux session
-        kitty -T "$window_name" -e tmux new-session -A -s "$window_name"
-    fi
+  switchToAgentSession = pkgs.writeShellScript "switchToAgentSession" ''
+    session_name="$1"
+    window_name="agent:''${session_name}"
+    wmctrl -Fa "$window_name" ||
+        kitty -T "$window_name" -e ssh agent-vm -t "sesh connect $session_name"
   '';
+
+  scratch = import ./tmux-scratch.nix { inherit pkgs; };
 
   switchToApp = pkgs.writeShellScript "switchToApp" ''
     app_name=$1
@@ -78,48 +77,73 @@ in
   services.sxhkd = {
     enable = true;
     keybindings = {
-      "super + Return" = "dmenu_tmux --tmux";
-      "super + Return + control" = "dmenu_tmux --tmux --cast";
-      "super + Return + shift" = "dmenu_tmux";
-      "super + BackSpace" = "${switchToDefaultSession}";
+      "super + Return" = "${scratch}/bin/tmux-scratch";
+      "super + control + Return" = "${repoPicker}/bin/host-repo-picker --desktop --group spabreaks";
+      "super + alt + Return" = "${repoPicker}/bin/host-repo-picker --desktop --group palekiwi";
+      "super + shift + Return" = "dmenu_remote_tmux agent-vm --prefix agent";
+      "super + BackSpace" = "dmenu_tmux --tmux";
+      "super + control + BackSpace" = "dmenu_remote_tmux agent-vm --prefix agent --tmux";
 
       "super + l" = "${switchToApp} rnote Rnote";
       "super + l + control" = "dmenu_activity_log --pr";
 
-      "super + space; t; e" = "${switchToSession} cue";
-      "super + space; t; n" = "${switchToSession} palekiwi";
-      "super + space; t; v" = "${switchToSession} cue-nvim";
-      "super + space; t; t" = "${switchToSession} cast";
-      "super + space; t; u" = "${switchToSession} cue-platform";
+      "super + control + space; t; e" = "${switchToSession} cue";
+      "super + control + space; t; n" = "${switchToSession} palekiwi-legacy";
+      "super + control + space; t; v" = "${switchToSession} cue-nvim";
+      "super + control + space; t; t" = "${switchToSession} cast";
+      "super + control + space; t; u" = "${switchToSession} cue-platform";
 
-      "super + space; c; c" = "${switchToSession} config-cast";
-      "super + space; c; n" = "${switchToSession} nix-config";
-      "super + space; c; p" = "${switchToSession} config-pi";
+      "super + control + space; c; c" = "${switchToSession} config-cast";
+      "super + control + space; c; n" = "${switchToSession} nix-config";
+      "super + control + space; c; p" = "${switchToSession} config-pi";
 
-      "super + space; m; d" = "${switchToSession} spabreaks/my-account/dev";
-      "super + space; m; e" = "${switchToSession} spabreaks/my-account";
+      "super + control + space; m; d" = "${switchToSession} spabreaks/my-account/dev";
+      "super + control + space; m; e" = "${switchToSession} spabreaks/my-account";
 
-      "super + space; n; p" = "${switchToSession} notes-pl";
-      "super + space; n; t" = "${switchToSession} notes-sb";
+      "super + control + space; n; p" = "${switchToSession} notes-pl";
+      "super + control + space; n; t" = "${switchToSession} notes-sb";
 
-      "super + space; k; s; c" = "${switchToKyomuSession} spabreaks/spabreaks/console";
-      "super + space; k; s; d" = "${switchToKyomuSession} spabreaks/spabreaks/dev";
-      "super + space; k; s; e" = "${switchToKyomuSession} spabreaks/spabreaks";
-      "super + space; k; s; t" = "${switchToKyomuSession} terraform";
+      "super + control + space; k; s; c" = "${switchToKyomuSession} spabreaks/spabreaks/console";
+      "super + control + space; k; s; d" = "${switchToKyomuSession} spabreaks/spabreaks/dev";
+      "super + control + space; k; s; e" = "${switchToKyomuSession} spabreaks/spabreaks";
+      "super + control + space; k; s; t" = "${switchToKyomuSession} terraform";
 
-      "super + space; k; n; c" = "${switchToKyomuSession} nix-config";
+      "super + control + space; k; n; c" = "${switchToKyomuSession} nix-config";
 
-      "super + space; s; c" = "${switchToSession} spabreaks/spabreaks/console";
-      "super + space; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
-      "super + space; s; e" = "${switchToSession} spabreaks/spabreaks";
-      "super + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
-      "super + space; s; t" = "${switchToSession} spabreaks/terraform";
+      "super + control + space; s; c" = "${switchToSession} spabreaks/spabreaks/console";
+      "super + control + space; s; d" = "${switchToSession} spabreaks/spabreaks/dev";
+      "super + control + space; s; e" = "${switchToSession} spabreaks/spabreaks";
+      "super + control + space; s; s" = "${switchToSession} spabreaks/spabreaks-org";
+      "super + control + space; s; t" = "${switchToSession} spabreaks/terraform";
 
-      "super + space; v; d" = "${switchToSession} spabreaks/vrs/dev";
-      "super + space; v; e" = "${switchToSession} spabreaks/vrs";
+      "super + control + space; r; d" = "${switchToSession} vrs/dev";
+      "super + control + space; r; e" = "${switchToSession} vrs";
 
-      "super + space; w; d" = "${switchToSession} spabreaks/wss/dev";
-      "super + space; w; e" = "${switchToSession} spabreaks/wss";
+      "super + space; t; e" = "${switchToAgentSession} cue";
+      "super + space; t; n" = "${switchToAgentSession} palekiwi";
+      "super + space; t; v" = "${switchToAgentSession} cue-nvim";
+      "super + space; t; t" = "${switchToAgentSession} cast";
+      "super + space; t; u" = "${switchToAgentSession} cue-platform";
+
+      "super + space; c; n" = "${switchToAgentSession} nix-config";
+
+      "super + space; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
+      "super + space; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
+      "super + space; s; e" = "${switchToAgentSession} spabreaks/spabreaks";
+      "super + space; s; s" = "${switchToAgentSession} spabreaks/spabreaks-org";
+      "super + space; s; t" = "${switchToAgentSession} spabreaks/terraform";
+
+      "super + space; m; d" = "${switchToAgentSession} spabreaks/my-account/dev";
+      "super + space; m; e" = "${switchToAgentSession} spabreaks/my-account";
+
+      "super + space; r; d" = "${switchToAgentSession} vrs/dev";
+      "super + space; r; e" = "${switchToAgentSession} vrs";
+
+      "super + space; w; d" = "${switchToAgentSession} spabreaks/wss/dev";
+      "super + space; w; e" = "${switchToAgentSession} spabreaks/wss";
+
+      "super + control + space; w; d" = "${switchToSession} spabreaks/wss/dev";
+      "super + control + space; w; e" = "${switchToSession} spabreaks/wss";
 
       "super + 0" = "google-chrome-stable --profile-directory='Profile 1'";
       "super + control + 0" = "google-chrome-stable --profile-directory='Profile 2'";
@@ -137,8 +161,10 @@ in
       "{button7,button6}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
       "shift + {button7,button6}" = "light -{U,A} 1";
       "{XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "pactl set-sink-volume @DEFAULT_SINK@ {-,+}5%";
-      "control + XF86AudioLowerVolume" = "pactl set-sink-volume @DEFAULT_SINK@ 50%; notify-send -t 800 'Master Vol:' 50%";
-      "control + XF86AudioRaiseVolume" = "pactl set-sink-volume @DEFAULT_SINK@ 65%; notify-send -t 800 'Master Vol:' 65%";
+      "control + XF86AudioLowerVolume" =
+        "pactl set-sink-volume @DEFAULT_SINK@ 50%; notify-send -t 800 'Master Vol:' 50%";
+      "control + XF86AudioRaiseVolume" =
+        "pactl set-sink-volume @DEFAULT_SINK@ 65%; notify-send -t 800 'Master Vol:' 65%";
       "shift + XF86AudioLowerVolume" = "cmus-remote -v -5%";
       "shift + XF86AudioRaiseVolume" = "cmus-remote -v +5%";
       "shift + control + XF86AudioLowerVolume" = "cmus-remote -v 50%; notify-send -t 800 'Cmus Vol:' 50%";
@@ -158,6 +184,9 @@ in
 
       "XF86Launch8" = "dmenu_hass";
       "XF86Launch9" = "dmenu_audio-sinks";
+    }
+    // lib.optionalAttrs (config.programs.local-tts.enable or false) {
+      "control + Pause" = "clipboard-speech-toggle";
     };
   };
 }

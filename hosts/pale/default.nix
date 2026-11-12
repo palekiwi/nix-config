@@ -1,36 +1,37 @@
 { pkgs, ... }:
 
 {
-  imports =
-    [
-      ../../modules/cachix.nix
-      ../../modules/cue-syncthing.nix
-      ../../modules/docker.nix
-      ../../modules/fonts.nix
-      ../../modules/ibus.nix
-      ../../modules/sops.nix
-      ../../modules/yubikey.nix
-      ../../users/pl/default.nix
-      ./acuity.nix
-      ./awesome.nix
-      ./bluetooth.nix
-      ./firewall-docker.nix
-      ./hardware-configuration.nix
-      ./locale.nix
-      ./notifications-server.nix
-      ./nvidia.nix
-      ./opentabletdriver.nix
-      ./packages.nix
-      ./picom.nix
-      ./sound.nix
-      ./ssh.nix
-      ./system.nix
-      ./user.nix
-    ];
+  imports = [
+    ../../modules/cachix.nix
+    ../../modules/docker.nix
+    ../../modules/fonts.nix
+    ../../modules/ibus.nix
+    ../../modules/sops.nix
+    ../../modules/yubikey.nix
+    ../../users/pl/default.nix
+    ./acuity.nix
+    ./awesome.nix
+    ./bluetooth.nix
+    ./firewall-docker.nix
+    ./hardware-configuration.nix
+    ./locale.nix
+    ./local-tts.nix
+    ./notifications-server.nix
+    ./nvidia.nix
+    ./opentabletdriver.nix
+    ./packages.nix
+    ./picom.nix
+    ./sc-controller-cc
+    ./sound.nix
+    ./ssh.nix
+    ./system.nix
+    ./user.nix
+  ];
 
   config = {
     modules.docker.enable = true;
     modules.ibus.enable = true;
+    hardware.nvidia-container-toolkit.enable = true;
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
