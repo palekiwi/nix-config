@@ -10,7 +10,7 @@ let
 
   cases = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (action: key: ''
-      ${lib.escapeShellArg action}) xdotool key ${lib.escapeShellArg key} ;;'') cfg.keys
+      ${lib.escapeShellArg action}) xdotool key ${lib.escapeShellArg key} || echo "cube-remote: xdotool failed" >&2 ;;'') cfg.keys
   );
 
   script = pkgs.writeShellApplication {
@@ -21,6 +21,11 @@ let
       pkgs.xdotool
     ];
     text = ''
+      if [ -z "''${DISPLAY:-}" ]; then
+        echo "cube-remote: DISPLAY is not set" >&2
+        exit 1
+      fi
+
       mosquitto_sub -h ${lib.escapeShellArg cfg.host} -p ${toString cfg.port} \
         -t ${lib.escapeShellArg cfg.topic} \
         | jq --unbuffered -r '.action | strings | select(. != "")' \
@@ -68,7 +73,7 @@ in
     systemd.user.services.cube-remote = {
       Unit = {
         Description = "Aqara cube remote";
-        After = [ "graphical-session-pre.target" ];
+        After = [ "graphical-session.target" ];
         PartOf = [ "graphical-session.target" ];
       };
       Service = {
