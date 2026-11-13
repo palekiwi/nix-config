@@ -41,7 +41,14 @@
     };
   };
 
-  outputs = { self, nixpkgs, claude-desktop, home-manager, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      claude-desktop,
+      home-manager,
+      ...
+    }@inputs:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
@@ -160,6 +167,7 @@
             builtins.toJSON (import ./hosts/pale/test-agent-mqtt.nix { flake = self; })
           )
         );
+        agent-mqtt-clients = pkgs.callPackage ./modules/agent-mqtt/clients { };
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
