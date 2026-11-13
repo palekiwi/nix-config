@@ -127,6 +127,7 @@ in
 
       "super + space; c; n" = "${switchToAgentSession} nix-config";
 
+      "super + space; s; a" = "${switchToAgentSession} spabreaks/agent-sandbox";
       "super + space; s; c" = "${switchToAgentSession} spabreaks/spabreaks/console";
       "super + space; s; d" = "${switchToAgentSession} spabreaks/spabreaks/dev";
       "super + space; s; e" = "${switchToAgentSession} spabreaks/spabreaks";

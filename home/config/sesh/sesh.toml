@@ -12,6 +12,11 @@ path = "~/code/spabreaks/spabreaks-org"
 startup_command = "_tmux_spabreaks_org"
 
 [[session]]
+name = "spabreaks/agent-sandbox"
+path = "~/code/spabreaks/agent-sandbox"
+startup_command = "_tmux_git-repo"
+
+[[session]]
 name = "spabreaks/spabreaks"
 path = "~/code/spabreaks/spabreaks"
 startup_command = "_tmux_git-repo"
