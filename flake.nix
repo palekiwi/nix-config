@@ -155,6 +155,11 @@
             builtins.toJSON (import ./hosts/pale/test-speech-bridge.nix { flake = self; })
           )
         );
+        agent-mqtt = pkgs.writeText "agent-mqtt-check.json" (
+          builtins.unsafeDiscardStringContext (
+            builtins.toJSON (import ./hosts/pale/test-agent-mqtt.nix { flake = self; })
+          )
+        );
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
