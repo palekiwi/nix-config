@@ -32,6 +32,8 @@
 
     services.cue-backup.enable = true;
 
+    services.agent-mqtt.enable = true;
+
     services.cube-remote = {
       enable = true;
       actions = {
