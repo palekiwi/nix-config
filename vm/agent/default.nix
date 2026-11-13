@@ -8,6 +8,7 @@
     ./proxy.nix
     ./git-hooks.nix
     ./shell.nix
+    ./agent-mqtt.nix
     ../../modules/machine-role.nix
   ];
 
@@ -73,7 +74,10 @@
         GatewayOnLink = true;
       }
     ];
-    dns = [ "1.1.1.1" "9.9.9.9" ];
+    dns = [
+      "1.1.1.1"
+      "9.9.9.9"
+    ];
   };
 
   systemd.network.networks."05-docker" = {
@@ -88,7 +92,10 @@
   users.users.pl = {
     isNormalUser = true;
     uid = 1000;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+    ];
   };
 
   security.sudo.wheelNeedsPassword = false;
@@ -113,7 +120,10 @@
     nix-direnv.enable = true;
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   nix.settings.build-dir = "/var/lib/nix-builds";
   nix.settings.min-free = 10 * 1024 * 1024 * 1024;
@@ -133,7 +143,15 @@
   };
   systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
 
-  environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs ]
+  environment.systemPackages =
+    with pkgs;
+    [
+      git
+      gitui
+      go-task
+      nushell
+      nodejs
+    ]
     ++ import ../../home/programs/tui/scripts/git-base.nix pkgs;
 
   system.stateVersion = "26.05";
