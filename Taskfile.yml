@@ -21,6 +21,94 @@ tasks:
       - mkdir -p {{.SOPS_AGE_DIR}}
       - test -f {{.SOPS_AGE_DIR}}/keys.txt || echo "AGE-SECRET-KEY-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" > {{.SOPS_AGE_DIR}}/keys.txt
 
+  agent-mqtt-guest-credentials:
+    desc: (agent VM) Generate vm-speech/vm-inbox MQTT passwords and print their hashes
+    summary: |
+      Run inside the agent VM. Writes a random password for each guest MQTT
+      user to {{.DIR}}/<user> and prints the matching mosquitto hash lines.
+      Pass the printed lines to agent-mqtt-host-secrets on pale.
+      Existing password files are kept unless FORCE=1.
+    vars:
+      DIR: '{{.DIR | default "/var/lib/agent-mqtt"}}'
+      FORCE: '{{.FORCE | default "0"}}'
+    silent: true
+    cmds:
+      - |
+        set -eu
+        sudo install -d -m 0700 -o pl -g users {{.DIR}}
+        for user in vm-speech vm-inbox; do
+          if [ -e "{{.DIR}}/$user" ] && [ "{{.FORCE}}" != 1 ]; then
+            echo "{{.DIR}}/$user exists, rerun with FORCE=1 to replace it" >&2
+            exit 1
+          fi
+        done
+        tmp=$(mktemp)
+        trap 'rm -f "$tmp"' EXIT
+        for user in vm-speech vm-inbox; do
+          password=$(head -c 24 /dev/urandom | base64 | tr -d '/+=')
+          install -m 0600 /dev/null "{{.DIR}}/$user"
+          printf '%s\n' "$password" > "{{.DIR}}/$user"
+          printf '%s:%s\n' "$user" "$password" >> "$tmp"
+        done
+        nix shell nixpkgs#mosquitto --command mosquitto_passwd -U "$tmp"
+        cat "$tmp"
+
+  agent-mqtt-host-secrets:
+    desc: (pale) Store agent-mqtt broker hashes and host passwords in sops
+    summary: |
+      Run on pale after agent-mqtt-guest-credentials in the agent VM.
+      Takes the guest hash lines from VM_SPEECH_HASH and VM_INBOX_HASH
+      ("user:hash" or just the hash) or prompts for them, generates
+      passwords for host-speech and host-inbox, and sets in {{.SOPS_FILE}}:
+        agent-mqtt/{vm-speech,vm-inbox,host-speech,host-inbox}/hash
+        agent-mqtt/{host-speech,host-inbox}/password
+    vars:
+      SOPS_FILE: secrets/secrets.yaml
+    interactive: true
+    silent: true
+    cmds:
+      - |
+        set -eu
+        tmp=$(mktemp)
+        trap 'rm -f "$tmp"' EXIT
+
+        set_secret() {
+          sops set {{.SOPS_FILE}} "[\"agent-mqtt\"][\"$1\"][\"$2\"]" "\"$3\""
+        }
+
+        vm_speech=${VM_SPEECH_HASH:-}
+        vm_inbox=${VM_INBOX_HASH:-}
+        if [ -z "$vm_speech" ]; then
+          printf 'vm-speech hash line: ' >&2
+          read -r vm_speech
+        fi
+        if [ -z "$vm_inbox" ]; then
+          printf 'vm-inbox hash line: ' >&2
+          read -r vm_inbox
+        fi
+        vm_speech=${vm_speech#vm-speech:}
+        vm_inbox=${vm_inbox#vm-inbox:}
+        for hash in "$vm_speech" "$vm_inbox"; do
+          case "$hash" in
+            '$7$'*) ;;
+            *) echo "not a mosquitto PBKDF2 hash: $hash" >&2; exit 1 ;;
+          esac
+        done
+
+        for user in host-speech host-inbox; do
+          password=$(head -c 24 /dev/urandom | base64 | tr -d '/+=')
+          printf '%s:%s\n' "$user" "$password" >> "$tmp"
+          set_secret "$user" password "$password"
+        done
+        nix shell nixpkgs#mosquitto --command mosquitto_passwd -U "$tmp"
+
+        set_secret vm-speech hash "$vm_speech"
+        set_secret vm-inbox hash "$vm_inbox"
+        while IFS=: read -r user hash; do
+          set_secret "$user" hash "$hash"
+        done < "$tmp"
+        echo "agent-mqtt secrets set in {{.SOPS_FILE}}"
+
   home-build:
     desc: Build a home configuration with sb-scripts from a local checkout (no ssh)
     vars:
