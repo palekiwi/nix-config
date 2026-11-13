@@ -2,7 +2,29 @@
 let
   config = flake.nixosConfigurations.pale.config;
   lib = flake.inputs.nixpkgs.lib;
+  pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux;
   endpoint = import ../../modules/agent-mqtt/endpoint.nix;
+  guest = config.microvm.vms.agent.config.config;
+  home = flake.inputs.home-manager.lib.homeManagerConfiguration {
+    inherit pkgs;
+    modules = [
+      ../../home/services/agent-mqtt.nix
+      {
+        home.username = "pl";
+        home.homeDirectory = "/home/pl";
+        home.stateVersion = "24.11";
+        services.agent-mqtt.enable = true;
+      }
+    ];
+  };
+  consumer = home.config.systemd.user.services.agent-mqtt-speech;
+  listener = guest.systemd.user.services.agent-mqtt-inbox;
+  secrets = config.sops.secrets;
+  mqttSources = map (name: builtins.readFile (../../modules/agent-mqtt + "/${name}")) [
+    "default.nix"
+    "broker.nix"
+    "endpoint.nix"
+  ];
   mqtt = config.services.mosquitto;
   unit = config.systemd.services.mosquitto;
   tapUnit = "microvm-tap-interfaces@agent.service";
@@ -44,7 +66,8 @@ let
     builtins.head matches;
   guestListener = listenerAt "10.77.0.1" 18830;
   hostListener = listenerAt "127.0.0.1" 18831;
-  users = lib.concatMap (l: lib.attrValues l.users) mqtt.listeners;
+  namedUsers = lib.foldl' (acc: l: acc // l.users) { } mqtt.listeners;
+  users = lib.attrValues namedUsers;
   aclLines = lib.concatMap (u: u.acl) users;
   explicit = line: builtins.match "(read|write|readwrite|deny) [^ ]+" line != null;
   aclOf = listener: lib.mapAttrs (_: u: u.acl) listener.users;
@@ -89,8 +112,47 @@ assert
   };
 assert lib.all (l: l.acl == [ ] && !l.omitPasswordAuth) mqtt.listeners;
 assert aclLines != [ ] && lib.all explicit aclLines;
-assert lib.all (u: u.password == null && u.passwordFile == null) users;
-assert lib.all (u: u.hashedPassword != null || u.hashedPasswordFile != null) users;
+assert
+  lib.attrNames namedUsers == [
+    "host-inbox"
+    "host-speech"
+    "vm-inbox"
+    "vm-speech"
+  ];
+assert lib.all (u: u.password == null && u.passwordFile == null && u.hashedPassword == null) users;
+assert lib.all (
+  name:
+  namedUsers.${name}.hashedPasswordFile == secrets."agent-mqtt/${name}/hash".path
+  && secrets."agent-mqtt/${name}/hash".path == "/run/secrets/agent-mqtt/${name}/hash"
+  && lib.elem secrets."agent-mqtt/${name}/hash".owner [
+    null
+    "root"
+  ]
+) (lib.attrNames namedUsers);
+assert lib.all (
+  name:
+  secrets."agent-mqtt/${name}/password".owner == "pl"
+  && secrets."agent-mqtt/${name}/password".mode == "0400"
+  && secrets."agent-mqtt/${name}/password".path == endpoint.credentials.hostPasswordFile name
+) endpoint.credentials.hostUsers;
+assert lib.all (name: !(secrets ? "agent-mqtt/${name}/password")) endpoint.credentials.guestUsers;
+assert !builtins.pathExists ../../modules/agent-mqtt/guest-credentials.nix;
+assert !builtins.pathExists ../../modules/agent-mqtt/hashes.nix;
+assert lib.all (src: !lib.hasInfix "$7$" src && !lib.hasInfix "hashedPassword =" src) mqttSources;
+assert consumer.Install.WantedBy == [ "default.target" ];
+assert
+  consumer.Service.Environment == [
+    "AGENT_MQTT_PASSWORD_FILE=${secrets."agent-mqtt/host-speech/password".path}"
+  ];
+assert consumer.Service.RestartPreventExitStatus == 78;
+assert consumer.Service.Restart == "always";
+assert listener.wantedBy == [ "default.target" ];
+assert listener.unitConfig.ConditionUser == "pl";
+assert listener.serviceConfig.RestartPreventExitStatus == 78;
+assert listener.environment.AGENT_MQTT_AGENTS == "pi";
+assert lib.elem "d /var/lib/agent-mqtt 0700 pl users -" guest.systemd.tmpfiles.rules;
+assert lib.any (v: v.mountPoint == "/var") guest.microvm.volumes;
+assert lib.hasPrefix "/var/" (endpoint.credentials.guestPasswordFile "vm-inbox");
 assert unit.bindsTo == [ tapUnit ];
 assert lib.elem tapUnit unit.after;
 assert unit.before == [ vmUnit ];

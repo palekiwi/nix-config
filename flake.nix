@@ -168,6 +168,7 @@
           )
         );
         agent-mqtt-clients = pkgs.callPackage ./modules/agent-mqtt/clients { };
+        agent-mqtt-nixos = pkgs.testers.runNixOSTest (import ./hosts/pale/test-agent-mqtt-nixos.nix);
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
