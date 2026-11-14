@@ -155,6 +155,7 @@
             builtins.toJSON (import ./hosts/pale/test-speech-bridge.nix { flake = self; })
           )
         );
+        agent-nats-nixos = pkgs.testers.runNixOSTest (import ./hosts/pale/test-agent-nats-nixos.nix);
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
