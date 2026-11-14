@@ -81,6 +81,7 @@
             ./modules/agent-microvm.nix
             ./modules/agent-egress-proxy
             ./modules/agent-speech-guard.nix
+            ./modules/agent-nats
             inputs.microvm.nixosModules.host
             inputs.notifications-server.nixosModules.default
             inputs.cue.nixosModules.acuity
