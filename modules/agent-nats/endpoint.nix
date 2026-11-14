@@ -5,6 +5,7 @@
   leafPort = 7422;
   clientPort = 4222;
   subjects = "agent.>";
+  jsDomain = "pale";
   accounts = {
     agent = "AGENT";
     host = "HOST";

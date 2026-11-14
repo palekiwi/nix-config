@@ -37,6 +37,7 @@ in
         max_payload = 65536;
         max_connections = 64;
         jetstream = {
+          domain = endpoint.jsDomain;
           max_memory_store = 67108864;
           max_file_store = 1073741824;
         };
@@ -63,6 +64,7 @@ in
         leafnodes = {
           host = "0.0.0.0";
           port = endpoint.leafPort;
+          advertise = "${endpoint.host}:${toString endpoint.leafPort}";
           authorization = {
             nkey = cfg.leafPublicKey;
             account = agent;
@@ -81,6 +83,7 @@ in
         ];
         IPAddressDeny = "any";
         MemoryMax = "512M";
+        RestrictAddressFamilies = lib.mkForce [ "AF_INET" ];
       };
     };
 
