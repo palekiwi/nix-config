@@ -8,6 +8,7 @@
     ./proxy.nix
     ./git-hooks.nix
     ./shell.nix
+    ./agent-nats.nix
     ../../modules/machine-role.nix
   ];
 
