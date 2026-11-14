@@ -40,8 +40,7 @@ local base = {
   { "<A-PageUp>",      "<cmd>lprev<cr>",                                                            desc = "[Loclist] Prev" },
   { "<A-PageDown>",    "<cmd>lnext<cr>",                                                            desc = "[Loclist] Next" },
   -- AI / Cue
-  { "<C-t>",           function() cue_utils.pick_contexts({ pinned = true, tree = true }) end,      desc = "[Cue] Pinned contexts (tree)" },
-  { "<C-a>",           function() cue_utils.pick_contexts({ tree = true }) end,                        desc = "[Cue] All contexts (tree)" },
+  { "<C-t>",           function() cue_utils.pick_contexts() end,                                    desc = "[Cue] Contexts" },
   { "<A-a>",           cue_utils.pick_active_context_artifacts,                                    desc = "[Cue] Artifacts (active context)" },
   { "<A-t>",           function() cue_utils.pick_artifacts({ task = "master", exclude_type = "task" }) end, desc = "[Cue] Artifacts (master scope)" },
   { "<A-c>",           cue_utils.open_context,                                                      desc = "[Cue] Open active context" },
