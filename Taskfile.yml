@@ -27,7 +27,8 @@ tasks:
       Run inside the agent VM. Generates a NATS user nkey, writes
       NATS_LEAF_SEED=<seed> to {{.FILE}} (root, mode 0600) and prints the
       public key. Put the public key in modules/agent-nats/leaf.pub in
-      nix-config, rebuild pale, then restart agent-nats-leaf in the VM.
+      nix-config, rebuild pale, then restart the agent VM (or the
+      agent-nats-leaf service in it).
       An existing seed file is kept unless FORCE=1.
     vars:
       FILE: '{{.FILE | default "/var/lib/agent-nats/leaf.env"}}'
@@ -50,7 +51,7 @@ tasks:
         echo "wrote {{.FILE}}"
         echo "leaf public key: $pub"
         echo "on pale: echo $pub > modules/agent-nats/leaf.pub in nix-config, commit, rebuild pale"
-        echo "then in the VM: sudo systemctl restart agent-nats-leaf"
+        echo "then restart the agent VM, or in the VM: sudo systemctl restart agent-nats-leaf"
 
   home-build:
     desc: Build a home configuration with sb-scripts from a local checkout (no ssh)
