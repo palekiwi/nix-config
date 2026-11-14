@@ -6,6 +6,15 @@ let
   port = 3128;
   user = "agent-proxy";
   tapUnit = "microvm-tap-interfaces@agent.service";
+  guard = import ../agent-port-guard.nix {
+    name = "agent-proxy-guard";
+    inherit
+      port
+      tap
+      guestAddr
+      listenAddr
+      ;
+  };
   secretsDir = "/run/secrets/agent-proxy";
   # Every secret the egress proxy can read is declared here and nowhere else.
   # Only read-only scoped tokens may be added. Accepted exceptions without
@@ -179,17 +188,6 @@ in
     };
   };
 
-  networking.firewall.extraCommands = lib.mkAfter ''
-    iptables -w -D INPUT -p tcp --dport ${toString port} -j agent-proxy-guard 2>/dev/null || true
-    iptables -w -N agent-proxy-guard 2>/dev/null || true
-    iptables -w -F agent-proxy-guard
-    iptables -w -A agent-proxy-guard -i ${tap} -s ${guestAddr} -d ${listenAddr} -j ACCEPT
-    iptables -w -A agent-proxy-guard -j DROP
-    iptables -w -I INPUT -p tcp --dport ${toString port} -j agent-proxy-guard
-  '';
-  networking.firewall.extraStopCommands = ''
-    iptables -w -D INPUT -p tcp --dport ${toString port} -j agent-proxy-guard 2>/dev/null || true
-    iptables -w -F agent-proxy-guard 2>/dev/null || true
-    iptables -w -X agent-proxy-guard 2>/dev/null || true
-  '';
+  networking.firewall.extraCommands = lib.mkAfter guard.start;
+  networking.firewall.extraStopCommands = guard.stop;
 }
