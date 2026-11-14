@@ -21,6 +21,37 @@ tasks:
       - mkdir -p {{.SOPS_AGE_DIR}}
       - test -f {{.SOPS_AGE_DIR}}/keys.txt || echo "AGE-SECRET-KEY-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" > {{.SOPS_AGE_DIR}}/keys.txt
 
+  agent-nats-leaf-seed:
+    desc: (agent VM) Generate the agent-nats leaf nkey and print its public key
+    summary: |
+      Run inside the agent VM. Generates a NATS user nkey, writes
+      NATS_LEAF_SEED=<seed> to {{.FILE}} (root, mode 0600) and prints the
+      public key. Put the public key in modules/agent-nats/leaf.pub in
+      nix-config, rebuild pale, then restart agent-nats-leaf in the VM.
+      An existing seed file is kept unless FORCE=1.
+    vars:
+      FILE: '{{.FILE | default "/var/lib/agent-nats/leaf.env"}}'
+      FORCE: '{{.FORCE | default "0"}}'
+    silent: true
+    cmds:
+      - |
+        set -eu
+        if sudo test -e "{{.FILE}}" && [ "{{.FORCE}}" != 1 ]; then
+          echo "{{.FILE}} exists, rerun with FORCE=1 to replace it" >&2
+          exit 1
+        fi
+        keys=$(nix shell nixpkgs#nkeys --command nk -gen user -pubout)
+        seed=$(printf '%s\n' "$keys" | sed -n 1p)
+        pub=$(printf '%s\n' "$keys" | sed -n 2p)
+        case "$seed" in SU*) ;; *) echo "unexpected nk output" >&2; exit 1 ;; esac
+        case "$pub" in U*) ;; *) echo "unexpected nk output" >&2; exit 1 ;; esac
+        sudo install -d -m 0700 -o root -g root "$(dirname "{{.FILE}}")"
+        printf 'NATS_LEAF_SEED=%s\n' "$seed" | sudo install -m 0600 -o root -g root /dev/stdin "{{.FILE}}"
+        echo "wrote {{.FILE}}"
+        echo "leaf public key: $pub"
+        echo "on pale: echo $pub > modules/agent-nats/leaf.pub in nix-config, commit, rebuild pale"
+        echo "then in the VM: sudo systemctl restart agent-nats-leaf"
+
   home-build:
     desc: Build a home configuration with sb-scripts from a local checkout (no ssh)
     vars:
