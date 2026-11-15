@@ -44,15 +44,25 @@ in
         accounts = {
           ${agent} = {
             jetstream = "enabled";
-            exports = [ { stream = endpoint.subjects; } ];
+            exports = [
+              { stream = endpoint.subjects; }
+              { stream = "speech.intent.>"; }
+            ];
           };
           ${host} = {
+            jetstream = "enabled";
             users = [ { user = endpoint.hostUser; } ];
             imports = [
               {
                 stream = {
                   account = agent;
                   subject = endpoint.subjects;
+                };
+              }
+              {
+                stream = {
+                  account = agent;
+                  subject = "speech.intent.>";
                 };
               }
             ];
@@ -85,6 +95,46 @@ in
         MemoryMax = "512M";
         RestrictAddressFamilies = lib.mkForce [ "AF_INET" ];
       };
+    };
+
+    systemd.services.nats-control-stream = {
+      wantedBy = [ "multi-user.target" ];
+      requires = [ "nats.service" ];
+      after = [ "nats.service" ];
+      partOf = [ "nats.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        Restart = "on-failure";
+        RestartSec = 2;
+      };
+      script =
+        let
+          nats = "${pkgs.natscli}/bin/nats --server nats://127.0.0.1:${toString endpoint.clientPort}";
+          stream = pkgs.writeText "control-stream.json" (
+            builtins.toJSON {
+              name = "CONTROL";
+              subjects = [
+                "speech.>"
+                "dictation.>"
+                "cube.>"
+              ];
+              retention = "limits";
+              storage = "file";
+              max_age = 604800000000000;
+              max_bytes = 67108864;
+              discard = "old";
+              num_replicas = 1;
+            }
+          );
+        in
+        ''
+          if ${nats} stream info CONTROL >/dev/null 2>&1; then
+            ${nats} stream edit CONTROL --config ${stream} --force
+          else
+            ${nats} stream add CONTROL --config ${stream} --defaults
+          fi
+        '';
     };
 
     environment.systemPackages = [ pkgs.natscli ];

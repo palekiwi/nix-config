@@ -219,7 +219,26 @@ in
         all_out = host_sub("all", ">")
         leaf_delivers(agent_out, "p1")
 
-    with subtest("subjects outside agent.> do not reach HOST"):
+    with subtest("speech intents reach HOST but commands do not"):
+        speech_out = host_sub("speech", "speech.>")
+        leaf_delivers(speech_out, "say", "speech.intent.say")
+        forbidden = mark("command")
+        pale.succeed(f"{LEAF}pub speech.cmd.stop {forbidden}")
+        leaf_delivers(speech_out, "barrier", "speech.intent.stop")
+        assert forbidden not in pale.succeed(f"cat {speech_out}")
+
+    with subtest("CONTROL is bounded observation in HOST only"):
+        import json
+        pale.wait_for_unit("nats-control-stream.service")
+        info = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert info["config"]["max_age"] == 604800000000000
+        assert info["config"]["max_bytes"] == 67108864
+        assert set(info["config"]["subjects"]) == {"speech.>", "dictation.>", "cube.>"}
+        assert info["state"]["messages"] > 0
+        pale.fail(f"{LEAF}--js-domain ${endpoint.jsDomain} stream info CONTROL")
+        pale.succeed("systemctl restart nats-control-stream.service")
+
+    with subtest("subjects outside exports do not reach HOST"):
         outside = mark("outside")
         pale.succeed(f"{LEAF}pub other.test {outside}")
         pale.succeed(f"{LEAF}pub agentx.test {outside}")
