@@ -1,8 +1,8 @@
 { pkgs, home-manager }:
 
 let
-  evaluate =
-    enabled: target:
+  evaluate' =
+    enabled: target: extraModules:
     home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
@@ -20,12 +20,18 @@ let
           programs.local-tts.bridge.enable = enabled;
           programs.local-tts.target = target;
         }
-      ];
+      ]
+      ++ extraModules;
     };
+  evaluate = enabled: target: evaluate' enabled target [ ];
   home = evaluate true null;
   disabled = evaluate false null;
   absent = evaluate null null;
   targeted = evaluate true "bluez_output.test";
+  handy = evaluate' true null [
+    ./handy.nix
+    { services.handy.enable = true; }
+  ];
   speechVolume = "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}";
 in
 assert !(home.config.services.sxhkd.keybindings ? ${speechVolume});
@@ -33,6 +39,12 @@ assert
   targeted.config.services.sxhkd.keybindings."alt + {button7,button6}"
   == targeted.config.services.sxhkd.keybindings.${speechVolume};
 assert !(absent.config.services.sxhkd.keybindings ? ${speechVolume});
+assert !(absent.config.services.sxhkd.keybindings ? "XF86AudioNext");
+assert !(home.config.services.sxhkd.keybindings ? "XF86AudioPrev");
+assert home.config.services.sxhkd.keybindings.XF86AudioNext == "speech-emergency-stop";
+assert
+  builtins.match ".*/bin/xdotool key Pause" handy.config.services.sxhkd.keybindings.XF86AudioPrev
+  != null;
 assert
   builtins.match ".*speech-volume \\{-,\\+}5%"
     targeted.config.services.sxhkd.keybindings.${speechVolume} != null;

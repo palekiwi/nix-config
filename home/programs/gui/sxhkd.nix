@@ -19,6 +19,8 @@ let
 
   speechTarget = config.programs.local-tts.target or null;
 
+  xdotool = "${pkgs.xdotool}/bin/xdotool";
+
   speechVolume = pkgs.writeShellScript "speech-volume" ''
     if ${pkgs.pulseaudio}/bin/pactl set-sink-volume ${lib.escapeShellArg speechTarget} "$1"; then
       volume="$(${pkgs.pulseaudio}/bin/pactl get-sink-volume ${lib.escapeShellArg speechTarget} | grep -o '[0-9]*%' | head -1)"
@@ -202,6 +204,10 @@ in
     }
     // lib.optionalAttrs (config.programs.local-tts.bridge.enable or false) {
       "control + shift + Pause" = "speech-emergency-stop";
+      "XF86AudioNext" = "speech-emergency-stop";
+    }
+    // lib.optionalAttrs (config.services.handy.enable or false) {
+      "XF86AudioPrev" = "${xdotool} key Pause";
     }
     // lib.optionalAttrs (speechTarget != null) {
       "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "${speechVolume} {-,+}5%";
