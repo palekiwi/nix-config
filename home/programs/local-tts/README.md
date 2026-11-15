@@ -252,6 +252,67 @@ sentences are expected. Voice and speed are module options
 the sentence and are logged without its text in
 `journalctl --user -u speech-bridge.service`.
 
+### Diagnosing clipped opening words
+
+NATS replacement cancels the prior owner, but does not trim the new text.
+The bridge still opens a player lazily on the first PCM bytes, once per
+sentence, just as before NATS. `speech.evt.started` means process creation,
+not that PipeWire or Bluetooth is ready to render sound. The foreground
+`speak` pipeline instead starts its player before synthesis. Faster warm
+synthesis can expose a sink wake-up delay; this is a host hypothesis, not
+something VM tests can establish.
+
+On pale, compare cold playback after the earbuds have idled with immediate
+replays and with a wired/default sink. Observe intent text and lifecycle
+while replaying the reported message (these subjects contain spoken text):
+
+```sh
+nats --server nats://127.0.0.1:4222 sub 'speech.>'
+wpctl status -n
+journalctl --user -u speech-bridge.service --since '5 minutes ago'
+speak --output /tmp/speech-opening.wav \
+  'Pi speech now uses NATS. The opening words must survive.'
+pw-play --target=bluez_output.58_FC_C6_CE_92_70.1 /tmp/speech-opening.wav
+```
+
+Verify seq 0 contains the opening words, and look for rejected/stopped
+utterances. Listen to the saved WAV on a warmed or wired sink: if its
+opening is missing there too, investigate synthesis rather than transport.
+Optionally record the sink monitor during a cold replay and listen back
+warm; intact monitor audio with missing physical sound narrows the loss to
+the output path, though it does not measure the earbuds themselves:
+
+```sh
+pw-record --target=bluez_output.58_FC_C6_CE_92_70.1 \
+  --properties='{ stream.capture.sink = true }' /tmp/speech-monitor.wav
+```
+
+The opt-in `programs.local-tts.bridge.leadingSilenceMs` (default 0, range
+0–2000) prepends mono s16 24 kHz zero samples before the first audio of an
+utterance. Try 350, then compare 0/350/700 ms after equal idle periods. It
+is not a sleep: silence traverses the actual player and sink. It is not
+repeated for subsequent chunks, does not alter generated WAVs or direct
+`speak`, and remains cancellable through the existing bounded pipe. A
+replacement utterance gets its own padding. It cannot guarantee readiness
+or address devices that mute again between sentence players.
+
+After fetching and safely fast-forwarding `feat/agent-nats` on the host,
+set that option in `home/users/pl/pale.nix`, then run from the checkout:
+
+```sh
+home-manager switch --flake './home#pl@pale'
+systemctl --user restart speech-bridge.service
+systemctl --user cat speech-bridge.service
+```
+
+Confirm `--leading-silence-ms 350` in ExecStart. No NixOS rebuild, NATS
+restart, VM rebuild or Pi reload is needed for this bridge-only option.
+Test cold first playback, immediate replay, multi-chunk continuity, stop
+before/during audio, rapid replacement and clipboard/agent replacement.
+Report the smallest effective padding and any remaining clipping; physical
+acceptance is still pending. These changes do not enable padding on pale
+automatically.
+
 ## NATS voice prototype
 
 Pale enables `bridge.natsUrl = "nats://127.0.0.1:4222"`. Other profiles

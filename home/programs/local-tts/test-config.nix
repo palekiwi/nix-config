@@ -15,6 +15,7 @@ let
             enable = enabled;
             inherit backend target;
             bridge.enable = bridge;
+            bridge.leadingSilenceMs = if enabled then 350 else 0;
             bridge.natsUrl = if bridge && enabled then "nats://127.0.0.1:4222" else null;
           };
         }
@@ -54,6 +55,9 @@ assert
 assert !(lib.hasInfix "SPEAK_TARGET" (installPhase enabled));
 assert builtins.length (lib.splitString targetFlag (installPhase targeted)) == 3;
 assert builtins.attrNames unified.config.systemd.user.services == [ "speech-bridge" ];
+assert lib.hasInfix "--leading-silence-ms 350" (
+  builtins.head unified.config.systemd.user.services.speech-bridge.Service.ExecStart
+);
 assert speechPackages bridged == [ ];
 assert builtins.attrNames bridged.config.systemd.user.services == [ "speech-bridge" ];
 assert bridge.Install.WantedBy == [ "default.target" ];
@@ -66,7 +70,7 @@ assert
     port = 8881;
   };
 assert
-  builtins.match ".*/bin/speech-bridge --host 10\\.77\\.0\\.1 --port 8881 --voice af_bella --speed 1\\.0+ --max-chars 1000 --max-queue 64" (
+  builtins.match ".*/bin/speech-bridge --host 10\\.77\\.0\\.1 --port 8881 --voice af_bella --speed 1\\.0+ --max-chars 1000 --max-queue 64 --leading-silence-ms 0" (
     builtins.head bridge.Service.ExecStart
   ) != null;
 {

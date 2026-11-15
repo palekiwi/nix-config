@@ -142,7 +142,14 @@ class BridgeTests(unittest.TestCase):
         self.player.chmod(0o755)
         self.before_synthesis = None
 
-    def start(self, max_queue=8, max_chars=100, say_slots=4, read_timeout=5.0):
+    def start(
+        self,
+        max_queue=8,
+        max_chars=100,
+        say_slots=4,
+        read_timeout=5.0,
+        leading_silence_ms=0,
+    ):
         def synthesize(text, sink, on_connect):
             if self.before_synthesis is not None:
                 self.before_synthesis()
@@ -152,6 +159,7 @@ class BridgeTests(unittest.TestCase):
             synthesize,
             speech_bridge.player_command(str(self.player), "1.5"),
             max_queue,
+            leading_silence_ms,
         )
         worker = threading.Thread(target=self.bridge.run, daemon=True)
         worker.start()
@@ -256,6 +264,73 @@ class BridgeTests(unittest.TestCase):
             ],
         )
         self.assertEqual(events[1][1]["reason"], "replaced")
+
+    def test_nats_prefix_and_pcm_survive_replacement(self):
+        from test_voice import chunk
+
+        self.kokoro.modes.append("stall")
+        self.start()
+        self.assertTrue(self.bridge.intent(chunk("old"), 100))
+        self.wait_for(lambda: self.played() == [b"abcd"])
+        text = "Pi speech now uses NATS. The opening words must survive."
+        body = chunk("replay", final=True)
+        body["text"] = text
+        self.assertTrue(self.bridge.intent(body, 100))
+        self.wait_for(lambda: len(self.played()) == 2 and self.idle())
+        self.assertEqual(self.kokoro.inputs()[-1], text)
+        self.assertEqual(self.played()[-1], b"abcd")
+
+    def test_leading_silence_once_per_utterance_not_chunk(self):
+        from test_voice import chunk
+
+        self.start(leading_silence_ms=350)
+        padding = bytes(16800)
+        self.assertTrue(self.bridge.intent(chunk("one"), 100))
+        self.wait_for(lambda: self.played() == [padding + b"abcd"] and self.idle())
+        self.assertTrue(self.bridge.intent(chunk("one", seq=1, final=True), 100))
+        self.wait_for(lambda: len(self.played()) == 2 and self.idle())
+        self.assertEqual(self.played(), [padding + b"abcd", b"abcd"])
+        self.assertTrue(self.bridge.intent(chunk("two", final=True), 100))
+        self.wait_for(lambda: len(self.played()) == 3 and self.idle())
+        self.assertEqual(self.played()[-1], padding + b"abcd")
+
+    def test_leading_silence_preserves_streaming_and_cancellation(self):
+        from test_voice import chunk
+
+        self.kokoro.default = "stall"
+        self.start(leading_silence_ms=350)
+        self.assertTrue(self.bridge.intent(chunk("old"), 100))
+        self.wait_for(lambda: self.played() == [bytes(16800) + b"abcd"])
+        old_player = self.players()[0]
+        self.assertTrue(self.bridge.intent(chunk("new", final=True), 100))
+        self.wait_for(
+            lambda: (
+                len(self.played()) == 2 and self.played()[-1] == bytes(16800) + b"abcd"
+            )
+        )
+        self.assertFalse(self.alive(old_player))
+        self.stop_speech()
+        self.wait_for(self.idle)
+        self.assertFalse(self.alive(self.players()[-1]))
+        self.assertFalse(self.bridge.intent(chunk("old", seq=1), 100))
+
+    def test_stop_cancels_backpressured_leading_silence(self):
+        from test_voice import chunk
+
+        self.player.write_text(f"#!{sys.executable}\nimport time\ntime.sleep(60)\n")
+        self.start(leading_silence_ms=2000)
+        self.assertTrue(self.bridge.intent(chunk(final=True), 100))
+        self.wait_for(lambda: self.bridge.player is not None)
+        player = self.bridge.player
+        self.stop_speech()
+        self.wait_for(self.idle)
+        self.assertIsNotNone(player.poll())
+        self.assertFalse(self.bridge.health()["active"])
+
+    def test_leading_silence_bounds(self):
+        for value in (-1, 2001):
+            with self.assertRaises(ValueError):
+                speech_bridge.Bridge(None, [], 1, value)
 
     def test_http_stop_and_hold_cancel_nats_and_gate_http(self):
         from test_voice import chunk

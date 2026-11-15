@@ -50,8 +50,12 @@ class Sink:
 
     def writeframesraw(self, data):
         if self.player is None:
-            self.player = self.bridge.start_player(self.generation)
+            self.player, padding = self.bridge.start_player(self.generation)
+        else:
+            padding = b""
         try:
+            if padding:
+                self.player.stdin.write(padding)
             self.player.stdin.write(data)
             self.player.stdin.flush()
         except (BrokenPipeError, ValueError):
@@ -80,10 +84,13 @@ class Sink:
 class Bridge:
     """Queue of sentences spoken one at a time, cancellable by stop()."""
 
-    def __init__(self, synthesize, command, max_queue):
+    def __init__(self, synthesize, command, max_queue, leading_silence_ms=0):
         self.synthesize = synthesize
         self.command = command
         self.max_queue = max_queue
+        if not 0 <= leading_silence_ms <= 2000:
+            raise ValueError("leading silence must be between 0 and 2000 ms")
+        self.leading_silence = bytes(48 * leading_silence_ms)
         self.lock = threading.RLock()
         self.ready = threading.Condition(self.lock)
         self.queue = deque()
@@ -260,16 +267,19 @@ class Bridge:
     def start_player(self, generation):
         player = self.spawn()
         with self.lock:
-            if generation == self.generation:
+            valid = generation == self.generation
+            first = valid and self.current and not self.started
+            if valid:
                 self.player = player
-                if self.current and not self.started:
+                if first:
                     self.started = True
                     self.event("started")
-                return player
-        player.kill()
-        player.stdin.close()
-        player.wait()
-        raise Stale()
+        if not valid:
+            player.kill()
+            player.stdin.close()
+            player.wait()
+            raise Stale()
+        return player, self.leading_silence if first else b""
 
     def run(self):
         while True:
@@ -452,6 +462,7 @@ def main(argv=None):
     parser.add_argument("--volume", default=os.environ.get("SPEAK_VOLUME", "1"))
     parser.add_argument("--max-chars", type=int, default=1000)
     parser.add_argument("--max-queue", type=int, default=64)
+    parser.add_argument("--leading-silence-ms", type=int, default=0)
     parser.add_argument("--player", default=os.environ.get("SPEAK_PLAYER", "pw-play"))
     parser.add_argument("--target", default=os.environ.get("SPEAK_TARGET", ""))
     args = parser.parse_args(argv)
@@ -463,6 +474,7 @@ def main(argv=None):
         synthesize,
         player_command(args.player, args.volume, args.target),
         args.max_queue,
+        args.leading_silence_ms,
     )
     transport = None
     if args.nats_url:

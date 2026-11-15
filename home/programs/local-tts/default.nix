@@ -63,6 +63,11 @@ in
         default = 1.0;
         description = "Kokoro speech speed used for every bridge request.";
       };
+      leadingSilenceMs = lib.mkOption {
+        type = lib.types.ints.between 0 2000;
+        default = 0;
+        description = "Silence before the first audio of an utterance, for sink startup; not repeated per chunk.";
+      };
       maxChars = lib.mkOption {
         type = lib.types.ints.positive;
         default = 1000;
@@ -104,6 +109,8 @@ in
               (toString cfg.bridge.maxChars)
               "--max-queue"
               (toString cfg.bridge.maxQueue)
+              "--leading-silence-ms"
+              (toString cfg.bridge.leadingSilenceMs)
             ]
             ++ lib.optionals (cfg.bridge.natsUrl != null) [
               "--nats-url"
