@@ -60,7 +60,7 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py http_engine.py speech_bridge.py speech_nats.py speak-engine "$out/lib/local-tts/"
+    cp speak.py http_engine.py speech_bridge.py speech_nats.py clipboard_nats.py speak-engine "$out/lib/local-tts/"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
       --set-default SPEAK_BACKEND ${lib.escapeShellArg backend} \
@@ -74,6 +74,10 @@ stdenv.mkDerivation {
       --add-flags "$out/lib/local-tts/speech_bridge.py" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
       --set-default SPEAK_VOLUME ${toString volume}${targetFlag}
+    makeWrapper ${bridgePython}/bin/python3 "$out/bin/clipboard-speech-nats" \
+      --add-flags "$out/lib/local-tts/clipboard_nats.py" \
+      --set-default SPEAK_WL_PASTE ${wl-clipboard}/bin/wl-paste \
+      --set-default SPEAK_XCLIP ${xclip}/bin/xclip
     runHook postInstall
   '';
   passthru = { inherit model; };

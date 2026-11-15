@@ -15,6 +15,7 @@ let
             enable = enabled;
             inherit backend target;
             bridge.enable = bridge;
+            bridge.natsUrl = if bridge && enabled then "nats://127.0.0.1:4222" else null;
           };
         }
       ];
@@ -24,6 +25,7 @@ let
   disabled = evaluate false "cpu" false null;
   bridged = evaluate false "http" true null;
   targeted = evaluate true "cpu" false "bluez_output.sink";
+  unified = evaluate true "http" true null;
   bridge = bridged.config.systemd.user.services.speech-bridge;
   endpoint = import ./bridge-endpoint.nix;
   speechPackages =
@@ -51,6 +53,7 @@ assert
   (builtins.head (speechPackages enabled)).drvPath == (pkgs.callPackage ./package.nix { }).drvPath;
 assert !(lib.hasInfix "SPEAK_TARGET" (installPhase enabled));
 assert builtins.length (lib.splitString targetFlag (installPhase targeted)) == 3;
+assert builtins.attrNames unified.config.systemd.user.services == [ "speech-bridge" ];
 assert speechPackages bridged == [ ];
 assert builtins.attrNames bridged.config.systemd.user.services == [ "speech-bridge" ];
 assert bridge.Install.WantedBy == [ "default.target" ];

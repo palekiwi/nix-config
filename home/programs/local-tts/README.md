@@ -49,7 +49,38 @@ stdin/file/clipboard to keep it out of the CLI's own argument list as well.
 Errors/verbose diagnostics may contain content; do not treat this as a
 secret-input facility.
 
-## Desktop clipboard toggle
+## Unified NATS clipboard toggle on pale
+
+With `bridge.enable` and `bridge.natsUrl` set (as on pale), **Ctrl+Pause**
+queries `speech.query.state`. Active speech from any source is stopped via
+`speech.intent.stop`; otherwise clipboard text is cleaned and published in
+contiguous `speech.intent.say` chunks with a fresh utterance ID. Each chunk
+awaits acceptance. A runtime lock serializes local key presses. There is no
+separate clipboard-speech user unit on pale, and no audio fallback on NATS
+failure. Errors go to sxhkd stderr. Empty clipboard is a no-op. Very large
+input may fill the bridge queue: rejection is visible and Ctrl+Pause can
+stop the partial utterance. Query/stop is not atomic against other sources.
+
+Activate both NixOS (firewall) and Home Manager (bridge, package, bindings):
+
+```sh
+sudo nixos-rebuild switch --flake .#pale
+home-manager switch --flake './home#pl@pale'
+systemctl --user restart speech-bridge.service sxhkd.service
+```
+
+From a clean host feature checkout, first `git fetch vm`, compare
+`HEAD...vm/feat/agent-nats` for divergence, then fast-forward only when safe.
+Do not reset host work or deploy from the guest.
+
+Host QA: start clipboard speech, stop before/during audio, let it finish and
+start again; try empty clipboard, NATS down, active holds, and rapid presses.
+Confirm clipboard replaces/stops agent speech, and direct HTTP emergency
+stop works with NATS down. Verify Ctrl+Shift+Pause is delivered physically
+and neither shortcut triggers Handy. Manual recovery:
+`systemctl --user restart speech-bridge.service`.
+
+## Legacy standalone clipboard toggle (without NATS bridge)
 
 sxhkd binds **Ctrl+Pause** to `clipboard-speech-toggle` when
 `programs.local-tts.enable` is true. The command resolves through the desktop

@@ -8,9 +8,17 @@ let
   cfg = config.programs.local-tts;
   endpoint = import ./bridge-endpoint.nix;
   speech = pkgs.callPackage ./package.nix { inherit (cfg) backend volume target; };
-  toggle = pkgs.writeShellScriptBin "clipboard-speech-toggle" ''
-    exec ${pkgs.python3}/bin/python3 ${./clipboard_toggle.py} ${pkgs.systemd}/bin/systemctl
-  '';
+  unified = cfg.bridge.enable && cfg.bridge.natsUrl != null;
+  toggle = pkgs.writeShellScriptBin "clipboard-speech-toggle" (
+    if unified then
+      ''
+        exec ${speech}/bin/clipboard-speech-nats --url ${lib.escapeShellArg cfg.bridge.natsUrl} --max-chars ${toString cfg.bridge.maxChars}
+      ''
+    else
+      ''
+        exec ${pkgs.python3}/bin/python3 ${./clipboard_toggle.py} ${pkgs.systemd}/bin/systemctl
+      ''
+  );
 in
 {
   options.programs.local-tts = {
@@ -113,7 +121,7 @@ in
         speech
         toggle
       ];
-      systemd.user.services.clipboard-speech = {
+      systemd.user.services.clipboard-speech = lib.mkIf (!unified) {
         Unit = {
           Description = "Clipboard speech owned by the desktop toggle";
           StartLimitIntervalSec = 0;
