@@ -165,8 +165,11 @@ def synthesize(text, output=None, verbose=False):
                 "--channels=1",
                 f"--volume={os.environ.get('SPEAK_VOLUME', '1')}",
                 "--properties={ application.name = speak state.restore-props = false }",
-                "-",
             ]
+            target = os.environ.get("SPEAK_TARGET", "")
+            if target:
+                player.append(f"--target={target}")
+            player.append("-")
             commands.insert(0, (player, {"stderr": options["stderr"]}))
         try:
             run_children(commands, pipeline=output is None)

@@ -24,8 +24,8 @@ def log(message):
     print(f"speech-bridge: {message}", file=sys.stderr, flush=True)
 
 
-def player_command(player, volume):
-    return [
+def player_command(player, volume, target=""):
+    command = [
         player,
         "--raw",
         "--format=s16",
@@ -33,8 +33,11 @@ def player_command(player, volume):
         "--channels=1",
         f"--volume={volume}",
         "--properties={ application.name = speak state.restore-props = false }",
-        "-",
     ]
+    if target:
+        command.append(f"--target={target}")
+    command.append("-")
+    return command
 
 
 class Sink:
@@ -321,13 +324,14 @@ def main(argv=None):
     parser.add_argument("--max-chars", type=int, default=1000)
     parser.add_argument("--max-queue", type=int, default=64)
     parser.add_argument("--player", default=os.environ.get("SPEAK_PLAYER", "pw-play"))
+    parser.add_argument("--target", default=os.environ.get("SPEAK_TARGET", ""))
     args = parser.parse_args(argv)
 
     def synthesize(text, sink, on_connect):
         http_engine.generate(text, sink, args.voice, args.speed, on_connect)
 
     bridge = Bridge(
-        synthesize, player_command(args.player, args.volume), args.max_queue
+        synthesize, player_command(args.player, args.volume, args.target), args.max_queue
     )
     worker = threading.Thread(target=bridge.run, daemon=True)
     worker.start()
