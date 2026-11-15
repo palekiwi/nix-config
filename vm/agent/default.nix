@@ -4,6 +4,7 @@
     ../../users/pl/default.nix
     ./nvim.nix
     ./cue-platform.nix
+    ./supervisor.nix
     ./tmux.nix
     ./proxy.nix
     ./git-hooks.nix
