@@ -24,6 +24,7 @@ in
   options.programs.local-tts = {
     enable = lib.mkEnableOption "foreground local text-to-speech";
     voiceControl.enable = lib.mkEnableOption "experimental guarded NATS dictation controller (no recording observer yet)";
+    cubeControl.enable = lib.mkEnableOption "live NATS cube controller, relay and mechanical host executor";
     backend = lib.mkOption {
       type = lib.types.enum [
         "cpu"
@@ -82,6 +83,58 @@ in
     };
   };
   config = lib.mkMerge [
+    (lib.mkIf cfg.cubeControl.enable {
+      assertions = [
+        {
+          assertion =
+            unified
+            && (config.services.handy.enable or false)
+            && !cfg.voiceControl.enable
+            && !(config.services.cube-remote.enable or false);
+          message = "cubeControl requires NATS speech and Handy, with legacy cube and guarded dictation control disabled";
+        }
+      ];
+      home.packages = [ speech ];
+      systemd.user.services =
+        lib.genAttrs [ "cube-controller" "cube-relay" "cube-host-executor" ]
+          (name: {
+            Unit = {
+              Description = "NATS cube control: ${name}";
+              After = [ "graphical-session.target" ];
+              PartOf = [ "graphical-session.target" ];
+            };
+            Service = {
+              ExecStart = lib.escapeShellArgs (
+                [
+                  "${speech}/bin/cube-control"
+                  (
+                    if name == "cube-controller" then
+                      "controller"
+                    else if name == "cube-relay" then
+                      "relay"
+                    else
+                      "executor"
+                  )
+                  "--url"
+                  (if cfg.bridge.natsUrl == null then "" else cfg.bridge.natsUrl)
+                ]
+                ++ lib.optionals (name == "cube-host-executor") [
+                  "--handy"
+                  (lib.getExe config.services.handy.package)
+                  "--wpctl"
+                  "${pkgs.wireplumber}/bin/wpctl"
+                ]
+                ++ lib.optionals (name == "cube-relay") [
+                  "--mosquitto"
+                  "${pkgs.mosquitto}/bin/mosquitto_sub"
+                ]
+              );
+              Restart = "on-failure";
+              RestartSec = 2;
+            };
+            Install.WantedBy = [ "graphical-session.target" ];
+          });
+    })
     (lib.mkIf cfg.voiceControl.enable {
       assertions = [
         {

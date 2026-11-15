@@ -313,6 +313,13 @@ Report the smallest effective padding and any remaining clipping; physical
 acceptance is still pending. These changes do not enable padding on pale
 automatically.
 
+## Cube NATS migration
+
+See [CUBE-CONTROL.md](CUBE-CONTROL.md) for the pale-only cube relay,
+controller and mechanical host executor, safe replacement of cube-remote,
+activation commands, observation, simulations and pending physical QA.
+Handy state tracking remains deferred; native shortcuts stay unchanged.
+
 ## NATS voice prototype
 
 Pale enables `bridge.natsUrl = "nats://127.0.0.1:4222"`. Other profiles

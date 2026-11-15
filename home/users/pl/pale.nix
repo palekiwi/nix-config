@@ -32,16 +32,7 @@
 
     services.cue-backup.enable = true;
 
-    services.cube-remote = {
-      enable = true;
-      actions = {
-        shake = "xdotool key Pause";
-        tap = "xdotool key alt+x";
-        flip90 = "xdotool key alt+x";
-        rotate_right = ''wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ "$(( (''${ANGLE%.*} + 4) / 5 ))%+"'';
-        rotate_left = ''wpctl set-volume @DEFAULT_AUDIO_SINK@ "$(( (-''${ANGLE%.*} + 4) / 5 ))%-"'';
-      };
-    };
+    services.cube-remote.enable = false;
 
     programs.sc-controller.enable = true;
     programs.local-tts = {
@@ -52,6 +43,7 @@
       bridge.enable = true;
       bridge.natsUrl = "nats://127.0.0.1:4222";
       bridge.leadingSilenceMs = 1000;
+      cubeControl.enable = true;
     };
   };
 }
