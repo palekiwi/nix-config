@@ -9,6 +9,7 @@
     ./git-hooks.nix
     ./shell.nix
     ./agent-nats.nix
+    ./github-service.nix
     ../../modules/machine-role.nix
   ];
 

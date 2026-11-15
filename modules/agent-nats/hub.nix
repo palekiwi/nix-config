@@ -47,6 +47,11 @@ in
             exports = [
               { stream = endpoint.subjects; }
               { stream = "speech.intent.>"; }
+              {
+                service = "github.api.v1.*";
+                response_type = "singleton";
+              }
+              { stream = "github.evt.v1.*"; }
             ];
           };
           ${host} = {
@@ -63,6 +68,18 @@ in
                 stream = {
                   account = agent;
                   subject = "speech.intent.>";
+                };
+              }
+              {
+                service = {
+                  account = agent;
+                  subject = "github.api.v1.*";
+                };
+              }
+              {
+                stream = {
+                  account = agent;
+                  subject = "github.evt.v1.*";
                 };
               }
             ];
