@@ -1,4 +1,4 @@
-# Live agent idle desktop prototype
+# Live agent idle notifications (desktop and Gotify)
 
 Pale's existing cubeControl option now starts one `agent-controller`
 process for cube rules and notifications. The separate cube relay and
@@ -8,10 +8,11 @@ stay disabled. No Handy shortcuts, speech padding or cube mappings change.
 The controller subscribes to core NATS `agent.evt.*.settled`, not a
 JetStream consumer. Every valid live settled event requests one desktop
 notification, except settled events from deny-listed service agents (see
-below). There are no duration, pipeline, aggregation or success
-filters. There is no Gotify, registry query, history/read state, retry
-queue or replay after restart. Events while disconnected are lost; NATS
-outages terminate the processes for systemd restart, without fallback.
+below). Interactive sessions (events without an `agent` field) also
+push to Gotify when enabled (see "Gotify channel"). There are no
+duration, pipeline, aggregation or success filters. There is no
+registry query, history/read state, retry queue or replay after
+restart. Events while disconnected are lost; NATS outages terminate the processes for systemd restart, without fallback.
 
 ## Settled event fields
 
@@ -76,6 +77,57 @@ settled from agent <name>` to the journal and reports
 deny check, as before. Filtering is controller policy; pi always
 publishes.
 
+## Gotify channel
+
+Gotify is a second channel, independent of the desktop one. Routing for
+a valid settled event:
+
+- `agent` is deny-listed: dropped, neither channel.
+- `agent` field present (any value, including empty; delegate and other
+  cue-agent runs): desktop only.
+- no `agent` field (interactive pi session): desktop and Gotify.
+
+For a qualifying event the controller publishes `host.cmd.notify
+{summary, body, id, ts}` and then `host.cmd.gotify {title, message,
+priority, id, ts}`; title and message are the same summary and body.
+Priority is `priority` (default 5) for a normal idle and `alertPriority`
+(default 7) when the event is aborted or errored. Each command is sent
+even if the other fails; any failed or rejected command makes the
+controller report `accepted: false` with `reason: RuntimeError` on
+`cube.evt.controller.result` and print e.g. `cube controller:
+RuntimeError: host.cmd.gotify rejected` to the journal.
+
+`cube-host-executor` performs the push: a fixed POST of JSON `{title,
+message, priority}` to `<url>/message`, with the application token in
+the `X-Gotify-Key` header (never in the URL, never logged). It uses the
+Python standard library (urllib), no proxy, no redirects, a three-second
+timeout and no retries. The token is read from the token file at send
+time, so a missing, unreadable or malformed token file is a per-message
+failure (`FileNotFoundError`, `PermissionError`, `ValueError`), not a
+crash. The file may hold the bare token or a `GOTIFY_TOKEN=<token>`
+line. HTTP errors, timeouts and unreachable servers are reported like
+every other executor failure: a `cube executor: <Error>: <message>`
+journal line and `host.evt.execution {subject: "host.cmd.gotify",
+accepted: false, reason}`. Success reports `accepted: true, status`. The
+executor validates the command the same way as `host.cmd.notify`
+(summary pattern, 100/256 bounds, priority an integer 0-10), strips
+control characters, and keeps message line breaks; no markup escaping is
+applied since Gotify renders plain text. The controller never sees the
+token. The executor only subscribes to `host.cmd.gotify` when Gotify is
+enabled.
+
+Options under `programs.local-tts.cubeControl.gotify`:
+
+- `enable` (default false; pale sets it in `home/users/pl/pale.nix`):
+  passes `--gotify --gotify-priority <n> --gotify-alert-priority <n>` to
+  agent-controller and `--gotify-url <url> --gotify-token-file <path>`
+  to cube-host-executor.
+- `url` (default `http://haze:8780`): Gotify base URL, the same server
+  acuity on pale posts to.
+- `tokenFile` (default `/run/secrets/gotify/token`): the existing sops
+  secret `gotify/token`, owned by `pl` on pale. No new secret.
+- `priority` (default 5) and `alertPriority` (default 7), 0-10.
+
 ## Bounds and execution
 
 Identity labels are flattened, stripped of controls and bounded to 80
@@ -101,10 +153,12 @@ The local integration test exercises live filtering/execution and restart
 without replay; actual VM-to-host leaf delivery still needs host QA.
 
 The controller only decides and sends `host.cmd.notify {summary, body,
-id, ts}`. Existing `cube-host-executor`, already part of the user's
+id, ts}` and, for Gotify, `host.cmd.gotify {title, message, priority, id,
+ts}`. Existing `cube-host-executor`, already part of the user's
 graphical-session target, performs the desktop action. This is simpler
 than a new notification service and preserves the policy/action boundary.
-It uses the user manager's session D-Bus environment, not a VM environment.
+It uses the user manager's session D-Bus environment, not a VM environment,
+and reaches haze:8780 directly from pale.
 HOST publishers remain trusted to invoke fixed actions in this prototype;
 this is not a new arbitrary-command capability or a per-publisher ACL.
 
@@ -140,8 +194,13 @@ Absent legacy units can report not-found on disable/stop. The last
 is-active check must report inactive/not-found for all four units. The new
 controller conflicts with cube-controller as a second migration guard.
 No NixOS rebuild, NATS restart, VM rebuild or pi reload is needed if the
-previous NATS transport is already active. Keep replacements stopped if
-activation fails before restoring old units. Integration into the host
+previous NATS transport is already active. Gotify needs no new secret:
+`/run/secrets/gotify/token` is already deployed on pale; check it with
+`test -r /run/secrets/gotify/token && echo readable` (never print it).
+The `systemctl --user cat` output must show `--gotify ...` on
+agent-controller and `--gotify-url http://haze:8780 --gotify-token-file
+/run/secrets/gotify/token` on cube-host-executor. Keep replacements
+stopped if activation fails before restoring old units. Integration into the host
 integration branch is a separate operator decision.
 
 ## QA (real desktop side effects)
@@ -190,13 +249,72 @@ flip90, rotations and shake using CUBE-CONTROL.md, native Handy shortcuts,
 and absence of duplicate actions. Desktop daemon/D-Bus access, real leaf
 connectivity, physical cube and notification rendering require operator QA.
 
+Gotify channel (desktop and phone):
+
+```sh
+nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
+  '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":1,"aborted":false,"context_title":"Gotify QA interactive","tools":3}'
+nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
+  '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":2,"aborted":true,"context_title":"Gotify QA aborted"}'
+nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
+  '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":3,"aborted":false,"agent":"builder","context_title":"Gotify QA builder"}'
+nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
+  '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":4,"aborted":false,"agent":"summarizer","context_title":"Gotify QA summarizer"}'
+```
+
+Expect:
+
+- seq 1: desktop and phone `Gotify QA interactive idle`, body `3 tools`
+  / `pale-qa`, Gotify priority 5; `host.evt.execution` shows
+  `host.cmd.notify` and `host.cmd.gotify` accepted (`status: 200`).
+- seq 2: desktop and phone `Gotify QA aborted idle (aborted)`, priority 7.
+- seq 3 (`agent: builder`): desktop only; no `host.cmd.gotify` execution.
+- seq 4 (`agent: summarizer`): nothing; `reason: denied agent`.
+
+Failure visibility, desktop unaffected. Temporarily point the token file
+at a missing path (or block haze:8780) and restart only the executor:
+
+```sh
+unit=$(systemctl --user show -p FragmentPath --value cube-host-executor)
+mkdir -p ~/.config/systemd/user/cube-host-executor.service.d
+{ echo '[Service]'; echo 'ExecStart='
+  grep '^ExecStart=' "$unit" | sed 's|/run/secrets/gotify/token|/run/secrets/gotify/missing|'
+} > ~/.config/systemd/user/cube-host-executor.service.d/gotify-qa.conf
+systemctl --user cat cube-host-executor | grep gotify-token-file
+systemctl --user daemon-reload
+systemctl --user restart cube-host-executor
+nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
+  '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":5,"aborted":false,"context_title":"Gotify QA failure"}'
+```
+
+Expect a desktop notification `Gotify QA failure idle`, no phone push,
+`host.evt.execution {subject: "host.cmd.gotify", accepted: false, reason:
+"FileNotFoundError"}`, journal lines `cube executor: FileNotFoundError:
+...` and `cube controller: RuntimeError: host.cmd.gotify rejected`, and
+cube-host-executor still active. Blocking the network instead gives
+`URLError` or `TimeoutError` within about three seconds (the controller
+may report `host.cmd.gotify TimeoutError` first, as its request waits two
+seconds). Restore with:
+
+```sh
+rm ~/.config/systemd/user/cube-host-executor.service.d/gotify-qa.conf
+systemctl --user daemon-reload
+systemctl --user restart cube-host-executor
+```
+
 ## Verification
 
 The package check runs all local-tts Python tests, including real loopback
 NATS/MQTT brokers, fixed argv/failed executor tests, malformed/oversized
 payload rejection, wording, v2 layout and fallbacks, deny list (unit and
-live), cube mappings and restart/no-replay tests. Home Manager service
+live), Gotify routing (interactive: notify and gotify; agent: notify
+only; denied: neither; priorities; independent channel failures), the
+executor's POST JSON and `X-Gotify-Key` header against a loopback HTTP
+server, HTTP error/unreachable/timeout/missing or malformed token
+failures, a live NATS run of both channels with a token-file failure,
+cube mappings and restart/no-replay tests. Home Manager service
 evaluation checks the new controller exists, conflicts with the removed
 old unit, leaves guarded units absent and passes `--deny-agent` for each
-configured name. No deployment
+configured name, plus the Gotify arguments when
+`cubeControl.gotify.enable` is set. No deployment
 or physical acceptance is implied by those checks.
