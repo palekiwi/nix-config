@@ -23,6 +23,7 @@ in
 {
   options.programs.local-tts = {
     enable = lib.mkEnableOption "foreground local text-to-speech";
+    voiceControl.enable = lib.mkEnableOption "experimental guarded NATS dictation controller (no recording observer yet)";
     backend = lib.mkOption {
       type = lib.types.enum [
         "cpu"
@@ -81,6 +82,43 @@ in
     };
   };
   config = lib.mkMerge [
+    (lib.mkIf cfg.voiceControl.enable {
+      assertions = [
+        {
+          assertion = unified && (config.services.handy.enable or false);
+          message = "voiceControl requires the NATS speech bridge and services.handy.enable";
+        }
+      ];
+      home.packages = [ speech ];
+      systemd.user.services = lib.genAttrs [ "voice-controller" "handy-adapter" ] (name: {
+        Unit = {
+          Description = "Guarded NATS voice coordination: ${name}";
+          After = [
+            "graphical-session.target"
+            "speech-bridge.service"
+            "handy.service"
+          ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = lib.escapeShellArgs (
+            [
+              "${speech}/bin/voice-control"
+              (if name == "voice-controller" then "controller" else "adapter")
+              "--url"
+              (if cfg.bridge.natsUrl == null then "" else cfg.bridge.natsUrl)
+            ]
+            ++ lib.optionals (name == "handy-adapter") [
+              "--handy"
+              (lib.getExe config.services.handy.package)
+            ]
+          );
+          Restart = "on-failure";
+          RestartSec = 2;
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      });
+    })
     (lib.mkIf cfg.bridge.enable {
       home.packages = [
         (pkgs.writeShellScriptBin "speech-emergency-stop" ''

@@ -32,8 +32,23 @@ let
     ./handy.nix
     { services.handy.enable = true; }
   ];
+  voice = evaluate' true null [
+    ./handy.nix
+    {
+      services.handy.enable = true;
+      programs.local-tts.bridge.natsUrl = "nats://127.0.0.1:4222";
+      programs.local-tts.voiceControl.enable = true;
+      services.handy.package = pkgs.hello;
+    }
+  ];
   speechVolume = "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}";
 in
+assert !(home.config.systemd.user.services ? voice-controller);
+assert voice.config.systemd.user.services.voice-controller.Service.Restart == "on-failure";
+assert
+  builtins.match ".*adapter.*--handy.*" (
+    builtins.head voice.config.systemd.user.services.handy-adapter.Service.ExecStart
+  ) != null;
 assert !(home.config.services.sxhkd.keybindings ? ${speechVolume});
 assert
   targeted.config.services.sxhkd.keybindings."alt + {button7,button6}"
