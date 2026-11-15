@@ -7,7 +7,7 @@
 let
   cfg = config.programs.local-tts;
   endpoint = import ./bridge-endpoint.nix;
-  speech = pkgs.callPackage ./package.nix { inherit (cfg) backend volume; };
+  speech = pkgs.callPackage ./package.nix { inherit (cfg) backend volume target; };
   toggle = pkgs.writeShellScriptBin "clipboard-speech-toggle" ''
     exec ${pkgs.python3}/bin/python3 ${./clipboard_toggle.py} ${pkgs.systemd}/bin/systemctl
   '';
@@ -27,6 +27,11 @@ in
       type = lib.types.numbers.positive;
       default = 1.0;
       description = "Playback gain passed to pw-play; values above 1 amplify and may clip.";
+    };
+    target = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "PipeWire sink node name speech prefers; falls back to the default sink when absent.";
     };
     bridge = {
       enable = lib.mkEnableOption "the speech bridge serving the agent VM";
