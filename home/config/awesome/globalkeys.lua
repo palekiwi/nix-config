@@ -455,11 +455,6 @@ local globalkeys = gears.table.join(
     { description = "swap with previous client by index", group = "client" }
   ),
 
-  -- Spawn programs
-  awful.key({ ALTKEY }, "XF86AudioRaiseVolume",
-    function() awful.spawn("cplay", { tag = "med" }) end,
-    { description = "open cmus", group = "launcher" }),
-
   -- Reload/Quit
   awful.key({ MODKEY, "Control" }, "q", awesome.restart,
     { description = "reload awesome", group = "awesome" }
