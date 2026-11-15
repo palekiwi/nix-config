@@ -119,6 +119,7 @@ in
                 "dictation.>"
                 "cube.>"
               ];
+              no_ack = true;
               retention = "limits";
               storage = "file";
               max_age = 604800000000000;

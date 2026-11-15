@@ -30,7 +30,73 @@ in
       environment.systemPackages = [
         pkgs.nats-server
         pkgs.nkeys
+        (pkgs.python3.withPackages (ps: [ ps.nats-py ]))
       ];
+
+      environment.etc."speech-request-check.py".text = ''
+        import asyncio
+        import json
+        import sys
+
+        import nats
+
+        sys.path.insert(0, "${../../home/programs/local-tts}")
+        from speech_bridge import Bridge
+        from speech_nats import Transport
+
+
+        class DelayedTransport(Transport):
+            async def message(self, msg):
+                await asyncio.sleep(0.1)
+                await super().message(msg)
+
+
+        async def main():
+            url = "nats://127.0.0.1:${toString endpoint.clientPort}"
+            bridge = Bridge(lambda *args: None, [], 10)
+            transport = DelayedTransport(bridge, url, 1000)
+            transport.start()
+            client = await nats.connect(url)
+            try:
+                for _ in range(100):
+                    if transport.nc and transport.nc.is_connected:
+                        break
+                    await asyncio.sleep(0.05)
+                else:
+                    raise AssertionError("bridge did not connect")
+                await asyncio.sleep(0.2)
+
+                async def request(subject, body):
+                    reply = await client.request(
+                        subject, json.dumps(body).encode(), timeout=2
+                    )
+                    return json.loads(reply.data)
+
+                assert (await request("speech.query.state", {}))["active"] is False
+                body = dict(utt="control-test", seq=0, final=False,
+                            text="hello", origin="test")
+                assert await request("speech.intent.say", body) == {"accepted": True}
+                assert (await request("speech.query.state", {}))["active"] is True
+                for subject in ("speech.intent.stop", "speech.cmd.stop"):
+                    assert await request(subject, {}) == {"accepted": True}
+                    assert (await request("speech.query.state", {}))["active"] is False
+                assert await request("speech.cmd.hold", {"id": "test", "ttl": 1}) == {"accepted": True}
+                assert await request("speech.cmd.release", {"id": "test"}) == {"accepted": True}
+                transport.close()
+                try:
+                    await request("speech.query.state", {})
+                except (nats.errors.TimeoutError, nats.errors.NoRespondersError):
+                    pass
+                else:
+                    raise AssertionError("CONTROL replied without the bridge")
+            finally:
+                transport.close()
+                bridge.close()
+                await client.close()
+
+
+        asyncio.run(main())
+      '';
 
       systemd.services.lan-netns = {
         wantedBy = [ "multi-user.target" ];
@@ -238,12 +304,36 @@ in
         import json
         pale.wait_for_unit("nats-control-stream.service")
         info = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert info["config"]["no_ack"] is True
         assert info["config"]["max_age"] == 604800000000000
         assert info["config"]["max_bytes"] == 67108864
         assert set(info["config"]["subjects"]) == {"speech.>", "dictation.>", "cube.>"}
         assert info["state"]["messages"] > 0
         pale.fail(f"{LEAF}--js-domain ${endpoint.jsDomain} stream info CONTROL")
+        pale.succeed("python3 /etc/speech-request-check.py")
+
+    with subtest("existing CONTROL is reconciled without losing observations"):
+        legacy = dict(info["config"], no_ack=False)
+        pale.succeed("cat > /tmp/legacy-control.json <<'EOF'\n" + json.dumps(legacy) + "\nEOF")
+        pale.succeed(f"{HUB}stream edit CONTROL --config /tmp/legacy-control.json --force")
+        ack = json.loads(pale.succeed(f"{HUB}req speech.query.state '{{}}' --raw --timeout 2s"))
+        assert ack["stream"] == "CONTROL", ack
+        before = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert before["config"].get("no_ack", False) is False
         pale.succeed("systemctl restart nats-control-stream.service")
+        after = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert after["config"]["no_ack"] is True
+        assert after["state"]["messages"] == before["state"]["messages"]
+        assert after["state"]["first_seq"] == before["state"]["first_seq"]
+        assert after["state"]["last_seq"] == before["state"]["last_seq"]
+        assert after["config"] == info["config"]
+        pale.succeed("python3 /etc/speech-request-check.py")
+        observed = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert observed["state"]["messages"] > after["state"]["messages"]
+        pale.succeed("systemctl restart nats-control-stream.service")
+        again = json.loads(pale.succeed(f"{HUB}stream info CONTROL --json"))
+        assert again["config"] == observed["config"]
+        assert again["state"]["last_seq"] == observed["state"]["last_seq"]
 
     with subtest("subjects outside exports do not reach HOST"):
         outside = mark("outside")

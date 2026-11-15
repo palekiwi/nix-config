@@ -259,6 +259,25 @@ leave it null. HTTP stays available during initial connection failure and
 reconnection. The bridge uses live core subscriptions, not JetStream
 consumers. Commands are never replayed. Lifecycle events are best effort
 and not buffered during outages; CONTROL is observation, not execution.
+The CONTROL stream sets `no_ack = true`: its broad observation subjects
+must not send JetStream publish acknowledgments to core request inboxes.
+Only the bridge replies to speech queries, intents and commands. Publishers
+must not use JetStream publish acknowledgment APIs for CONTROL subjects.
+
+After activating a changed hub configuration, reconcile an existing CONTROL
+stream with `sudo systemctl restart nats-control-stream.service`. The unit
+edits the stream in place, preserving recorded observations; no stream
+deletion or bridge restart is needed. Verify with:
+
+```sh
+nats --server nats://127.0.0.1:4222 stream info CONTROL --json | jq '.config.no_ack'
+nats --server nats://127.0.0.1:4222 req speech.query.state '{}' --timeout 2s
+```
+
+The first command must print `true`; the second must return bridge health
+(including `active`), not a `stream`/`seq` storage acknowledgment. Without a
+bridge responder, requests time out or report no responders rather than
+receiving a storage acknowledgment.
 
 - `speech.intent.say`: `{utt, seq, final, text, origin, sid?}`. IDs are
   nonempty strings up to 128 characters; sequences start at zero and must
