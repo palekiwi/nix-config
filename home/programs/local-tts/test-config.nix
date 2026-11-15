@@ -1,7 +1,8 @@
 { pkgs, home-manager }:
 let
+  inherit (pkgs) lib;
   evaluate =
-    enabled: backend: bridge:
+    enabled: backend: bridge: target:
     home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
@@ -12,21 +13,24 @@ let
           home.stateVersion = "24.11";
           programs.local-tts = {
             enable = enabled;
-            inherit backend;
+            inherit backend target;
             bridge.enable = bridge;
           };
         }
       ];
     };
-  enabled = evaluate true "cpu" false;
-  http = evaluate true "http" false;
-  disabled = evaluate false "cpu" false;
-  bridged = evaluate false "http" true;
+  enabled = evaluate true "cpu" false null;
+  http = evaluate true "http" false null;
+  disabled = evaluate false "cpu" false null;
+  bridged = evaluate false "http" true null;
+  targeted = evaluate true "cpu" false "bluez_output.sink";
   bridge = bridged.config.systemd.user.services.speech-bridge;
   endpoint = import ./bridge-endpoint.nix;
   speechPackages =
     configuration:
     builtins.filter (package: (package.pname or "") == "local-tts") configuration.config.home.packages;
+  installPhase = configuration: (builtins.head (speechPackages configuration)).installPhase;
+  targetFlag = "--set-default SPEAK_TARGET ${lib.escapeShellArg "bluez_output.sink"}";
 in
 assert builtins.length (speechPackages enabled) == 1;
 assert speechPackages disabled == [ ];
@@ -42,6 +46,11 @@ assert
   == [ "${builtins.head (speechPackages http)}/bin/speak --clipboard" ];
 assert
   (builtins.head (speechPackages http)).drvPath != (builtins.head (speechPackages enabled)).drvPath;
+assert builtins.length (speechPackages targeted) == 1;
+assert
+  (builtins.head (speechPackages enabled)).drvPath == (pkgs.callPackage ./package.nix { }).drvPath;
+assert !(lib.hasInfix "SPEAK_TARGET" (installPhase enabled));
+assert builtins.length (lib.splitString targetFlag (installPhase targeted)) == 3;
 assert speechPackages bridged == [ ];
 assert builtins.attrNames bridged.config.systemd.user.services == [ "speech-bridge" ];
 assert bridge.Install.WantedBy == [ "default.target" ];
@@ -62,5 +71,6 @@ assert
   disabled = disabled.activationPackage.drvPath;
   http = http.activationPackage.drvPath;
   bridged = bridged.activationPackage.drvPath;
+  targeted = targeted.activationPackage.drvPath;
   package = (builtins.head (speechPackages enabled)).outPath;
 }

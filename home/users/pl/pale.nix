@@ -48,6 +48,7 @@
       enable = true;
       backend = "http";
       volume = 1.5;
+      target = "bluez_output.58_FC_C6_CE_92_70.1";
       bridge.enable = true;
     };
   };

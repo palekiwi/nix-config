@@ -11,8 +11,12 @@
   xclip,
   backend ? "cpu",
   volume ? 1.0,
+  target ? null,
 }:
 let
+  targetFlag = lib.optionalString (
+    target != null
+  ) " --set-default SPEAK_TARGET ${lib.escapeShellArg target}";
   model = stdenvNoCC.mkDerivation {
     pname = "kokoro-int8-en";
     version = "0.19";
@@ -60,11 +64,11 @@ stdenv.mkDerivation {
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
       --set-default SPEAK_VOLUME ${toString volume} \
       --set-default SPEAK_WL_PASTE ${wl-clipboard}/bin/wl-paste \
-      --set-default SPEAK_XCLIP ${xclip}/bin/xclip
+      --set-default SPEAK_XCLIP ${xclip}/bin/xclip${targetFlag}
     makeWrapper ${python3}/bin/python3 "$out/bin/speech-bridge" \
       --add-flags "$out/lib/local-tts/speech_bridge.py" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
-      --set-default SPEAK_VOLUME ${toString volume}
+      --set-default SPEAK_VOLUME ${toString volume}${targetFlag}
     runHook postInstall
   '';
   passthru = { inherit model; };

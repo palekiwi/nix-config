@@ -393,6 +393,33 @@ class BridgeTests(unittest.TestCase):
             self.assertEqual(client.recv(1024), b"")
         self.assertEqual(self.say("free"), 202)
 
+    def test_player_command_target(self):
+        for target in ("", None):
+            arguments = () if target is None else (target,)
+            command = speech_bridge.player_command("pw-play", "1", *arguments)
+            self.assertEqual(command[-1], "-")
+            self.assertFalse(any(arg.startswith("--target") for arg in command))
+        command = speech_bridge.player_command("pw-play", "1", "bluez_output.sink")
+        self.assertEqual(command[-2:], ["--target=bluez_output.sink", "-"])
+
+    def test_main_threads_target(self):
+        for env, argv, expected in (
+            ({}, [], []),
+            ({"SPEAK_TARGET": "env.sink"}, [], ["--target=env.sink"]),
+            ({"SPEAK_TARGET": "env.sink"}, ["--target", "cli.sink"], ["--target=cli.sink"]),
+        ):
+            with patch.dict(os.environ), patch.object(
+                speech_bridge, "Bridge", side_effect=RuntimeError
+            ) as bridge:
+                os.environ.pop("SPEAK_TARGET", None)
+                os.environ.update(env)
+                with self.assertRaises(RuntimeError):
+                    speech_bridge.main(["--host", "127.0.0.1", "--port", "0", *argv])
+                command = bridge.call_args.args[1]
+                self.assertEqual(
+                    [arg for arg in command if arg.startswith("--target")], expected
+                )
+
     def test_binds_non_local_address_with_freebind(self):
         bridge = speech_bridge.Bridge(None, [], 1)
         server = speech_bridge.Server(("192.0.2.1", 0), bridge, 10)

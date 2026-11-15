@@ -343,6 +343,28 @@ class PipelineTests(unittest.TestCase):
             self.assertIn(volume, argv)
             self.assertIn("--properties={ application.name = speak state.restore-props = false }", argv)
 
+    def test_player_target(self):
+        self.script("engine", "sys.stdin.read()\n")
+        self.script(
+            "player",
+            "(root / 'argv').write_text('\\n'.join(sys.argv[1:]))\n"
+            "sys.stdin.buffer.read()\n",
+        )
+        for env, target in (
+            ({}, None),
+            ({"SPEAK_TARGET": ""}, None),
+            ({"SPEAK_TARGET": "bluez_output.sink"}, "--target=bluez_output.sink"),
+        ):
+            self.env.pop("SPEAK_TARGET", None)
+            self.env.update(env)
+            process = self.start()
+            out, err = process.communicate(timeout=10)
+            self.assertEqual(process.returncode, 0, err)
+            argv = (self.root / "argv").read_text().split("\n")
+            self.assertEqual(argv[-1], "-")
+            targets = [arg for arg in argv if arg.startswith("--target")]
+            self.assertEqual(targets, [] if target is None else [target])
+
     def test_cancel_callback_blocked_on_pipe(self):
         self.script(
             "engine",
