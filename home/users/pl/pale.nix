@@ -44,6 +44,7 @@
       bridge.natsUrl = "nats://127.0.0.1:4222";
       bridge.leadingSilenceMs = 1000;
       cubeControl.enable = true;
+      cubeControl.gotify.enable = true;
     };
   };
 }

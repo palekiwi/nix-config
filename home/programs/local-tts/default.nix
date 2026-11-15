@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.programs.local-tts;
+  gotify = cfg.cubeControl.gotify;
   endpoint = import ./bridge-endpoint.nix;
   speech = pkgs.callPackage ./package.nix { inherit (cfg) backend volume target; };
   unified = cfg.bridge.enable && cfg.bridge.natsUrl != null;
@@ -32,6 +33,29 @@ in
         "compactor"
       ];
       description = "cue-agent agent names whose settled events never notify; events without an agent always notify.";
+    };
+    cubeControl.gotify = {
+      enable = lib.mkEnableOption "Gotify pushes for settled events without an agent, alongside the desktop notification";
+      url = lib.mkOption {
+        type = lib.types.str;
+        default = "http://haze:8780";
+        description = "Gotify server base URL; the executor posts to <url>/message.";
+      };
+      tokenFile = lib.mkOption {
+        type = lib.types.str;
+        default = "/run/secrets/gotify/token";
+        description = "File holding the Gotify application token, read by the host executor at send time.";
+      };
+      priority = lib.mkOption {
+        type = lib.types.ints.between 0 10;
+        default = 5;
+        description = "Gotify priority for a normal idle notification.";
+      };
+      alertPriority = lib.mkOption {
+        type = lib.types.ints.between 0 10;
+        default = 7;
+        description = "Gotify priority for an aborted or errored idle notification.";
+      };
     };
     backend = lib.mkOption {
       type = lib.types.enum [
@@ -138,12 +162,25 @@ in
                   "--notify-send"
                   "${pkgs.libnotify}/bin/notify-send"
                 ]
+                ++ lib.optionals (name == "cube-host-executor" && gotify.enable) [
+                  "--gotify-url"
+                  gotify.url
+                  "--gotify-token-file"
+                  gotify.tokenFile
+                ]
                 ++ lib.optionals (name == "agent-controller") (
                   lib.concatMap (agent: [
                     "--deny-agent"
                     agent
                   ]) cfg.cubeControl.notifyDenyAgents
                 )
+                ++ lib.optionals (name == "agent-controller" && gotify.enable) [
+                  "--gotify"
+                  "--gotify-priority"
+                  (toString gotify.priority)
+                  "--gotify-alert-priority"
+                  (toString gotify.alertPriority)
+                ]
                 ++ lib.optionals (name == "cube-relay") [
                   "--mosquitto"
                   "${pkgs.mosquitto}/bin/mosquitto_sub"

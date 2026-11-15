@@ -1,7 +1,9 @@
 import html
+import json
 import math
 import re
 import unicodedata
+import urllib.request
 
 SUMMARY = re.compile(r".+ idle( \((aborted|error|aborted, error)\))?", re.S)
 
@@ -50,6 +52,20 @@ def agent_of(body):
     return label(body.get("agent"))
 
 
+def status_of(body):
+    status = []
+    if body.get("aborted") is True:
+        status.append("aborted")
+    if (
+        body.get("errored") is True
+        or body.get("error")
+        or body.get("state") == "error"
+        or body.get("stopReason") == "error"
+    ):
+        status.append("error")
+    return status
+
+
 def notification(subject, body):
     sid = body.get("sid")
     if (
@@ -63,16 +79,7 @@ def notification(subject, body):
         or type(body.get("aborted")) is not bool
     ):
         raise ValueError("invalid settled event")
-    status = []
-    if body["aborted"]:
-        status.append("aborted")
-    if (
-        body.get("errored") is True
-        or body.get("error")
-        or body.get("state") == "error"
-        or body.get("stopReason") == "error"
-    ):
-        status.append("error")
+    status = status_of(body)
     suffix = " idle" + (f" ({', '.join(status)})" if status else "")
     name = (
         label(body.get("context_title"))
@@ -99,16 +106,20 @@ def notification(subject, body):
     return {"summary": summary, "body": "\n".join(filter(None, parts))[:256]}
 
 
+def valid(summary, text):
+    return (
+        isinstance(summary, str)
+        and SUMMARY.fullmatch(summary) is not None
+        and len(summary) <= 100
+        and isinstance(text, str)
+        and len(text) <= 256
+    )
+
+
 def notify_argv(executable, body):
     summary = body.get("summary")
     text = body.get("body")
-    if (
-        not isinstance(summary, str)
-        or not SUMMARY.fullmatch(summary)
-        or len(summary) > 100
-        or not isinstance(text, str)
-        or len(text) > 256
-    ):
+    if not valid(summary, text):
         raise ValueError("invalid notification")
     return [
         executable,
@@ -119,3 +130,51 @@ def notify_argv(executable, body):
         html.escape(label(summary, 100)),
         html.escape(lines(text, 256)),
     ]
+
+
+def gotify_message(body):
+    title = body.get("title")
+    message = body.get("message")
+    priority = body.get("priority")
+    if (
+        not valid(title, message)
+        or type(priority) is not int
+        or not 0 <= priority <= 10
+    ):
+        raise ValueError("invalid gotify message")
+    return {
+        "title": label(title, 100),
+        "message": lines(message, 256),
+        "priority": priority,
+    }
+
+
+def gotify_token(path):
+    with open(path, encoding="utf-8") as file:
+        text = file.read(4096)
+    token = next((line.strip() for line in text.splitlines() if line.strip()), "")
+    if token.startswith("GOTIFY_TOKEN="):
+        token = token.split("=", 1)[1].strip().strip("'\"")
+    if not re.fullmatch(r"[A-Za-z0-9._~-]{1,256}", token):
+        raise ValueError("invalid gotify token file")
+    return token
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args):
+        return None
+
+
+def post_gotify(url, token_file, message, timeout=3):
+    request = urllib.request.Request(
+        url.rstrip("/") + "/message",
+        data=json.dumps(message).encode(),
+        headers={
+            "Content-Type": "application/json",
+            "X-Gotify-Key": gotify_token(token_file),
+        },
+        method="POST",
+    )
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect)
+    with opener.open(request, timeout=timeout) as response:
+        return response.status

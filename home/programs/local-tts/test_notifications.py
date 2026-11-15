@@ -2,14 +2,60 @@ import asyncio
 import json
 import shutil
 import tempfile
+import threading
 import time
 import unittest
+import urllib.error
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
 
 from cube_control import Controller, HostExecutor, decode, serve
-from notifications import duration, notification, notify_argv
-from test_cube_control import LiveTests
+from notifications import duration, gotify_message, notification, notify_argv
+from test_cube_control import LiveTests, free_port
+
+TOKEN = "AbC.123-token"
+
+
+class Gotify:
+    def __init__(self, status=200, delay=0):
+        self.requests = []
+        owner = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                time.sleep(delay)
+                length = int(self.headers["Content-Length"])
+                owner.requests.append(
+                    (
+                        self.path,
+                        dict(self.headers),
+                        json.loads(self.rfile.read(length)),
+                    )
+                )
+                self.send_response(status)
+                self.send_header("Content-Length", "2")
+                self.end_headers()
+                self.wfile.write(b"{}")
+
+            def log_message(self, *args):
+                pass
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.server.daemon_threads = True
+        self.server.handle_error = lambda *args: None
+        self.url = f"http://127.0.0.1:{self.server.server_address[1]}"
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+
+    def close(self):
+        self.server.shutdown()
+        self.server.server_close()
+
+
+def token_file(directory, text=TOKEN + "\n", name="token"):
+    path = Path(directory) / name
+    path.write_text(text)
+    return str(path)
 
 
 def event(**fields):
@@ -121,6 +167,138 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             "agent.evt.session-qa.settled", event(agent="summarizer")
         )
         self.assertEqual(len(calls), 3)
+
+    async def test_gotify_routing(self):
+        calls = []
+
+        async def call(subject, payload):
+            calls.append((subject, payload))
+            return {"accepted": True}
+
+        controller = Controller(call, ["summarizer"], (5, 7))
+        result = await controller.handle(
+            "agent.evt.session-qa.settled", event(context_title="Design", tools=2)
+        )
+        self.assertEqual(result, {"accepted": True, "channels": ["notify", "gotify"]})
+        self.assertEqual([s for s, _ in calls], ["host.cmd.notify", "host.cmd.gotify"])
+        notify, gotify = calls[0][1], calls[1][1]
+        self.assertEqual(
+            {k: gotify[k] for k in ("title", "message", "priority")},
+            {"title": "Design idle", "message": "2 tools\ncasm", "priority": 5},
+        )
+        self.assertEqual(gotify["title"], notify["summary"])
+        self.assertNotEqual(gotify["id"], notify["id"])
+        self.assertIsInstance(gotify["ts"], float)
+        for fields in ({"aborted": True}, {"errored": True}):
+            calls.clear()
+            await controller.handle(
+                "agent.evt.session-qa.settled", {**event(), **fields}
+            )
+            self.assertEqual(calls[1][1]["priority"], 7)
+        for agent, expected in (
+            ("builder", ["host.cmd.notify"]),
+            ("", ["host.cmd.notify"]),
+            ("summarizer", []),
+        ):
+            calls.clear()
+            await controller.handle("agent.evt.session-qa.settled", event(agent=agent))
+            self.assertEqual([s for s, _ in calls], expected)
+        calls.clear()
+        await Controller(call).handle("agent.evt.session-qa.settled", event())
+        self.assertEqual([s for s, _ in calls], ["host.cmd.notify"])
+
+    async def test_gotify_channels_are_independent(self):
+        for failing in ("host.cmd.notify", "host.cmd.gotify"):
+            calls = []
+
+            async def call(subject, payload):
+                calls.append(subject)
+                if subject == failing:
+                    raise TimeoutError
+                return {"accepted": subject != failing}
+
+            with self.assertRaisesRegex(RuntimeError, failing):
+                await Controller(call, (), (5, 7)).handle(
+                    "agent.evt.session-qa.settled", event()
+                )
+            self.assertEqual(calls, ["host.cmd.notify", "host.cmd.gotify"])
+
+        async def reject(subject, payload):
+            return {"accepted": subject == "host.cmd.notify"}
+
+        with self.assertRaisesRegex(RuntimeError, "host.cmd.gotify rejected"):
+            await Controller(reject, (), (5, 7)).handle(
+                "agent.evt.session-qa.settled", event()
+            )
+
+    async def test_gotify_executor_posts_json_with_header(self):
+        server = Gotify()
+        self.addCleanup(server.close)
+        with tempfile.TemporaryDirectory() as directory:
+            for text in (TOKEN + "\n", f"GOTIFY_TOKEN={TOKEN}\n"):
+                executor = HostExecutor(
+                    "h", "w", "n", server.url + "/", token_file(directory, text)
+                )
+                result = await executor.handle(
+                    "host.cmd.gotify",
+                    {
+                        "title": "<b>x</b> idle",
+                        "message": "ctx\x00\u202e\n\ncasm",
+                        "priority": 7,
+                        "id": "i",
+                        "ts": time.time(),
+                    },
+                )
+                self.assertEqual(result, {"accepted": True, "status": 200})
+        self.assertEqual(len(server.requests), 2)
+        for path, headers, body in server.requests:
+            self.assertEqual(path, "/message")
+            self.assertEqual(headers["X-Gotify-Key"], TOKEN)
+            self.assertEqual(headers["Content-Type"], "application/json")
+            self.assertEqual(
+                body, {"title": "<b>x</b> idle", "message": "ctx\ncasm", "priority": 7}
+            )
+        for body in (
+            {"title": "x idle", "message": "m", "priority": 11},
+            {"title": "x idle", "message": "m", "priority": True},
+            {"title": "anything", "message": "m", "priority": 5},
+            {"title": "x idle", "message": "m" * 257, "priority": 5},
+        ):
+            with self.assertRaises(ValueError):
+                gotify_message(body)
+        with self.assertRaisesRegex(ValueError, "invalid command"):
+            await HostExecutor("h", "w").handle(
+                "host.cmd.gotify",
+                {"title": "x idle", "message": "", "priority": 5, "ts": time.time()},
+            )
+
+    async def test_gotify_executor_failures(self):
+        command = {"title": "x idle", "message": "m", "priority": 5}
+        with tempfile.TemporaryDirectory() as directory:
+            token = token_file(directory)
+            missing = str(Path(directory) / "missing")
+            server = Gotify(status=500)
+            self.addCleanup(server.close)
+            slow = Gotify(delay=5)
+            self.addCleanup(slow.close)
+            cases = (
+                (server.url, token, urllib.error.HTTPError),
+                (server.url, missing, FileNotFoundError),
+                (server.url, token_file(directory, "bad token\n", "bad"), ValueError),
+                (f"http://127.0.0.1:{free_port()}", token, urllib.error.URLError),
+            )
+            for url, path, error in cases:
+                with self.assertRaises(error):
+                    await HostExecutor("h", "w", "n", url, path).handle(
+                        "host.cmd.gotify", {**command, "ts": time.time()}
+                    )
+            self.assertEqual(len(server.requests), 1)
+            started = time.monotonic()
+            with self.assertRaises(TimeoutError):
+                await HostExecutor("h", "w", "n", slow.url, token).handle(
+                    "host.cmd.gotify", {**command, "ts": time.time()}
+                )
+            self.assertLess(time.monotonic() - started, 3.5)
 
     async def test_subject_schema_and_malformed_payloads(self):
         for subject in (
@@ -256,3 +434,81 @@ class NotificationLiveTests(LiveTests):
                 pass
             await asyncio.sleep(0.1)
             self.assertEqual(output.read_text().count("session-qa idle"), 2)
+
+    async def test_live_gotify_channel_and_failure(self):
+        server = Gotify()
+        self.addCleanup(server.close)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "calls"
+            executable = Path(directory) / "notify"
+            executable.write_text(f'#!/bin/sh\nprintf "%s\\n" "$@" >> {output}\n')
+            executable.chmod(0o700)
+            token = token_file(directory)
+            executor = asyncio.create_task(
+                serve(
+                    self.url,
+                    "executor",
+                    notify_send=str(executable),
+                    gotify_url=server.url,
+                    gotify_token_file=token,
+                )
+            )
+            self.tasks.extend(
+                [
+                    executor,
+                    asyncio.create_task(
+                        serve(
+                            self.url,
+                            "controller",
+                            deny_agents=["summarizer"],
+                            gotify=(5, 7),
+                        )
+                    ),
+                ]
+            )
+            await asyncio.sleep(0.2)
+
+            async def settled(**fields):
+                await self.nc.publish(
+                    "agent.evt.session-qa.settled", json.dumps(event(**fields)).encode()
+                )
+                executions = []
+                async with asyncio.timeout(3):
+                    while True:
+                        name, body = await self.events.get()
+                        if name == "host.evt.execution":
+                            executions.append(body)
+                        elif name == "cube.evt.controller.result":
+                            return body, executions
+
+            result, executions = await settled()
+            self.assertEqual(result["channels"], ["notify", "gotify"])
+            self.assertEqual(
+                [e["subject"] for e in executions],
+                ["host.cmd.notify", "host.cmd.gotify"],
+            )
+            self.assertEqual(len(server.requests), 1)
+            self.assertEqual(server.requests[0][2]["title"], "session-qa idle")
+            result, executions = await settled(agent="builder")
+            self.assertEqual(result["channels"], ["notify"])
+            result, executions = await settled(agent="summarizer")
+            self.assertEqual(result["reason"], "denied agent")
+            self.assertEqual(len(server.requests), 1)
+            self.assertEqual(output.read_text().count("session-qa idle"), 2)
+            Path(token).unlink()
+            result, executions = await settled()
+            self.assertFalse(result["accepted"])
+            self.assertEqual(result["reason"], "RuntimeError")
+            self.assertEqual(output.read_text().count("session-qa idle"), 3)
+            self.assertEqual(
+                executions,
+                [
+                    {"subject": "host.cmd.notify", "accepted": True, "returncode": 0},
+                    {
+                        "subject": "host.cmd.gotify",
+                        "accepted": False,
+                        "reason": "FileNotFoundError",
+                    },
+                ],
+            )
+            self.assertFalse(executor.done())

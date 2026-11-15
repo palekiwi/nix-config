@@ -1,12 +1,20 @@
 import argparse
 import asyncio
+import http.client
 import json
 import math
 import time
 import uuid
 
 import nats
-from notifications import agent_of, notification, notify_argv
+from notifications import (
+    agent_of,
+    gotify_message,
+    notification,
+    notify_argv,
+    post_gotify,
+    status_of,
+)
 from voice_control import request
 
 DEVICE = "pale_cube"
@@ -85,9 +93,25 @@ class CubeController:
 
 
 class Controller(CubeController):
-    def __init__(self, call, deny_agents=()):
+    def __init__(self, call, deny_agents=(), gotify=None):
         super().__init__(call)
         self.deny_agents = frozenset(deny_agents)
+        self.gotify = gotify
+
+    async def deliver(self, subject, payload):
+        payload.update(ts=time.time(), id=str(uuid.uuid4()))
+        try:
+            result = await self.call(subject, payload)
+        except (
+            ValueError,
+            TypeError,
+            OSError,
+            RuntimeError,
+            TimeoutError,
+            nats.errors.Error,
+        ) as error:
+            return f"{subject} {type(error).__name__}"
+        return None if result.get("accepted") is True else f"{subject} rejected"
 
     async def handle(self, subject, body):
         if subject.startswith("agent."):
@@ -98,22 +122,59 @@ class Controller(CubeController):
                     f"agent controller: dropped settled from agent {agent}", flush=True
                 )
                 return {"accepted": True, "reason": "denied agent"}
-            payload.update(ts=time.time(), id=str(uuid.uuid4()))
-            result = await self.call("host.cmd.notify", payload)
-            if result.get("accepted") is not True:
-                raise RuntimeError("notification rejected")
-            return result
+            commands = [("host.cmd.notify", payload)]
+            if self.gotify and "agent" not in body:
+                priority, alert_priority = self.gotify
+                commands.append(
+                    (
+                        "host.cmd.gotify",
+                        {
+                            "title": payload["summary"],
+                            "message": payload["body"],
+                            "priority": alert_priority if status_of(body) else priority,
+                        },
+                    )
+                )
+            failures = [
+                failure
+                for failure in [await self.deliver(*command) for command in commands]
+                if failure
+            ]
+            if failures:
+                raise RuntimeError("; ".join(failures))
+            return {
+                "accepted": True,
+                "channels": [name.rsplit(".", 1)[1] for name, _ in commands],
+            }
         return await super().handle(subject, body)
 
 
 class HostExecutor:
-    def __init__(self, handy, wpctl, notify_send="notify-send"):
+    def __init__(
+        self,
+        handy,
+        wpctl,
+        notify_send="notify-send",
+        gotify_url=None,
+        gotify_token_file=None,
+    ):
         self.handy = handy
         self.wpctl = wpctl
         self.notify_send = notify_send
+        self.gotify_url = gotify_url
+        self.gotify_token_file = gotify_token_file
 
     async def handle(self, subject, body):
         fresh(body)
+        if subject == "host.cmd.gotify" and self.gotify_url:
+            message = gotify_message(body)
+            status = await asyncio.wait_for(
+                asyncio.to_thread(
+                    post_gotify, self.gotify_url, self.gotify_token_file, message, 3
+                ),
+                3,
+            )
+            return {"accepted": True, "status": status}
         if subject == "host.cmd.notify":
             args = notify_argv(self.notify_send, body)
         elif subject == "host.cmd.handy" and body.get("action") in ("toggle", "cancel"):
@@ -199,6 +260,9 @@ async def serve(
     port=1883,
     notify_send="notify-send",
     deny_agents=(),
+    gotify=None,
+    gotify_url=None,
+    gotify_token_file=None,
 ):
     disconnected = asyncio.Event()
 
@@ -217,9 +281,9 @@ async def serve(
     )
     queue = asyncio.Queue(maxsize=64)
     handler = (
-        Controller(lambda s, b: request(nc, s, b), deny_agents)
+        Controller(lambda s, b: request(nc, s, b), deny_agents, gotify)
         if mode == "controller"
-        else HostExecutor(handy, wpctl, notify_send)
+        else HostExecutor(handy, wpctl, notify_send, gotify_url, gotify_token_file)
     )
 
     async def report(result, subject):
@@ -248,6 +312,7 @@ async def serve(
             [f"cube.evt.{DEVICE}.*", "agent.evt.*.settled"]
             if mode == "controller"
             else ["host.cmd.handy", "host.cmd.volume", "host.cmd.notify"]
+            + (["host.cmd.gotify"] if gotify_url else [])
         )
         for subject in subjects:
             await nc.subscribe(
@@ -270,6 +335,7 @@ async def serve(
                 OSError,
                 RuntimeError,
                 TimeoutError,
+                http.client.HTTPException,
                 nats.errors.Error,
             ) as error:
                 print(f"cube {mode}: {type(error).__name__}: {error}", flush=True)
@@ -309,6 +375,11 @@ def main():
     parser.add_argument("--mqtt-host", default="haze")
     parser.add_argument("--mqtt-port", type=int, default=1883)
     parser.add_argument("--deny-agent", action="append", default=[])
+    parser.add_argument("--gotify", action="store_true")
+    parser.add_argument("--gotify-priority", type=int, default=5)
+    parser.add_argument("--gotify-alert-priority", type=int, default=7)
+    parser.add_argument("--gotify-url")
+    parser.add_argument("--gotify-token-file", default="/run/secrets/gotify/token")
     args = parser.parse_args()
     asyncio.run(
         serve(
@@ -321,6 +392,13 @@ def main():
             args.mqtt_port,
             args.notify_send,
             args.deny_agent,
+            (
+                (args.gotify_priority, args.gotify_alert_priority)
+                if args.gotify
+                else None
+            ),
+            args.gotify_url,
+            args.gotify_token_file,
         )
     )
 
