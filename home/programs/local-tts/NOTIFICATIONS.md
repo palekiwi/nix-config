@@ -7,23 +7,83 @@ stay disabled. No Handy shortcuts, speech padding or cube mappings change.
 
 The controller subscribes to core NATS `agent.evt.*.settled`, not a
 JetStream consumer. Every valid live settled event requests one desktop
-notification. There are no duration, pipeline, aggregation or success
+notification, except settled events from deny-listed service agents (see
+below). There are no duration, pipeline, aggregation or success
 filters. There is no Gotify, registry query, history/read state, retry
 queue or replay after restart. Events while disconnected are lost; NATS
 outages terminate the processes for systemd restart, without fallback.
 
-`Agent became idle` never claims task success. An aborted event explicitly
-says `aborted`; an error field/state explicitly says `error reported`,
-without exposing error text. Current cue-platform SessionTracker emits
-only v, ts, sid, host, kind, seq and aborted on settled. It does not attach
-the prior error state, cwd, session name or context, so normal identity is
-session ID and host, and prior errors cannot be inferred. Optional session
-name and context/cwd are supported when present; no lookup blocks delivery.
+## Settled event fields
+
+cue-platform's SessionTracker (schema v1, additive) puts these on
+settled; every field after `aborted` is omitted when unknown:
+
+- `v`, `ts`, `sid`, `host`, `kind`, `seq`: envelope.
+- `aborted`: the busy period was aborted.
+- `errored`: the session was in error state when it settled.
+- `context`: canonical cue context address (`org/repo/slug`).
+- `context_title`: `title` (else `description`) of that context's
+  `context.md` in the cue store.
+- `session_name`, `cwd`: pi session name and working directory.
+- `run_id`, `agent`: cue-agent run id and agent name when the session is
+  a cue-agent run (`agent` comes from `CUE_AGENT_NAME`, set by
+  cue-platform on every cue-agent task).
+- `turn_ms`: milliseconds since the input that began the busy period.
+- `tools`: tool calls completed in the busy period.
+
+No assistant, prompt, tool or error text is ever carried or shown.
+
+## Layout
+
+Summary: `<label> idle`, with ` (aborted)`, ` (error)` or
+` (aborted, error)` appended. The label is the first present of
+`context_title`, the context slug (last segment of `context`),
+`session_name`, the basename of `cwd`, and `sid`. `idle` never claims
+task success. Error is shown for `errored: true` and, for older events,
+an `error` field, `state: error` or `stopReason: error`, without
+exposing error text.
+
+Body, one line each, only when present:
+
+- context address
+- `cwd`, with `/home/<user>` or `/root` shortened to `~`
+- `agent <name>`
+- `turn <duration>, <n> tools` (duration like `41s`, `3m12s`, `1h02m`)
+- host
+
+Example: summary `Controller design for the NATS platform idle`, body
+
+```
+palekiwi/palekiwi/controller-design
+~/code/palekiwi/palekiwi
+turn 3m12s, 14 tools
+casm
+```
+
+Older events with only the envelope and `aborted` still notify, as
+`<sid> idle` with the host as body. No lookup blocks delivery.
+
+## Service agent deny list
+
+`programs.local-tts.cubeControl.notifyDenyAgents` (default
+`[ "summarizer" "compactor" ]`) is passed to agent-controller as
+repeated `--deny-agent <name>`. A valid settled event whose `agent` is
+listed is dropped: the controller prints `agent controller: dropped
+settled from agent <name>` to the journal and reports
+`{"accepted": true, "reason": "denied agent"}` on
+`cube.evt.controller.result`; it is not an error. Events without an
+`agent` field always notify. Malformed events are rejected before the
+deny check, as before. Filtering is controller policy; pi always
+publishes.
+
+## Bounds and execution
 
 Identity labels are flattened, stripped of controls and bounded to 80
-characters each. The executor bounds summary/body to 100/256 characters,
-escapes markup, and calls a fixed Nix-store notify-send executable with
-separate argv and `--`. No shell or caller-selected executable/options.
+characters each; the summary label is shortened further so the summary
+stays within 100 characters. The executor bounds summary/body to
+100/256 characters, keeps body line breaks but strips every other
+control character per line, escapes markup, and calls a fixed Nix-store
+notify-send executable with separate argv and `--`. No shell or caller-selected executable/options.
 Event JSON is limited to 8 KiB; other cube/host messages remain 4 KiB.
 Existing 64-message queues, two-second host command expiry and three-second
 subprocess timeout remain. Overload, executor failure and unavailable
@@ -100,8 +160,27 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":2,"aborted":true,"error":true}'
 ```
 
-Expect one idle notification per publish; second says aborted/error reported,
-never succeeded/completed. No event timestamp filter is applied: these
+Expect one idle notification per publish: `notification_qa idle` with
+body `pale-qa`, then `notification_qa idle (aborted, error)`; never
+succeeded/completed.
+
+v2 fields and the deny list:
+
+```sh
+nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
+  '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":3,"aborted":false,"errored":false,"context":"palekiwi/palekiwi/controller-design","context_title":"Controller design QA","cwd":"/home/pl/code/palekiwi/palekiwi","agent":"builder","turn_ms":192400,"tools":14}'
+nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
+  '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":4,"aborted":false,"agent":"summarizer","context_title":"Should not show"}'
+```
+
+The first shows `Controller design QA idle` with body lines
+`palekiwi/palekiwi/controller-design`, `~/code/palekiwi/palekiwi`,
+`agent builder`, `turn 3m12s, 14 tools`, `pale-qa`. The second shows no
+notification; the journal has `dropped settled from agent summarizer`
+and `cube.evt.controller.result` carries `reason: denied agent`. From a
+real pi session after reloading cue-platform dev: the notification is
+labelled with the context title, and a turn summary (summarizer run)
+or log compaction (compactor run) produces no notification. No event timestamp filter is applied: these
 are live publishes, not stored messages. Publish the same command from
 the VM using its existing local NATS URL to verify the leaf/HOST import.
 Also observe an actual pi idle transition. An `end` or `turn_end` subject
@@ -115,7 +194,9 @@ connectivity, physical cube and notification rendering require operator QA.
 
 The package check runs all local-tts Python tests, including real loopback
 NATS/MQTT brokers, fixed argv/failed executor tests, malformed/oversized
-payload rejection, wording, cube mappings and restart/no-replay tests.
-Home Manager service evaluation checks the new controller exists, conflicts
-with the removed old unit, and leaves guarded units absent. No deployment
+payload rejection, wording, v2 layout and fallbacks, deny list (unit and
+live), cube mappings and restart/no-replay tests. Home Manager service
+evaluation checks the new controller exists, conflicts with the removed
+old unit, leaves guarded units absent and passes `--deny-agent` for each
+configured name. No deployment
 or physical acceptance is implied by those checks.
