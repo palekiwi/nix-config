@@ -21,12 +21,12 @@ in
     enable = lib.mkEnableOption "the GitHub collection service";
     package = lib.mkOption {
       type = lib.types.package;
-      default = inputs.cue-platform.packages.${pkgs.stdenv.hostPlatform.system}.github-service;
+      default = inputs.cue-platform.packages.${pkgs.stdenv.hostPlatform.system}.cue-github;
       description = "Package providing the long-running GitHub collector.";
     };
     executable = lib.mkOption {
       type = lib.types.str;
-      default = "github-service";
+      default = "cue-github";
       description = "Executable name in the package's bin directory.";
     };
     user = lib.mkOption {

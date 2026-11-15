@@ -8,14 +8,14 @@ must be handled by the collector. No host collector is enabled.
 ## Package and configuration contract
 
 The default package is
-`inputs.cue-platform.packages.x86_64-linux.github-service`. It must provide
-`bin/github-service`, including its Node runtime and JavaScript dependencies.
+`inputs.cue-platform.packages.x86_64-linux.cue-github`. It must provide
+`bin/cue-github`, including its Node runtime and JavaScript dependencies.
 The package and executable name are module options so they can be overridden
 while the package contract is being finalized. The service adds `gh` to PATH.
 It invokes exactly:
 
 ```
-github-service --config /home/pl/.config/cue/github.toml
+cue-github --config /home/pl/.config/cue/github.toml
 ```
 
 Nix generates this TOML schema:
@@ -35,12 +35,9 @@ root and its read-only `stateDirectory` option derives the writable sandbox
 path. Migrations, reconnect logic and collection behavior belong to the
 package. No CLI flags beyond `--config` are assumed.
 
-The in-progress CLI help calls itself `cue-github`; its package wrapper was
-not yet defined when inspected. The default executable remains the requested
-`github-service`, but `services.github-service.executable` can select
-`cue-github` if that is the final package binary. Confirm this before enabling
-the real package. The polling option is bounded to 15–1800 seconds to respect
-the parser's default cooldown and maximum backoff.
+The package and executable are both named `cue-github`, matching the
+standalone cue-platform output. The polling option is bounded to 15–1800
+seconds to respect the parser's default cooldown and maximum backoff.
 
 The config is a tmpfiles-managed symlink to immutable store content; changes
 trigger a service restart. State directories are owned by `pl` with mode
