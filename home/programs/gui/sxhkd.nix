@@ -17,6 +17,17 @@ let
     fi
   '';
 
+  speechTarget = config.programs.local-tts.target or null;
+
+  speechVolume = pkgs.writeShellScript "speech-volume" ''
+    if ${pkgs.pulseaudio}/bin/pactl set-sink-volume ${lib.escapeShellArg speechTarget} "$1"; then
+      volume="$(${pkgs.pulseaudio}/bin/pactl get-sink-volume ${lib.escapeShellArg speechTarget} | grep -o '[0-9]*%' | head -1)"
+      notify-send -t 800 'Speech Vol:' "$volume"
+    else
+      notify-send -t 800 'Speech Vol:' 'speech device not connected'
+    fi
+  '';
+
   typeText = pkgs.writeShellScript "typeText" ''
     sleep 0.1 && xdotool type "$@"
   '';
@@ -188,6 +199,9 @@ in
     }
     // lib.optionalAttrs (config.programs.local-tts.enable or false) {
       "control + Pause" = "clipboard-speech-toggle";
+    }
+    // lib.optionalAttrs (speechTarget != null) {
+      "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "${speechVolume} {-,+}5%";
     };
   };
 }
