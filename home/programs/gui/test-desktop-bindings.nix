@@ -17,6 +17,7 @@ let
         ../local-tts
         {
           programs.local-tts.enable = enabled;
+          programs.local-tts.bridge.enable = enabled;
           programs.local-tts.target = target;
         }
       ];
@@ -32,6 +33,9 @@ assert !(absent.config.services.sxhkd.keybindings ? ${speechVolume});
 assert
   builtins.match ".*speech-volume \\{-,\\+}5%"
     targeted.config.services.sxhkd.keybindings.${speechVolume} != null;
+assert !(absent.config.services.sxhkd.keybindings ? "control + shift + Pause");
+assert !(disabled.config.services.sxhkd.keybindings ? "control + shift + Pause");
+assert home.config.services.sxhkd.keybindings."control + shift + Pause" == "speech-emergency-stop";
 assert !(absent.config.services.sxhkd.keybindings ? "control + Pause");
 assert !(disabled.config.services.sxhkd.keybindings ? "control + Pause");
 pkgs.linkFarm "desktop-bindings-test-config" [

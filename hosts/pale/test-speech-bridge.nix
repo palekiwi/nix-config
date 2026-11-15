@@ -32,6 +32,7 @@ let
   ++ [
     "iptables -w -N agent-speech-guard-new 2>/dev/null || true"
     "iptables -w -F agent-speech-guard-new"
+    "iptables -w -A agent-speech-guard-new -i lo -s 10.77.0.1 -d 10.77.0.1 -j ACCEPT"
     "iptables -w -A agent-speech-guard-new -i vm-agent -s 10.77.0.2 -d 10.77.0.1 -j ACCEPT"
     "iptables -w -A agent-speech-guard-new -j DROP"
     "iptables -w -I INPUT 1 -p tcp --dport 8881 -j agent-speech-guard-new"

@@ -58,8 +58,10 @@ class DesktopBindings(unittest.TestCase):
         self.assertNotIn("super + space; space", bindings)
         self.assertEqual(bindings["control + Pause"], "clipboard-speech-toggle")
         self.assertEqual(
-            [key for key in bindings if re.search(r"\bPause\b", key)], ["control + Pause"]
+            [key for key in bindings if re.search(r"\bPause\b", key)],
+            ["control + Pause", "control + shift + Pause"]
         )
+        self.assertEqual(bindings["control + shift + Pause"], "speech-emergency-stop")
         self.assertNotRegex((CONFIG / "sxhkdrc-disabled").read_text(), r"\bPause\b")
         self.assertNotIn(
             "clipboard-speech-toggle", (CONFIG / "sxhkdrc-disabled").read_text()
@@ -67,6 +69,7 @@ class DesktopBindings(unittest.TestCase):
         awesome = SOURCE.parents[1] / "config" / "awesome"
         forbidden = {
             (frozenset(['"Shift"']), "Pause"),
+            (frozenset(['"Control"', '"Shift"']), "Pause"),
             (frozenset(), "Pause"),
             (frozenset(["MODKEY"]), "Return"),
             (frozenset(["MODKEY", '"Control"']), "Return"),

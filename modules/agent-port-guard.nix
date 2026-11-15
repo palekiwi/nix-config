@@ -4,6 +4,7 @@
   tap,
   guestAddr,
   listenAddr,
+  allowLocal ? false,
 }:
 let
   new = "${name}-new";
@@ -22,6 +23,16 @@ in
   + ''
     iptables -w -N ${new} 2>/dev/null || true
     iptables -w -F ${new}
+  ''
+  + (
+    if allowLocal then
+      ''
+        iptables -w -A ${new} -i lo -s ${listenAddr} -d ${listenAddr} -j ACCEPT
+      ''
+    else
+      ""
+  )
+  + ''
     iptables -w -A ${new} -i ${tap} -s ${guestAddr} -d ${listenAddr} -j ACCEPT
     iptables -w -A ${new} -j DROP
     iptables -w -I INPUT 1 ${rule} -j ${new}

@@ -200,6 +200,9 @@ in
     // lib.optionalAttrs (config.programs.local-tts.enable or false) {
       "control + Pause" = "clipboard-speech-toggle";
     }
+    // lib.optionalAttrs (config.programs.local-tts.bridge.enable or false) {
+      "control + shift + Pause" = "speech-emergency-stop";
+    }
     // lib.optionalAttrs (speechTarget != null) {
       "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "${speechVolume} {-,+}5%";
     };

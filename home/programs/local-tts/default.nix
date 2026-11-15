@@ -69,6 +69,12 @@ in
   };
   config = lib.mkMerge [
     (lib.mkIf cfg.bridge.enable {
+      home.packages = [
+        (pkgs.writeShellScriptBin "speech-emergency-stop" ''
+          exec ${pkgs.curl}/bin/curl --noproxy '*' --max-time 2 --fail --silent --show-error \
+            -X POST http://${endpoint.host}:${toString cfg.bridge.port}/stop
+        '')
+      ];
       systemd.user.services.speech-bridge = {
         Unit = {
           Description = "Speech bridge for the agent VM";

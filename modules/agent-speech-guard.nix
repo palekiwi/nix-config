@@ -7,6 +7,7 @@ let
     tap = "vm-agent";
     guestAddr = "10.77.0.2";
     listenAddr = endpoint.host;
+    allowLocal = true;
   };
 in
 {

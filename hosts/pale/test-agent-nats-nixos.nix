@@ -21,6 +21,7 @@ in
       imports = [
         ../../modules/agent-vm-network.nix
         ../../modules/agent-nats/hub.nix
+        ../../modules/agent-speech-guard.nix
         ../../vm/agent/agent-nats.nix
       ];
 
@@ -81,6 +82,12 @@ in
           RemainAfterExit = true;
           ExecStart = "${pkgs.coreutils}/bin/true";
         };
+      };
+
+      systemd.services.speech-http-test = {
+        after = [ "${tapUnit}.service" ];
+        requires = [ "${tapUnit}.service" ];
+        serviceConfig.ExecStart = "${pkgs.python3}/bin/python3 -m http.server 8881 --bind 10.77.0.1";
       };
 
       systemd.services.agent-nats-leaf = {
@@ -266,6 +273,16 @@ in
 
     with subtest("guest cannot reach the hub client port"):
         pale.fail(f"{G}timeout 5 bash -c '</dev/tcp/10.77.0.1/${toString endpoint.clientPort}'")
+
+    with subtest("speech HTTP reachable only from host-local and VM"):
+        pale.succeed("systemctl start speech-http-test.service")
+        pale.wait_for_open_port(8881, "10.77.0.1")
+        for action in ["reload", "restart"]:
+            pale.succeed(f"systemctl {action} firewall.service")
+            pale.succeed("curl --noproxy '*' --max-time 3 -f http://10.77.0.1:8881/")
+            pale.succeed(f"{G}curl --noproxy '*' --max-time 3 -f http://10.77.0.1:8881/")
+            pale.fail(f"{L}curl --noproxy '*' --max-time 3 -f http://10.77.0.1:8881/")
+            pale.fail("curl --noproxy '*' --interface 192.168.99.1 --max-time 3 -f http://10.77.0.1:8881/")
 
     with subtest("leafnode port unreachable from non-tap sources"):
         guard_intact()

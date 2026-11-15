@@ -187,8 +187,17 @@ restarted on failure). It listens on `10.77.0.1:8881` with `IP_FREEBIND`, so
 it starts before the agent VM's tap device exists and survives VM restarts.
 Address and port live once in `bridge-endpoint.nix`, read by both the user
 service and the NixOS `agent-speech-guard` firewall chain, which accepts the
-port only from `10.77.0.2` on `vm-agent` and drops everything else,
-including host-local and LAN callers.
+port from `10.77.0.2` on `vm-agent`, and from host-local loopback traffic
+whose source and destination are `10.77.0.1`. Everything else, including
+LAN traffic, is dropped. This deliberately trusts host-local clients for
+all bridge HTTP endpoints; it does not expose a new listening address.
+
+**Ctrl+Shift+Pause** runs `speech-emergency-stop`, a direct HTTP `/stop`
+with proxies disabled and a two-second timeout, independent of NATS. No
+conflicting configured binding was found; physical key delivery and Handy
+modifier handling still need host QA. Second-tier recovery is manually
+`systemctl --user restart speech-bridge.service`; this loses in-memory
+holds and retired IDs, so do not use it as an automatic fallback.
 
 ```sh
 curl -X POST -d '{"text": "Hello from the VM."}' http://10.77.0.1:8881/say
