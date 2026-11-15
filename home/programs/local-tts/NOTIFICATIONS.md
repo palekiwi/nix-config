@@ -27,6 +27,8 @@ settled; every field after `aborted` is omitted when unknown:
 - `context_title`: `title` (else `description`) of that context's
   `context.md` in the cue store.
 - `session_name`, `cwd`: pi session name and working directory.
+- `session_description`: latest `session-description` entry written by
+  `/describe`, refreshed when the session settles.
 - `run_id`, `agent`: cue-agent run id and agent name when the session is
   a cue-agent run (`agent` comes from `CUE_AGENT_NAME`, set by
   cue-platform on every cue-agent task).
@@ -47,23 +49,26 @@ exposing error text.
 
 Body, one line each, only when present:
 
-- context address
+- session description from `/describe`, if present
 - `cwd`, with `/home/<user>` or `/root` shortened to `~`
 - `agent <name>`
-- `turn <duration>, <n> tools` (duration like `41s`, `3m12s`, `1h02m`)
-- host
+
+Desktop and Gotify use the same body. Context address, host, turn duration
+and tool counts are not displayed.
 
 Example: summary `Controller design for the NATS platform idle`, body
 
 ```
-palekiwi/palekiwi/controller-design
+Simplify agent notifications
 ~/code/palekiwi/palekiwi
-turn 3m12s, 14 tools
-casm
 ```
 
 Older events with only the envelope and `aborted` still notify, as
-`<sid> idle` with the host as body. No lookup blocks delivery.
+`<sid> idle` with an empty body. No lookup blocks delivery.
+
+For QA, set or edit `/describe` in a running pi session and let it settle.
+Both desktop and phone should show the latest description, working
+ directory and optional agent line, without host or turn statistics.
 
 ## Service agent deny list
 

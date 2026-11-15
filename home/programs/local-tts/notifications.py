@@ -89,19 +89,11 @@ def notification(subject, body):
         or label(sid)
     )
     summary = name[: 100 - len(suffix)] + suffix
-    tools = body.get("tools")
-    work = [duration(body.get("turn_ms"))]
-    if work[0]:
-        work[0] = f"turn {work[0]}"
-    if type(tools) is int and tools >= 0:
-        work.append(f"{tools} tool{'' if tools == 1 else 's'}")
     agent = agent_of(body)
     parts = [
-        label(body.get("context")),
+        label(body.get("session_description")),
         home_short(body.get("cwd")),
         f"agent {agent}" if agent else "",
-        ", ".join(filter(None, work)),
-        label(body["host"]),
     ]
     return {"summary": summary, "body": "\n".join(filter(None, parts))[:256]}
 

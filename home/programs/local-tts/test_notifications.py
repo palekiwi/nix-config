@@ -67,12 +67,12 @@ def event(**fields):
 class NotificationTests(unittest.IsolatedAsyncioTestCase):
     async def test_wording_and_identity(self):
         result = notification("agent.evt.session-qa.settled", event())
-        self.assertEqual(result, {"summary": "session-qa idle", "body": "casm"})
+        self.assertEqual(result, {"summary": "session-qa idle", "body": ""})
         body = event(session_name="Worker", cwd="/project", error="secret failure text")
         body["aborted"] = True
         result = notification("agent.evt.session-qa.settled", body)
         self.assertEqual(result["summary"], "Worker idle (aborted, error)")
-        self.assertEqual(result["body"], "/project\ncasm")
+        self.assertEqual(result["body"], "/project")
         self.assertNotIn("secret", str(result))
         calls = []
 
@@ -88,6 +88,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             context="palekiwi/palekiwi/controller-design",
             context_title="Controller design for the NATS platform",
             session_name="named",
+            session_description="  Simplify\nnotifications  ",
             cwd="/home/pl/code/palekiwi/palekiwi",
             run_id="20261114-134753-ae2a53-builder-1",
             agent="builder",
@@ -99,11 +100,9 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             notification("agent.evt.session-qa.settled", full),
             {
                 "summary": "Controller design for the NATS platform idle",
-                "body": "palekiwi/palekiwi/controller-design\n"
+                "body": "Simplify notifications\n"
                 "~/code/palekiwi/palekiwi\n"
-                "agent builder\n"
-                "turn 3m12s, 14 tools\n"
-                "casm",
+                "agent builder",
             },
         )
         fallbacks = (
@@ -123,7 +122,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         aborted["aborted"] = True
         self.assertEqual(
             notification("agent.evt.session-qa.settled", aborted),
-            {"summary": "T idle (aborted, error)", "body": "turn 0s, 1 tool\ncasm"},
+            {"summary": "T idle (aborted, error)", "body": ""},
         )
         self.assertEqual(
             notification("agent.evt.session-qa.settled", event(errored=True))[
@@ -184,7 +183,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         notify, gotify = calls[0][1], calls[1][1]
         self.assertEqual(
             {k: gotify[k] for k in ("title", "message", "priority")},
-            {"title": "Design idle", "message": "2 tools\ncasm", "priority": 5},
+            {"title": "Design idle", "message": "", "priority": 5},
         )
         self.assertEqual(gotify["title"], notify["summary"])
         self.assertNotEqual(gotify["id"], notify["id"])
