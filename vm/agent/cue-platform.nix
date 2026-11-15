@@ -9,6 +9,7 @@ in
     cp.cue-agent
     cp.cue-recall
     cp.cue-review
+    cp.station
     cp.cue-supervisor
     cp.gh
     cp.jq
