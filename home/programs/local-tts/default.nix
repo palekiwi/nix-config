@@ -96,25 +96,29 @@ in
       ];
       home.packages = [ speech ];
       systemd.user.services =
-        lib.genAttrs [ "cube-controller" "cube-relay" "cube-host-executor" ]
+        lib.genAttrs [ "agent-controller" "cube-relay" "cube-host-executor" ]
           (name: {
             Unit = {
-              Description = "NATS cube control: ${name}";
-              After = [ "graphical-session.target" ];
+              Description = "NATS controller runtime: ${name}";
+              Conflicts = lib.optionals (name == "agent-controller") [ "cube-controller.service" ];
+              After = [
+                "graphical-session.target"
+              ]
+              ++ lib.optionals (name == "agent-controller") [ "cube-controller.service" ];
               PartOf = [ "graphical-session.target" ];
             };
             Service = {
               ExecStart = lib.escapeShellArgs (
-                [
-                  "${speech}/bin/cube-control"
-                  (
-                    if name == "cube-controller" then
-                      "controller"
-                    else if name == "cube-relay" then
-                      "relay"
-                    else
-                      "executor"
-                  )
+                (
+                  if name == "agent-controller" then
+                    [ "${speech}/bin/agent-controller" ]
+                  else
+                    [
+                      "${speech}/bin/cube-control"
+                      (if name == "cube-relay" then "relay" else "executor")
+                    ]
+                )
+                ++ [
                   "--url"
                   (if cfg.bridge.natsUrl == null then "" else cfg.bridge.natsUrl)
                 ]
@@ -123,6 +127,8 @@ in
                   (lib.getExe config.services.handy.package)
                   "--wpctl"
                   "${pkgs.wireplumber}/bin/wpctl"
+                  "--notify-send"
+                  "${pkgs.libnotify}/bin/notify-send"
                 ]
                 ++ lib.optionals (name == "cube-relay") [
                   "--mosquitto"

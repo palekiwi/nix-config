@@ -6,6 +6,7 @@ import time
 import uuid
 
 import nats
+from notifications import notification, notify_argv
 from voice_control import request
 
 DEVICE = "pale_cube"
@@ -13,8 +14,8 @@ TOPIC = "zigbee2mqtt/Cube"
 ACTIONS = {"shake", "tap", "flip90", "flip180", "slide", "rotate_left", "rotate_right"}
 
 
-def decode(data):
-    if len(data) > 4096:
+def decode(data, limit=4096):
+    if len(data) > limit:
         raise ValueError("payload too large")
     body = json.loads(data)
     if not isinstance(body, dict):
@@ -83,14 +84,29 @@ class CubeController:
         return result
 
 
+class Controller(CubeController):
+    async def handle(self, subject, body):
+        if subject.startswith("agent."):
+            payload = notification(subject, body)
+            payload.update(ts=time.time(), id=str(uuid.uuid4()))
+            result = await self.call("host.cmd.notify", payload)
+            if result.get("accepted") is not True:
+                raise RuntimeError("notification rejected")
+            return result
+        return await super().handle(subject, body)
+
+
 class HostExecutor:
-    def __init__(self, handy, wpctl):
+    def __init__(self, handy, wpctl, notify_send="notify-send"):
         self.handy = handy
         self.wpctl = wpctl
+        self.notify_send = notify_send
 
     async def handle(self, subject, body):
         fresh(body)
-        if subject == "host.cmd.handy" and body.get("action") in ("toggle", "cancel"):
+        if subject == "host.cmd.notify":
+            args = notify_argv(self.notify_send, body)
+        elif subject == "host.cmd.handy" and body.get("action") in ("toggle", "cancel"):
             args = [
                 self.handy,
                 "--toggle-transcription" if body["action"] == "toggle" else "--cancel",
@@ -171,6 +187,7 @@ async def serve(
     mosquitto="mosquitto_sub",
     host="haze",
     port=1883,
+    notify_send="notify-send",
 ):
     disconnected = asyncio.Event()
 
@@ -189,9 +206,9 @@ async def serve(
     )
     queue = asyncio.Queue(maxsize=64)
     handler = (
-        CubeController(lambda s, b: request(nc, s, b))
+        Controller(lambda s, b: request(nc, s, b))
         if mode == "controller"
-        else HostExecutor(handy, wpctl)
+        else HostExecutor(handy, wpctl, notify_send)
     )
 
     async def report(result, subject):
@@ -217,9 +234,9 @@ async def serve(
             await relay(nc, mosquitto, host, port)
             return
         subjects = (
-            [f"cube.evt.{DEVICE}.*"]
+            [f"cube.evt.{DEVICE}.*", "agent.evt.*.settled"]
             if mode == "controller"
-            else ["host.cmd.handy", "host.cmd.volume"]
+            else ["host.cmd.handy", "host.cmd.volume", "host.cmd.notify"]
         )
         for subject in subjects:
             await nc.subscribe(
@@ -229,9 +246,15 @@ async def serve(
         while True:
             msg = await queue.get()
             try:
-                result = await handler.handle(msg.subject, decode(msg.data))
+                result = await handler.handle(
+                    msg.subject,
+                    decode(
+                        msg.data, 8192 if msg.subject.startswith("agent.") else 4096
+                    ),
+                )
             except (
                 ValueError,
+                RecursionError,
                 TypeError,
                 OSError,
                 RuntimeError,
@@ -270,6 +293,7 @@ def main():
     parser.add_argument("--url", required=True)
     parser.add_argument("--handy", default="handy")
     parser.add_argument("--wpctl", default="wpctl")
+    parser.add_argument("--notify-send", default="notify-send")
     parser.add_argument("--mosquitto", default="mosquitto_sub")
     parser.add_argument("--mqtt-host", default="haze")
     parser.add_argument("--mqtt-port", type=int, default=1883)
@@ -283,6 +307,7 @@ def main():
             args.mosquitto,
             args.mqtt_host,
             args.mqtt_port,
+            args.notify_send,
         )
     )
 
