@@ -202,6 +202,7 @@ in
     }
     // lib.optionalAttrs (speechTarget != null) {
       "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}" = "${speechVolume} {-,+}5%";
+      "alt + {button7,button6}" = "${speechVolume} {-,+}5%";
     };
   };
 }

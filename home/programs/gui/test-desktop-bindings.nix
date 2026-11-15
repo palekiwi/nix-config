@@ -28,6 +28,9 @@ let
   speechVolume = "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}";
 in
 assert !(home.config.services.sxhkd.keybindings ? ${speechVolume});
+assert
+  targeted.config.services.sxhkd.keybindings."alt + {button7,button6}"
+  == targeted.config.services.sxhkd.keybindings.${speechVolume};
 assert !(absent.config.services.sxhkd.keybindings ? ${speechVolume});
 assert
   builtins.match ".*speech-volume \\{-,\\+}5%"
