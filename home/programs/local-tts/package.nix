@@ -10,6 +10,7 @@
   wl-clipboard,
   xclip,
   nats-server,
+  mosquitto,
   backend ? "cpu",
   volume ? 1.0,
   target ? null,
@@ -43,6 +44,7 @@ stdenv.mkDerivation {
   nativeCheckInputs = [
     bridgePython
     nats-server
+    mosquitto
   ];
   buildInputs = [ sherpa-onnx ];
   buildPhase = ''
@@ -60,7 +62,7 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py http_engine.py speech_bridge.py speech_nats.py clipboard_nats.py voice_control.py speak-engine "$out/lib/local-tts/"
+    cp speak.py http_engine.py speech_bridge.py speech_nats.py clipboard_nats.py voice_control.py cube_control.py speak-engine "$out/lib/local-tts/"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
       --set-default SPEAK_BACKEND ${lib.escapeShellArg backend} \
@@ -80,6 +82,8 @@ stdenv.mkDerivation {
       --set-default SPEAK_XCLIP ${xclip}/bin/xclip
     makeWrapper ${bridgePython}/bin/python3 "$out/bin/voice-control" \
       --add-flags "$out/lib/local-tts/voice_control.py"
+    makeWrapper ${bridgePython}/bin/python3 "$out/bin/cube-control" \
+      --add-flags "$out/lib/local-tts/cube_control.py"
     runHook postInstall
   '';
   passthru = { inherit model; };
