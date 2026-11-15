@@ -320,6 +320,10 @@ controller and mechanical host executor, safe replacement of cube-remote,
 activation commands, observation, simulations and pending physical QA.
 Handy state tracking remains deferred; native shortcuts stay unchanged.
 
+The same `agent-controller` now handles live agent idle notifications.
+See [NOTIFICATIONS.md](NOTIFICATIONS.md) for protocol, migration, desktop
+session environment, host fetch/activation and simulated settled-event QA.
+
 ## NATS voice prototype
 
 Pale enables `bridge.natsUrl = "nats://127.0.0.1:4222"`. Other profiles

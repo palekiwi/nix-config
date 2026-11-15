@@ -19,7 +19,7 @@ The accepted 1000 ms speech startup padding is unchanged.
   `cube.evt.pale_cube.<action>` with `{action, angle?, ts}`. `pale_cube`
   is the stable device token for this single allowlisted physical cube;
   it is a valid single NATS token, not the MQTT topic or arbitrary input.
-- `cube-controller.service`: tap/flip90 -> `speech.cmd.stop {}` globally;
+- `agent-controller.service` (replaces `cube-controller.service`): tap/flip90 -> `speech.cmd.stop {}` globally;
   shake -> `host.cmd.handy {action:"toggle", id, ts}`; rotations ->
   `host.cmd.volume {delta, id, ts}`. Slide/flip180 remain unbound.
 - Volume preserves the current pale and feat/cube-remote configuration:
@@ -61,14 +61,17 @@ updated checkout, first stop the old consumer to avoid overlapping rules:
 
 ```sh
 systemctl --user stop cube-remote.service
+systemctl --user disable --now cube-controller.service
 home-manager switch --flake './home#pl@pale'
 systemctl --user daemon-reload
-systemctl --user restart cube-host-executor cube-controller cube-relay
-systemctl --user is-active cube-host-executor cube-controller cube-relay
-systemctl --user is-active cube-remote voice-controller handy-adapter
+systemctl --user restart cube-host-executor agent-controller cube-relay
+systemctl --user is-active cube-host-executor agent-controller cube-relay
+systemctl --user is-active cube-controller cube-remote voice-controller handy-adapter
 ```
 
-The last three must be inactive/not-found. If activation fails, keep new
+The last four must be inactive/not-found. A not-found result when stopping
+an already absent legacy unit is expected. The new controller conflicts
+with the old cube-controller unit as a second duplicate-consumer guard. If activation fails, keep new
 services stopped before restoring the previous configuration and old cube
 consumer. Do not run both. No NixOS/VM rebuild is needed for this migration
 if the earlier NATS hub/speech configuration is already active. Otherwise
@@ -82,7 +85,7 @@ host cube control. Do not enable guarded voice-controller/handy-adapter.
 nats --server nats://127.0.0.1:4222 sub 'cube.>'
 nats --server nats://127.0.0.1:4222 sub 'host.>'
 nats --server nats://127.0.0.1:4222 sub 'speech.cmd.>'
-journalctl --user -f -u cube-relay -u cube-controller -u cube-host-executor
+journalctl --user -f -u cube-relay -u agent-controller -u cube-host-executor
 nats --server nats://127.0.0.1:4222 req speech.query.state '{}'
 ```
 
