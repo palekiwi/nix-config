@@ -6,7 +6,7 @@ import time
 import uuid
 
 import nats
-from notifications import notification, notify_argv
+from notifications import agent_of, notification, notify_argv
 from voice_control import request
 
 DEVICE = "pale_cube"
@@ -85,9 +85,19 @@ class CubeController:
 
 
 class Controller(CubeController):
+    def __init__(self, call, deny_agents=()):
+        super().__init__(call)
+        self.deny_agents = frozenset(deny_agents)
+
     async def handle(self, subject, body):
         if subject.startswith("agent."):
             payload = notification(subject, body)
+            agent = agent_of(body)
+            if agent and agent in self.deny_agents:
+                print(
+                    f"agent controller: dropped settled from agent {agent}", flush=True
+                )
+                return {"accepted": True, "reason": "denied agent"}
             payload.update(ts=time.time(), id=str(uuid.uuid4()))
             result = await self.call("host.cmd.notify", payload)
             if result.get("accepted") is not True:
@@ -188,6 +198,7 @@ async def serve(
     host="haze",
     port=1883,
     notify_send="notify-send",
+    deny_agents=(),
 ):
     disconnected = asyncio.Event()
 
@@ -206,7 +217,7 @@ async def serve(
     )
     queue = asyncio.Queue(maxsize=64)
     handler = (
-        Controller(lambda s, b: request(nc, s, b))
+        Controller(lambda s, b: request(nc, s, b), deny_agents)
         if mode == "controller"
         else HostExecutor(handy, wpctl, notify_send)
     )
@@ -297,6 +308,7 @@ def main():
     parser.add_argument("--mosquitto", default="mosquitto_sub")
     parser.add_argument("--mqtt-host", default="haze")
     parser.add_argument("--mqtt-port", type=int, default=1883)
+    parser.add_argument("--deny-agent", action="append", default=[])
     args = parser.parse_args()
     asyncio.run(
         serve(
@@ -308,6 +320,7 @@ def main():
             args.mqtt_host,
             args.mqtt_port,
             args.notify_send,
+            args.deny_agent,
         )
     )
 

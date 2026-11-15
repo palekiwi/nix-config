@@ -25,6 +25,14 @@ in
     enable = lib.mkEnableOption "foreground local text-to-speech";
     voiceControl.enable = lib.mkEnableOption "experimental guarded NATS dictation controller (no recording observer yet)";
     cubeControl.enable = lib.mkEnableOption "live NATS cube controller, relay and mechanical host executor";
+    cubeControl.notifyDenyAgents = lib.mkOption {
+      type = lib.types.listOf lib.types.nonEmptyStr;
+      default = [
+        "summarizer"
+        "compactor"
+      ];
+      description = "cue-agent agent names whose settled events never notify; events without an agent always notify.";
+    };
     backend = lib.mkOption {
       type = lib.types.enum [
         "cpu"
@@ -130,6 +138,12 @@ in
                   "--notify-send"
                   "${pkgs.libnotify}/bin/notify-send"
                 ]
+                ++ lib.optionals (name == "agent-controller") (
+                  lib.concatMap (agent: [
+                    "--deny-agent"
+                    agent
+                  ]) cfg.cubeControl.notifyDenyAgents
+                )
                 ++ lib.optionals (name == "cube-relay") [
                   "--mosquitto"
                   "${pkgs.mosquitto}/bin/mosquitto_sub"
