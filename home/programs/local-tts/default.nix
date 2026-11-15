@@ -35,6 +35,11 @@ in
     };
     bridge = {
       enable = lib.mkEnableOption "the speech bridge serving the agent VM";
+      natsUrl = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Optional live NATS transport; HTTP remains independent.";
+      };
       port = lib.mkOption {
         type = lib.types.port;
         default = endpoint.port;
@@ -70,21 +75,27 @@ in
           After = [ "pipewire.service" ];
         };
         Service = {
-          ExecStart = lib.escapeShellArgs [
-            "${speech}/bin/speech-bridge"
-            "--host"
-            endpoint.host
-            "--port"
-            (toString cfg.bridge.port)
-            "--voice"
-            cfg.bridge.voice
-            "--speed"
-            (toString cfg.bridge.speed)
-            "--max-chars"
-            (toString cfg.bridge.maxChars)
-            "--max-queue"
-            (toString cfg.bridge.maxQueue)
-          ];
+          ExecStart = lib.escapeShellArgs (
+            [
+              "${speech}/bin/speech-bridge"
+              "--host"
+              endpoint.host
+              "--port"
+              (toString cfg.bridge.port)
+              "--voice"
+              cfg.bridge.voice
+              "--speed"
+              (toString cfg.bridge.speed)
+              "--max-chars"
+              (toString cfg.bridge.maxChars)
+              "--max-queue"
+              (toString cfg.bridge.maxQueue)
+            ]
+            ++ lib.optionals (cfg.bridge.natsUrl != null) [
+              "--nats-url"
+              cfg.bridge.natsUrl
+            ]
+          );
           Restart = "on-failure";
           RestartSec = 2;
         };

@@ -9,11 +9,13 @@
   pipewire,
   wl-clipboard,
   xclip,
+  nats-server,
   backend ? "cpu",
   volume ? 1.0,
   target ? null,
 }:
 let
+  bridgePython = python3.withPackages (ps: [ ps.nats-py ]);
   targetFlag = lib.optionalString (
     target != null
   ) " --set-default SPEAK_TARGET ${lib.escapeShellArg target}";
@@ -38,7 +40,10 @@ stdenv.mkDerivation {
   version = "0.3.0";
   src = ./.;
   nativeBuildInputs = [ makeWrapper ];
-  nativeCheckInputs = [ python3 ];
+  nativeCheckInputs = [
+    bridgePython
+    nats-server
+  ];
   buildInputs = [ sherpa-onnx ];
   buildPhase = ''
     runHook preBuild
@@ -49,13 +54,13 @@ stdenv.mkDerivation {
   doCheck = true;
   checkPhase = ''
     runHook preCheck
-    ${python3}/bin/python3 -m unittest -v
+    ${bridgePython}/bin/python3 -m unittest -v
     runHook postCheck
   '';
   installPhase = ''
     runHook preInstall
     mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py http_engine.py speech_bridge.py speak-engine "$out/lib/local-tts/"
+    cp speak.py http_engine.py speech_bridge.py speech_nats.py speak-engine "$out/lib/local-tts/"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
       --set-default SPEAK_BACKEND ${lib.escapeShellArg backend} \
@@ -65,7 +70,7 @@ stdenv.mkDerivation {
       --set-default SPEAK_VOLUME ${toString volume} \
       --set-default SPEAK_WL_PASTE ${wl-clipboard}/bin/wl-paste \
       --set-default SPEAK_XCLIP ${xclip}/bin/xclip${targetFlag}
-    makeWrapper ${python3}/bin/python3 "$out/bin/speech-bridge" \
+    makeWrapper ${bridgePython}/bin/python3 "$out/bin/speech-bridge" \
       --add-flags "$out/lib/local-tts/speech_bridge.py" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
       --set-default SPEAK_VOLUME ${toString volume}${targetFlag}

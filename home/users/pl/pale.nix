@@ -50,6 +50,7 @@
       volume = 1.5;
       target = "bluez_output.58_FC_C6_CE_92_70.1";
       bridge.enable = true;
+      bridge.natsUrl = "nats://127.0.0.1:4222";
     };
   };
 }

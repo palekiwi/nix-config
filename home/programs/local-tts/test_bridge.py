@@ -232,6 +232,46 @@ class BridgeTests(unittest.TestCase):
     def idle(self):
         return not self.bridge.health()["speaking"]
 
+    def test_nats_replacement_owns_player_and_emits_lifecycle(self):
+        from test_voice import chunk
+
+        self.kokoro.modes.append("stall")
+        self.start()
+        events = []
+        self.bridge.emit = lambda subject, body: events.append((subject, body))
+        self.assertTrue(self.bridge.intent(chunk("old"), 100))
+        self.wait_for(lambda: self.played() == [b"abcd"])
+        old_player = self.players()[0]
+        self.assertTrue(self.bridge.intent(chunk("new", final=True), 100))
+        self.wait_for(lambda: len(self.played()) == 2 and self.idle())
+        self.assertFalse(self.alive(old_player))
+        self.assertFalse(self.bridge.intent(chunk("old", seq=1), 100))
+        self.assertEqual(
+            [(subject, body["utt"]) for subject, body in events[:4]],
+            [
+                ("speech.evt.started", "old"),
+                ("speech.evt.stopped", "old"),
+                ("speech.evt.started", "new"),
+                ("speech.evt.finished", "new"),
+            ],
+        )
+        self.assertEqual(events[1][1]["reason"], "replaced")
+
+    def test_http_stop_and_hold_cancel_nats_and_gate_http(self):
+        from test_voice import chunk
+
+        self.kokoro.default = "stall"
+        self.start()
+        self.bridge.intent(chunk(), 100)
+        self.wait_for(lambda: self.played() == [b"abcd"])
+        self.stop_speech()
+        self.wait_for(self.idle)
+        self.assertFalse(self.bridge.intent(chunk(seq=1), 100))
+        self.bridge.hold("dict", 5)
+        self.assertEqual(self.say("blocked"), 503)
+        self.bridge.release("dict")
+        self.assertEqual(self.say("legacy"), 202)
+
     def test_say_streams_into_one_player_per_sentence(self):
         self.start()
         self.assertEqual(self.say("first"), 202)
@@ -256,7 +296,8 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(self.say("first"), 202)
         self.wait_for(self.kokoro.requested.is_set)
         self.assertEqual(self.say("second"), 202)
-        self.assertEqual(self.bridge.health(), {"queued": 1, "speaking": True})
+        self.assertEqual(self.bridge.health()["queued"], 1)
+        self.assertTrue(self.bridge.health()["speaking"])
         status, body = self.call("GET", "/health")
         self.assertEqual((status, json.loads(body)["queued"]), (200, 1))
 
@@ -338,7 +379,8 @@ class BridgeTests(unittest.TestCase):
                 thread.join(5)
             self.stop_speech()
             self.wait_for(self.idle, timeout=2)
-            self.assertEqual(self.bridge.health(), {"queued": 0, "speaking": False})
+            self.assertEqual(self.bridge.health()["queued"], 0)
+            self.assertFalse(self.bridge.health()["speaking"])
             self.assertFalse(any(self.alive(pid) for pid in self.players()))
         self.wait_for(lambda: self.kokoro.closed == self.kokoro.connections)
         self.assertEqual(self.logs, [])
@@ -406,11 +448,18 @@ class BridgeTests(unittest.TestCase):
         for env, argv, expected in (
             ({}, [], []),
             ({"SPEAK_TARGET": "env.sink"}, [], ["--target=env.sink"]),
-            ({"SPEAK_TARGET": "env.sink"}, ["--target", "cli.sink"], ["--target=cli.sink"]),
+            (
+                {"SPEAK_TARGET": "env.sink"},
+                ["--target", "cli.sink"],
+                ["--target=cli.sink"],
+            ),
         ):
-            with patch.dict(os.environ), patch.object(
-                speech_bridge, "Bridge", side_effect=RuntimeError
-            ) as bridge:
+            with (
+                patch.dict(os.environ),
+                patch.object(
+                    speech_bridge, "Bridge", side_effect=RuntimeError
+                ) as bridge,
+            ):
                 os.environ.pop("SPEAK_TARGET", None)
                 os.environ.update(env)
                 with self.assertRaises(RuntimeError):

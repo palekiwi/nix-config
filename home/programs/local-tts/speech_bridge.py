@@ -7,6 +7,8 @@ import socketserver
 import subprocess
 import sys
 import threading
+import time
+import uuid
 from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -82,7 +84,7 @@ class Bridge:
         self.synthesize = synthesize
         self.command = command
         self.max_queue = max_queue
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.ready = threading.Condition(self.lock)
         self.queue = deque()
         self.generation = 0
@@ -90,17 +92,125 @@ class Bridge:
         self.socket = None
         self.speaking = False
         self.closed = False
+        self.current = None
+        self.retired = deque(maxlen=1024)
+        self.holds = {}
+        self.emit = lambda subject, body: None
+
+    def event(self, kind, reason=None, utterance=None):
+        body = dict(utterance or self.current or {})
+        if reason:
+            body["reason"] = reason
+        self.emit(f"speech.evt.{kind}", body)
+
+    def held(self):
+        now = time.monotonic()
+        self.holds = {key: end for key, end in self.holds.items() if end > now}
+        return bool(self.holds)
+
+    def retire(self):
+        if self.current:
+            self.retired.append(self.current["utt"])
+            self.current = None
+
+    def reject(self, body, reason):
+        self.event(
+            "rejected",
+            reason,
+            {key: body[key] for key in ("utt", "origin", "sid") if key in body},
+        )
+        return False
+
+    def intent(self, body, max_chars):
+        with self.lock:
+            utt, seq, final, text, origin = (
+                body.get(key) for key in ("utt", "seq", "final", "text", "origin")
+            )
+            if (
+                not isinstance(utt, str)
+                or not 0 < len(utt) <= 128
+                or type(seq) is not int
+                or seq < 0
+                or type(final) is not bool
+                or not isinstance(text, str)
+                or len(text) > max_chars
+                or not isinstance(origin, str)
+                or not 0 < len(origin) <= 128
+                or ("sid" in body and not isinstance(body["sid"], str))
+                or (not text.strip() and not final)
+            ):
+                return self.reject({}, "invalid")
+            if utt in self.retired:
+                return self.reject(body, "stale")
+            if self.held():
+                self.retired.append(utt)
+                return self.reject(body, "held")
+            same = self.current and self.current["utt"] == utt
+            if seq != (self.next_seq if same else 0):
+                return self.reject(body, "sequence")
+            if same and (self.final or origin != self.current["origin"]):
+                return self.reject(body, "finalized" if self.final else "origin")
+            if same and len(self.queue) >= self.max_queue:
+                return self.reject(body, "queue_full")
+            if not same:
+                self.stop("replaced")
+                self.current = {
+                    key: body[key] for key in ("utt", "origin", "sid") if key in body
+                }
+                self.source = "nats"
+                self.next_seq = 0
+                self.final = False
+                self.started = False
+            self.next_seq += 1
+            self.final = final
+            if text.strip():
+                self.queue.append((self.generation, text))
+                self.ready.notify()
+            self.complete()
+            return True
+
+    def complete(self):
+        if self.current and self.final and not self.queue and not self.speaking:
+            self.event("finished")
+            self.retire()
+
+    def hold(self, identity, ttl):
+        if not isinstance(identity, str) or not 0 < len(identity) <= 128:
+            raise ValueError("invalid hold id")
+        if type(ttl) not in (int, float) or not 0 < ttl <= 300:
+            raise ValueError("invalid hold ttl")
+        with self.lock:
+            self.holds[identity] = time.monotonic() + ttl
+            self.stop("held")
+
+    def release(self, identity):
+        if not isinstance(identity, str):
+            raise ValueError("invalid hold id")
+        with self.lock:
+            self.holds.pop(identity, None)
 
     def say(self, text):
         with self.lock:
+            if self.held():
+                return self.reject({"origin": "http"}, "held")
+            if self.current and self.source != "http":
+                self.stop("replaced")
             if len(self.queue) >= self.max_queue:
                 return False
+            if not self.current:
+                self.current = {"utt": str(uuid.uuid4()), "origin": "http"}
+                self.source = "http"
+                self.final = True
+                self.started = False
             self.queue.append((self.generation, text))
             self.ready.notify()
             return True
 
-    def stop(self):
+    def stop(self, reason="requested"):
         with self.lock:
+            if self.current:
+                self.event("stopped", reason)
+                self.retire()
             self.generation += 1
             self.queue.clear()
             if self.player is not None:
@@ -119,7 +229,13 @@ class Bridge:
 
     def health(self):
         with self.lock:
-            return {"queued": len(self.queue), "speaking": self.speaking}
+            return {
+                "queued": len(self.queue),
+                "speaking": self.speaking,
+                "active": self.current is not None,
+                "utterance": self.current,
+                "held": self.held(),
+            }
 
     def check(self, generation):
         with self.lock:
@@ -146,6 +262,9 @@ class Bridge:
         with self.lock:
             if generation == self.generation:
                 self.player = player
+                if self.current and not self.started:
+                    self.started = True
+                    self.event("started")
                 return player
         player.kill()
         player.stdin.close()
@@ -161,13 +280,21 @@ class Bridge:
                     return
                 generation, text = self.queue.popleft()
                 self.speaking = True
+            success = False
             try:
-                self.speak(generation, text)
+                success = self.speak(generation, text)
             finally:
                 with self.lock:
                     self.player = None
                     self.socket = None
                     self.speaking = False
+                    if (
+                        not success
+                        and generation == self.generation
+                        and self.source == "nats"
+                    ):
+                        self.stop("failed")
+                    self.complete()
 
     def speak(self, generation, text):
         sink = Sink(self, generation)
@@ -178,6 +305,7 @@ class Bridge:
             self.check(generation)
             if code:
                 log(f"player exited with status {code}")
+            return code == 0
         except Stale:
             sink.abandon()
         except Exception as error:
@@ -316,6 +444,7 @@ class Server(ThreadingHTTPServer):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Speak text sent over HTTP.")
+    parser.add_argument("--nats-url")
     parser.add_argument("--host", required=True)
     parser.add_argument("--port", type=int, required=True)
     parser.add_argument("--voice", default="af_bella")
@@ -331,8 +460,16 @@ def main(argv=None):
         http_engine.generate(text, sink, args.voice, args.speed, on_connect)
 
     bridge = Bridge(
-        synthesize, player_command(args.player, args.volume, args.target), args.max_queue
+        synthesize,
+        player_command(args.player, args.volume, args.target),
+        args.max_queue,
     )
+    transport = None
+    if args.nats_url:
+        from speech_nats import Transport
+
+        transport = Transport(bridge, args.nats_url, args.max_chars)
+        transport.start()
     worker = threading.Thread(target=bridge.run, daemon=True)
     worker.start()
     server = Server((args.host, args.port), bridge, args.max_chars)
@@ -347,6 +484,8 @@ def main(argv=None):
         server.serve_forever()
     finally:
         bridge.close()
+        if transport:
+            transport.close()
         server.server_close()
         worker.join(timeout=2)
     return 0

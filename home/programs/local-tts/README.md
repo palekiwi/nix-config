@@ -212,6 +212,45 @@ sentences are expected. Voice and speed are module options
 the sentence and are logged without its text in
 `journalctl --user -u speech-bridge.service`.
 
+## NATS voice prototype
+
+Pale enables `bridge.natsUrl = "nats://127.0.0.1:4222"`. Other profiles
+leave it null. HTTP stays available during initial connection failure and
+reconnection. The bridge uses live core subscriptions, not JetStream
+consumers. Commands are never replayed. Lifecycle events are best effort
+and not buffered during outages; CONTROL is observation, not execution.
+
+- `speech.intent.say`: `{utt, seq, final, text, origin, sid?}`. IDs are
+  nonempty strings up to 128 characters; sequences start at zero and must
+  be contiguous. Same-ID chunks append; a different ID atomically stops
+  and replaces playback. An empty final chunk finalizes without audio.
+  Finalized utterances reject additional chunks. The last 1024 stopped,
+  completed or hold-rejected IDs are remembered in memory, not across
+  service restarts. Senders must use fresh UUIDs and never retry old speech
+  after reconnect. Text uses the HTTP maxChars limit per chunk.
+- `speech.intent.stop` and `speech.cmd.stop`: `{}`. Both cancel the owner,
+  queued chunks, player and synthesis connection through generation bump.
+- `speech.cmd.hold`: `{id, ttl}` with TTL in seconds, greater than zero and
+  at most 300. Stops playback immediately. Same-ID renewal extends the
+  deadline; different holds coexist. `speech.cmd.release`: `{id}` removes
+  only that hold. Expiry is monotonic. HTTP and NATS speech are both
+  rejected while any hold remains; rejected speech is never queued.
+- `speech.evt.started`, `finished`, `stopped`, `rejected`: carry
+  `utt`, `origin`, optional `sid`, and `reason` for stop/rejection. Started
+  means the player was spawned. Finished means final input and all queued
+  audio completed; empty utterances finish without started. Synthesis
+  failures terminate NATS utterances with reason `failed`.
+- `speech.query.state`: core request/reply returning bridge health with
+  `active`, `utterance`, `held`, `queued`, `speaking`. Active includes
+  synthesis and waiting for more chunks, not just audible playback.
+  Intents/commands also reply `{accepted}` when a reply subject is supplied.
+
+HTTP `/say` retains its sentence queue semantics between HTTP clients.
+Switching between HTTP and NATS replaces the prior owner. HTTP callers
+have no utterance IDs, so their late requests cannot be tombstoned. Holds
+still gate them. Local trusted publishers may issue commands in this
+prototype; the AGENT account exports only speech intents, not commands.
+
 ## Validation
 
 From the root checkout (no activation, image download or full system build):
