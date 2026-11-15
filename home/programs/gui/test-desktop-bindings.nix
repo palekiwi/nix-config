@@ -2,7 +2,7 @@
 
 let
   evaluate =
-    enabled:
+    enabled: target:
     home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
@@ -15,13 +15,23 @@ let
       ]
       ++ pkgs.lib.optionals (enabled != null) [
         ../local-tts
-        { programs.local-tts.enable = enabled; }
+        {
+          programs.local-tts.enable = enabled;
+          programs.local-tts.target = target;
+        }
       ];
     };
-  home = evaluate true;
-  disabled = evaluate false;
-  absent = evaluate null;
+  home = evaluate true null;
+  disabled = evaluate false null;
+  absent = evaluate null null;
+  targeted = evaluate true "bluez_output.test";
+  speechVolume = "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}";
 in
+assert !(home.config.services.sxhkd.keybindings ? ${speechVolume});
+assert !(absent.config.services.sxhkd.keybindings ? ${speechVolume});
+assert
+  builtins.match ".*speech-volume \\{-,\\+}5%"
+    targeted.config.services.sxhkd.keybindings.${speechVolume} != null;
 assert !(absent.config.services.sxhkd.keybindings ? "control + Pause");
 assert !(disabled.config.services.sxhkd.keybindings ? "control + Pause");
 pkgs.linkFarm "desktop-bindings-test-config" [
