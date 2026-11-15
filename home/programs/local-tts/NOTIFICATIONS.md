@@ -12,7 +12,8 @@ below). Interactive sessions (events without an `agent` field) also
 push to Gotify when enabled (see "Gotify channel"). There are no
 duration, pipeline, aggregation or success filters. There is no
 registry query, history/read state, retry queue or replay after
-restart. Events while disconnected are lost; NATS outages terminate the processes for systemd restart, without fallback.
+restart. Events while disconnected are lost; NATS outages terminate
+the processes for systemd restart, without fallback.
 
 ## Settled event fields
 
