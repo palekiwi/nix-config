@@ -149,6 +149,11 @@
 
       checks.x86_64-linux = {
         local-tts = self.packages.x86_64-linux.local-tts;
+        supervisor = pkgs.writeText "supervisor-check.json" (
+          builtins.unsafeDiscardStringContext (
+            builtins.toJSON (import ./vm/agent/test-supervisor.nix { flake = self; })
+          )
+        );
         speech-bridge = pkgs.writeText "speech-bridge-check.json" (
           builtins.unsafeDiscardStringContext (
             builtins.toJSON (import ./hosts/pale/test-speech-bridge.nix { flake = self; })
