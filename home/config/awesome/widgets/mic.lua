@@ -63,20 +63,6 @@ mic_widget.keys = gears.table.join(
             awful.spawn("amixer set Capture toggle")
             mic_widget:check()
         end
-    ),
-    awful.key({}, "XF86AudioPrev",
-        function()
-            awful.spawn("amixer set Capture nocap")
-            awful.spawn("notify-send Mic MUTE")
-            mic_widget:check()
-        end
-    ),
-    awful.key({}, "XF86AudioNext",
-        function()
-            awful.spawn("amixer set Capture cap")
-            awful.spawn("notify-send Mic ON")
-            mic_widget:check()
-        end
     )
 )
 
