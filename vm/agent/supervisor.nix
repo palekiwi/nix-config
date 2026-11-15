@@ -19,6 +19,7 @@ in
       cp.cue-agent
       cp.cue-recall
       cp.cue-review
+      cp.cue-supervisor
       cp.gh
       cp.jq
       pkgs.bash

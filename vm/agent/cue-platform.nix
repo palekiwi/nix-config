@@ -9,7 +9,14 @@ in
     cp.cue-agent
     cp.cue-recall
     cp.cue-review
+    cp.cue-supervisor
     cp.gh
     cp.jq
   ];
+
+  environment.variables = {
+    CUE_DELEGATE_BACKEND = "supervisor";
+    CUE_NATS_URL = "nats://127.0.0.1:4222";
+    CUE_NATS_JS_DOMAIN = "pale";
+  };
 }
