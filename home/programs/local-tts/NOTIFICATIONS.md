@@ -58,13 +58,15 @@ Interactive sessions (no `agent` field):
   events) the label falls back to `session_name`, the context slug (last
   segment of `context`), `context_title`, then `sid`.
 - Body, one line each, only when present: the session description from
-  `/describe`, then the tmux session name.
+  `/describe`, then the tmux session name as a footer prefixed with
+  `── `. No blank line separates them; without a tmux session there is
+  no footer.
 
 Example: summary `[idle]: notifications`, body
 
 ```
 Simplify agent notifications
-palekiwi
+── palekiwi
 ```
 
 Headless agent runs (`agent` field present, any value):
@@ -84,7 +86,8 @@ Older events with only the envelope and `aborted` still notify, as
 For QA, set or edit `/describe` in a running pi session inside tmux and
 let it settle. Both desktop and phone should show `[idle]: <window>`
 with the window name the picker shows (rename the window by hand to
-check it follows), then the description and the tmux session name.
+check it follows), then the description and the `── <tmux session>`
+footer.
 A delegated run shows `[idle]: <agent>` on the desktop only.
 
 ## Service agent deny list
@@ -261,7 +264,7 @@ The first shows `[idle]: builder` with an empty body. The second shows no
 notification; the journal has `dropped settled from agent summarizer`
 and `cube.evt.controller.result` carries `reason: denied agent`. The
 third shows `[idle]: notifications` with body lines
-`Notification layout QA` and `palekiwi`, and no directory. From a
+`Notification layout QA` and `── palekiwi`, and no directory. From a
 real pi session after reloading cue-platform dev: the notification uses
 the tmux window name, and a turn summary (summarizer run) or log compaction
 (compactor run) produces no notification. No event timestamp filter is applied: these

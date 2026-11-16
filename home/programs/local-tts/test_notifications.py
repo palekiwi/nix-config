@@ -100,13 +100,23 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             notification("agent.evt.session-qa.settled", full),
             {
                 "summary": "[idle]: notifications",
-                "body": "Simplify notifications\npalekiwi",
+                "body": "Simplify notifications\n── palekiwi",
             },
         )
         bare = event(tmux_window="w", tmux_session="s", cwd="/home/pl/x")
         self.assertEqual(
             notification("agent.evt.session-qa.settled", bare),
-            {"summary": "[idle]: w", "body": "s"},
+            {"summary": "[idle]: w", "body": "── s"},
+        )
+        described = event(tmux_window="w", session_description="Only text")
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", described),
+            {"summary": "[idle]: w", "body": "Only text"},
+        )
+        blank = event(tmux_window="w", tmux_session=" \n ")
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", blank),
+            {"summary": "[idle]: w", "body": ""},
         )
         fallbacks = (
             ({"tmux_window": " ", "session_name": "named"}, "[idle]: named"),

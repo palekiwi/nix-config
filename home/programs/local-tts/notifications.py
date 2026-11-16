@@ -88,9 +88,10 @@ def notification(subject, body):
             or label(body.get("context_title"))
             or label(sid)
         )
+        tmux_session = label(body.get("tmux_session"))
         parts = [
             label(body.get("session_description")),
-            label(body.get("tmux_session")),
+            f"── {tmux_session}" if tmux_session else "",
         ]
     summary = prefix + name[: 100 - len(prefix)]
     return {"summary": summary, "body": "\n".join(filter(None, parts))[:256]}
