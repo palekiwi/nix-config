@@ -72,7 +72,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         body["aborted"] = True
         result = notification("agent.evt.session-qa.settled", body)
         self.assertEqual(result["summary"], "[aborted, error]: Worker")
-        self.assertEqual(result["body"], "/project")
+        self.assertEqual(result["body"], "")
         self.assertNotIn("secret", str(result))
         calls = []
 
@@ -83,15 +83,15 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         await Controller(call).handle("agent.evt.session-qa.settled", event())
         self.assertEqual(calls[0][0], "host.cmd.notify")
 
-    async def test_v2_layout(self):
+    async def test_interactive_layout(self):
         full = event(
             context="palekiwi/palekiwi/controller-design",
             context_title="Controller design for the NATS platform",
             session_name="named",
             session_description="  Simplify\nnotifications  ",
+            tmux_window="notifications",
+            tmux_session="palekiwi",
             cwd="/home/pl/code/palekiwi/palekiwi",
-            run_id="20261114-134753-ae2a53-builder-1",
-            agent="builder",
             errored=False,
             turn_ms=192_400,
             tools=14,
@@ -99,16 +99,20 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             notification("agent.evt.session-qa.settled", full),
             {
-                "summary": "[idle]: named",
-                "body": "Simplify notifications\n"
-                "~/code/palekiwi/palekiwi\n"
-                "agent builder",
+                "summary": "[idle]: notifications",
+                "body": "Simplify notifications\npalekiwi",
             },
         )
+        bare = event(tmux_window="w", tmux_session="s", cwd="/home/pl/x")
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", bare),
+            {"summary": "[idle]: w", "body": "s"},
+        )
         fallbacks = (
+            ({"tmux_window": " ", "session_name": "named"}, "[idle]: named"),
             ({"context": "o/r/ctx-slug", "session_name": "n"}, "[idle]: n"),
-            ({"session_name": "named", "cwd": "/w/repo"}, "[idle]: named"),
-            ({"cwd": "/home/pl/code/repo/"}, "[idle]: repo"),
+            ({"context": "o/r/ctx-slug", "cwd": "/w/repo"}, "[idle]: ctx-slug"),
+            ({"cwd": "/home/pl/code/repo/"}, "[idle]: session-qa"),
             ({"context_title": "  ", "cwd": ""}, "[idle]: session-qa"),
         )
         for fields, summary in fallbacks:
@@ -134,12 +138,38 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             [duration(v) for v in (0, 59_999, 60_000, 3_725_000, -1, "5", None)],
             ["0s", "59s", "1m00s", "1h02m", "", "", ""],
         )
-        long = event(context_title="t" * 300, errored=True)
+        long = event(tmux_window="t" * 300, errored=True)
         long["aborted"] = True
         self.assertLessEqual(
             len(notification("agent.evt.session-qa.settled", long)["summary"]), 100
         )
         notify_argv("n", notification("agent.evt.session-qa.settled", long))
+
+    async def test_headless_layout(self):
+        run = event(
+            agent="builder",
+            run_id="20261114-134753-ae2a53-builder-1",
+            session_name="named",
+            session_description="Not shown",
+            tmux_window="parent-window",
+            tmux_session="palekiwi",
+            context="palekiwi/palekiwi/controller-design",
+            cwd="/home/pl/code/palekiwi/palekiwi",
+        )
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", run),
+            {"summary": "[idle]: builder", "body": ""},
+        )
+        failed = event(agent="reviewer", errored=True)
+        failed["aborted"] = True
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", failed)["summary"],
+            "[aborted, error]: reviewer",
+        )
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", event(agent=""))["summary"],
+            "[idle]: session-qa",
+        )
 
     async def test_deny_list(self):
         calls = []
@@ -323,7 +353,11 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
                 decode(data, 8192)
         result = notification(
             "agent.evt.session-qa.settled",
-            event(session_name="x" * 3000, cwd="y" * 3000),
+            event(
+                tmux_window="x" * 3000,
+                session_description="y" * 3000,
+                tmux_session="z" * 3000,
+            ),
         )
         self.assertLessEqual(len(result["body"]), 256)
 
@@ -493,12 +527,13 @@ class NotificationLiveTests(LiveTests):
             result, executions = await settled(agent="summarizer")
             self.assertEqual(result["reason"], "denied agent")
             self.assertEqual(len(server.requests), 1)
-            self.assertEqual(output.read_text().count("[idle]: session-qa"), 2)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 1)
+            self.assertEqual(output.read_text().count("[idle]: builder"), 1)
             Path(token).unlink()
             result, executions = await settled()
             self.assertFalse(result["accepted"])
             self.assertEqual(result["reason"], "RuntimeError")
-            self.assertEqual(output.read_text().count("[idle]: session-qa"), 3)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 2)
             self.assertEqual(
                 executions,
                 [

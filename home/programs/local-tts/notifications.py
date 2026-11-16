@@ -44,10 +44,6 @@ def last_segment(value):
     return label(value).rstrip("/").rsplit("/", 1)[-1].strip()
 
 
-def home_short(path):
-    return re.sub(r"^(/home/[^/]+|/root)(?=/|$)", "~", label(path))
-
-
 def agent_of(body):
     return label(body.get("agent"))
 
@@ -81,20 +77,22 @@ def notification(subject, body):
         raise ValueError("invalid settled event")
     status = status_of(body)
     prefix = f"[{', '.join(status) if status else 'idle'}]: "
-    name = (
-        label(body.get("session_name"))
-        or last_segment(body.get("context"))
-        or label(body.get("context_title"))
-        or last_segment(body.get("cwd"))
-        or label(sid)
-    )
+    if "agent" in body:
+        name = agent_of(body) or label(sid)
+        parts = []
+    else:
+        name = (
+            label(body.get("tmux_window"))
+            or label(body.get("session_name"))
+            or last_segment(body.get("context"))
+            or label(body.get("context_title"))
+            or label(sid)
+        )
+        parts = [
+            label(body.get("session_description")),
+            label(body.get("tmux_session")),
+        ]
     summary = prefix + name[: 100 - len(prefix)]
-    agent = agent_of(body)
-    parts = [
-        label(body.get("session_description")),
-        home_short(body.get("cwd")),
-        f"agent {agent}" if agent else "",
-    ]
     return {"summary": summary, "body": "\n".join(filter(None, parts))[:256]}
 
 

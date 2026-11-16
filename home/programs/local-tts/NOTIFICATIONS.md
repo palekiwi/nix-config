@@ -29,9 +29,14 @@ settled; every field after `aborted` is omitted when unknown:
 - `session_name`, `cwd`: pi session name and working directory.
 - `session_description`: latest `session-description` entry written by
   `/describe`, refreshed when the session settles.
+- `tmux_window`, `tmux_session`: `#{window_name}` and `#{session_name}`
+  of the pane, read with `tmux display-message` when the session settles.
+  Only an interactive pi owning its tty inside tmux reports them;
+  headless runs, which inherit `TMUX_PANE` from their parent, do not.
 - `run_id`, `agent`: cue-agent run id and agent name when the session is
-  a cue-agent run (`agent` comes from `CUE_AGENT_NAME`, set by
-  cue-platform on every cue-agent task).
+  a headless agent run (`agent` comes from `CUE_AGENT_NAME`, set by
+  cue-platform on every cue-agent task and by cue-supervisor on every
+  supervisor run).
 - `turn_ms`: milliseconds since the input that began the busy period.
 - `tools`: tool calls completed in the busy period.
 
@@ -39,36 +44,48 @@ No assistant, prompt, tool or error text is ever carried or shown.
 
 ## Layout
 
-Summary: `[idle]: <label>`, or `[aborted]:`, `[error]:` or
-`[aborted, error]:` for those states. The label is the first present of
-`session_name`, the context slug (last segment of `context`),
-`context_title`, the basename of `cwd`, and `sid`. `idle` never claims
+The status prefix is the state the settled event reports: `[idle]`,
+or `[aborted]`, `[error]` or `[aborted, error]`. `idle` never claims
 task success. Error is shown for `errored: true` and, for older events,
 an `error` field, `state: error` or `stopReason: error`, without
-exposing error text.
+exposing error text. Headless runs use the same prefix; no run outcome
+(succeeded, failed, timed out) is published on NATS.
 
-Body, one line each, only when present:
+Interactive sessions (no `agent` field):
 
-- session description from `/describe`, if present
-- `cwd`, with `/home/<user>` or `/root` shortened to `~`
-- `agent <name>`
+- Summary `[<status>]: <tmux window>`. The window name is `tmux_window`,
+  the name the C-f window picker shows. Without it (pi outside tmux, older
+  events) the label falls back to `session_name`, the context slug (last
+  segment of `context`), `context_title`, then `sid`.
+- Body, one line each, only when present: the session description from
+  `/describe`, then the tmux session name.
 
-Desktop and Gotify use the same body. Context address, host, turn duration
-and tool counts are not displayed.
-
-Example: summary `[idle]: controller-design`, body
+Example: summary `[idle]: notifications`, body
 
 ```
 Simplify agent notifications
-~/code/palekiwi/palekiwi
+palekiwi
 ```
+
+Headless agent runs (`agent` field present, any value):
+
+- Summary `[<status>]: <agent>`, falling back to `sid` when `agent` is
+  empty.
+- Body: empty. A task label would go here, but no settled event carries
+  one: cue-agent and the supervisor do not pass task labels to the run.
+
+Desktop and Gotify use the same summary and body. The working
+directory, context address, host, turn duration and tool counts are not
+displayed.
 
 Older events with only the envelope and `aborted` still notify, as
 `[idle]: <sid>` with an empty body. No lookup blocks delivery.
 
-For QA, set or edit `/describe` in a running pi session and let it settle.
-Both desktop and phone should show the latest description, working
-directory and optional agent line, without host or turn statistics.
+For QA, set or edit `/describe` in a running pi session inside tmux and
+let it settle. Both desktop and phone should show `[idle]: <window>`
+with the window name the picker shows (rename the window by hand to
+check it follows), then the description and the tmux session name.
+A delegated run shows `[idle]: <agent>` on the desktop only.
 
 ## Service agent deny list
 
@@ -236,14 +253,17 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":3,"aborted":false,"errored":false,"context":"palekiwi/palekiwi/controller-design","context_title":"Controller design QA","cwd":"/home/pl/code/palekiwi/palekiwi","agent":"builder","turn_ms":192400,"tools":14}'
 nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":4,"aborted":false,"agent":"summarizer","context_title":"Should not show"}'
+nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
+  '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":5,"aborted":false,"session_name":"named","session_description":"Notification layout QA","tmux_window":"notifications","tmux_session":"palekiwi","cwd":"/home/pl/code/palekiwi/palekiwi"}'
 ```
 
-The first shows `[idle]: controller-design` with body lines
-`~/code/palekiwi/palekiwi` and `agent builder`. The second shows no
+The first shows `[idle]: builder` with an empty body. The second shows no
 notification; the journal has `dropped settled from agent summarizer`
-and `cube.evt.controller.result` carries `reason: denied agent`. From a
+and `cube.evt.controller.result` carries `reason: denied agent`. The
+third shows `[idle]: notifications` with body lines
+`Notification layout QA` and `palekiwi`, and no directory. From a
 real pi session after reloading cue-platform dev: the notification uses
-the session name, and a turn summary (summarizer run) or log compaction
+the tmux window name, and a turn summary (summarizer run) or log compaction
 (compactor run) produces no notification. No event timestamp filter is applied: these
 are live publishes, not stored messages. Publish the same command from
 the VM using its existing local NATS URL to verify the leaf/HOST import.
