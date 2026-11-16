@@ -67,11 +67,11 @@ def event(**fields):
 class NotificationTests(unittest.IsolatedAsyncioTestCase):
     async def test_wording_and_identity(self):
         result = notification("agent.evt.session-qa.settled", event())
-        self.assertEqual(result, {"summary": "session-qa idle", "body": ""})
+        self.assertEqual(result, {"summary": "[idle]: session-qa", "body": ""})
         body = event(session_name="Worker", cwd="/project", error="secret failure text")
         body["aborted"] = True
         result = notification("agent.evt.session-qa.settled", body)
-        self.assertEqual(result["summary"], "Worker idle (aborted, error)")
+        self.assertEqual(result["summary"], "[aborted, error]: Worker")
         self.assertEqual(result["body"], "/project")
         self.assertNotIn("secret", str(result))
         calls = []
@@ -99,17 +99,17 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             notification("agent.evt.session-qa.settled", full),
             {
-                "summary": "Controller design for the NATS platform idle",
+                "summary": "[idle]: named",
                 "body": "Simplify notifications\n"
                 "~/code/palekiwi/palekiwi\n"
                 "agent builder",
             },
         )
         fallbacks = (
-            ({"context": "o/r/ctx-slug", "session_name": "n"}, "ctx-slug idle"),
-            ({"session_name": "named", "cwd": "/w/repo"}, "named idle"),
-            ({"cwd": "/home/pl/code/repo/"}, "repo idle"),
-            ({"context_title": "  ", "cwd": ""}, "session-qa idle"),
+            ({"context": "o/r/ctx-slug", "session_name": "n"}, "[idle]: n"),
+            ({"session_name": "named", "cwd": "/w/repo"}, "[idle]: named"),
+            ({"cwd": "/home/pl/code/repo/"}, "[idle]: repo"),
+            ({"context_title": "  ", "cwd": ""}, "[idle]: session-qa"),
         )
         for fields, summary in fallbacks:
             self.assertEqual(
@@ -122,13 +122,13 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         aborted["aborted"] = True
         self.assertEqual(
             notification("agent.evt.session-qa.settled", aborted),
-            {"summary": "T idle (aborted, error)", "body": ""},
+            {"summary": "[aborted, error]: T", "body": ""},
         )
         self.assertEqual(
             notification("agent.evt.session-qa.settled", event(errored=True))[
                 "summary"
             ],
-            "session-qa idle (error)",
+            "[error]: session-qa",
         )
         self.assertEqual(
             [duration(v) for v in (0, 59_999, 60_000, 3_725_000, -1, "5", None)],
@@ -183,7 +183,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         notify, gotify = calls[0][1], calls[1][1]
         self.assertEqual(
             {k: gotify[k] for k in ("title", "message", "priority")},
-            {"title": "Design idle", "message": "", "priority": 5},
+            {"title": "[idle]: Design", "message": "", "priority": 5},
         )
         self.assertEqual(gotify["title"], notify["summary"])
         self.assertNotEqual(gotify["id"], notify["id"])
@@ -241,7 +241,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
                 result = await executor.handle(
                     "host.cmd.gotify",
                     {
-                        "title": "<b>x</b> idle",
+                        "title": "[idle]: <b>x</b>",
                         "message": "ctx\x00\u202e\n\ncasm",
                         "priority": 7,
                         "id": "i",
@@ -255,24 +255,24 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(headers["X-Gotify-Key"], TOKEN)
             self.assertEqual(headers["Content-Type"], "application/json")
             self.assertEqual(
-                body, {"title": "<b>x</b> idle", "message": "ctx\ncasm", "priority": 7}
+                body, {"title": "[idle]: <b>x</b>", "message": "ctx\ncasm", "priority": 7}
             )
         for body in (
-            {"title": "x idle", "message": "m", "priority": 11},
-            {"title": "x idle", "message": "m", "priority": True},
+            {"title": "[idle]: x", "message": "m", "priority": 11},
+            {"title": "[idle]: x", "message": "m", "priority": True},
             {"title": "anything", "message": "m", "priority": 5},
-            {"title": "x idle", "message": "m" * 257, "priority": 5},
+            {"title": "[idle]: x", "message": "m" * 257, "priority": 5},
         ):
             with self.assertRaises(ValueError):
                 gotify_message(body)
         with self.assertRaisesRegex(ValueError, "invalid command"):
             await HostExecutor("h", "w").handle(
                 "host.cmd.gotify",
-                {"title": "x idle", "message": "", "priority": 5, "ts": time.time()},
+                {"title": "[idle]: x", "message": "", "priority": 5, "ts": time.time()},
             )
 
     async def test_gotify_executor_failures(self):
-        command = {"title": "x idle", "message": "m", "priority": 5}
+        command = {"title": "[idle]: x", "message": "m", "priority": 5}
         with tempfile.TemporaryDirectory() as directory:
             token = token_file(directory)
             missing = str(Path(directory) / "missing")
@@ -348,7 +348,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("\u202e", args[-2])
         injected = notify_argv(
             "/fixed/notify-send",
-            {"summary": "x idle", "body": "<i>a</i>\n\x00\u202eb\r\n\nc"},
+            {"summary": "[idle]: x", "body": "<i>a</i>\n\x00\u202eb\r\n\nc"},
         )
         self.assertEqual(injected[-1], "&lt;i&gt;a&lt;/i&gt;\nb\nc")
 
@@ -403,7 +403,7 @@ class NotificationLiveTests(LiveTests):
             )
             result = await self.until("host.evt.execution")
             self.assertTrue(result["accepted"])
-            self.assertIn("session-qa idle", output.read_text())
+            self.assertIn("[idle]: session-qa", output.read_text())
             original = output.read_text()
             controller.cancel()
             await asyncio.gather(controller, return_exceptions=True)
@@ -422,7 +422,7 @@ class NotificationLiveTests(LiveTests):
                 "agent.evt.session-qa.settled", json.dumps(event()).encode()
             )
             await self.until("host.evt.execution")
-            self.assertEqual(output.read_text().count("session-qa idle"), 2)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 2)
             await self.nc.publish(
                 "agent.evt.session-qa.settled",
                 json.dumps(event(agent="summarizer")).encode(),
@@ -432,7 +432,7 @@ class NotificationLiveTests(LiveTests):
             ) != "denied agent":
                 pass
             await asyncio.sleep(0.1)
-            self.assertEqual(output.read_text().count("session-qa idle"), 2)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 2)
 
     async def test_live_gotify_channel_and_failure(self):
         server = Gotify()
@@ -487,18 +487,18 @@ class NotificationLiveTests(LiveTests):
                 ["host.cmd.notify", "host.cmd.gotify"],
             )
             self.assertEqual(len(server.requests), 1)
-            self.assertEqual(server.requests[0][2]["title"], "session-qa idle")
+            self.assertEqual(server.requests[0][2]["title"], "[idle]: session-qa")
             result, executions = await settled(agent="builder")
             self.assertEqual(result["channels"], ["notify"])
             result, executions = await settled(agent="summarizer")
             self.assertEqual(result["reason"], "denied agent")
             self.assertEqual(len(server.requests), 1)
-            self.assertEqual(output.read_text().count("session-qa idle"), 2)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 2)
             Path(token).unlink()
             result, executions = await settled()
             self.assertFalse(result["accepted"])
             self.assertEqual(result["reason"], "RuntimeError")
-            self.assertEqual(output.read_text().count("session-qa idle"), 3)
+            self.assertEqual(output.read_text().count("[idle]: session-qa"), 3)
             self.assertEqual(
                 executions,
                 [

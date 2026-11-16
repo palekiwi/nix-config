@@ -39,10 +39,10 @@ No assistant, prompt, tool or error text is ever carried or shown.
 
 ## Layout
 
-Summary: `<label> idle`, with ` (aborted)`, ` (error)` or
-` (aborted, error)` appended. The label is the first present of
-`context_title`, the context slug (last segment of `context`),
-`session_name`, the basename of `cwd`, and `sid`. `idle` never claims
+Summary: `[idle]: <label>`, or `[aborted]:`, `[error]:` or
+`[aborted, error]:` for those states. The label is the first present of
+`session_name`, the context slug (last segment of `context`),
+`context_title`, the basename of `cwd`, and `sid`. `idle` never claims
 task success. Error is shown for `errored: true` and, for older events,
 an `error` field, `state: error` or `stopReason: error`, without
 exposing error text.
@@ -56,7 +56,7 @@ Body, one line each, only when present:
 Desktop and Gotify use the same body. Context address, host, turn duration
 and tool counts are not displayed.
 
-Example: summary `Controller design for the NATS platform idle`, body
+Example: summary `[idle]: controller-design`, body
 
 ```
 Simplify agent notifications
@@ -64,11 +64,11 @@ Simplify agent notifications
 ```
 
 Older events with only the envelope and `aborted` still notify, as
-`<sid> idle` with an empty body. No lookup blocks delivery.
+`[idle]: <sid>` with an empty body. No lookup blocks delivery.
 
 For QA, set or edit `/describe` in a running pi session and let it settle.
 Both desktop and phone should show the latest description, working
- directory and optional agent line, without host or turn statistics.
+directory and optional agent line, without host or turn statistics.
 
 ## Service agent deny list
 
@@ -225,8 +225,8 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":2,"aborted":true,"error":true}'
 ```
 
-Expect one idle notification per publish: `notification_qa idle` with
-body `pale-qa`, then `notification_qa idle (aborted, error)`; never
+Expect one idle notification per publish: `[idle]: notification_qa` with
+an empty body, then `[aborted, error]: notification_qa`; never
 succeeded/completed.
 
 v2 fields and the deny list:
@@ -238,14 +238,13 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":4,"aborted":false,"agent":"summarizer","context_title":"Should not show"}'
 ```
 
-The first shows `Controller design QA idle` with body lines
-`palekiwi/palekiwi/controller-design`, `~/code/palekiwi/palekiwi`,
-`agent builder`, `turn 3m12s, 14 tools`, `pale-qa`. The second shows no
+The first shows `[idle]: controller-design` with body lines
+`~/code/palekiwi/palekiwi` and `agent builder`. The second shows no
 notification; the journal has `dropped settled from agent summarizer`
 and `cube.evt.controller.result` carries `reason: denied agent`. From a
-real pi session after reloading cue-platform dev: the notification is
-labelled with the context title, and a turn summary (summarizer run)
-or log compaction (compactor run) produces no notification. No event timestamp filter is applied: these
+real pi session after reloading cue-platform dev: the notification uses
+the session name, and a turn summary (summarizer run) or log compaction
+(compactor run) produces no notification. No event timestamp filter is applied: these
 are live publishes, not stored messages. Publish the same command from
 the VM using its existing local NATS URL to verify the leaf/HOST import.
 Also observe an actual pi idle transition. An `end` or `turn_end` subject
@@ -270,10 +269,10 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
 
 Expect:
 
-- seq 1: desktop and phone `Gotify QA interactive idle`, body `3 tools`
-  / `pale-qa`, Gotify priority 5; `host.evt.execution` shows
+- seq 1: desktop and phone `[idle]: Gotify QA interactive`, empty body,
+  Gotify priority 5; `host.evt.execution` shows
   `host.cmd.notify` and `host.cmd.gotify` accepted (`status: 200`).
-- seq 2: desktop and phone `Gotify QA aborted idle (aborted)`, priority 7.
+- seq 2: desktop and phone `[aborted]: Gotify QA aborted`, priority 7.
 - seq 3 (`agent: builder`): desktop only; no `host.cmd.gotify` execution.
 - seq 4 (`agent: summarizer`): nothing; `reason: denied agent`.
 
@@ -293,7 +292,7 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
   '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":5,"aborted":false,"context_title":"Gotify QA failure"}'
 ```
 
-Expect a desktop notification `Gotify QA failure idle`, no phone push,
+Expect a desktop notification `[idle]: Gotify QA failure`, no phone push,
 `host.evt.execution {subject: "host.cmd.gotify", accepted: false, reason:
 "FileNotFoundError"}`, journal lines `cube executor: FileNotFoundError:
 ...` and `cube controller: RuntimeError: host.cmd.gotify rejected`, and

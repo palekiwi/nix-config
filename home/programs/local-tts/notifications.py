@@ -5,7 +5,7 @@ import re
 import unicodedata
 import urllib.request
 
-SUMMARY = re.compile(r".+ idle( \((aborted|error|aborted, error)\))?", re.S)
+SUMMARY = re.compile(r"\[(idle|aborted|error|aborted, error)\]: .+", re.S)
 
 
 def label(value, limit=80):
@@ -80,15 +80,15 @@ def notification(subject, body):
     ):
         raise ValueError("invalid settled event")
     status = status_of(body)
-    suffix = " idle" + (f" ({', '.join(status)})" if status else "")
+    prefix = f"[{', '.join(status) if status else 'idle'}]: "
     name = (
-        label(body.get("context_title"))
+        label(body.get("session_name"))
         or last_segment(body.get("context"))
-        or label(body.get("session_name"))
+        or label(body.get("context_title"))
         or last_segment(body.get("cwd"))
         or label(sid)
     )
-    summary = name[: 100 - len(suffix)] + suffix
+    summary = prefix + name[: 100 - len(prefix)]
     agent = agent_of(body)
     parts = [
         label(body.get("session_description")),
