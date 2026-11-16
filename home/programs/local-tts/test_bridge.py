@@ -149,17 +149,19 @@ class BridgeTests(unittest.TestCase):
         say_slots=4,
         read_timeout=5.0,
         leading_silence_ms=0,
+        voice="am_adam",
     ):
-        def synthesize(text, sink, on_connect):
+        def synthesize(text, sink, on_connect, voice):
             if self.before_synthesis is not None:
                 self.before_synthesis()
-            http_engine.generate(text, sink, "am_adam", 1.25, on_connect)
+            http_engine.generate(text, sink, voice, 1.25, on_connect)
 
         self.bridge = speech_bridge.Bridge(
             synthesize,
             speech_bridge.player_command(str(self.player), "1.5"),
             max_queue,
             leading_silence_ms,
+            voice,
         )
         worker = threading.Thread(target=self.bridge.run, daemon=True)
         worker.start()
@@ -279,6 +281,35 @@ class BridgeTests(unittest.TestCase):
         self.wait_for(lambda: len(self.played()) == 2 and self.idle())
         self.assertEqual(self.kokoro.inputs()[-1], text)
         self.assertEqual(self.played()[-1], b"abcd")
+
+    def test_nats_voice_reaches_kokoro_per_utterance(self):
+        from test_voice import chunk
+
+        self.start()
+        self.assertTrue(self.bridge.intent(dict(chunk("one"), voice="af_heart"), 100))
+        self.wait_for(lambda: len(self.played()) == 1 and self.idle())
+        self.assertTrue(
+            self.bridge.intent(
+                dict(chunk("one", seq=1, final=True), voice="af_heart"), 100
+            )
+        )
+        self.wait_for(lambda: len(self.played()) == 2 and self.idle())
+        self.assertTrue(self.bridge.intent(chunk("two", final=True), 100))
+        self.wait_for(lambda: len(self.played()) == 3 and self.idle())
+        self.assertEqual(self.say("legacy"), 202)
+        self.wait_for(lambda: len(self.played()) == 4 and self.idle())
+        self.assertEqual(
+            [request["voice"] for request in self.kokoro.requests],
+            ["af_heart", "af_heart", "am_adam", "am_adam"],
+        )
+
+    def test_main_passes_default_voice(self):
+        with patch.object(speech_bridge, "Bridge", side_effect=RuntimeError) as bridge:
+            with self.assertRaises(RuntimeError):
+                speech_bridge.main(
+                    ["--host", "127.0.0.1", "--port", "0", "--voice", "af_sky"]
+                )
+        self.assertEqual(bridge.call_args.args[4], "af_sky")
 
     def test_leading_silence_once_per_utterance_not_chunk(self):
         from test_voice import chunk

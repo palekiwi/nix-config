@@ -90,7 +90,7 @@ in
       voice = lib.mkOption {
         type = lib.types.str;
         default = "af_bella";
-        description = "Kokoro voice used for every bridge request.";
+        description = "Default Kokoro voice for HTTP requests and NATS utterances without a voice.";
       };
       speed = lib.mkOption {
         type = lib.types.numbers.positive;

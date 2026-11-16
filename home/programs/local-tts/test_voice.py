@@ -29,7 +29,7 @@ class OwnershipTests(unittest.TestCase):
         self.assertEqual(b.generation, generation)
         self.assertEqual(len(b.queue), 2)
         self.assertTrue(b.intent(chunk("b"), 100))
-        self.assertEqual(list(b.queue), [(b.generation, "hello")])
+        self.assertEqual(list(b.queue), [(b.generation, "hello", "af_bella")])
         self.assertFalse(b.intent(chunk(seq=2), 100))
         b.stop()
         self.assertFalse(b.intent(chunk("b", seq=1), 100))
@@ -88,11 +88,75 @@ class OwnershipTests(unittest.TestCase):
         b = self.bridge
         b.say("first")
         b.say("second")
-        self.assertEqual([text for _, text in b.queue], ["first", "second"])
+        self.assertEqual([text for _, text, _ in b.queue], ["first", "second"])
         b.intent(chunk(origin="http"), 100)
         b.say("legacy replaces NATS even with http origin")
         self.assertEqual(len(b.queue), 1)
         self.assertFalse(b.intent(chunk(seq=1, origin="http"), 100))
+
+    def test_voice_defaults_and_allowlist(self):
+        b = self.bridge
+        self.assertEqual(
+            speech_bridge.VOICES,
+            {"af_bella", "af_heart", "af_jessica", "af_sky", "bf_isabella", "am_echo"},
+        )
+        self.assertTrue(b.intent(chunk("default"), 100))
+        self.assertEqual(b.queue[-1][2], "af_bella")
+        self.assertEqual(b.health()["utterance"]["voice"], "af_bella")
+        for voice in sorted(speech_bridge.VOICES):
+            self.assertTrue(b.intent(dict(chunk(voice), voice=voice), 100))
+            self.assertEqual(list(b.queue), [(b.generation, "hello", voice)])
+            self.assertEqual(b.health()["utterance"]["voice"], voice)
+        self.assertTrue(b.say("legacy"))
+        self.assertEqual(b.queue[-1][2], "af_bella")
+        self.assertEqual(b.health()["utterance"]["voice"], "af_bella")
+
+    def test_invalid_voice_rejected_without_interrupting(self):
+        b = self.bridge
+        self.assertTrue(b.intent(dict(chunk(), voice="af_heart"), 100))
+        generation = b.generation
+        for voice in (None, 5, ["af_heart"], {"name": "af_heart"}, True):
+            self.assertFalse(b.intent(dict(chunk("bad"), voice=voice), 100))
+            self.assertEqual(self.events[-1][1]["reason"], "invalid")
+        for voice in ("af_nova", "", "AF_BELLA", "af_bella ", "../af_bella"):
+            self.assertFalse(b.intent(dict(chunk("bad"), voice=voice), 100))
+            self.assertEqual(
+                self.events[-1],
+                (
+                    "speech.evt.rejected",
+                    {"utt": "bad", "origin": "pi", "reason": "voice"},
+                ),
+            )
+        self.assertEqual(b.generation, generation)
+        self.assertEqual(b.current["utt"], "a")
+        self.assertNotIn("speech.evt.stopped", [s for s, _ in self.events])
+        self.assertTrue(b.intent(dict(chunk("bad"), voice="am_echo"), 100))
+
+    def test_voice_consistent_within_utterance(self):
+        b = self.bridge
+        self.assertTrue(b.intent(dict(chunk(), voice="bf_isabella"), 100))
+        self.assertFalse(b.intent(dict(chunk(seq=1), voice="af_sky"), 100))
+        self.assertEqual(self.events[-1][1]["reason"], "voice")
+        self.assertFalse(b.intent(chunk(seq=1), 100))
+        self.assertEqual(self.events[-1][1]["reason"], "voice")
+        self.assertTrue(b.intent(dict(chunk(seq=1), voice="bf_isabella"), 100))
+        self.assertEqual([voice for _, _, voice in b.queue], ["bf_isabella"] * 2)
+        self.assertTrue(b.intent(chunk("b"), 100))
+        self.assertFalse(b.intent(dict(chunk("b", seq=1), voice="af_heart"), 100))
+        self.assertTrue(b.intent(dict(chunk("b", seq=1), voice="af_bella"), 100))
+        self.assertTrue(b.intent(chunk("b", seq=2), 100))
+        self.assertEqual([voice for _, _, voice in b.queue], ["af_bella"] * 3)
+
+    def test_configured_default_voice(self):
+        b = speech_bridge.Bridge(lambda *args: None, [], 3, voice="bf_emma")
+        self.assertTrue(b.intent(chunk(), 100))
+        self.assertTrue(b.intent(dict(chunk(seq=1), voice="bf_emma"), 100))
+        self.assertEqual([voice for _, _, voice in b.queue], ["bf_emma"] * 2)
+        self.assertTrue(b.intent(dict(chunk("b"), voice="af_bella"), 100))
+        self.assertEqual(b.queue[-1][2], "af_bella")
+        for voice in ("", None, 5):
+            with self.assertRaises(ValueError):
+                speech_bridge.Bridge(lambda *args: None, [], 3, voice=voice)
 
 
 @unittest.skipUnless(shutil.which("nats-server"), "requires nats-server")
@@ -150,6 +214,17 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
         if self.server:
             self.server.terminate()
             self.server.wait(timeout=3)
+
+    async def test_voice_over_nats(self):
+        say = "speech.intent.say"
+        body = dict(chunk("v"), voice="af_jessica")
+        self.assertTrue((await self.request(say, body))["accepted"])
+        self.assertEqual(self.bridge.health()["utterance"]["voice"], "af_jessica")
+        body = dict(chunk("v", seq=1), voice="am_echo")
+        self.assertFalse((await self.request(say, body))["accepted"])
+        body = dict(chunk("w"), voice="af_nova")
+        self.assertFalse((await self.request(say, body))["accepted"])
+        self.assertEqual(self.bridge.health()["utterance"]["utt"], "v")
 
     async def test_live_commands_outage_reconnect_no_replay(self):
         self.assertTrue((await self.request("speech.intent.say", chunk()))["accepted"])

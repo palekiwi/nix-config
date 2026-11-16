@@ -16,6 +16,9 @@ import http_engine
 
 IP_FREEBIND = getattr(socket, "IP_FREEBIND", 15)
 MAX_BODY = 8192
+VOICES = frozenset(
+    ("af_bella", "af_heart", "af_jessica", "af_sky", "bf_isabella", "am_echo")
+)
 
 
 class Stale(Exception):
@@ -84,7 +87,18 @@ class Sink:
 class Bridge:
     """Queue of sentences spoken one at a time, cancellable by stop()."""
 
-    def __init__(self, synthesize, command, max_queue, leading_silence_ms=0):
+    def __init__(
+        self,
+        synthesize,
+        command,
+        max_queue,
+        leading_silence_ms=0,
+        voice="af_bella",
+    ):
+        if not isinstance(voice, str) or not voice:
+            raise ValueError("default voice must be a nonempty string")
+        self.voice = voice
+        self.voices = VOICES | {voice}
         self.synthesize = synthesize
         self.command = command
         self.max_queue = max_queue
@@ -145,8 +159,12 @@ class Bridge:
                 or not 0 < len(origin) <= 128
                 or ("sid" in body and not isinstance(body["sid"], str))
                 or (not text.strip() and not final)
+                or ("voice" in body and not isinstance(body["voice"], str))
             ):
                 return self.reject({}, "invalid")
+            voice = body.get("voice", self.voice)
+            if voice not in self.voices:
+                return self.reject(body, "voice")
             if utt in self.retired:
                 return self.reject(body, "stale")
             if self.held():
@@ -157,6 +175,8 @@ class Bridge:
                 return self.reject(body, "sequence")
             if same and (self.final or origin != self.current["origin"]):
                 return self.reject(body, "finalized" if self.final else "origin")
+            if same and voice != self.current["voice"]:
+                return self.reject(body, "voice")
             if same and len(self.queue) >= self.max_queue:
                 return self.reject(body, "queue_full")
             if not same:
@@ -164,6 +184,7 @@ class Bridge:
                 self.current = {
                     key: body[key] for key in ("utt", "origin", "sid") if key in body
                 }
+                self.current["voice"] = voice
                 self.source = "nats"
                 self.next_seq = 0
                 self.final = False
@@ -171,7 +192,7 @@ class Bridge:
             self.next_seq += 1
             self.final = final
             if text.strip():
-                self.queue.append((self.generation, text))
+                self.queue.append((self.generation, text, voice))
                 self.ready.notify()
             self.complete()
             return True
@@ -205,11 +226,15 @@ class Bridge:
             if len(self.queue) >= self.max_queue:
                 return False
             if not self.current:
-                self.current = {"utt": str(uuid.uuid4()), "origin": "http"}
+                self.current = {
+                    "utt": str(uuid.uuid4()),
+                    "origin": "http",
+                    "voice": self.voice,
+                }
                 self.source = "http"
                 self.final = True
                 self.started = False
-            self.queue.append((self.generation, text))
+            self.queue.append((self.generation, text, self.voice))
             self.ready.notify()
             return True
 
@@ -288,11 +313,11 @@ class Bridge:
                     self.ready.wait()
                 if self.closed:
                     return
-                generation, text = self.queue.popleft()
+                generation, text, voice = self.queue.popleft()
                 self.speaking = True
             success = False
             try:
-                success = self.speak(generation, text)
+                success = self.speak(generation, text, voice)
             finally:
                 with self.lock:
                     self.player = None
@@ -306,11 +331,13 @@ class Bridge:
                         self.stop("failed")
                     self.complete()
 
-    def speak(self, generation, text):
+    def speak(self, generation, text, voice):
         sink = Sink(self, generation)
         try:
             self.check(generation)
-            self.synthesize(text, sink, lambda sock: self.connected(generation, sock))
+            self.synthesize(
+                text, sink, lambda sock: self.connected(generation, sock), voice
+            )
             code = sink.finish()
             self.check(generation)
             if code:
@@ -467,14 +494,15 @@ def main(argv=None):
     parser.add_argument("--target", default=os.environ.get("SPEAK_TARGET", ""))
     args = parser.parse_args(argv)
 
-    def synthesize(text, sink, on_connect):
-        http_engine.generate(text, sink, args.voice, args.speed, on_connect)
+    def synthesize(text, sink, on_connect, voice):
+        http_engine.generate(text, sink, voice, args.speed, on_connect)
 
     bridge = Bridge(
         synthesize,
         player_command(args.player, args.volume, args.target),
         args.max_queue,
         args.leading_silence_ms,
+        args.voice,
     )
     transport = None
     if args.nats_url:

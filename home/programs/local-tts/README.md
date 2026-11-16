@@ -247,8 +247,9 @@ curl http://10.77.0.1:8881/health
 
 Each sentence streams from the resident Kokoro server into its own `pw-play`
 with the same stream properties and gain as `speak`; short gaps between
-sentences are expected. Voice and speed are module options
-(`bridge.voice`, `bridge.speed`), never caller choices. Kokoro failures drop
+sentences are expected. Speed (`bridge.speed`) is never a caller choice.
+HTTP `/say` always uses the default voice (`bridge.voice`); NATS utterances
+may select another (see below). Kokoro failures drop
 the sentence and are logged without its text in
 `journalctl --user -u speech-bridge.service`.
 
@@ -351,7 +352,7 @@ The first command must print `true`; the second must return bridge health
 bridge responder, requests time out or report no responders rather than
 receiving a storage acknowledgment.
 
-- `speech.intent.say`: `{utt, seq, final, text, origin, sid?}`. IDs are
+- `speech.intent.say`: `{utt, seq, final, text, origin, sid?, voice?}`. IDs are
   nonempty strings up to 128 characters; sequences start at zero and must
   be contiguous. Same-ID chunks append; a different ID atomically stops
   and replaces playback. An empty final chunk finalizes without audio.
@@ -359,6 +360,20 @@ receiving a storage acknowledgment.
   completed or hold-rejected IDs are remembered in memory, not across
   service restarts. Senders must use fresh UUIDs and never retry old speech
   after reconnect. Text uses the HTTP maxChars limit per chunk.
+- `voice` is optional. Absent means the configured `bridge.voice`
+  (default `af_bella`). Accepted values are exactly `af_bella`, `af_heart`,
+  `af_jessica`, `af_sky`, `bf_isabella`, `am_echo` and the configured
+  default; the list is fixed in `speech_bridge.py`, not a module option.
+  A non-string voice (including `null`) is rejected as `invalid`; any other
+  string is rejected with reason `voice`. Such a rejected new utterance
+  never replaces or stops current speech. The voice is fixed by seq 0 for
+  the whole utterance: every later chunk must resolve to the same voice,
+  so either repeat it on each chunk or omit it on all chunks when using
+  the default. A mismatched chunk is rejected with reason `voice`, like
+  an origin mismatch, and the utterance keeps waiting for a valid chunk.
+  Each queued sentence carries its voice into its own Kokoro request.
+  Voice availability in the running Kokoro image is not checked by the
+  bridge; a missing voice fails synthesis with reason `failed`.
 - `speech.intent.stop` and `speech.cmd.stop`: `{}`. Both cancel the owner,
   queued chunks, player and synthesis connection through generation bump.
 - `speech.cmd.hold`: `{id, ttl}` with TTL in seconds, greater than zero and
@@ -367,7 +382,9 @@ receiving a storage acknowledgment.
   only that hold. Expiry is monotonic. HTTP and NATS speech are both
   rejected while any hold remains; rejected speech is never queued.
 - `speech.evt.started`, `finished`, `stopped`, `rejected`: carry
-  `utt`, `origin`, optional `sid`, and `reason` for stop/rejection. Started
+  `utt`, `origin`, optional `sid`, and `reason` for stop/rejection.
+  Started, finished and stopped also carry the effective `voice`; the
+  health `utterance` object does too, for NATS and HTTP owners. Started
   means the player was spawned. Finished means final input and all queued
   audio completed; empty utterances finish without started. Synthesis
   failures terminate NATS utterances with reason `failed`.
