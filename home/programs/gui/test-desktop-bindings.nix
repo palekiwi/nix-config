@@ -42,6 +42,7 @@ let
     }
   ];
   speechVolume = "alt + {XF86AudioLowerVolume,XF86AudioRaiseVolume}";
+  playPause = "{XF86AudioPlay,XF86AudioPause}";
 in
 assert !(home.config.systemd.user.services ? voice-controller);
 assert voice.config.systemd.user.services.voice-controller.Service.Restart == "on-failure";
@@ -57,6 +58,15 @@ assert !(absent.config.services.sxhkd.keybindings ? ${speechVolume});
 assert !(absent.config.services.sxhkd.keybindings ? "XF86AudioNext");
 assert !(home.config.services.sxhkd.keybindings ? "XF86AudioPrev");
 assert home.config.services.sxhkd.keybindings.XF86AudioNext == "speech-emergency-stop";
+assert home.config.services.sxhkd.keybindings.${playPause} == "speech-emergency-stop";
+assert disabled.config.services.sxhkd.keybindings.${playPause} == "playerctl -i cmus play-pause";
+assert absent.config.services.sxhkd.keybindings.${playPause} == "playerctl -i cmus play-pause";
+assert
+  builtins.attrNames (
+    pkgs.lib.filterAttrs (
+      key: _: builtins.match ".*XF86Audio(Play|Pause).*" key != null
+    ) home.config.services.sxhkd.keybindings
+  ) == [ playPause ];
 assert
   builtins.match ".*/bin/xdotool key Pause" handy.config.services.sxhkd.keybindings.XF86AudioPrev
   != null;

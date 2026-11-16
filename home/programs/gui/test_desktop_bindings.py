@@ -62,6 +62,16 @@ class DesktopBindings(unittest.TestCase):
             ["control + Pause", "control + shift + Pause"]
         )
         self.assertEqual(bindings["control + shift + Pause"], "speech-emergency-stop")
+        play_pause = "{XF86AudioPlay,XF86AudioPause}"
+        self.assertEqual(bindings[play_pause], "speech-emergency-stop")
+        self.assertEqual(
+            [key for key in bindings if re.search(r"XF86Audio(Play|Pause)", key)],
+            [play_pause],
+        )
+        self.assertIn(
+            f"{play_pause}\n  playerctl -i cmus play-pause",
+            (CONFIG / "sxhkdrc-disabled").read_text(),
+        )
         self.assertNotRegex((CONFIG / "sxhkdrc-disabled").read_text(), r"\bPause\b")
         self.assertNotIn(
             "clipboard-speech-toggle", (CONFIG / "sxhkdrc-disabled").read_text()

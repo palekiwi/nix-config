@@ -205,6 +205,7 @@ in
     // lib.optionalAttrs (config.programs.local-tts.bridge.enable or false) {
       "control + shift + Pause" = "speech-emergency-stop";
       "XF86AudioNext" = "speech-emergency-stop";
+      "{XF86AudioPlay,XF86AudioPause}" = "speech-emergency-stop";
     }
     // lib.optionalAttrs (config.services.handy.enable or false) {
       "XF86AudioPrev" = "${xdotool} key Pause";
