@@ -22,6 +22,11 @@ local function set_master_branch_name()
 end
 
 local function set_git_base()
+  local station_base = vim.env.STATION_BASE
+  if station_base ~= nil and station_base ~= "" then
+    vim.g.git_base = station_base
+    return
+  end
   local result = run_helper("get_pr_base")
   vim.g.git_base = result ~= "" and result or vim.g.git_master
 end
