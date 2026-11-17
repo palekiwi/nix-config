@@ -3,6 +3,9 @@ return {
     "lewis6991/gitsigns.nvim",
     config = function()
       require('gitsigns').setup {
+        -- set here, not only at VimEnter, so command-line file buffers
+        -- (station's `e`) attach with the right base from the first update
+        base = require('config.utils.helpers.git').diff_base(),
         on_attach                    = function(bufnr)
           local gitsigns = require('gitsigns')
 
