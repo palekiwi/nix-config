@@ -8,6 +8,7 @@
     ./tmux.nix
     ./proxy.nix
     ./git-hooks.nix
+    ./9router.nix
     ./shell.nix
     ./agent-nats.nix
     ./github-service.nix
