@@ -23,7 +23,7 @@
     backend = "docker";
     containers.headroom = {
       image = "ghcr.io/headroomlabs-ai/headroom:0.44.0@sha256:10ef5f71c4cae3a02ca28107dfcf379aa73314ff26544c1f9988140e71f732f4";
-      autoStart = false;
+      autoStart = true;
       pull = "missing";
       ports = [ "127.0.0.1:8787:8787" ];
       environment = {
