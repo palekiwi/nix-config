@@ -1,7 +1,8 @@
 { pkgs }:
 
 pkgs.writers.writeNuBin "dmenu_audio-sinks" ''
-  let options_pale = ["Speakers", "Earbuds: voice only", "Earbuds: calls", "Earbuds: disconnect"]
+  let options_pale = ["Speakers", "Earbuds: voice only", "Earbuds: calls", "Earbuds: disconnect", "Speaker: connect", "Speaker: disconnect"]
+  let speaker = "11:75:58:93:13:9F"
   let earbuds = "58:FC:C6:CE:92:70"
   let earbuds_sink = "bluez_output.58_FC_C6_CE_92_70.1"
   let speakers_sink = "alsa_output.pci-0000_00_1f.3-platform-sof_sdw.HiFi__HDMI1__sink"
@@ -26,6 +27,15 @@ pkgs.writers.writeNuBin "dmenu_audio-sinks" ''
       }
       "Earbuds: disconnect" => {
         bluetoothctl disconnect $earbuds
+        pactl set-default-sink $speakers_sink
+      }
+      "Speaker: connect" => {
+        bluetoothctl connect $speaker
+        sleep 1sec
+        pactl set-default-sink $speakers_sink
+      }
+      "Speaker: disconnect" => {
+        bluetoothctl disconnect $speaker
         pactl set-default-sink $speakers_sink
       }
       _ => {
