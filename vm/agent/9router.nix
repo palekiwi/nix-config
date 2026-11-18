@@ -12,6 +12,7 @@
         DATA_DIR = "/app/data";
       };
       volumes = [ "9router-data:/app/data" ];
+      extraOptions = [ "--network=agent-llm" ];
     };
   };
 }
