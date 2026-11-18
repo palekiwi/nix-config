@@ -32,6 +32,7 @@
         HEADROOM_MODE = "cache";
         HEADROOM_BEACON = "off";
         HEADROOM_TELEMETRY = "off";
+        HEADROOM_ALLOW_UNAUTHENTICATED_BIND = "1";
         ANTHROPIC_TARGET_API_URL = "http://9router:20128";
         OPENAI_TARGET_API_URL = "http://9router:20128/v1";
       };
