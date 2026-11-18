@@ -70,3 +70,82 @@ tasks:
     cmds:
       - fetch_gh_docs
     silent: true
+
+  vm-sync-repo:
+    desc: (host) Fast-forward a branch from the agent VM and push it to origin
+    summary: |
+      Fetches the `vm` remote of REPO, fast-forwards BRANCH (checked out or
+      not) to vm/BRANCH and pushes it to origin. Stops when the branch has
+      diverged from the VM; never merges or force-pushes. DRY=1 prints the
+      commits that would move and changes nothing.
+    requires:
+      vars: [REPO, BRANCH]
+    vars:
+      DRY: '{{.DRY | default "0"}}'
+    silent: true
+    cmds:
+      - |
+        set -eu
+        repo={{.REPO}}; branch={{.BRANCH}}
+        if ! git -C "$repo" remote get-url vm >/dev/null 2>&1; then
+          echo "$repo: no 'vm' remote; add one pointing at the same path in the guest" >&2
+          exit 1
+        fi
+        git -C "$repo" fetch -q vm "$branch"
+        local_sha=$(git -C "$repo" rev-parse "refs/heads/$branch")
+        vm_sha=$(git -C "$repo" rev-parse "refs/remotes/vm/$branch")
+        if [ "$local_sha" = "$vm_sha" ]; then
+          echo "$repo $branch: up to date"
+        elif ! git -C "$repo" merge-base --is-ancestor "$local_sha" "$vm_sha"; then
+          echo "$repo $branch: diverged from vm/$branch, resolve by hand" >&2
+          exit 1
+        else
+          git -C "$repo" log --oneline "$local_sha..$vm_sha"
+          if [ "{{.DRY}}" = 1 ]; then exit 0; fi
+          if [ "$(git -C "$repo" branch --show-current)" = "$branch" ]; then
+            git -C "$repo" merge -q --ff-only "vm/$branch"
+          else
+            git -C "$repo" update-ref "refs/heads/$branch" "$vm_sha" "$local_sha"
+          fi
+        fi
+        if [ "{{.DRY}}" != 1 ]; then git -C "$repo" push -q origin "$branch"; fi
+
+  cue-platform-deploy:
+    desc: (host) Sync cue-platform dev and config-cue from the VM, bump the input, rebuild
+    summary: |
+      Fast-forwards and pushes cue-platform BRANCH (default dev) and the
+      config-cue checked-out branch from the agent VM, then in FLAKE (default
+      ~/nix-config; a worktree path also works) runs
+      `nix flake update cue-platform`, commits flake.lock and rebuilds this
+      host with `nixos-rebuild switch`. FLAKE must have no staged changes.
+      DRY=1 only reports what would move.
+    vars:
+      CUE_PLATFORM: '{{.CUE_PLATFORM | default "/home/pl/code/palekiwi-labs/cue-platform"}}'
+      CONFIG_CUE: '{{.CONFIG_CUE | default "/home/pl/.config/cue"}}'
+      BRANCH: '{{.BRANCH | default "dev"}}'
+      FLAKE: '{{.FLAKE | default "/home/pl/nix-config"}}'
+      DRY: '{{.DRY | default "0"}}'
+      CONFIG_CUE_BRANCH:
+        sh: git -C {{.CONFIG_CUE}} branch --show-current
+    silent: true
+    cmds:
+      - task: vm-sync-repo
+        vars: { REPO: '{{.CUE_PLATFORM}}', BRANCH: '{{.BRANCH}}', DRY: '{{.DRY}}' }
+      - task: vm-sync-repo
+        vars: { REPO: '{{.CONFIG_CUE}}', BRANCH: '{{.CONFIG_CUE_BRANCH}}', DRY: '{{.DRY}}' }
+      - |
+        set -eu
+        if [ "{{.DRY}}" = 1 ]; then echo "dry run: skipping flake update and rebuild"; exit 0; fi
+        cd {{.FLAKE}}
+        if ! git diff --cached --quiet; then
+          echo "{{.FLAKE}}: staged changes present, commit or unstage them first" >&2
+          exit 1
+        fi
+        nix flake update cue-platform
+        if git diff --quiet -- flake.lock; then
+          echo "cue-platform input unchanged"
+        else
+          git commit -q -m "chore: bump cue-platform" -- flake.lock
+          echo "committed flake.lock"
+        fi
+        sudo nixos-rebuild switch --flake "{{.FLAKE}}#$(hostname -s)"
