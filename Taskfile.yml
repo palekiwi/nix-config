@@ -111,14 +111,14 @@ tasks:
         if [ "{{.DRY}}" != 1 ]; then git -C "$repo" push -q origin "$branch"; fi
 
   cue-platform-deploy:
-    desc: (host) Sync cue-platform dev and config-cue from the VM, bump the input, rebuild
+    desc: (host) Sync cue-platform dev and config-cue from the VM and bump the input
     summary: |
       Fast-forwards and pushes cue-platform BRANCH (default dev) and the
       config-cue checked-out branch from the agent VM, then in FLAKE (default
       ~/nix-config; a worktree path also works) runs
-      `nix flake update cue-platform`, commits flake.lock and rebuilds this
-      host with `nixos-rebuild switch`. FLAKE must have no staged changes.
-      DRY=1 only reports what would move.
+      `nix flake update cue-platform` and commits flake.lock. It does not
+      rebuild. FLAKE must have no staged changes. DRY=1 only reports what
+      would move.
     vars:
       CUE_PLATFORM: '{{.CUE_PLATFORM | default "/home/pl/code/palekiwi-labs/cue-platform"}}'
       CONFIG_CUE: '{{.CONFIG_CUE | default "/home/pl/.config/cue"}}'
@@ -135,7 +135,7 @@ tasks:
         vars: { REPO: '{{.CONFIG_CUE}}', BRANCH: '{{.CONFIG_CUE_BRANCH}}', DRY: '{{.DRY}}' }
       - |
         set -eu
-        if [ "{{.DRY}}" = 1 ]; then echo "dry run: skipping flake update and rebuild"; exit 0; fi
+        if [ "{{.DRY}}" = 1 ]; then echo "dry run: skipping flake update"; exit 0; fi
         cd {{.FLAKE}}
         if ! git diff --cached --quiet; then
           echo "{{.FLAKE}}: staged changes present, commit or unstage them first" >&2
@@ -148,4 +148,3 @@ tasks:
           git commit -q -m "chore: bump cue-platform" -- flake.lock
           echo "committed flake.lock"
         fi
-        sudo nixos-rebuild switch --flake "{{.FLAKE}}#$(hostname -s)"
