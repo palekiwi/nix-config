@@ -61,8 +61,9 @@ stdenv.mkDerivation {
   '';
   installPhase = ''
     runHook preInstall
-    mkdir -p "$out/lib/local-tts" "$out/bin"
-    cp speak.py http_engine.py speech_bridge.py speech_nats.py clipboard_nats.py voice_control.py cube_control.py notifications.py speak-engine "$out/lib/local-tts/"
+    mkdir -p "$out/lib/local-tts" "$out/share/local-tts" "$out/bin"
+    cp speak.py http_engine.py speech_bridge.py speech_nats.py clipboard_nats.py voice_control.py cube_control.py notifications.py gen_blips.py speak-engine "$out/lib/local-tts/"
+    ${python3}/bin/python3 "$out/lib/local-tts/gen_blips.py" "$out/share/local-tts"
     makeWrapper ${python3}/bin/python3 "$out/bin/speak" \
       --add-flags "$out/lib/local-tts/speak.py" \
       --set-default SPEAK_BACKEND ${lib.escapeShellArg backend} \
@@ -85,7 +86,10 @@ stdenv.mkDerivation {
     makeWrapper ${bridgePython}/bin/python3 "$out/bin/agent-controller" \
       --add-flags "$out/lib/local-tts/cube_control.py controller"
     makeWrapper ${bridgePython}/bin/python3 "$out/bin/cube-control" \
-      --add-flags "$out/lib/local-tts/cube_control.py"
+      --add-flags "$out/lib/local-tts/cube_control.py" \
+      --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
+      --set-default SPEAK_BLIP_DIR "$out/share/local-tts" \
+      --set-default SPEAK_BLIP_VOLUME 0.6${targetFlag}
     runHook postInstall
   '';
   passthru = { inherit model; };
