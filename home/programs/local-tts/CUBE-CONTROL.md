@@ -34,6 +34,14 @@ The accepted 1000 ms speech startup padding is unchanged.
   Invalid, busy, rejected, unavailable and subprocess failure paths are
   visible in those events or the service journal. CLI success means only
   CLI success, not that Handy was observed recording.
+- After a Handy toggle or cancel, the executor plays a short confirmation
+  blip on the speech target sink (`SPEAK_TARGET`, falling back to the
+  default sink): a rising two-note blip for a delivered toggle, a falling
+  two-note blip for cancel, a low buzz when the Handy CLI exits nonzero.
+  Blips come from the package's generated WAVs in `share/local-tts/`, played
+  by `pw-play` via the `SPEAK_PLAYER`, `SPEAK_BLIP_DIR` and
+  `SPEAK_BLIP_VOLUME` environment; unset `SPEAK_BLIP_DIR` disables them.
+  Blip playback failure never fails the command.
 
 Messages are bounded to 4096 bytes, queues to 64, commands/gestures to a
 2-second freshness window, and subprocess execution to 3 seconds. NATS

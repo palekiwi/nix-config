@@ -3,6 +3,7 @@ import asyncio
 import http.client
 import json
 import math
+import os
 import time
 import uuid
 
@@ -149,6 +150,27 @@ class Controller(CubeController):
         return await super().handle(subject, body)
 
 
+async def play_blip(kind):
+    directory = os.environ.get("SPEAK_BLIP_DIR")
+    player = os.environ.get("SPEAK_PLAYER")
+    if not directory or not player:
+        return
+    args = [player, f"--volume={os.environ.get('SPEAK_BLIP_VOLUME', '0.6')}"]
+    target = os.environ.get("SPEAK_TARGET", "")
+    if target:
+        args.append(f"--target={target}")
+    args.append(os.path.join(directory, f"{kind}.wav"))
+    try:
+        process = await asyncio.create_subprocess_exec(
+            *args,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+        await asyncio.wait_for(process.wait(), 2)
+    except (OSError, TimeoutError):
+        pass
+
+
 class HostExecutor:
     def __init__(
         self,
@@ -205,6 +227,13 @@ class HostExecutor:
                 process.kill()
             await process.wait()
             raise
+        if subject == "host.cmd.handy":
+            kind = (
+                "error"
+                if process.returncode != 0
+                else ("cancel" if body["action"] == "cancel" else "start")
+            )
+            await play_blip(kind)
         return {"accepted": process.returncode == 0, "returncode": process.returncode}
 
 

@@ -8,11 +8,80 @@ import unittest
 from unittest.mock import patch
 
 import nats
-from cube_control import CubeController, HostExecutor, decode, gesture, serve
+from cube_control import (
+    CubeController,
+    HostExecutor,
+    decode,
+    gesture,
+    play_blip,
+    serve,
+)
 from voice_control import request
 
 
-class PolicyTests(unittest.IsolatedAsyncioTestCase):
+class BlipTests(unittest.IsolatedAsyncioTestCase):
+    async def test_handy_commands_blip_by_outcome(self):
+        class Process:
+            def __init__(self, returncode):
+                self.returncode = returncode
+
+            async def wait(self):
+                return self.returncode
+
+        spawned = []
+        fail_handy = False
+
+        async def fake_exec(*args, **kwargs):
+            spawned.append(args)
+            return Process(7 if args[0] == "handy" and fail_handy else 0)
+
+        env = {
+            "SPEAK_BLIP_DIR": "/blips",
+            "SPEAK_PLAYER": "pw-play",
+            "SPEAK_TARGET": "sink1",
+        }
+        executor = HostExecutor("handy", "wpctl")
+        with (
+            patch.dict("os.environ", env),
+            patch("cube_control.asyncio.create_subprocess_exec", side_effect=fake_exec),
+        ):
+            await executor.handle(
+                "host.cmd.handy", {"action": "toggle", "ts": time.time()}
+            )
+            await executor.handle(
+                "host.cmd.handy", {"action": "cancel", "ts": time.time()}
+            )
+            fail_handy = True
+            await executor.handle(
+                "host.cmd.handy", {"action": "toggle", "ts": time.time()}
+            )
+        blips = [args for args in spawned if args[0] == "pw-play"]
+        self.assertEqual(len(blips), 3)
+        self.assertIn("--target=sink1", blips[0])
+        self.assertTrue(blips[0][-1].endswith("start.wav"))
+        self.assertTrue(blips[1][-1].endswith("cancel.wav"))
+        self.assertTrue(blips[2][-1].endswith("error.wav"))
+
+    async def test_blip_skipped_without_env(self):
+        spawned = []
+
+        async def fake_exec(*args, **kwargs):
+            spawned.append(args)
+
+            class Process:
+                returncode = 0
+
+                async def wait(self):
+                    return 0
+
+            return Process()
+
+        with patch(
+            "cube_control.asyncio.create_subprocess_exec", side_effect=fake_exec
+        ):
+            await play_blip("start")
+        self.assertEqual(spawned, [])
+
     async def test_mappings_without_observer_or_holds(self):
         calls = []
 
