@@ -26,6 +26,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     cue-platform.url = "github:palekiwi-labs/cue-platform/dev";
+    llm-agents.url = "github:numtide/llm-agents.nix";
     git-pr-sync = {
       url = "github:palekiwi-labs/git-pr-sync";
       inputs.nixpkgs.follows = "nixpkgs";
