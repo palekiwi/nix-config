@@ -89,7 +89,7 @@ stdenv.mkDerivation {
       --add-flags "$out/lib/local-tts/cube_control.py" \
       --set-default SPEAK_PLAYER ${pipewire}/bin/pw-play \
       --set-default SPEAK_BLIP_DIR "$out/share/local-tts" \
-      --set-default SPEAK_BLIP_VOLUME 0.6${targetFlag}
+      --set-default SPEAK_BLIP_VOLUME 1.0${targetFlag}
     runHook postInstall
   '';
   passthru = { inherit model; };

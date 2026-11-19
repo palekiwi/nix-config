@@ -26,12 +26,12 @@ def tone(freqs, dur, amp):
 def blips():
     return {
         "start": silence(LEAD_SILENCE)
-        + tone([660], 0.09, 0.5)
-        + tone([880], 0.12, 0.5),
+        + tone([660], 0.09, 0.8)
+        + tone([880], 0.12, 0.8),
         "cancel": silence(LEAD_SILENCE)
-        + tone([520], 0.12, 0.5)
-        + tone([392], 0.12, 0.5),
-        "error": silence(LEAD_SILENCE) + tone([180, 181], 0.18, 0.6),
+        + tone([520], 0.12, 0.8)
+        + tone([392], 0.12, 0.8),
+        "error": silence(LEAD_SILENCE) + tone([180, 181], 0.18, 0.9),
     }
 
 
