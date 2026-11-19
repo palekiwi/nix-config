@@ -5,6 +5,11 @@ import sys
 import wave
 
 RATE = 44100
+LEAD_SILENCE = 0.3
+
+
+def silence(dur):
+    return bytearray(int(RATE * dur) * 2)
 
 
 def tone(freqs, dur, amp):
@@ -20,9 +25,13 @@ def tone(freqs, dur, amp):
 
 def blips():
     return {
-        "start": tone([660], 0.09, 0.5) + tone([880], 0.12, 0.5),
-        "cancel": tone([520], 0.12, 0.5) + tone([392], 0.12, 0.5),
-        "error": tone([180, 181], 0.18, 0.6),
+        "start": silence(LEAD_SILENCE)
+        + tone([660], 0.09, 0.5)
+        + tone([880], 0.12, 0.5),
+        "cancel": silence(LEAD_SILENCE)
+        + tone([520], 0.12, 0.5)
+        + tone([392], 0.12, 0.5),
+        "error": silence(LEAD_SILENCE) + tone([180, 181], 0.18, 0.6),
     }
 
 

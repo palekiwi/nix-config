@@ -41,7 +41,8 @@ The accepted 1000 ms speech startup padding is unchanged.
   Blips come from the package's generated WAVs in `share/local-tts/`, played
   by `pw-play` via the `SPEAK_PLAYER`, `SPEAK_BLIP_DIR` and
   `SPEAK_BLIP_VOLUME` environment; unset `SPEAK_BLIP_DIR` disables them.
-  Blip playback failure never fails the command.
+  Each WAV starts with 300 ms of silence so the tone survives cold
+  Bluetooth sink startup. Blip playback failure never fails the command.
 
 Messages are bounded to 4096 bytes, queues to 64, commands/gestures to a
 2-second freshness window, and subprocess execution to 3 seconds. NATS
