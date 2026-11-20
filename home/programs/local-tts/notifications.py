@@ -107,7 +107,7 @@ def valid(summary, text):
     )
 
 
-def notify_argv(executable, body):
+def notify_argv(executable, body, icon=None):
     summary = body.get("summary")
     text = body.get("body")
     if not valid(summary, text):
@@ -117,6 +117,7 @@ def notify_argv(executable, body):
         "--app-name=Agent controller",
         "--urgency=normal",
         "--expire-time=8000",
+        *([f"--icon={icon}"] if icon else []),
         "--",
         html.escape(label(summary, 100)),
         html.escape(lines(text, 256)),

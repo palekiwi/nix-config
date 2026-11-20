@@ -395,6 +395,19 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             {"summary": "[idle]: x", "body": "<i>a</i>\n\x00\u202eb\r\n\nc"},
         )
         self.assertEqual(injected[-1], "&lt;i&gt;a&lt;/i&gt;\nb\nc")
+        iconned = notify_argv("/fixed/notify-send", payload, "/fixed/terminal.png")
+        self.assertEqual(
+            iconned[:6],
+            [
+                "/fixed/notify-send",
+                "--app-name=Agent controller",
+                "--urgency=normal",
+                "--expire-time=8000",
+                "--icon=/fixed/terminal.png",
+                "--",
+            ],
+        )
+        self.assertEqual(iconned[6:], args[5:])
 
         class Process:
             returncode = 1
@@ -410,6 +423,16 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             )
             self.assertFalse(result["accepted"])
             spawn.assert_awaited_once_with(*args)
+        with patch(
+            "cube_control.asyncio.create_subprocess_exec", return_value=Process()
+        ) as spawn:
+            await HostExecutor(
+                "handy",
+                "wpctl",
+                "/fixed/notify-send",
+                notify_icon="/fixed/terminal.png",
+            ).handle("host.cmd.notify", {**payload, "ts": time.time()})
+            spawn.assert_awaited_once_with(*iconned)
         with self.assertRaises(ValueError):
             notify_argv("notify-send", {"summary": "anything", "body": "x"})
 
@@ -429,7 +452,12 @@ class NotificationLiveTests(LiveTests):
             )
             await self.nc.flush()
             executor = asyncio.create_task(
-                serve(self.url, "executor", notify_send=str(executable))
+                serve(
+                    self.url,
+                    "executor",
+                    notify_send=str(executable),
+                    notify_icon="/fixed/terminal.png",
+                )
             )
             controller = asyncio.create_task(serve(self.url, "controller"))
             self.tasks.extend([executor, controller])
@@ -448,6 +476,7 @@ class NotificationLiveTests(LiveTests):
             result = await self.until("host.evt.execution")
             self.assertTrue(result["accepted"])
             self.assertIn("[idle]: session-qa", output.read_text())
+            self.assertIn("--icon=/fixed/terminal.png", output.read_text())
             original = output.read_text()
             controller.cancel()
             await asyncio.gather(controller, return_exceptions=True)
