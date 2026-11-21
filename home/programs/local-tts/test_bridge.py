@@ -257,15 +257,41 @@ class BridgeTests(unittest.TestCase):
         self.assertFalse(self.alive(old_player))
         self.assertFalse(self.bridge.intent(chunk("old", seq=1), 100))
         self.assertEqual(
-            [(subject, body["utt"]) for subject, body in events[:4]],
+            [(subject, body["utt"]) for subject, body in events[:6]],
             [
+                ("speech.evt.chunk", "old"),
                 ("speech.evt.started", "old"),
                 ("speech.evt.stopped", "old"),
+                ("speech.evt.chunk", "new"),
                 ("speech.evt.started", "new"),
                 ("speech.evt.finished", "new"),
             ],
         )
-        self.assertEqual(events[1][1]["reason"], "replaced")
+        self.assertEqual(events[2][1]["reason"], "replaced")
+
+    def test_chunk_events_carry_seq_and_text(self):
+        from test_voice import chunk
+
+        self.start()
+        events = []
+        self.bridge.emit = lambda subject, body: events.append((subject, body))
+        self.assertTrue(self.bridge.intent(chunk("a"), 100))
+        self.assertTrue(
+            self.bridge.intent(chunk("a", seq=1, final=True, text="second"), 100)
+        )
+        self.wait_for(lambda: self.idle() and len(self.played()) == 2)
+        self.wait_for(
+            lambda: events
+            and events[-1][0] == "speech.evt.finished"
+        )
+        self.assertEqual(
+            [
+                (subject, body.get("seq"), body.get("text"))
+                for subject, body in events
+                if subject == "speech.evt.chunk"
+            ],
+            [("speech.evt.chunk", 0, "hello"), ("speech.evt.chunk", 1, "second")],
+        )
 
     def test_nats_prefix_and_pcm_survive_replacement(self):
         from test_voice import chunk

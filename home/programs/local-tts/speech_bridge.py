@@ -192,7 +192,7 @@ class Bridge:
             self.next_seq += 1
             self.final = final
             if text.strip():
-                self.queue.append((self.generation, text, voice))
+                self.queue.append((self.generation, seq, text, voice))
                 self.ready.notify()
             self.complete()
             return True
@@ -234,7 +234,7 @@ class Bridge:
                 self.source = "http"
                 self.final = True
                 self.started = False
-            self.queue.append((self.generation, text, self.voice))
+            self.queue.append((self.generation, None, text, self.voice))
             self.ready.notify()
             return True
 
@@ -313,8 +313,13 @@ class Bridge:
                     self.ready.wait()
                 if self.closed:
                     return
-                generation, text, voice = self.queue.popleft()
+                generation, seq, text, voice = self.queue.popleft()
                 self.speaking = True
+                if self.current and generation == self.generation:
+                    self.emit(
+                        "speech.evt.chunk",
+                        {**self.current, "seq": seq, "text": text},
+                    )
             success = False
             try:
                 success = self.speak(generation, text, voice)
