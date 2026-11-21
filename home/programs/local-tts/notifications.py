@@ -5,7 +5,7 @@ import re
 import unicodedata
 import urllib.request
 
-SUMMARY = re.compile(r"\[(idle|aborted|error|aborted, error)\]: .+", re.S)
+SOURCES = ("interactive", "headless")
 
 
 def label(value, limit=80):
@@ -75,12 +75,13 @@ def notification(subject, body):
         or type(body.get("aborted")) is not bool
     ):
         raise ValueError("invalid settled event")
-    status = status_of(body)
-    prefix = f"[{', '.join(status) if status else 'idle'}]: "
+    status = ", ".join(status_of(body)) or "idle"
     if "agent" in body:
+        source = "headless"
         name = agent_of(body) or label(sid)
-        parts = []
+        parts = [f"── {status}"]
     else:
+        source = "interactive"
         name = (
             label(body.get("tmux_window"))
             or label(body.get("session_name"))
@@ -91,27 +92,32 @@ def notification(subject, body):
         tmux_session = label(body.get("tmux_session"))
         parts = [
             label(body.get("session_description")),
-            f"── {tmux_session}" if tmux_session else "",
+            f"── {status} · {tmux_session}" if tmux_session else f"── {status}",
         ]
-    summary = prefix + name[: 100 - len(prefix)]
-    return {"summary": summary, "body": "\n".join(filter(None, parts))[:256]}
+    return {
+        "summary": name[:100],
+        "body": "\n".join(filter(None, parts))[:256],
+        "source": source,
+    }
 
 
 def valid(summary, text):
     return (
         isinstance(summary, str)
-        and SUMMARY.fullmatch(summary) is not None
+        and label(summary, 100) != ""
         and len(summary) <= 100
         and isinstance(text, str)
         and len(text) <= 256
     )
 
 
-def notify_argv(executable, body, icon=None):
+def notify_argv(executable, body, icons=None):
     summary = body.get("summary")
     text = body.get("body")
-    if not valid(summary, text):
+    source = body.get("source")
+    if not valid(summary, text) or source not in (None, *SOURCES):
         raise ValueError("invalid notification")
+    icon = (icons or {}).get(source)
     return [
         executable,
         "--app-name=Agent controller",

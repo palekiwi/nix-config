@@ -161,8 +161,10 @@ in
                   "${pkgs.wireplumber}/bin/wpctl"
                   "--notify-send"
                   "${pkgs.libnotify}/bin/notify-send"
-                  "--notify-icon"
-                  "${./icons/agent-notification.png}"
+                  "--notify-icon-interactive"
+                  "${./icons/notification-interactive.png}"
+                  "--notify-icon-headless"
+                  "${./icons/notification-headless.png}"
                 ]
                 ++ lib.optionals (name == "cube-host-executor" && gotify.enable) [
                   "--gotify-url"

@@ -44,51 +44,76 @@ No assistant, prompt, tool or error text is ever carried or shown.
 
 ## Layout
 
-The status prefix is the state the settled event reports: `[idle]`,
-or `[aborted]`, `[error]` or `[aborted, error]`. `idle` never claims
-task success. Error is shown for `errored: true` and, for older events,
-an `error` field, `state: error` or `stopReason: error`, without
-exposing error text. Headless runs use the same prefix; no run outcome
-(succeeded, failed, timed out) is published on NATS.
+The source is shown by the desktop icon, the status by text in the
+footer, the last body line. The title carries no status.
 
-Interactive sessions (no `agent` field):
+The status is the state the settled event reports: `idle`, or
+`aborted`, `error` or `aborted, error`. It is passed through as
+reported; no other label is invented. `idle` never claims task success.
+Error is shown for `errored: true` and, for older events, an `error`
+field, `state: error` or `stopReason: error`, without exposing error
+text. Headless runs use the same status; no run outcome (succeeded,
+failed, timed out) is published on NATS.
 
-- Summary `[<status>]: <tmux window>`. The window name is `tmux_window`,
-  the name the C-f window picker shows. Without it (pi outside tmux, older
-  events) the label falls back to `session_name`, the context slug (last
-  segment of `context`), `context_title`, then `sid`.
-- Body, one line each, only when present: the session description from
-  `/describe`, then the tmux session name as a footer prefixed with
-  `── `. No blank line separates them; without a tmux session there is
-  no footer.
+Interactive sessions (no `agent` field), icon Material Symbols
+`terminal`:
 
-Example: summary `[idle]: notifications`, body
+- Title: the tmux window name (`tmux_window`), the name the C-f window
+  picker shows. Without it (pi outside tmux, older events) the title
+  falls back to `session_name`, the context slug (last segment of
+  `context`), `context_title`, then `sid`.
+- Body, one line each: the session description from `/describe` when
+  present, then the footer `── <status> · <tmux session>`. Without a
+  tmux session the footer is `── <status>`.
+
+Example: title `notifications`, body
 
 ```
 Simplify agent notifications
-── palekiwi
+── idle · palekiwi
 ```
 
-Headless agent runs (`agent` field present, any value):
+Headless agent runs (`agent` field present, any value), icon Material
+Symbols `smart_toy`:
 
-- Summary `[<status>]: <agent>`, falling back to `sid` when `agent` is
-  empty.
-- Body: empty. A task label would go here, but no settled event carries
-  one: cue-agent and the supervisor do not pass task labels to the run.
+- Title: the agent name, falling back to `sid` when `agent` is empty.
+- Body: the footer `── <status>`. A task label line would go above it,
+  but no settled event carries one: cue-agent and the supervisor do not
+  pass task labels to the run, so none is shown.
 
-Desktop and Gotify use the same summary and body. The working
-directory, context address, host, turn duration and tool counts are not
-displayed.
+Example: title `explore`, body `── idle`.
+
+The controller tags each `host.cmd.notify` with `source: interactive`
+or `source: headless`; the executor maps it to its own fixed icon path
+and never takes a path from the message. A command without `source`
+is shown without an icon; any other value is rejected.
+
+Desktop and Gotify use the same title and body. Gotify has no icon per
+message (its application icon is fixed server-side) and only receives
+interactive sessions, so it gets no `source`. The working directory,
+context address, host, turn duration and tool counts are not displayed.
 
 Older events with only the envelope and `aborted` still notify, as
-`[idle]: <sid>` with an empty body. No lookup blocks delivery.
+title `<sid>` with body `── idle`. No lookup blocks delivery.
 
 For QA, set or edit `/describe` in a running pi session inside tmux and
-let it settle. Both desktop and phone should show `[idle]: <window>`
+let it settle. The desktop should show the terminal icon, title `<window>`
 with the window name the picker shows (rename the window by hand to
-check it follows), then the description and the `── <tmux session>`
-footer.
-A delegated run shows `[idle]: <agent>` on the desktop only.
+check it follows), then the description and the `── idle · <tmux
+session>` footer; the phone shows the same title and body.
+A delegated run shows the robot icon, title `<agent>` and `── idle`, on
+the desktop only.
+
+## Icons
+
+`icons/notification-interactive.png` (`terminal`) and
+`icons/notification-headless.png` (`smart_toy`) are monochrome 256x256
+PNGs rendered from Material Symbols Outlined (Apache License 2.0,
+Google), from the nixpkgs `material-symbols` package the home flake
+pins. Attribution, the license text and the regeneration command are in
+`icons/README.md` and `icons/LICENSE`. They reach the executor as
+`--notify-icon-interactive` and `--notify-icon-headless` Nix-store
+paths.
 
 ## Service agent deny list
 
@@ -114,7 +139,7 @@ a valid settled event:
 - no `agent` field (interactive pi session): desktop and Gotify.
 
 For a qualifying event the controller publishes `host.cmd.notify
-{summary, body, id, ts}` and then `host.cmd.gotify {title, message,
+{summary, body, source, id, ts}` and then `host.cmd.gotify {title, message,
 priority, id, ts}`; title and message are the same summary and body.
 Priority is `priority` (default 5) for a normal idle and `alertPriority`
 (default 7) when the event is aborted or errored. Each command is sent
@@ -136,7 +161,7 @@ every other executor failure: a `cube executor: <Error>: <message>`
 journal line and `host.evt.execution {subject: "host.cmd.gotify",
 accepted: false, reason}`. Success reports `accepted: true, status`. The
 executor validates the command the same way as `host.cmd.notify`
-(summary pattern, 100/256 bounds, priority an integer 0-10), strips
+(non-empty title, 100/256 bounds, priority an integer 0-10), strips
 control characters, and keeps message line breaks; no markup escaping is
 applied since Gotify renders plain text. The controller never sees the
 token. The executor only subscribes to `host.cmd.gotify` when Gotify is
@@ -157,8 +182,8 @@ Options under `programs.local-tts.cubeControl.gotify`:
 ## Bounds and execution
 
 Identity labels are flattened, stripped of controls and bounded to 80
-characters each; the summary label is shortened further so the summary
-stays within 100 characters. The executor bounds summary/body to
+characters each; the title is one such label, so it stays within 100
+characters. The executor rejects an empty title and bounds title/body to
 100/256 characters, keeps body line breaks but strips every other
 control character per line, escapes markup, and calls a fixed Nix-store
 notify-send executable with separate argv and `--`. No shell or caller-selected executable/options.
@@ -179,7 +204,7 @@ The local integration test exercises live filtering/execution and restart
 without replay; actual VM-to-host leaf delivery still needs host QA.
 
 The controller only decides and sends `host.cmd.notify {summary, body,
-id, ts}` and, for Gotify, `host.cmd.gotify {title, message, priority, id,
+source, id, ts}` and, for Gotify, `host.cmd.gotify {title, message, priority, id,
 ts}`. Existing `cube-host-executor`, already part of the user's
 graphical-session target, performs the desktop action. This is simpler
 than a new notification service and preserves the policy/action boundary.
@@ -245,8 +270,8 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":2,"aborted":true,"error":true}'
 ```
 
-Expect one idle notification per publish: `[idle]: notification_qa` with
-an empty body, then `[aborted, error]: notification_qa`; never
+Expect one notification per publish, both with the terminal icon and
+title `notification_qa`: body `── idle`, then `── aborted, error`; never
 succeeded/completed.
 
 v2 fields and the deny list:
@@ -260,11 +285,12 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.notification_qa.settled \
   '{"v":1,"ts":0,"sid":"notification_qa","host":"pale-qa","kind":"settled","seq":5,"aborted":false,"session_name":"named","session_description":"Notification layout QA","tmux_window":"notifications","tmux_session":"palekiwi","cwd":"/home/pl/code/palekiwi/palekiwi"}'
 ```
 
-The first shows `[idle]: builder` with an empty body. The second shows no
-notification; the journal has `dropped settled from agent summarizer`
-and `cube.evt.controller.result` carries `reason: denied agent`. The
-third shows `[idle]: notifications` with body lines
-`Notification layout QA` and `── palekiwi`, and no directory. From a
+The first shows the robot icon, title `builder` and body `── idle`. The
+second shows no notification; the journal has `dropped settled from agent
+summarizer` and `cube.evt.controller.result` carries `reason: denied
+agent`. The third shows the terminal icon, title `notifications` with
+body lines `Notification layout QA` and `── idle · palekiwi`, and no
+directory. From a
 real pi session after reloading cue-platform dev: the notification uses
 the tmux window name, and a turn summary (summarizer run) or log compaction
 (compactor run) produces no notification. No event timestamp filter is applied: these
@@ -292,10 +318,11 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
 
 Expect:
 
-- seq 1: desktop and phone `[idle]: Gotify QA interactive`, empty body,
-  Gotify priority 5; `host.evt.execution` shows
+- seq 1: desktop and phone title `Gotify QA interactive`, body
+  `── idle`, Gotify priority 5; `host.evt.execution` shows
   `host.cmd.notify` and `host.cmd.gotify` accepted (`status: 200`).
-- seq 2: desktop and phone `[aborted]: Gotify QA aborted`, priority 7.
+- seq 2: desktop and phone title `Gotify QA aborted`, body
+  `── aborted`, priority 7.
 - seq 3 (`agent: builder`): desktop only; no `host.cmd.gotify` execution.
 - seq 4 (`agent: summarizer`): nothing; `reason: denied agent`.
 
@@ -315,7 +342,7 @@ nats --server nats://127.0.0.1:4222 pub agent.evt.gotify_qa.settled \
   '{"v":1,"ts":0,"sid":"gotify_qa","host":"pale-qa","kind":"settled","seq":5,"aborted":false,"context_title":"Gotify QA failure"}'
 ```
 
-Expect a desktop notification `[idle]: Gotify QA failure`, no phone push,
+Expect a desktop notification `Gotify QA failure` (`── idle`), no phone push,
 `host.evt.execution {subject: "host.cmd.gotify", accepted: false, reason:
 "FileNotFoundError"}`, journal lines `cube executor: FileNotFoundError:
 ...` and `cube controller: RuntimeError: host.cmd.gotify rejected`, and
@@ -334,7 +361,8 @@ systemctl --user restart cube-host-executor
 
 The package check runs all local-tts Python tests, including real loopback
 NATS/MQTT brokers, fixed argv/failed executor tests, malformed/oversized
-payload rejection, wording, v2 layout and fallbacks, deny list (unit and
+payload rejection, wording, v2 layout and fallbacks, per-source icon
+selection and `source` validation, deny list (unit and
 live), Gotify routing (interactive: notify and gotify; agent: notify
 only; denied: neither; priorities; independent channel failures), the
 executor's POST JSON and `X-Gotify-Key` header against a loopback HTTP

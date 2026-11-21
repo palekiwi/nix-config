@@ -179,12 +179,12 @@ class HostExecutor:
         notify_send="notify-send",
         gotify_url=None,
         gotify_token_file=None,
-        notify_icon=None,
+        notify_icons=None,
     ):
         self.handy = handy
         self.wpctl = wpctl
         self.notify_send = notify_send
-        self.notify_icon = notify_icon
+        self.notify_icons = notify_icons or {}
         self.gotify_url = gotify_url
         self.gotify_token_file = gotify_token_file
 
@@ -200,7 +200,7 @@ class HostExecutor:
             )
             return {"accepted": True, "status": status}
         if subject == "host.cmd.notify":
-            args = notify_argv(self.notify_send, body, self.notify_icon)
+            args = notify_argv(self.notify_send, body, self.notify_icons)
         elif subject == "host.cmd.handy" and body.get("action") in ("toggle", "cancel"):
             args = [
                 self.handy,
@@ -294,7 +294,7 @@ async def serve(
     gotify=None,
     gotify_url=None,
     gotify_token_file=None,
-    notify_icon=None,
+    notify_icons=None,
 ):
     disconnected = asyncio.Event()
 
@@ -316,7 +316,7 @@ async def serve(
         Controller(lambda s, b: request(nc, s, b), deny_agents, gotify)
         if mode == "controller"
         else HostExecutor(
-            handy, wpctl, notify_send, gotify_url, gotify_token_file, notify_icon
+            handy, wpctl, notify_send, gotify_url, gotify_token_file, notify_icons
         )
     )
 
@@ -405,7 +405,8 @@ def main():
     parser.add_argument("--handy", default="handy")
     parser.add_argument("--wpctl", default="wpctl")
     parser.add_argument("--notify-send", default="notify-send")
-    parser.add_argument("--notify-icon")
+    parser.add_argument("--notify-icon-interactive")
+    parser.add_argument("--notify-icon-headless")
     parser.add_argument("--mosquitto", default="mosquitto_sub")
     parser.add_argument("--mqtt-host", default="haze")
     parser.add_argument("--mqtt-port", type=int, default=1883)
@@ -434,7 +435,14 @@ def main():
             ),
             args.gotify_url,
             args.gotify_token_file,
-            args.notify_icon,
+            {
+                source: path
+                for source, path in (
+                    ("interactive", args.notify_icon_interactive),
+                    ("headless", args.notify_icon_headless),
+                )
+                if path
+            },
         )
     )
 
