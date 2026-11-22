@@ -131,11 +131,11 @@
         "nvf": "nvf"
       },
       "locked": {
-        "lastModified": 1795016407,
-        "narHash": "sha256-GMOY6vDgn/h8c0flFjPqUogziz8c50Oaryks1AoXFF4=",
+        "lastModified": 1795367029,
+        "narHash": "sha256-ucz8nzNMQYyOJCZcQHgRobByvtwWrZpUxG2AgptMyUA=",
         "owner": "palekiwi-labs",
         "repo": "cue-platform",
-        "rev": "1f6e772b244514ee4f8dd10c4134f9f43c0318e4",
+        "rev": "9ae1b60c1418a28aa95fd74e1cb23bb1fd4b7cbc",
         "type": "github"
       },
       "original": {
@@ -155,16 +155,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1794413863,
-        "narHash": "sha256-MqS87NDtGhwTwUnlZS5eigYKs0L2iAExM4Ug4UA3RX0=",
+        "lastModified": 1795364790,
+        "narHash": "sha256-CPPQ44hfQHo7oDOB9TNVdJOuqh5mTa4cZ6ysLt/M72M=",
         "owner": "palekiwi-labs",
         "repo": "cue",
-        "rev": "fd4fd6287fdf1a147084b92de6c5572d8a3083f4",
+        "rev": "0a4ea05151fa37eeb0fc4423b61cded9af006b40",
         "type": "github"
       },
       "original": {
         "owner": "palekiwi-labs",
-        "ref": "cue-agent-prototype",
+        "ref": "feat/cue-hooks",
         "repo": "cue",
         "type": "github"
       }
