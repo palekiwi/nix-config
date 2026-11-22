@@ -29,7 +29,7 @@ class OwnershipTests(unittest.TestCase):
         self.assertEqual(b.generation, generation)
         self.assertEqual(len(b.queue), 2)
         self.assertTrue(b.intent(chunk("b"), 100))
-        self.assertEqual(list(b.queue), [(b.generation, "hello", "af_bella")])
+        self.assertEqual(list(b.queue), [(b.generation, 0, "hello", "af_bella")])
         self.assertFalse(b.intent(chunk(seq=2), 100))
         b.stop()
         self.assertFalse(b.intent(chunk("b", seq=1), 100))
@@ -88,7 +88,7 @@ class OwnershipTests(unittest.TestCase):
         b = self.bridge
         b.say("first")
         b.say("second")
-        self.assertEqual([text for _, text, _ in b.queue], ["first", "second"])
+        self.assertEqual([text for _, _, text, _ in b.queue], ["first", "second"])
         b.intent(chunk(origin="http"), 100)
         b.say("legacy replaces NATS even with http origin")
         self.assertEqual(len(b.queue), 1)
@@ -101,14 +101,14 @@ class OwnershipTests(unittest.TestCase):
             {"af_bella", "af_heart", "af_jessica", "af_sky", "bf_isabella", "am_echo"},
         )
         self.assertTrue(b.intent(chunk("default"), 100))
-        self.assertEqual(b.queue[-1][2], "af_bella")
+        self.assertEqual(b.queue[-1][3], "af_bella")
         self.assertEqual(b.health()["utterance"]["voice"], "af_bella")
         for voice in sorted(speech_bridge.VOICES):
             self.assertTrue(b.intent(dict(chunk(voice), voice=voice), 100))
-            self.assertEqual(list(b.queue), [(b.generation, "hello", voice)])
+            self.assertEqual(list(b.queue), [(b.generation, 0, "hello", voice)])
             self.assertEqual(b.health()["utterance"]["voice"], voice)
         self.assertTrue(b.say("legacy"))
-        self.assertEqual(b.queue[-1][2], "af_bella")
+        self.assertEqual(b.queue[-1][3], "af_bella")
         self.assertEqual(b.health()["utterance"]["voice"], "af_bella")
 
     def test_invalid_voice_rejected_without_interrupting(self):
@@ -140,20 +140,20 @@ class OwnershipTests(unittest.TestCase):
         self.assertFalse(b.intent(chunk(seq=1), 100))
         self.assertEqual(self.events[-1][1]["reason"], "voice")
         self.assertTrue(b.intent(dict(chunk(seq=1), voice="bf_isabella"), 100))
-        self.assertEqual([voice for _, _, voice in b.queue], ["bf_isabella"] * 2)
+        self.assertEqual([voice for _, _, _, voice in b.queue], ["bf_isabella"] * 2)
         self.assertTrue(b.intent(chunk("b"), 100))
         self.assertFalse(b.intent(dict(chunk("b", seq=1), voice="af_heart"), 100))
         self.assertTrue(b.intent(dict(chunk("b", seq=1), voice="af_bella"), 100))
         self.assertTrue(b.intent(chunk("b", seq=2), 100))
-        self.assertEqual([voice for _, _, voice in b.queue], ["af_bella"] * 3)
+        self.assertEqual([voice for _, _, _, voice in b.queue], ["af_bella"] * 3)
 
     def test_configured_default_voice(self):
         b = speech_bridge.Bridge(lambda *args: None, [], 3, voice="bf_emma")
         self.assertTrue(b.intent(chunk(), 100))
         self.assertTrue(b.intent(dict(chunk(seq=1), voice="bf_emma"), 100))
-        self.assertEqual([voice for _, _, voice in b.queue], ["bf_emma"] * 2)
+        self.assertEqual([voice for _, _, _, voice in b.queue], ["bf_emma"] * 2)
         self.assertTrue(b.intent(dict(chunk("b"), voice="af_bella"), 100))
-        self.assertEqual(b.queue[-1][2], "af_bella")
+        self.assertEqual(b.queue[-1][3], "af_bella")
         for voice in ("", None, 5):
             with self.assertRaises(ValueError):
                 speech_bridge.Bridge(lambda *args: None, [], 3, voice=voice)
