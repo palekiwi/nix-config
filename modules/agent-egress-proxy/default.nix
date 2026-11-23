@@ -11,7 +11,10 @@ let
   # Only read-only scoped tokens may be added. Accepted exceptions without
   # scopes: typesafe and the model provider API keys (anthropic, gemini, zai).
   # airbrake is unscoped and only allowed because the proxy restricts it to
-  # GET under its read paths (methods/paths). Never add jira/token (read-write).
+  # GET under its read paths (methods/paths). gcp is a short-lived access token
+  # of the keyless agent-sandbox-readonly service account (metadata only, no
+  # row reads), refreshed by hand; a change restarts the proxy.
+  # Never add jira/token (read-write).
   injections = {
     github = {
       secret = "github/palekiwi/gh_cli_readonly";
@@ -56,6 +59,22 @@ let
       hosts = [ "api.airbrake.io" ];
       methods = [ "GET" ];
       paths = [ "/api/v4/projects" ];
+    };
+    gcp = {
+      secret = "spabreaks/gcp_readonly_token";
+      placeholder = "PLACEHOLDER-gcp";
+      hosts = [
+        "geminidataanalytics.googleapis.com"
+        "geminidataanalytics.eu.rep.googleapis.com"
+        "bigquery.googleapis.com"
+      ];
+      methods = [ "GET" ];
+      paths = [
+        "/v1beta/projects/sb-web-exports"
+        "/v1/projects/sb-web-exports"
+        "/bigquery/v2/projects/sb-web-exports"
+      ];
+      restart = true;
     };
   };
   headerOf = r: r.header or "authorization";
@@ -106,10 +125,12 @@ in
     "agent-proxy/ca" = {
       owner = user;
     };
-  } // lib.mapAttrs' (name: r: lib.nameValuePair "agent-proxy/${name}" {
+  } // lib.mapAttrs' (name: r: lib.nameValuePair "agent-proxy/${name}" ({
     key = r.secret;
     owner = user;
-  }) injections;
+  } // lib.optionalAttrs (r.restart or false) {
+    restartUnits = [ "agent-egress-proxy.service" ];
+  })) injections;
 
   users.users.${user} = {
     isSystemUser = true;

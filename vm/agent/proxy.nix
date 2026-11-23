@@ -32,6 +32,7 @@ in
     GEMINI_API_KEY = "PLACEHOLDER-gemini";
     GOOGLE_GENERATIVE_AI_API_KEY = "PLACEHOLDER-gemini";
     SB_AIRBRAKE_AUTH_TOKEN = "PLACEHOLDER-airbrake";
+    GDA_TOKEN = "PLACEHOLDER-gcp";
   };
 
   programs.git = {
