@@ -44,6 +44,11 @@ def last_segment(value):
     return label(value).rstrip("/").rsplit("/", 1)[-1].strip()
 
 
+def task_of(body):
+    slug = last_segment(body.get("active_task"))
+    return slug.removesuffix(".md")
+
+
 def agent_of(body):
     return label(body.get("agent"))
 
@@ -90,7 +95,9 @@ def notification(subject, body):
             or label(sid)
         )
         tmux_session = label(body.get("tmux_session"))
+        task = task_of(body)
         parts = [
+            f"task: {task}" if task else "",
             label(body.get("session_description")),
             f"── {status} · {tmux_session}" if tmux_session else f"── {status}",
         ]

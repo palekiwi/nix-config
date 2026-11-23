@@ -118,6 +118,24 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             notification("agent.evt.session-qa.settled", described)["body"],
             "Only text\n── idle",
         )
+        tasked = event(
+            tmux_window="w",
+            tmux_session="s",
+            session_description="Text",
+            active_task="palekiwi/palekiwi/notifications/task/notify-task.md",
+        )
+        self.assertEqual(
+            notification("agent.evt.session-qa.settled", tasked)["body"],
+            "task: notify-task\nText\n── idle · s",
+        )
+        for missing in ("", " \n ", None, 3):
+            self.assertEqual(
+                notification(
+                    "agent.evt.session-qa.settled",
+                    event(tmux_window="w", active_task=missing),
+                )["body"],
+                "── idle",
+            )
         blank = event(tmux_window="w", tmux_session=" \n ")
         self.assertEqual(
             notification("agent.evt.session-qa.settled", blank),
@@ -169,6 +187,7 @@ class NotificationTests(unittest.IsolatedAsyncioTestCase):
             tmux_window="parent-window",
             tmux_session="palekiwi",
             context="palekiwi/palekiwi/controller-design",
+            active_task="palekiwi/palekiwi/controller-design/task/layout.md",
             cwd="/home/pl/code/palekiwi/palekiwi",
         )
         self.assertEqual(

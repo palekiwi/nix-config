@@ -29,6 +29,11 @@ settled; every field after `aborted` is omitted when unknown:
 - `session_name`, `cwd`: pi session name and working directory.
 - `session_description`: latest `session-description` entry written by
   `/describe`, refreshed when the session settles.
+- `active_task`: canonical address of the session's cue active task
+  (set with `cue-session-task` or `/session-task`), refreshed when the
+  session settles. Omitted without one or when the task is stale
+  (its context is no longer the session's context). This is not a
+  delegate or cue-agent task label.
 - `tmux_window`, `tmux_session`: `#{window_name}` and `#{session_name}`
   of the pane, read with `tmux display-message` when the session settles.
   Only an interactive pi owning its tty inside tmux reports them;
@@ -62,13 +67,16 @@ Interactive sessions (no `agent` field), icon Material Symbols
   picker shows. Without it (pi outside tmux, older events) the title
   falls back to `session_name`, the context slug (last segment of
   `context`), `context_title`, then `sid`.
-- Body, one line each: the session description from `/describe` when
-  present, then the footer `── <status> · <tmux session>`. Without a
-  tmux session the footer is `── <status>`.
+- Body, one line each: `task: <task slug>` when the session has an
+  active task (file name of `active_task` without `.md`), the session
+  description from `/describe` when present, then the footer
+  `── <status> · <tmux session>`. Without a tmux session the footer is
+  `── <status>`.
 
 Example: title `notifications`, body
 
 ```
+task: notify-task
 Simplify agent notifications
 ── idle · palekiwi
 ```
@@ -79,7 +87,8 @@ Symbols `smart_toy`:
 - Title: the agent name, falling back to `sid` when `agent` is empty.
 - Body: the footer `── <status>`. A task label line would go above it,
   but no settled event carries one: cue-agent and the supervisor do not
-  pass task labels to the run, so none is shown.
+  pass task labels to the run, so none is shown. `active_task` is not
+  such a label and is not shown for headless runs.
 
 Example: title `explore`, body `── idle`.
 
