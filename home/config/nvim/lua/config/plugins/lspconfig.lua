@@ -143,6 +143,7 @@ return {
         vim.lsp.enable('cue_lsp')
       end
       vim.lsp.enable('eslint')
+      vim.lsp.enable('gopls')
       vim.lsp.enable('lua_ls')
       vim.lsp.enable('nixd')
       vim.lsp.enable('nushell')
