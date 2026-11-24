@@ -89,7 +89,7 @@ let
     };
     gcp-chat = {
       secret = "spabreaks/gcp_readonly_token";
-      placeholder = "PLACEHOLDER-gcp-chat";
+      placeholder = "PLACEHOLDER-gda-chat";
       hosts = [
         "geminidataanalytics.googleapis.com"
         "geminidataanalytics.eu.rep.googleapis.com"
