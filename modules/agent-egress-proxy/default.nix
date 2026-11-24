@@ -22,7 +22,9 @@ let
   # airbrake is unscoped and only allowed because the proxy restricts it to
   # GET under its read paths (methods/paths). gcp is a short-lived access token
   # of the keyless agent-sandbox-readonly service account (metadata only, no
-  # row reads), refreshed by hand; a change restarts the proxy.
+  # row reads), refreshed by hand; a change restarts the proxy. ga is a
+  # short-lived analytics.readonly access token of the ga4-readonly service
+  # account (Viewer on one GA4 property), limited to the hosted MCP endpoint.
   # Never add jira/token (read-write).
   injections = {
     github = {
@@ -83,6 +85,14 @@ let
         "/v1/projects/sb-web-exports"
         "/bigquery/v2/projects/sb-web-exports"
       ];
+      restart = true;
+    };
+    ga = {
+      secret = "spabreaks/ga_readonly_token";
+      placeholder = "PLACEHOLDER-ga";
+      hosts = [ "analyticsdata.googleapis.com" ];
+      methods = [ "POST" ];
+      paths = [ "/mcp/v1" ];
       restart = true;
     };
   };
