@@ -106,7 +106,7 @@ let
       placeholder = "PLACEHOLDER-ga";
       hosts = [ "analyticsdata.googleapis.com" ];
       methods = [ "POST" ];
-      paths = [ "/mcp/v1" ];
+      paths = [ "/mcp/v1" "/v1alpha/properties/311767619:runFunnelReport" ];
       restart = true;
     };
   };
