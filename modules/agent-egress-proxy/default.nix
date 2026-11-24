@@ -87,6 +87,20 @@ let
       ];
       restart = true;
     };
+    gcp-chat = {
+      secret = "spabreaks/gcp_readonly_token";
+      placeholder = "PLACEHOLDER-gcp-chat";
+      hosts = [
+        "geminidataanalytics.googleapis.com"
+        "geminidataanalytics.eu.rep.googleapis.com"
+      ];
+      methods = [ "POST" ];
+      paths = [
+        "/v1beta/projects/sb-web-exports/locations/eu:chat"
+        "/v1beta/projects/sb-web-exports/locations/global:chat"
+      ];
+      restart = true;
+    };
     ga = {
       secret = "spabreaks/ga_readonly_token";
       placeholder = "PLACEHOLDER-ga";
