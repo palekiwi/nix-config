@@ -34,6 +34,7 @@ in
     SB_AIRBRAKE_AUTH_TOKEN = "PLACEHOLDER-airbrake";
     GDA_TOKEN = "PLACEHOLDER-gcp";
     GA_TOKEN = "PLACEHOLDER-ga";
+    BQ_MCP_TOKEN = "PLACEHOLDER-bq-mcp";
   };
 
   programs.git = {

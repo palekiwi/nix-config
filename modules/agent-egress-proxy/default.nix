@@ -101,6 +101,14 @@ let
       ];
       restart = true;
     };
+    bq-mcp = {
+      secret = "spabreaks/gcp_readonly_token";
+      placeholder = "PLACEHOLDER-bq-mcp";
+      hosts = [ "bigquery.googleapis.com" ];
+      methods = [ "POST" ];
+      paths = [ "/mcp" ];
+      restart = true;
+    };
     ga = {
       secret = "spabreaks/ga_readonly_token";
       placeholder = "PLACEHOLDER-ga";
