@@ -3,9 +3,9 @@
   imports = [
     ../../users/pl/default.nix
     ./nvim.nix
-    ./cue-platform.nix
+    ./session-environment.nix
     ./claude-code.nix
-    ./tmux.nix
+    ./home-manager.nix
     ./proxy.nix
     ./git-hooks.nix
     ./9router.nix

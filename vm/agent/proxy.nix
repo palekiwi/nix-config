@@ -35,6 +35,11 @@ in
     GDA_TOKEN = "PLACEHOLDER-gcp";
     GDA_CHAT_TOKEN = "PLACEHOLDER-gda-chat";
     GA_TOKEN = "PLACEHOLDER-ga";
+    CUE_DELEGATE_BACKEND = "supervisor";
+    CUE_NATS_URL = "nats://127.0.0.1:4222";
+    CUE_NATS_JS_DOMAIN = "pale";
+    NINEROUTER_URL = "http://127.0.0.1:20128";
+    NINEROUTER_PASSWORD = "123456";
   };
 
   programs.git = {
