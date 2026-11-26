@@ -1,10 +1,8 @@
 { pkgs, inputs, ... }:
 {
-  environment.systemPackages = [
+  home.packages = [
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
   ];
 
-  environment.variables = {
-    DISABLE_AUTOUPDATER = "1";
-  };
+  home.sessionVariables.DISABLE_AUTOUPDATER = "1";
 }

@@ -45,12 +45,6 @@ in
   programs.git = {
     enable = true;
     config = {
-      user = {
-        name = "Pawel Lisewski";
-        email = "dev@palekiwi.com";
-      };
-      init.defaultBranch = "master";
-      pull.rebase = true;
       url."https://github.com/".insteadOf = [
         "git@github.com:"
         "ssh://git@github.com/"

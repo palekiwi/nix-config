@@ -3,6 +3,11 @@
   imports = [
     ./tmux.nix
     ./cue-platform.nix
+    ./claude-code.nix
+    ./dev.nix
+    ./shell.nix
+    ./nvim.nix
+    ./git.nix
   ];
 
   home.username = "pl";

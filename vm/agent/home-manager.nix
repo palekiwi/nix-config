@@ -1,7 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 {
-  environment.systemPackages = [
-    pkgs.kitty.terminfo
-    inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
-  ];
+  environment.systemPackages = [ pkgs.kitty.terminfo ];
 }

@@ -1,16 +1,13 @@
-{ pkgs, ... }:
+{ ... }:
 {
   imports = [
     ../../users/pl/default.nix
-    ./nvim.nix
     ./session-environment.nix
-    ./claude-code.nix
     ./home-manager.nix
     ./proxy.nix
     ./git-hooks.nix
     ./9router.nix
     ./headroom.nix
-    ./shell.nix
     ./agent-nats.nix
     ./github-service.nix
     ../../modules/machine-role.nix
@@ -124,11 +121,6 @@
     PermitRootLogin = "no";
   };
 
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-  };
-
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   nix.settings.build-dir = "/var/lib/nix-builds";
@@ -148,9 +140,6 @@
     options = "--delete-older-than 14d";
   };
   systemd.tmpfiles.rules = [ "d /var/lib/nix-builds 0700 root root 7d" ];
-
-  environment.systemPackages = with pkgs; [ git gitui go-task nushell nodejs python3 ]
-    ++ import ../../home/programs/tui/scripts/git-base.nix pkgs;
 
   system.stateVersion = "26.05";
 }
