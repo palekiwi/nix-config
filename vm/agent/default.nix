@@ -5,7 +5,6 @@
     ./nvim.nix
     ./cue-platform.nix
     ./claude-code.nix
-    ./supervisor.nix
     ./tmux.nix
     ./proxy.nix
     ./git-hooks.nix

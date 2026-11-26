@@ -1,6 +1,9 @@
 { ... }:
 {
-  imports = [ ./tmux.nix ];
+  imports = [
+    ./tmux.nix
+    ./cue-platform.nix
+  ];
 
   home.username = "pl";
   home.homeDirectory = "/home/pl";

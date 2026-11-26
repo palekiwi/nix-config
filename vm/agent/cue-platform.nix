@@ -1,20 +1,5 @@
-{ pkgs, inputs, ... }:
-let
-  cp = inputs.cue-platform.packages.${pkgs.stdenv.hostPlatform.system};
-in
+{ config, lib, ... }:
 {
-  environment.systemPackages = [
-    cp.pi
-    cp.cue
-    cp.cue-agent
-    cp.cue-recall
-    cp.cue-review
-    cp.station
-    cp.cue-supervisor
-    cp.gh
-    cp.jq
-  ];
-
   environment.variables = {
     CUE_DELEGATE_BACKEND = "supervisor";
     CUE_NATS_URL = "nats://127.0.0.1:4222";
@@ -22,4 +7,17 @@ in
     NINEROUTER_URL = "http://127.0.0.1:20128";
     NINEROUTER_PASSWORD = "123456";
   };
+
+  environment.etc."agent-vm/environment".text =
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: value: "${name}=${value}") (
+        config.environment.variables
+        // {
+          NIX_PATH = lib.concatStringsSep ":" config.nix.nixPath;
+          NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+          SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+        }
+      )
+    )
+    + "\n";
 }
