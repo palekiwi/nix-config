@@ -6,8 +6,6 @@
     ./home-manager.nix
     ./proxy.nix
     ./git-hooks.nix
-    ./9router.nix
-    ./headroom.nix
     ./agent-nats.nix
     ../../modules/machine-role.nix
   ];
