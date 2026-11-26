@@ -140,7 +140,13 @@
         };
       };
 
-      packages.x86_64-linux = {
+      homeConfigurations."pl@casm" = home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      extraSpecialArgs = { inherit inputs; };
+      modules = [ ./vm/agent/home ];
+    };
+
+    packages.x86_64-linux = {
         local-tts = pkgs.callPackage ./home/programs/local-tts/package.nix { };
         claude = self.nixosConfigurations.claude-vm.config.system.build.vm;
 

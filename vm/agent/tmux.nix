@@ -30,10 +30,9 @@ in
     '';
   };
 
-  environment.systemPackages = [ pkgs.sesh pkgs.kitty.terminfo ] ++ shared.packages;
-
-  systemd.tmpfiles.rules = [
-    "d /home/pl/.config/sesh 0755 pl users -"
-    "L+ /home/pl/.config/sesh/sesh.toml - - - - ${../../home/config/sesh/sesh.toml}"
-  ];
+  environment.systemPackages = [
+    pkgs.sesh
+    pkgs.kitty.terminfo
+    inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
+  ] ++ shared.packages;
 }
