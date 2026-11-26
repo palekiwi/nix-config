@@ -148,3 +148,58 @@ tasks:
           git commit -q -m "chore: bump cue-platform" -- flake.lock
           echo "committed flake.lock"
         fi
+
+  vm-home-switch:
+    desc: (agent VM) Apply the pl@casm home configuration, repairing missing store paths
+    summary: |
+      Run inside the agent VM. Builds the pl@casm activation package from
+      FLAKE (default ~/nix-config), re-realises store paths that the nix
+      database lists but the store lacks (left behind when a host rebuild
+      drops them from the system image), switches, and restarts
+      cue-supervisor.
+    vars:
+      FLAKE: '{{.FLAKE | default "/home/pl/nix-config"}}'
+    silent: true
+    cmds:
+      - |
+        set -eu
+        cd {{.FLAKE}}
+        attr='.#homeConfigurations."pl@casm".activationPackage'
+        gen=$(nix build --no-link --print-out-paths "$attr")
+        missing=$(for p in $(nix-store -qR "$gen"); do [ -e "$p" ] || echo "$p"; done)
+        if [ -n "$missing" ]; then
+          echo "repairing $(echo "$missing" | wc -l) missing store paths"
+          sudo nix build --repair --no-link "$attr"
+        fi
+        home-manager switch --flake .#pl@casm
+        systemctl --user restart cue-supervisor
+        systemctl --user is-active cue-supervisor
+
+  vm-cue-platform-bump:
+    desc: (agent VM) Bump the cue-platform input, commit flake.lock and apply it
+    summary: |
+      Run inside the agent VM, in FLAKE (default ~/nix-config). Updates the
+      cue-platform input to the latest commit on GitHub, commits flake.lock
+      and runs vm-home-switch. No VM rebuild. Guest-only cue-platform
+      commits are not picked up until they are pushed from the host
+      (cue-platform-deploy). FLAKE must have no staged changes.
+    vars:
+      FLAKE: '{{.FLAKE | default "/home/pl/nix-config"}}'
+    silent: true
+    cmds:
+      - |
+        set -eu
+        cd {{.FLAKE}}
+        if ! git diff --cached --quiet; then
+          echo "{{.FLAKE}}: staged changes present, commit or unstage them first" >&2
+          exit 1
+        fi
+        nix flake update cue-platform
+        if git diff --quiet -- flake.lock; then
+          echo "cue-platform input unchanged"
+        else
+          git commit -q -m "chore: bump cue-platform" -- flake.lock
+          echo "committed flake.lock on $(git branch --show-current)"
+        fi
+      - task: vm-home-switch
+        vars: { FLAKE: '{{.FLAKE}}' }

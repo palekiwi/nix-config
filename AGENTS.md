@@ -34,3 +34,17 @@
 - Never retire or delete a branch/worktree without explicit approval and
   checking for unique commits on both host and guest. Guest-only evidence
   cannot establish that a host branch is safe to retire.
+
+## Agent VM user space (home-manager)
+
+- In the agent VM (casm), user space is the standalone home-manager
+  configuration `homeConfigurations."pl@casm"` (modules in
+  `vm/agent/home/`), applied inside the guest. The system config
+  (`vm/agent/`) keeps boot, network, proxy, services and the session
+  variables, rendered to `/etc/agent-vm/environment` for user services.
+- Apply home changes with `task vm-home-switch`. It repairs store paths a
+  host rebuild left missing, switches, and restarts cue-supervisor.
+- Bump cue-platform with `task vm-cue-platform-bump` (update the input,
+  commit flake.lock, switch). No VM rebuild is needed.
+- Move a package to home-manager and remove it from the system in the
+  same commit; never install it in both.
