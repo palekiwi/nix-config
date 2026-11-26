@@ -1,17 +1,17 @@
 # VM GitHub collection service
 
-`vm/agent/github-service.nix` enables `services.github-service` only in the
-agent VM. It is a system service running as `pl`, independent of interactive
-logins. The local NATS leaf is ordered before it; transient disconnections
-must be handled by the collector. No host collector is enabled.
+`vm/agent/home/github-service.nix` defines the collector as a home-manager
+user service in `homeConfigurations."pl@casm"`. It runs only while `pl` has a
+session (no linger). User units cannot order against the system
+`agent-nats-leaf` unit; transient disconnections must be handled by the
+collector, and the unit restarts on failure. No host collector is enabled.
 
 ## Package and configuration contract
 
 The default package is
 `inputs.cue-platform.packages.x86_64-linux.cue-github`. It must provide
 `bin/cue-github`, including its Node runtime and JavaScript dependencies.
-The package and executable name are module options so they can be overridden
-while the package contract is being finalized. The service adds `gh` to PATH.
+The service adds `gh` to PATH.
 It invokes exactly:
 
 ```
@@ -30,20 +30,19 @@ These three keys match the in-progress cue-platform parser inspected during
 implementation. The collector must read but never rewrite the config and
 stay in the foreground. State is selected with the explicit environment
 `XDG_STATE_HOME=/home/pl/.local/state`; the collector appends
-`cue/github/snapshots.sqlite`. The module's `stateHome` option controls that
-root and its read-only `stateDirectory` option derives the writable sandbox
-path. Migrations, reconnect logic and collection behavior belong to the
+`cue/github/snapshots.sqlite`. The state root follows home-manager's `xdg.stateHome`; the
+writable sandbox path is `cue/github` under it. Migrations, reconnect logic and collection behavior belong to the
 package. No CLI flags beyond `--config` are assumed.
 
 The package and executable are both named `cue-github`, matching the
-standalone cue-platform output. The polling option is bounded to 15–1800
-seconds to respect the parser's default cooldown and maximum backoff.
+standalone cue-platform output. Keep `poll_seconds` within 15-1800 to respect
+the parser's default cooldown and maximum backoff.
 
-The config is a tmpfiles-managed symlink to immutable store content; changes
-trigger a service restart. State directories are owned by `pl` with mode
-0700, and the service uses umask 0077. Its sandbox makes the home directory
+The config is a home-manager `xdg.configFile` symlink to immutable store
+content; changes trigger a service restart through `X-Restart-Triggers`. An
+activation step creates the state directories with mode 0700, and the service uses umask 0077. Its sandbox makes the home directory
 read-only except the collector state directory. Nix is the sole config owner.
-Do not put real credentials in module options or generated TOML.
+Do not put real credentials in the module or generated TOML.
 
 ## Network and credentials
 
@@ -74,10 +73,10 @@ Run from this worktree:
 nix develop --command nix build .#checks.x86_64-linux.github-service --no-link
 ```
 
-The check uses an explicit `hello` package/executable override, not a fake
-collector. It tests the actual VM module options and rendered unit, generated
-TOML, disabled-module laziness with no cue-platform input, host exclusion,
-private state configuration, explicit environment, and real NATS account
+The check evaluates the real home-manager unit and generated TOML, without
+executing the collector. It tests the rendered user unit, the absence of a
+system unit in the VM and on the host, private state configuration, explicit
+environment, and real NATS account
 request/reply and event routing with out-of-scope subjects rejected.
 It does not execute a collector or claim the pinned input exports it.
 

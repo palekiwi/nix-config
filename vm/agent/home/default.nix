@@ -8,6 +8,7 @@
     ./shell.nix
     ./nvim.nix
     ./git.nix
+    ./github-service.nix
   ];
 
   home.username = "pl";

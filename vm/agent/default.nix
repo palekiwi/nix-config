@@ -9,7 +9,6 @@
     ./9router.nix
     ./headroom.nix
     ./agent-nats.nix
-    ./github-service.nix
     ../../modules/machine-role.nix
   ];
 
