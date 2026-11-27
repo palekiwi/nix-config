@@ -1,6 +1,16 @@
-{ pkgs, inputs, ... }:
+{
+  lib,
+  pkgs,
+  inputs,
+  config,
+  ...
+}:
 let
   cp = inputs.cue-platform.packages.${pkgs.stdenv.hostPlatform.system};
+  runEnvironment = (pkgs.formats.keyValue { }).generate "cue-supervisor-environment" {
+    EDITOR = config.home.sessionVariables.EDITOR;
+    DISABLE_AUTOUPDATER = config.home.sessionVariables.DISABLE_AUTOUPDATER;
+  };
 in
 {
   home.packages = [
@@ -20,7 +30,10 @@ in
     Install.WantedBy = [ "default.target" ];
     Service = {
       ExecStart = "${cp.cue-supervisor}/bin/cue-supervisor daemon";
-      EnvironmentFile = "/etc/agent-vm/environment";
+      EnvironmentFile = [
+        "/etc/agent-vm/environment"
+        runEnvironment
+      ];
       Environment = [
         "CUE_STORE=/home/pl/cue"
         "CUE_SUPERVISOR_STATE=/home/pl/.local/state/cue-supervisor"
