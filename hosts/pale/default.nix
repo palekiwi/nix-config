@@ -35,7 +35,11 @@
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
-    boot.kernelPackages = pkgs.linuxPackages_6_12;
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.extraModprobeConfig = ''
+      options cfg80211 ieee80211_regdom=TW
+    '';
+    hardware.wirelessRegulatoryDatabase = true;
 
     boot.initrd.luks.devices = {
       "luks-f9d8ffcf-b76f-4a3e-acad-90a6665d1bfc" = {
