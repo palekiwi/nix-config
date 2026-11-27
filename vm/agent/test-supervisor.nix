@@ -13,7 +13,9 @@ in
 assert service.Install.WantedBy == [ "default.target" ];
 assert service.Service.Restart == "on-failure";
 assert service.Service.UMask == "0077";
-assert service.Service.EnvironmentFile == "/etc/agent-vm/environment";
+assert lib.elem "/etc/agent-vm/environment" (lib.toList service.Service.EnvironmentFile);
+assert lib.any (lib.hasSuffix "cue-supervisor-environment") (lib.toList service.Service.EnvironmentFile);
+assert lib.last (lib.toList service.Service.EnvironmentFile) != "/etc/agent-vm/environment";
 assert lib.hasSuffix "/bin/cue-supervisor daemon" (builtins.head service.Service.ExecStart);
 assert builtins.elem "CUE_STORE=/home/pl/cue" service.Service.Environment;
 assert builtins.elem "CUE_SUPERVISOR_STATE=/home/pl/.local/state/cue-supervisor" service.Service.Environment;
